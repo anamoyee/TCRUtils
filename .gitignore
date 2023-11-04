@@ -1,3 +1,6 @@
+src/commit_and_push.bat
+commit_and_push.bat
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
