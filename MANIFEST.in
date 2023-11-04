@@ -1,0 +1,5 @@
+graft tcrutils
+include pyproject.toml
+include setup.py
+global-exclude *.py[cod]
+global-exclude upload.py
