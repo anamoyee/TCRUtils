@@ -10,7 +10,7 @@ from .src.tcr_timestr import timestr
 
 __all__ = [x for x in globals() if not x.startswith('_') and x != 'src']
 
-from .src.tcr_decorator import test, timeit
+from .src.tcr_decorator import autorun, test, timeit
 from .src.tcr_error import error
 from .src.tcr_F import F
 from .src.tcr_other import oddeven
