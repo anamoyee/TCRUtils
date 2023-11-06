@@ -1,4 +1,6 @@
-def print_iterable(it: list | tuple | dict, *, recursive=True, raw=False) -> str | None: # Required for debugging (console object)
+def print_iterable(
+  it: list | tuple | dict, *, recursive=True, raw=False
+) -> str | None:  # Required for debugging (console object)
   if it == []:
     return '[]'
   if it == ():

@@ -13,6 +13,7 @@ Useful stuff for tcr projects.
 - [x] Add docstring to dict_zip and others
 - [x] make docstrings use \<h1> // ###
 - [ ] add to timestr: random and someday
+- [ ] add "+" timestr to add random few minutes
 
 
 ~~<style>s{color: crimson;} b,strong{text-decoration:underline}</style>~~

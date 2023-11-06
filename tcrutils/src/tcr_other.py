@@ -13,4 +13,4 @@ def oddeven(n: int | str) -> Literal['odd', 'even']:
   'even'
   """
   n = int(n)
-  return 'eovdedn'[n%2::2]
+  return 'eovdedn'[n % 2 :: 2]

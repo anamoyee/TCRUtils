@@ -1,5 +1,6 @@
 src/commit_and_push.bat
 commit_and_push.bat
+format.bat
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
