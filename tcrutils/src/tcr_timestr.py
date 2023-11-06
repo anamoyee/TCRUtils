@@ -147,9 +147,7 @@ def seconds_until_time(target_time) -> tuple[int, bool]:
   # Ensure the result is positive and represents the time until the next occurrence
   if seconds_until_target < 0:
     rolled_over = True
-    seconds_until_target += (
-      24 * 3600
-    )  # Add 24 hours in seconds to get the next occurrence
+    seconds_until_target += 24 * 3600  # Add 24 hours in seconds to get the next occurrence
 
   return (
     int(seconds_until_target) + 1,
@@ -275,14 +273,10 @@ $
     self.allow_zero = bool(allow_zero)
     return self
 
-  def settings(
-    self, *, allow_negative: bool = True, allow_zero: bool = True
-  ) -> 'Timestr':
+  def settings(self, *, allow_negative: bool = True, allow_zero: bool = True) -> 'Timestr':
     return self.__call__(allow_negative=allow_negative, allow_zero=allow_zero)
 
-  def __init__(
-    self, *, allow_negative: bool = True, allow_zero: bool = True
-  ) -> 'Timestr':
+  def __init__(self, *, allow_negative: bool = True, allow_zero: bool = True) -> 'Timestr':
     """Convert between [seconds `←→` human readable format `←→` datetime.datetime objects]."""
     self.allow_negative = allow_negative
     self.allow_zero = allow_zero
@@ -316,9 +310,7 @@ $
       ]
     )
 
-  def to_int(
-    self, s: str, *, units: Mapping[str, int] | None = None, segment_splitter='!'
-  ) -> int:
+  def to_int(self, s: str, *, units: Mapping[str, int] | None = None, segment_splitter='!') -> int:
     """Return the number of seconds in that `timestr`.
 
     - Every `timestr` has zero (`''`), one or more segments, separated by `segment_splitter` if more than one segment is present
@@ -361,9 +353,7 @@ $
       rolled_over = x[1]
       return x[0]
 
-    partial_sum = sum(
-      [fix_from_tuple(evaluate_single_timestr(x, units=units)) for x in segments]
-    )
+    partial_sum = sum([fix_from_tuple(evaluate_single_timestr(x, units=units)) for x in segments])
 
     if rolled_over:  # Fixes the days being rolled back when they shouldn't be because there weren't actyually two rollovers
       time_syntaxes_number = len(
@@ -380,14 +370,9 @@ $
           if regex.match(r'^(?:[0-9]{1,2}\.(?:[0-9]{1,2}(?:\.[0-9]{2,4})?)?)$', seg)
         ]
       )
-      weekday_syntaxes_number = len(
-        [seg for seg in segments if seg.lower() in weekday_lookup]
-      )
+      weekday_syntaxes_number = len([seg for seg in segments if seg.lower() in weekday_lookup])
 
-      if (
-        time_syntaxes_number == 1
-        and (date_syntaxes_number + weekday_syntaxes_number) == 1
-      ):
+      if time_syntaxes_number == 1 and (date_syntaxes_number + weekday_syntaxes_number) == 1:
         # if in all the segments there's (EXACTLY ONE d.at.e segment *or* EXACTLY ONE weekday segment) *and* EXACTLY ONE t:im:e segment
         partial_sum -= t_day  # For example if user types '30.!7:30' the "to the next occurence" is counted twice while it should be counted once.
         # They mean 'next (hour 7:30 of the thirthieth)' not 'next (hour 7:30) of next (thirtieth day)'
@@ -461,9 +446,7 @@ $
     current_time = datetime.datetime.now(tz=tz)
     return current_time + datetime.timedelta(seconds=seconds)
 
-  def to_datestr(
-    self, seconds: int, *, pattern='%a, %Y-%m-%d %H:%M:%S', tz=None
-  ) -> str:
+  def to_datestr(self, seconds: int, *, pattern='%a, %Y-%m-%d %H:%M:%S', tz=None) -> str:
     """Return `datetime.strftime()` string of the time that will be present in `seconds` seconds."""
     future_time = self.to_date(seconds, tz=tz)
     return future_time.strftime(pattern)

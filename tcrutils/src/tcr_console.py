@@ -23,9 +23,7 @@ class console:
     return str(datetime.datetime.now())[:-3].replace('.', ',')
 
   @classmethod
-  def log(
-    cls, *values, sep=' ', end='', returnonly=False, withprefix=True
-  ) -> None | str:
+  def log(cls, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
     if not values:
       values = ['']
     out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
@@ -38,9 +36,7 @@ class console:
     return None
 
   @classmethod
-  def warn(
-    cls, *values, sep=' ', end='', returnonly=False, withprefix=True
-  ) -> None | str:
+  def warn(cls, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
     if not values:
       values = ['']
     out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
@@ -53,9 +49,7 @@ class console:
     return None
 
   @classmethod
-  def error(
-    cls, *values, sep=' ', end='', returnonly=False, withprefix=True
-  ) -> None | str:
+  def error(cls, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
     if not values:
       values = ['']
     values = [(extract_error(x) if isinstance(x, Exception) else x) for x in values]
@@ -100,9 +94,7 @@ class console:
     return None if not passthrough else values[0]
 
   @classmethod
-  def critical(
-    cls, *values, sep=' ', end='', returnonly=False, withprefix=True
-  ) -> None | str:
+  def critical(cls, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
     if not values:
       values = ['']
     out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
