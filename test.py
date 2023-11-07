@@ -98,9 +98,9 @@ if True:  # \/ # Tests
     console(repr(tcr.cut_at("uwuwuwuuwuwu", n=1)))
     console(repr(tcr.cut_at("uwuwuwuuwuwu", n=0)))
     console(repr(tcr.cut_at("uwuwuwuuwuwu", n=-1)))
-    console((repr(a := tcr.cut_at("http://te.st.com.chudj/asdf", n=16, filter_links=r"[\3]")), len(a)), print_iterable_=False)
-    console((repr(a := tcr.cut_at("http://te.st/asdf", n=16, filter_links=False)), len(a)), print_iterable_=False)
-    console((repr(a := tcr.cut_at("uwuwuwuuwuwuieiei", n=16, filter_links=r"[\3]")), len(a)), print_iterable_=False)
+    console(((a := tcr.cut_at("http://te.st.com.chudj/asdf", n=16, filter_links=r"[\3]")), len(a)), print_iterable_=False)
+    console(((a := tcr.cut_at("http://te.st/asdf", n=16, filter_links=False)), len(a)), print_iterable_=False)
+    console(((a := tcr.cut_at("uwuwuwuuwuwuieiei", n=16, filter_links=r"[\3]")), len(a)), print_iterable_=False)
 
 
 if True:  # \/ # Test setup
@@ -119,5 +119,5 @@ if __name__ == '__main__':
   # test_getch()
   # test_trei()
   # test_asert()
-  test_iterable()
+  # test_iterable()
   pass  # noqa: PIE790, RUF100
