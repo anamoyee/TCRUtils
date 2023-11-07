@@ -15,12 +15,12 @@ print('| NO NEED FOR __TOKEN__ |')
 print('=========================')
 
 if version is not None:
-  with open('VERSION.txt', 'w') as f:
+  with open('VERSION.txt', 'w') as f:  # noqa: PTH123
     f.write(version)
 else:
-  with open('VERSION.txt') as f:
+  with open('VERSION.txt') as f:  # noqa: PTH123
     a = f.read()
-  with open('VERSION.txt', 'w') as f:
+  with open('VERSION.txt', 'w') as f:  # noqa: PTH123
     a = a.split('.')
     a[2] = str(int(a[2]) + 1)
     f.write('.'.join(a))
