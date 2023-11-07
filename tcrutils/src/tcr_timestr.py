@@ -6,74 +6,64 @@ from .tcr_console import console
 from .tcr_error import ConfigurationError
 from .tcr_extract_error import extract_error
 
+# fmt: off
 timestr_lookup = {
-  's': (t_second := 1),
-  'sec': t_second,
-  'secs': t_second,
-  'sex': t_second,  # >:3
-  'second': t_second,
-  'seconds': t_second,
-  'm': (t_minute := 60 * t_second),
-  'min': t_minute,
-  'mins': t_minute,
-  'minute': t_minute,
-  'minutes': t_minute,
-  'h': (t_hour := 60 * t_minute),
-  'hr': t_hour,
-  'hrs': t_hour,
-  'hour': t_hour,
-  'hours': t_hour,
-  'd': (t_day := 24 * t_hour),
-  'day': t_day,
-  'days': t_day,
-  'w': (t_week := 7 * t_day),
-  'week': t_week,
-  'weeks': t_week,
-  'y': (t_year := 365 * t_day),
-  'year': t_year,
-  'years': t_year,
-  'pul': (t_pul := (11 * t_hour + 30 * t_minute)),
-  'pull': t_pul,
-  'puls': t_pul,
-  'pulls': t_pul,
-  'card': t_pul,
-  'cards': t_pul,
-  'res': (t_rescue := 6 * t_hour),
-  'reses': t_rescue,
-  'resees': t_rescue,
-  'rescue': t_rescue,
-  'rescues': t_rescue,
-  'rev': (
-    t_revolution := 133 * t_day
-  ),  # 1 revolution = 133 days, nice if you get the reference hihi :>
-  'revs': t_revolution,
-  'revolution': t_revolution,
-  'revolutions': t_revolution,
-}
+    's':       (t_second := 1),
+    'sec':     t_second,
+    'secs':    t_second,
+    'sex':     t_second, # >:3
+    'second':  t_second,
+    'seconds': t_second,
+
+    'm':       (t_minute := 60*t_second),
+    'min':     t_minute,
+    'mins':    t_minute,
+    'minute':  t_minute,
+    'minutes': t_minute,
+
+    'h':     (t_hour := 60*t_minute),
+    'hr':    t_hour,
+    'hrs':   t_hour,
+    'hour':  t_hour,
+    'hours': t_hour,
+
+    'd':    (t_day := 24*t_hour),
+    'day':  t_day,
+    'days': t_day,
+
+    'w':     (t_week := 7*t_day),
+    'week':  t_week,
+    'weeks': t_week,
+
+    'y':     (t_year := 365*t_day),
+    'year':  t_year,
+    'years': t_year,
+
+    'pul':   (t_pul := (11*t_hour + 30*t_minute)),
+    'pull':  t_pul,
+    'puls':  t_pul,
+    'pulls': t_pul,
+    'card':  t_pul,
+    'cards': t_pul,
+
+    'res':     (t_rescue := 6*t_hour),
+    'reses':   t_rescue,
+    'resees':  t_rescue,
+    'rescue':  t_rescue,
+    'rescues': t_rescue,
+
+    'rev':         (t_revolution := 133*t_day), # 1 revolution = 133 days, nice if you get the reference hihi :>
+    'revs':        t_revolution,
+    'revolution':  t_revolution,
+    'revolutions': t_revolution,
+  }
 
 weekday_lookup = [
-  'mo',
-  'tu',
-  'we',
-  'th',
-  'fr',
-  'sa',
-  'su',
-  'mon',
-  'tue',
-  'wed',
-  'thu',
-  'fri',
-  'sat',
-  'sun',
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-  'sunday',
+  'mo',     'tu',      'we',        'th',       'fr',     'sa',       'su',
+  'mon',    'tue',     'wed',       'thu',      'fri',    'sat',      'sun',
+  'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
 ]
+# fmt: on
 
 
 def days_until_next_weekday(target_weekday):
@@ -104,24 +94,12 @@ def split_string_at_indices(s: str, indices: Iterable[int]) -> tuple[str]:
 
 
 def split_string_on_change(s: str) -> tuple[tuple[str]]:
-  splits = []
-  for i in range(len(s) - 1):  # Not using enumerate because i also need the next letter
-    if (s[i].isalpha()) and not (
-      s[i + 1].isalpha()
-    ):  # If there happens to be a NON-numer on the left and a number on the right...
-      splits.append(i + 1)  # ...place a split point there
-
+  splits = [i + 1 for i in range(len(s) - 1) if (s[i].isalpha()) and not (s[i + 1].isalpha())]
   return [_split_string_on_change2(x) for x in split_string_at_indices(s, splits)]
 
 
 def _split_string_on_change2(s: str) -> tuple[str]:
-  splits = []
-  for i in range(len(s) - 1):  # Not using enumerate because i also need the next letter
-    if (
-      not s[i].isalpha() and s[i + 1].isalpha()
-    ):  # If there happens to be a NON-numer on the left and a number on the right...
-      splits.append(i + 1)  # ...place a split point there
-
+  splits = [i + 1 for i in range(len(s) - 1) if (not s[i].isalpha() and s[i + 1].isalpha())]
   return split_string_at_indices(s, splits)
 
 
@@ -172,6 +150,7 @@ def days_until_due(due_date):
 
 
 def evaluate_single_timestr(s: str, *, units: Mapping[str, int]) -> int:
+  # sourcery skip: assign-if-exp, extract-method, hoist-similar-statement-from-if, hoist-statement-from-if, reintroduce-else, remove-unnecessary-else, use-fstring-for-concatenation
   if not s:
     return 0
 
@@ -269,8 +248,8 @@ $
   allow_zero = True
 
   def __call__(self, *, allow_negative: bool = True, allow_zero: bool = True):
-    self.allow_negative = bool(allow_negative)
-    self.allow_zero = bool(allow_zero)
+    self.allow_negative = allow_negative
+    self.allow_zero = allow_zero
     return self
 
   def settings(self, *, allow_negative: bool = True, allow_zero: bool = True) -> 'Timestr':
@@ -299,16 +278,16 @@ $
 
   def valid(self, s: str, *, segment_splitter='!') -> bool:
     """Return `True` if specified string is a valid input for `to_int()` conversion, otherwise `False`."""
-    s = s.replace(' ', '')
-    if s == '':
+    if s := s.replace(' ', ''):
+      return all(
+        bool(x)
+        for x in [
+          regex.match(self.pattern, x) or x.lower() in weekday_lookup
+          for x in s.split(segment_splitter)
+        ]
+      )
+    else:
       return True
-    return all(
-      bool(x)
-      for x in [
-        regex.match(self.pattern, x) or x.lower() in weekday_lookup
-        for x in s.split(segment_splitter)
-      ]
-    )
 
   def to_int(self, s: str, *, units: Mapping[str, int] | None = None, segment_splitter='!') -> int:
     """Return the number of seconds in that `timestr`.
@@ -328,7 +307,7 @@ $
       - `1.!1.!1.` ("However much time it takes to get to nearest first day of the month, thrice" / No practical use i can think of)
     """
     s = s.replace(' ', '')
-    if s == '':
+    if not s:
       return 0
 
     while (segment_splitter + segment_splitter) in s:
@@ -353,7 +332,7 @@ $
       rolled_over = x[1]
       return x[0]
 
-    partial_sum = sum([fix_from_tuple(evaluate_single_timestr(x, units=units)) for x in segments])
+    partial_sum = sum(fix_from_tuple(evaluate_single_timestr(x, units=units)) for x in segments)
 
     if rolled_over:  # Fixes the days being rolled back when they shouldn't be because there weren't actyually two rollovers
       time_syntaxes_number = len(
@@ -396,7 +375,7 @@ $
     Units go up to days. Supports negative values and handles plurals automatically.
     """
     if n < 0:
-      return '-' + self.to_str(-n)
+      return f'-{self.to_str(-n)}'
 
     units = [
       ('day', 86400),
@@ -411,7 +390,7 @@ $
         if num_units == round(num_units):
           num_units = round(num_units)
         num_units = round(num_units, 2)
-        unit_str = unit if num_units == 1 else unit + 's'
+        unit_str = unit if num_units == 1 else f'{unit}s'
         return f'{num_units} {unit_str}'
 
     # If seconds is 0, return "in 0 seconds"
@@ -438,7 +417,7 @@ $
     minutes, seconds = divmod(seconds, units['minute'])
     base_time_str = f'{hours:02}:{minutes:02}:{seconds:02}'
     if days >= 1:
-      base_time_str = f'{days}d + ' + base_time_str
+      base_time_str = f'{days}d + {base_time_str}'
     return base_time_str
 
   def to_date(self, seconds: int, *, tz=None) -> datetime.datetime:

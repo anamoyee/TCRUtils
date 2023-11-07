@@ -84,19 +84,25 @@ if True:  # \/ # Tests
   def test_trei():
     1 / 0  # noqa: B018
 
+  def test_asert():
+    asert(lambda: 1 == 1)
+    asert(lambda: 1 == 2)
+
 
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @test decorator
     if k.startswith('test_'):
       globals()[k] = tcr.test(v)
 
-if __name__ == '__main__': ...
-# test_timestr()
-# test_dict_merge()
-# test_dict_zip()
-# test_oddeven()
-# test_timeit()
-# test_autorun()
-# test_breakpoint()
-# test_getch()
-# test_trei()
+if __name__ == '__main__':
+  # test_timestr()
+  # test_dict_merge()
+  # test_dict_zip()
+  # test_oddeven()
+  # test_timeit()
+  # test_autorun()
+  # test_breakpoint()
+  # test_getch()
+  # test_trei()
+  # test_asert()
+  pass  # noqa: PIE790, RUF100

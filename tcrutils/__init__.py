@@ -2,12 +2,13 @@
 
 from .src.tcr_color import c, color, colour
 from .src.tcr_console import console
-from .src.tcr_decorator import trei
 from .src.tcr_dict import dict_zip, merge_dicts
 from .src.tcr_extract_error import extract_error
 from .src.tcr_getch import getch
+from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null
 from .src.tcr_print_iterable import print_iterable
+from .src.tcr_run import RunSACAble, run_sac
 from .src.tcr_timestr import timestr
 
 __all__ = [x for x in globals() if not x.startswith('_') and x != 'src']
