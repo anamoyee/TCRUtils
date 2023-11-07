@@ -14,6 +14,7 @@ Useful stuff for tcr projects.
 - [x] make docstrings use \<h1> // ###
 - [ ] add to timestr: random and someday
 - [ ] add "+" timestr to add random few minutes
+- [ ] timestr.to_int() by parts, [("weekday", 1000), ("robostr", 20)]
 
 
 ~~<style>s{color: crimson;} b,strong{text-decoration:underline}</style>~~

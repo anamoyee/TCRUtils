@@ -5,6 +5,7 @@ from .src.tcr_console import console
 from .src.tcr_dict import dict_zip, merge_dicts
 from .src.tcr_extract_error import extract_error
 from .src.tcr_getch import getch
+from .src.tcr_iterable import batched, cut_at
 from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null
 from .src.tcr_print_iterable import print_iterable

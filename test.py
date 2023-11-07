@@ -88,6 +88,23 @@ if True:  # \/ # Tests
     asert(lambda: 1 == 1)
     asert(lambda: 1 == 2)
 
+  def test_iterable():
+    console(tcr.batched('1234567890', n=3))
+    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=10)!r}')
+    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=4)!r}')
+    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=3)!r}')
+    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=2)!r}')
+    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=1)!r}')
+    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=0)!r}')
+    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=-1)!r}')
+    console(
+      f'{tcr.cut_at("http://te.st/asdf", n=16, filter_links=lambda match: "[" + match.group(3) + "]")!r}'
+    )
+    console(f'{tcr.cut_at("http://te.st/asdf", n=16, filter_links=False)!r}')
+    console(
+      f'{tcr.cut_at("uwuwuwuuwuwu", n=11, filter_links=lambda match: "[" + match.group(2) + "]")!r}'
+    )
+
 
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @test decorator
@@ -105,4 +122,5 @@ if __name__ == '__main__':
   # test_getch()
   # test_trei()
   # test_asert()
+  test_iterable()
   pass  # noqa: PIE790, RUF100
