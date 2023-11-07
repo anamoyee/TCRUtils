@@ -1,3 +1,4 @@
+# fmt: off
 if __import__('sys').version_info[:2] != (3, 11):
   msg = 'Use py311'
   raise RuntimeError(msg)
@@ -90,20 +91,16 @@ if True:  # \/ # Tests
 
   def test_iterable():
     console(tcr.batched('1234567890', n=3))
-    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=10)!r}')
-    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=4)!r}')
-    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=3)!r}')
-    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=2)!r}')
-    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=1)!r}')
-    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=0)!r}')
-    console(f'{tcr.cut_at("uwuwuwuuwuwu", n=-1)!r}')
-    console(
-      f'{tcr.cut_at("http://te.st/asdf", n=16, filter_links=lambda match: "[" + match.group(3) + "]")!r}'
-    )
-    console(f'{tcr.cut_at("http://te.st/asdf", n=16, filter_links=False)!r}')
-    console(
-      f'{tcr.cut_at("uwuwuwuuwuwu", n=11, filter_links=lambda match: "[" + match.group(2) + "]")!r}'
-    )
+    console(repr(tcr.cut_at("uwuwuwuuwuwu", n=10)))
+    console(repr(tcr.cut_at("uwuwuwuuwuwu", n=4)))
+    console(repr(tcr.cut_at("uwuwuwuuwuwu", n=3)))
+    console(repr(tcr.cut_at("uwuwuwuuwuwu", n=2)))
+    console(repr(tcr.cut_at("uwuwuwuuwuwu", n=1)))
+    console(repr(tcr.cut_at("uwuwuwuuwuwu", n=0)))
+    console(repr(tcr.cut_at("uwuwuwuuwuwu", n=-1)))
+    console((repr(a := tcr.cut_at("http://te.st.com.chudj/asdf", n=16, filter_links=r"[\3]")), len(a)), print_iterable_=False)
+    console((repr(a := tcr.cut_at("http://te.st/asdf", n=16, filter_links=False)), len(a)), print_iterable_=False)
+    console((repr(a := tcr.cut_at("uwuwuwuuwuwuieiei", n=16, filter_links=r"[\3]")), len(a)), print_iterable_=False)
 
 
 if True:  # \/ # Test setup

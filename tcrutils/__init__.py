@@ -2,6 +2,7 @@
 
 from .src.tcr_color import c, color, colour
 from .src.tcr_console import console
+from .src.tcr_constants import *
 from .src.tcr_dict import dict_zip, merge_dicts
 from .src.tcr_extract_error import extract_error
 from .src.tcr_getch import getch
