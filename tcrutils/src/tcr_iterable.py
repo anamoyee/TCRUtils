@@ -36,6 +36,8 @@ def cut_at(
   - `$6` - part of the link after `/` (not including it, may be '')
 
   https://regex101.com/r/46LZtS/1
+
+  shrink_links_visually_if_fits replaces links with their markdown counterparts where the visible text is http(s):/subdomain.domain.tld/ (no further part of the links is visible, but the entire link is contained)
   """
   if len(it) <= n:
     if shrink_links_visually_if_fits and len(a := regex.sub(URL_PATTERN, r"[\2:/\3/](<\1>)", it)) <= n: # :/ instead of :// because discord bruh
