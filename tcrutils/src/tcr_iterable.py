@@ -38,7 +38,7 @@ def cut_at(
   https://regex101.com/r/46LZtS/1
   """
   if len(it) <= n:
-    if shrink_links_visually_if_fits and len(a := regex.sub(URL_PATTERN, r"[\2://\3/](<\1>)", it)) <= n:
+    if shrink_links_visually_if_fits and len(a := regex.sub(URL_PATTERN, r"[\2:/\3/](<\1>)", it)) <= n: # :/ instead of :// because discord bruh
       return a
     return it
   if filter_links is not False and isinstance(it, str):
