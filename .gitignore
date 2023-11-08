@@ -3,6 +3,7 @@ commit_and_push.bat
 format.bat
 .sourcery.yaml
 test.py
+codex.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -19,6 +19,7 @@ def cut_at(
   end: str | Iterable = '...',
   *,
   filter_links: Literal[False] | str | Callable = False,
+  shrink_links_visually_if_fits: bool = False,
 ) -> str:
   """### Return a cut off part of the provided `it` iterable.
 
@@ -37,6 +38,8 @@ def cut_at(
   https://regex101.com/r/46LZtS/1
   """
   if len(it) <= n:
+    if shrink_links_visually_if_fits and len(a := regex.sub(URL_PATTERN, r"[\2://\3/](<\1>)", it)) <= n:
+      return a
     return it
   if filter_links is not False and isinstance(it, str):
     if not isinstance(filter_links, str | Callable):
