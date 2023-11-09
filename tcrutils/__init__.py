@@ -10,6 +10,7 @@ from .src.tcr_iterable import batched, cut_at
 from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null
 from .src.tcr_print_iterable import print_iterable
+from .src.tcr_regex import RegexPreset
 from .src.tcr_run import RunSACAble, run_sac
 from .src.tcr_timestr import timestr
 

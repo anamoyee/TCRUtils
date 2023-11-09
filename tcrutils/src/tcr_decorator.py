@@ -13,6 +13,9 @@ if True:  # \/ # @test
     @wraps(func)
     def wrapper(*args, **kwargs):
       name = func.__name__
+      name = name.removeprefix('test_')
+      name = name.replace('_', ' ')
+      name = name.title()
       print(
         f"""
   {c('White')}####{len(name)*"#"}####

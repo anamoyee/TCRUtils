@@ -2,14 +2,24 @@ import re as regex
 from collections.abc import Callable, Iterable
 from typing import Literal
 
-from .tcr_regex import URL_PATTERN
+from .tcr_regex import Regex, RegexPreset
 
 
-def batched(it: str | Iterable, n: int) -> list:
-  """### Poor man's (Py3.11) itertools.batched().
+def batched(
+  it: str | Iterable,
+  n: int,
+  *,
+  back_to_front: bool = False,
+) -> list:
+  """### Poor man's `itertools.batched()` (on Py3.11).
 
   Returns a list of splits of the original `it` Iterable that was passed in, split every `n` items. Last group may be smaller than `n` items if the source was exhausted
+  `back_to_front`: makes the items pile up in the back and now the first item is the one to have less than n items if there's not enough to pack it with. For example:
+  - `batched("1234567890", n=3)                    ` returns `["123", "456", "789", "0"]`
+  - `batched("1234567890", n=3, back_to_front=True)` returns `["1", "234", "567", "890"]`
   """
+  if back_to_front:
+    return [x[::-1] for x in batched(it[::-1], n=n, back_to_front=False)[::-1]]
   return [it[i : i + n] for i in range(0, len(it), n)]
 
 
@@ -37,17 +47,20 @@ def cut_at(
 
   https://regex101.com/r/46LZtS/1
 
-  shrink_links_visually_if_fits replaces links with their markdown counterparts where the visible text is http(s):/subdomain.domain.tld/ (no further part of the links is visible, but the entire link is contained)
+  `shrink_links_visually_if_fits` replaces links with their markdown counterparts where the visible text is http(s):/subdomain.domain.tld/ (no further part of the links is visible, but the entire link is contained)
   """
   if len(it) <= n:
-    if shrink_links_visually_if_fits and len(a := regex.sub(URL_PATTERN, r"[\2:/\3/](<\1>)", it)) <= n: # :/ instead of :// because discord bruh
+    if (
+      shrink_links_visually_if_fits
+      and len(a := regex.sub(RegexPreset.URL, r'[\2:/\3/](<\1>)', it)) <= n
+    ):  # :/ instead of :// because discord bruh
       return a
     return it
   if filter_links is not False and isinstance(it, str):
     if not isinstance(filter_links, str | Callable):
       msg = f'Set filter_links to a str of the replacement value for links or Callable, not {filter_links!r}'
       raise ValueError(msg)
-    it = regex.sub(URL_PATTERN, filter_links, it)
+    it = regex.sub(RegexPreset.URL, filter_links, it)
     if len(it) <= n:
       return it
   if n > len(end):
