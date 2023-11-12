@@ -436,6 +436,12 @@ $
     future_time = self.to_date(seconds, tz=tz)
     return future_time.strftime(pattern)
 
+  def to_datestr_from_unix(self, unix: int | str, *, pattern='%a, %Y-%m-%d %H:%M:%S', tz=None) -> str:
+    """Return `datetime.strftime()` string of the passed in unix timestamp."""
+    if isinstance(unix, str):
+      unix = int(unix)
+    return datetime.datetime.fromtimestamp(unix, tz=tz).strftime(pattern)
+
 
 timestr = Timestr()
 

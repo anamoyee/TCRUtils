@@ -2,7 +2,7 @@ import re as regex
 from collections.abc import Callable, Iterable
 from typing import Literal
 
-from .tcr_regex import Regex, RegexPreset
+from .tcr_regex import RegexPreset
 
 
 def batched(
