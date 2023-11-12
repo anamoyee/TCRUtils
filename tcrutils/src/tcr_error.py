@@ -15,6 +15,13 @@ class error:
         s += f" Got '{not_integer!r} instead'"
       super().__init__(s)
 
+  class DatabaseError(Exception):
+    """Used when database raises an unexpected exception."""
+
+    def __init__(self) -> None:
+      super().__init__()
+
+
 
 for attr_name, attr_value in error.__dict__.items():
   if not attr_name.startswith('__'):
