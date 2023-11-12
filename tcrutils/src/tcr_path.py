@@ -25,7 +25,7 @@ class path:
     """Return unused directory or file with the name `name` in directory `path` or the current directory if not passed in."""
     if path is None: path = os.getcwd()
     path = str(path)
-    listdir = os.listdir()
+    listdir = os.listdir(path)
     while name in listdir:
       name = nextname(name)
     return name
