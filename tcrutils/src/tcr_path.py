@@ -18,8 +18,8 @@ def nextname(name):
   return new_name
 
 
-class Path:
-  """Provides path-related utilitiess."""
+class path:
+  """Provides path-related utilities."""
   @staticmethod
   def newdir(name: str | None = None, path: p.Path | str | None = None, nextname: Callable[[str | None], str] = nextname):
     """Return unused directory or file with the name `name` in directory `path` or the current directory if not passed in."""
@@ -29,8 +29,5 @@ class Path:
     while name in listdir:
       name = nextname(name)
     return name
-
-
-path = Path()
 
 __all__ = ['path']
