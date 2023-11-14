@@ -15,6 +15,7 @@ Useful stuff for tcr projects.
 - [ ] add to timestr: random and someday
 - [ ] add "+" timestr to add random few minutes
 - [ ] timestr.to_int() by parts, [("weekday", 1000), ("robostr", 20)]
+- [ ] Add optional syntax highlighting to print_iterable
 
 
 ~~<style>s{color: crimson;} b,strong{text-decoration:underline}</style>~~

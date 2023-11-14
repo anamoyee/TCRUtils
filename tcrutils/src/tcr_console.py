@@ -1,5 +1,6 @@
 import datetime
 from functools import reduce
+from sys import exit
 
 # console was coded before .tcr_color was written
 from colored import attr, bg, fg, stylize
@@ -129,7 +130,7 @@ class console:
     )
 
 
-def breakpoint(*vals, printhook=console, clear=True):  # noqa: A001 - That's intentional
+def breakpoint(*vals, printhook=console, clear=True, ctrlc=exit) -> None:  # noqa: A001 - That's intentional
   """Stop the program execution until a key is pressed. Optionally pass in things to print."""
   for val in vals:
     printhook(val)
@@ -137,8 +138,15 @@ def breakpoint(*vals, printhook=console, clear=True):  # noqa: A001 - That's int
     (a := f'{c("White")} >>> {c("RED")}BREAKPOINT{c(0)} {c("White")}<<<{c(0)}'),
     end='\r',
   )
-  getch()
+
+  if getch() == b'\x03':
+    if clear:
+      print(len(a) * ' ', end='')
+    ctrlc()
+    return
+
   if clear:
     print(len(a) * ' ', end='\r')
   else:
     print()
+  
