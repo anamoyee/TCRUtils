@@ -26,7 +26,9 @@ def dict_zip(dict1: Mapping, *dicts: Mapping) -> Generator[tuple[Hashable, Any],
     yield (k, (v, *(dick[k] for dick in dicks[1:])))
 
 
-def merge_dicts(master: Mapping, slave: Mapping, *dicts: Mapping, recursive=True, strict=False) -> Mapping:
+def merge_dicts(
+  master: Mapping, slave: Mapping, *dicts: Mapping, recursive=True, strict=False
+) -> Mapping:
   """Merge dictionaries, made to prioritize the `master` dictionary and if key is not found there, then it takes from the `slave` dictionary.
 
   Optionally if `recursive=True`, then if the same key is a dict in both master and slave, merge dicts operation is performed on both of them.\\

@@ -97,3 +97,89 @@ if True:  # \/ # @autorun
   def autorun(func):
     func()
     return func
+
+
+if True:  # \/ # @convert.stringify
+
+  class Convert:
+    def stringify(self, func):
+      @wraps(func)
+      def wrapper(*args, **kwargs):
+        return str(func(*args, **kwargs))
+
+      return wrapper
+
+    def intify(self, func):
+      @wraps(func)
+      def wrapper(*args, **kwargs):
+        return int(func(*args, **kwargs))
+
+      return wrapper
+
+    def floatify(self, func):
+      @wraps(func)
+      def wrapper(*args, **kwargs):
+        return float(func(*args, **kwargs))
+
+      return wrapper
+
+    def boolify(self, func):
+      @wraps(func)
+      def wrapper(*args, **kwargs):
+        return bool(func(*args, **kwargs))
+
+      return wrapper
+
+    def listify(self, func):
+      @wraps(func)
+      def wrapper(*args, **kwargs):
+        return list(func(*args, **kwargs))
+
+      return wrapper
+
+    def setify(self, func):
+      @wraps(func)
+      def wrapper(*args, **kwargs):
+        return set(func(*args, **kwargs))
+
+      return wrapper
+
+    def dictify(self, func):
+      @wraps(func)
+      def wrapper(*args, **kwargs):
+        return dict(func(*args, **kwargs))
+
+      return wrapper
+
+    def tuplify(self, func):
+      @wraps(func)
+      def wrapper(*args, **kwargs):
+        return tuple(func(*args, **kwargs))
+
+      return wrapper
+
+    def complexify(self, func):
+      @wraps(func)
+      def wrapper(*args, **kwargs):
+        return complex(func(*args, **kwargs))
+
+      return wrapper
+
+    def reprify(self, func):
+      @wraps(func)
+      def wrapper(*args, **kwargs):
+        return repr(func(*args, **kwargs))
+
+      return wrapper
+
+    def anyify(self, converter: Callable):
+      def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+          return converter(func(*args, **kwargs))
+
+        return wrapper
+
+      return decorator
+
+  convert = Convert()

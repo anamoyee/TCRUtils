@@ -22,7 +22,6 @@ class error:
       super().__init__()
 
 
-
 for attr_name, attr_value in error.__dict__.items():
   if not attr_name.startswith('__'):
     globals()[attr_name] = attr_value

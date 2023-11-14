@@ -15,4 +15,5 @@ class RegexPreset:
   https://regex101.com/r/46LZtS/1
   """
 
+
 __all__ = ['RegexPreset']
