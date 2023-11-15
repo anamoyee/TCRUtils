@@ -11,6 +11,7 @@ from .src.tcr_iterable import batched, cut_at
 from .src.tcr_markdown import codeblock, uncodeblock
 from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null
+from .src.tcr_other import commafy_str_or_int, hex, intbool
 from .src.tcr_path import path
 from .src.tcr_print_iterable import print_iterable
 from .src.tcr_regex import RegexPreset
