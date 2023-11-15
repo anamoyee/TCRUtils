@@ -1,4 +1,7 @@
+from collections.abc import Callable
+
 from .tcr_constants import BACKTICKS, NEWLINE, DiscordLimits
+from .tcr_iterable import cut_at
 
 
 def codeblock(
@@ -6,6 +9,7 @@ def codeblock(
   *,
   langcode='',
   max_length: int = DiscordLimits.Message.LENGTH_SAFE,
+  cut_at_func: Callable[[str, int], str] = cut_at,
 ) -> str:
   """Pack text into a Discord codeblock.
 
@@ -16,7 +20,7 @@ def codeblock(
     if max_length != -1
     else 9999999999999999 # Eh...
   )
-  return BACKTICKS + langcode + NEWLINE + text[:maxlen] + BACKTICKS
+  return BACKTICKS + langcode + NEWLINE + cut_at_func(text, maxlen) + BACKTICKS
 
 
 def uncodeblock(text: str) -> str:
