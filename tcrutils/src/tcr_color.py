@@ -37,39 +37,44 @@ class Color:
       raise TypeError(msg)
     self._default = self(color)
 
-  def __call__(self, color: str | None = None, text: str | None = None) -> str:
+  def __call__(self, *colors: str | None) -> str:
     """Abstraction for easier ansi coloring & formatting."""
 
-    if color is None:
+    if len(colors) >= 2:
+      return ''.join([self.__call__(x) for x in colors])
+    else:
+      colors = colors[0]
+
+    if colors == ():
       return self._get_default_color()
 
-    if str(color).lower() in ['reset', '0']:
+    if str(colors).lower() in ['reset', '0']:
       return self.RESET
 
-    attr_und = '_' in color
-    color = color.replace('_', '')  # Underlined if it contains _
-    attr_dim = '&' in color
-    color = color.replace('&', '')  # Dim        if it contains &
-    attr_bli = '*' in color
-    color = color.replace('*', '')  # Blink      if it contains *
-    attr_rev = '!' in color
-    color = color.replace('!', '')  # Reverse    if it contains !
-    attr_hidd = '#' in color
-    color = color.replace('#', '')  # Hidden     if it contains #
+    attr_und = '_' in colors
+    colors = colors.replace('_', '')  # Underlined if it contains _
+    attr_dim = '&' in colors
+    colors = colors.replace('&', '')  # Dim        if it contains &
+    attr_bli = '*' in colors
+    colors = colors.replace('*', '')  # Blink      if it contains *
+    attr_rev = '!' in colors
+    colors = colors.replace('!', '')  # Reverse    if it contains !
+    attr_hidd = '#' in colors
+    colors = colors.replace('#', '')  # Hidden     if it contains #
 
-    attr_bold = color[0] == color[0].upper()  # Bold if the first letter is uppercase
-    is_bg = color == color.upper()  # bg if all caps
+    attr_bold = colors[0] == colors[0].upper()  # Bold if the first letter is uppercase
+    is_bg = colors == colors.upper()  # bg if all caps
 
-    color = color.lower()
+    colors = colors.lower()
 
-    if color in color_aliases:
-      color = color_aliases[color]
+    if colors in color_aliases:
+      colors = color_aliases[colors]
 
     styles = []
     try:
-      styles.append((bg if is_bg else fg)(color))
+      styles.append((bg if is_bg else fg)(colors))
     except KeyError:
-      return self._get_default_color(color)
+      return self._get_default_color(colors)
     if attr_bold:
       styles.append(attr('bold'))
     if attr_und:
@@ -83,11 +88,13 @@ class Color:
     if attr_hidd:
       styles.append(attr('hidden'))
 
-    if text is None:
-      return stylize('', ''.join(styles), reset=False)
-    return styles(text, ''.join(styles))
+    return stylize('', ''.join(styles), reset=False)
 
 
 color = Color()
 del Color
 c, colour = color, color
+
+def printc(*args, end='\n', **kwargs):
+  end = c('reset')+end
+  return print(*args, end=end, **kwargs)

@@ -1,6 +1,6 @@
 """Useful stuff for tcr projects."""
 
-from .src.tcr_color import c, color, colour
+from .src.tcr_color import c, color, colour, printc
 from .src.tcr_console import console
 from .src.tcr_constants import *
 from .src.tcr_decorator import autorun, convert

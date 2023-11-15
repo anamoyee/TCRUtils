@@ -1,5 +1,8 @@
 """`other` submodule contains garbage or joke functions that never should be used in real code, just don't use this submodule pls. Why is it there? uhhh... :3."""
+from functools import partial
 from typing import Literal
+
+from .tcr_color import c
 
 
 def oddeven(n: int | str) -> Literal['odd', 'even']:
