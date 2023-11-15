@@ -8,6 +8,7 @@ from .src.tcr_dict import dict_zip, merge_dicts
 from .src.tcr_extract_error import extract_error
 from .src.tcr_getch import getch
 from .src.tcr_iterable import batched, cut_at
+from .src.tcr_markdown import codeblock, uncodeblock
 from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null
 from .src.tcr_path import path

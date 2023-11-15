@@ -95,6 +95,7 @@ color = Color()
 del Color
 c, colour = color, color
 
+
 def printc(*args, end='\n', **kwargs):
-  end = c('reset')+end
+  end = c('reset') + end
   return print(*args, end=end, **kwargs)

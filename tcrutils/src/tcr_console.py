@@ -149,4 +149,3 @@ def breakpoint(*vals, printhook=console, clear=True, ctrlc=exit) -> None:  # noq
     print(len(a) * ' ', end='\r')
   else:
     print()
-  

@@ -18,12 +18,15 @@ def oddeven(n: int | str) -> Literal['odd', 'even']:
   n = int(n)
   return 'eovdedn'[n % 2 :: 2]
 
+
 def hex(number, leading_zeroes=2, *, upper=True):  # noqa: A001 # Intentional shadow
-    hex_output = __import__('builtins').hex(number)
-    hex_value = hex_output[2:].zfill(leading_zeroes).upper() if upper else hex_output[2:].zfill(leading_zeroes)
+  hex_output = __import__('builtins').hex(number)
+  hex_value = (
+    hex_output[2:].zfill(leading_zeroes).upper() if upper else hex_output[2:].zfill(leading_zeroes)
+  )
 
-    formatted_output = f"0x{hex_value}"
-    if not upper:
-        formatted_output = formatted_output.lower()
+  formatted_output = f'0x{hex_value}'
+  if not upper:
+    formatted_output = formatted_output.lower()
 
-    return formatted_output
+  return formatted_output
