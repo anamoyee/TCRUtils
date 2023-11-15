@@ -9,7 +9,7 @@ def codeblock(
 ) -> str:
   """Pack text into a Discord codeblock.
 
-  May return str with len > max_length if max_length is ridicously low such that not even ` ` `\\nlangcode` ` ` fit
+  May return str with len > max_length if max_length is ridicously low such that not even `'''\\nlangcode'''` fits
   """
   maxlen = (
     max_length - (len(BACKTICKS) + len(langcode) + len(NEWLINE) + len(BACKTICKS))
