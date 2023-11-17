@@ -1,7 +1,7 @@
 # fmt: off
 BACKSLASH  = '\\'
 NEWLINE    = '\n'
-CARRRET    = '\r'
+CARR_RET   = '\r'
 BACKSPACE  = '\b'
 BACKTICK   = '`'
 BACKTICKS  = 3*BACKTICK
@@ -26,4 +26,14 @@ class DiscordLimits:
     FOOTER = 2048
     TOTAL_CHARACTERS = 6000
 
-__all__ = [x for x in globals().copy() if not x.startswith('_')]
+# fmt: off
+__all__ = [
+  "BACKSLASH",
+  "NEWLINE",
+  "CARR_RET",
+  "BACKSPACE",
+  "BACKTICK", "BACKTICKS",
+  "APOSTROPHE", "QUOTE",
+  "FAKE_PIPE",
+  "DiscordLimits",
+]

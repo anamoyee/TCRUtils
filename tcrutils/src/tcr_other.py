@@ -1,8 +1,6 @@
 """`other` submodule contains garbage or joke functions that never should be used in real code, just don't use this submodule pls. Why is it there? uhhh... :3."""
-from functools import partial
+from collections.abc import Callable
 from typing import Literal
-
-from .tcr_color import c
 
 
 def oddeven(n: int | str) -> Literal['odd', 'even']:
@@ -18,7 +16,9 @@ def oddeven(n: int | str) -> Literal['odd', 'even']:
   n = int(n)
   return 'eovdedn'[n % 2 :: 2]
 
+
 sex = __import__('builtins').hex
+
 
 def hex(number, leading_zeroes=2, *, upper=True):  # noqa: A001 # Intentional shadow
   hex_output = sex(number)
@@ -32,7 +32,8 @@ def hex(number, leading_zeroes=2, *, upper=True):  # noqa: A001 # Intentional sh
 
   return formatted_output
 
-def commafy_str_or_int(text: str | int, splitter: str = ','):
+
+def commafy(text: str | int, splitter: str = ','):
   text = str(text)
   temp = ''
   for i, letter in enumerate(text[::-1]):
@@ -41,5 +42,9 @@ def commafy_str_or_int(text: str | int, splitter: str = ','):
       temp += splitter
   return temp[::-1]
 
+
 def intbool(__o: object, /):
   return int(bool(__o))
+
+
+fizzbuz: Callable[[int], str] = lambda n: 'Fizz' * (n % 3 == 0) + 'Buzz' * (n % 5 == 0) or str(n)

@@ -18,7 +18,7 @@ def codeblock(
   maxlen = (
     max_length - (len(BACKTICKS) + len(langcode) + len(NEWLINE) + len(BACKTICKS))
     if max_length != -1
-    else 9999999999999999 # Eh...
+    else 9999999999999999  # Eh...
   )
   return BACKTICKS + langcode + NEWLINE + cut_at_func(text, maxlen) + BACKTICKS
 

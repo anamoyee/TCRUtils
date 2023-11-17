@@ -1,4 +1,5 @@
 import datetime
+from collections.abc import Iterable
 from functools import reduce
 from sys import exit
 
@@ -74,6 +75,8 @@ class console:
     print_iterable_=True,
     passthrough=True,
     recursive=True,
+    item_limit=100,
+    syntax_highlighting=True
   ) -> None | str:
     if not values:
       values = ['']
@@ -83,12 +86,12 @@ class console:
       out = values[0]
     if isinstance(out, type({}.values()) | type({}.keys())):
       out = list(out)
-    if print_iterable_ and isinstance(out, list | tuple | dict):
-      out = print_iterable(out, raw=True, recursive=recursive)
+    if print_iterable_ and isinstance(out, Iterable):
+      out = print_iterable(out, raw=True, recursive=recursive, item_limit=item_limit, syntax_highlighting=syntax_highlighting)
     out = str(out)
     if withprefix:
       out = (f'D {cls._get_timestamp()} ') + out
-    out = stylize(out, fg('magenta') + attr('bold'))  # + attr("underlined"))
+    out = stylize(out, c('Purple\\_1A'))  # + attr("underlined"))
     if returnonly:
       return out
     print(out)
@@ -117,6 +120,8 @@ class console:
     print_iterable_=True,
     passthrough=True,
     recursive=True,
+    item_limit=100,
+    syntax_highlighting=True
   ) -> None | str:
     return console.debug(
       *values,
@@ -127,6 +132,8 @@ class console:
       print_iterable_=print_iterable_,
       passthrough=passthrough,
       recursive=recursive,
+      item_limit=item_limit,
+      syntax_highlighting=syntax_highlighting,
     )
 
 
