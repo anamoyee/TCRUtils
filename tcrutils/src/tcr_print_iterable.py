@@ -15,11 +15,11 @@ MORE_ITEMS_COLOR = "Purple\\_1B"
 
 def print_iterable(
   it: Iterable,
-  *,
+  *its: Iterable,
   recursive=True,
   raw=False,
   item_limit=100,
-  syntax_highlighting=False
+  syntax_highlighting=True
 ) -> str | None:
   """Print an iterable in a nicely formatted way. If raw=True return the nicely formatted string instead of printing.
 
@@ -27,6 +27,8 @@ def print_iterable(
   `item_limit` determines the limit of iterable items before it displays them instead of continuing to get more
   `syntax_highlighting` adds ansi codes to highlight syntax (may be buggy)
   """
+
+  if its: return print_iterable((it, *its), recursive=recursive, raw=raw, item_limit=item_limit, syntax_highlighting=syntax_highlighting)
 
   def synhi_s(symbol):
     if not syntax_highlighting: return symbol
