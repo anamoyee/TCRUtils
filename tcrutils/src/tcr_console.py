@@ -68,8 +68,6 @@ class console:
   def debug(
     cls,
     *values,
-    sep=' ',
-    end='',
     returnonly=False,
     withprefix=True,
     print_iterable_=True,
@@ -80,10 +78,7 @@ class console:
   ) -> None | str:
     if not values:
       values = ['']
-    if len(values) > 1:
-      out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
-    else:
-      out = values[0]
+    out = values if len(values) > 1 else values[0]
     if isinstance(out, type({}.values()) | type({}.keys())):
       out = list(out)
     if print_iterable_ and isinstance(out, Iterable):
@@ -113,8 +108,6 @@ class console:
   def __new__(
     cls,
     *values,
-    sep=' ',
-    end='',
     returnonly=False,
     withprefix=True,
     print_iterable_=True,
@@ -125,8 +118,6 @@ class console:
   ) -> None | str:
     return console.debug(
       *values,
-      sep=sep,
-      end=end,
       returnonly=returnonly,
       withprefix=withprefix,
       print_iterable_=print_iterable_,

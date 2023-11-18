@@ -3,14 +3,24 @@ from copy import deepcopy as copy
 from typing import TypeAlias
 
 from .tcr_color import c
+from .tcr_null import Null
 from .tcr_other import hex
 
-PIRepassable: TypeAlias = list | tuple | dict | set | Generator | range | bytes | bytearray | str
+PIRepassable: TypeAlias = list | tuple | dict | set | Generator | range | bytes | bytearray | str | None | bool
 
 BRACKET_COLOR    = "Cyan"
+
 COLON_COLOR      = "Orange\\_1"
 COMMA_COLOR      = "Dark\\_gray"
+
 B_COLOR          = "Red" # b''
+
+TRUE_COLOR       = "Green"
+FALSE_COLOR      = "Red"
+
+NULL_COLOR       = "Dark\\_gray"
+NONE_COLOR       = "Light\\_gray"
+
 MORE_ITEMS_COLOR = "Purple\\_1B"
 
 def print_iterable(
@@ -64,6 +74,14 @@ def print_iterable(
     if not syntax_highlighting: return ncstr
     if origitem == "more":
       return c(MORE_ITEMS_COLOR) + ncstr + c('reset')
+    elif origitem is Null:
+      return "Null" if not syntax_highlighting else c(NULL_COLOR) + "Null" + c('reset')
+    elif origitem is None:
+      return "None" if not syntax_highlighting else c(NONE_COLOR) + "None" + c('reset')
+    elif origitem is True:
+      return "True" if not syntax_highlighting else c(TRUE_COLOR) + "True" + c('reset')
+    elif origitem is False:
+      return "False" if not syntax_highlighting else c(FALSE_COLOR) + "False" + c('reset')
     elif isinstance(origitem, str):
       return f"{c(colors['str+'])}{ncstr[0]}{c('reset')+c(colors['str'])}{ncstr[1:-1]}{c('reset')}{c(colors['str+'])}{ncstr[-1]}{c('reset')}"
     elif isinstance(origitem, int):
@@ -72,6 +90,18 @@ def print_iterable(
       return f"{synhi_s('b')}{c(colors['str+'])}{ncstr[1]}{c('reset')+c(colors['str'])}{ncstr[2:-1]}{c('reset')}{c(colors['str+'])}{ncstr[-1]}{c('reset')}"
 
     return ncstr
+
+  if it is Null:
+    return "Null" if not syntax_highlighting else c(NULL_COLOR) + "Null" + c('reset')
+
+  if it is None:
+    return "None" if not syntax_highlighting else c(NONE_COLOR) + "None" + c('reset')
+
+  if it is True:
+    return "True" if not syntax_highlighting else c(TRUE_COLOR) + "True" + c('reset')
+
+  if it is False:
+    return "False" if not syntax_highlighting else c(FALSE_COLOR) + "False" + c('reset')
 
   if isinstance(it, str):
     it = repr(it)
