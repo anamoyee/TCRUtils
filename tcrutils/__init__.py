@@ -3,7 +3,7 @@
 from .src.tcr_color import c, color, colour, printc
 from .src.tcr_console import breakpoint, console
 from .src.tcr_constants import *
-from .src.tcr_decorator import accept, autorun, convert, test, timeit
+from .src.tcr_decorator import autorun, convert, test, timeit
 from .src.tcr_dict import dict_zip, merge_dicts
 from .src.tcr_error import error
 from .src.tcr_error import error as tcrerror
@@ -25,7 +25,7 @@ from .src.tcr_timestr import timestr
 __all__ = [
   "c", "color", "colour", "printc",    # color
   "console",                           # console
-  "autorun", "convert", "accept",      # decorator
+  "autorun", "convert",                # decorator
   "dict_zip", "merge_dicts",           # dict
   "tcrerror",                          # error
   "extract_error", "extract_traceback" # extract_error
