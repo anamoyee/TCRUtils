@@ -188,7 +188,7 @@ if True:  # \/ # @convert.stringify
 
 if True:  # \/ # @accept
   def accept(func):
-    """Filter and discard any unmatching kwargs or kwargs. Sync & Async supported. This does not touch args, it only works for kwargs."""
+    """Filter and discard any unmatching kwargs. Sync & Async supported. This does not touch args, it only works for kwargs."""
 
     if iscoroutinefunction(func):
       @wraps(func)
