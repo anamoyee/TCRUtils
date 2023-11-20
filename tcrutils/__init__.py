@@ -6,7 +6,8 @@ from .src.tcr_constants import *
 from .src.tcr_constants import __all__ as _all_constants
 from .src.tcr_decorator import accept, autorun, convert, test, timeit
 from .src.tcr_dict import dict_zip, merge_dicts
-from .src.tcr_error import error
+from .src.tcr_error import error, get_traceback
+from .src.tcr_error import error as tcrerror
 from .src.tcr_extract_error import extract_error
 from .src.tcr_F import F
 from .src.tcr_getch import getch
@@ -27,6 +28,7 @@ __all__ = [
   "console",                        # console
   "autorun", "convert", "accept",   # decorator
   "dict_zip", "merge_dicts",        # dict
+  "tcrerror",                       # error
   "extract_error",                  # extract_error
   "getch",                          # getch
   "batched", "cut_at",              # iterable

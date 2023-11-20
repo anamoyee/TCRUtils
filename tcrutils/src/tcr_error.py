@@ -27,3 +27,10 @@ for attr_name, attr_value in error.__dict__.items():
     globals()[attr_name] = attr_value
 
 __all__ = [x for x in globals() if not x.startswith('_') and x != error.__name__]
+
+import traceback
+
+
+def get_traceback(e: Exception) -> str:
+    traceback_details = traceback.format_tb(e.__traceback__)
+    return ''.join(traceback_details)
