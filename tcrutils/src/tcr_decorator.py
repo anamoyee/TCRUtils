@@ -185,18 +185,3 @@ if True:  # \/ # @convert.stringify
       return decorator
 
   convert = Convert()
-
-if True:  # \/ # @accept
-  def accept(func):
-    """Filter and discard any unmatching kwargs. Sync & Async supported. This does not touch args, it only works for kwargs."""
-
-    if iscoroutinefunction(func):
-      @wraps(func)
-      async def wrapper(*args, **kwargs):
-        return await func(*args, **{k: v for k, v in kwargs.items() if k in inspect.signature(func).parameters})
-    else:
-      @wraps(func)
-      def wrapper(*args, **kwargs):
-        return func(*args, **{k: v for k, v in kwargs.items() if k in inspect.signature(func).parameters})
-
-    return wrapper
