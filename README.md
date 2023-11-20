@@ -17,6 +17,7 @@ Useful stuff for tcr projects.
 - [ ] timestr.to_int() by parts, [("weekday", 1000), ("robostr", 20)]
 - [x] Add optional syntax highlighting to print_iterable
   - [ ] *Rewrite print_iterable, maybeeee?*
+- [ ] dir2()
 
 
 ~~<style>s{color: crimson;} b,strong{text-decoration:underline}</style>~~
