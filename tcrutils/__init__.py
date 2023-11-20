@@ -3,12 +3,11 @@
 from .src.tcr_color import c, color, colour, printc
 from .src.tcr_console import breakpoint, console
 from .src.tcr_constants import *
-from .src.tcr_constants import __all__ as _all_constants
 from .src.tcr_decorator import accept, autorun, convert, test, timeit
 from .src.tcr_dict import dict_zip, merge_dicts
-from .src.tcr_error import error, get_traceback
+from .src.tcr_error import error
 from .src.tcr_error import error as tcrerror
-from .src.tcr_extract_error import extract_error
+from .src.tcr_extract_error import extract_error, extract_traceback
 from .src.tcr_F import F
 from .src.tcr_getch import getch
 from .src.tcr_iterable import batched, cut_at
@@ -24,25 +23,25 @@ from .src.tcr_timestr import timestr
 
 # fmt: off
 __all__ = [
-  "c", "color", "colour", "printc", # color
-  "console",                        # console
-  "autorun", "convert", "accept",   # decorator
-  "dict_zip", "merge_dicts",        # dict
-  "tcrerror",                       # error
-  "extract_error",                  # extract_error
-  "getch",                          # getch
-  "batched", "cut_at",              # iterable
-  "codeblock", "uncodeblock",       # markdown
-  "asert", "trei",                  # misspellings
-  "Null",                           # null
-  "commafy", "hex", "intbool",      # other
-  "path",                           # path
-  "print_iterable",                 # print_iterable
-  "RegexPreset",                    # regex
-  "run_sac",                        # run
-  "timestr",                        # timestr
+  "c", "color", "colour", "printc",    # color
+  "console",                           # console
+  "autorun", "convert", "accept",      # decorator
+  "dict_zip", "merge_dicts",           # dict
+  "tcrerror",                          # error
+  "extract_error", "extract_traceback" # extract_error
+  "getch",                             # getch
+  "batched", "cut_at",                 # iterable
+  "codeblock", "uncodeblock",          # markdown
+  "asert", "trei",                     # misspellings
+  "Null",                              # null
+  "commafy", "hex", "intbool",         # other
+  "path",                              # path
+  "print_iterable",                    # print_iterable
+  "RegexPreset",                       # regex
+  "run_sac",                           # run
+  "timestr",                           # timestr
 
-  "BACKSLASH",                      # constants
+  "BACKSLASH",                         # constants
   "NEWLINE",
   "CARR_RET",
   "BACKSPACE",

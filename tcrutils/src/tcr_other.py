@@ -20,7 +20,7 @@ def oddeven(n: int | str) -> Literal['odd', 'even']:
 sex = __import__('builtins').hex
 
 
-def hex(number, leading_zeroes=2, *, upper=True):  # noqa: A001 # Intentional shadow
+def hex(number, leading_zeroes=2, *, upper=True):
   hex_output = sex(number)
   hex_value = (
     hex_output[2:].zfill(leading_zeroes).upper() if upper else hex_output[2:].zfill(leading_zeroes)
