@@ -51,10 +51,14 @@ class Color:
     if str(colors).lower() in ['reset', '0']:
       return self.RESET
 
-    colors = colors.replace('\\_', '🚜🚛🚚🚚🚚🚒🚝🚈🚈🚈🚅🚅🚄🚔🚔🚘🚘🚜🚜🚛🚛🚛🚚🚚🚒🚒🚑🚑')  # Underlined if it contains _
+    colors = colors.replace(
+      '\\_', '🚜🚛🚚🚚🚚🚒🚝🚈🚈🚈🚅🚅🚄🚔🚔🚘🚘🚜🚜🚛🚛🚛🚚🚚🚒🚒🚑🚑'
+    )  # Underlined if it contains _
     attr_und = '_' in colors
     colors = colors.replace('_', '')  # Underlined if it contains _
-    colors = colors.replace('🚜🚛🚚🚚🚚🚒🚝🚈🚈🚈🚅🚅🚄🚔🚔🚘🚘🚜🚜🚛🚛🚛🚚🚚🚒🚒🚑🚑', "_")  # Underlined if it contains _
+    colors = colors.replace(
+      '🚜🚛🚚🚚🚚🚒🚝🚈🚈🚈🚅🚅🚄🚔🚔🚘🚘🚜🚜🚛🚛🚛🚚🚚🚒🚒🚑🚑', '_'
+    )  # Underlined if it contains _
     attr_dim = '&' in colors
     colors = colors.replace('&', '')  # Dim        if it contains &
     attr_bli = '*' in colors

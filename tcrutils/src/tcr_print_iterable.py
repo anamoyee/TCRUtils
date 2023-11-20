@@ -8,6 +8,7 @@ from .tcr_other import hex
 
 PIRepassable: TypeAlias = list | tuple | dict | set | Generator | range | bytes | bytearray | str | None | bool
 
+# fmt: off
 BRACKET_COLOR    = "Cyan"
 
 COLON_COLOR      = "Orange\\_1"
@@ -22,6 +23,7 @@ NULL_COLOR       = "Dark\\_gray"
 NONE_COLOR       = "Light\\_gray"
 
 MORE_ITEMS_COLOR = "Purple\\_1B"
+# fmt: on
 
 def print_iterable(
   it: Iterable,
@@ -29,7 +31,7 @@ def print_iterable(
   recursive=True,
   raw=False,
   item_limit=100,
-  syntax_highlighting=True
+  syntax_highlighting=False,
 ) -> str | None:
   """Print an iterable in a nicely formatted way. If raw=True return the nicely formatted string instead of printing.
 

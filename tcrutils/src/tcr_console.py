@@ -74,7 +74,7 @@ class console:
     passthrough=True,
     recursive=True,
     item_limit=100,
-    syntax_highlighting=True
+    syntax_highlighting=True,
   ) -> None | str:
     if not values:
       values = ['']
@@ -82,7 +82,13 @@ class console:
     if isinstance(out, type({}.values()) | type({}.keys())):
       out = list(out)
     if print_iterable_ and isinstance(out, Iterable):
-      out = print_iterable(out, raw=True, recursive=recursive, item_limit=item_limit, syntax_highlighting=syntax_highlighting)
+      out = print_iterable(
+        out,
+        raw=True,
+        recursive=recursive,
+        item_limit=item_limit,
+        syntax_highlighting=syntax_highlighting,
+      )
     out = str(out)
     if withprefix:
       out = (f'D {cls._get_timestamp()} ') + out
@@ -114,7 +120,7 @@ class console:
     passthrough=True,
     recursive=True,
     item_limit=100,
-    syntax_highlighting=True
+    syntax_highlighting=True,
   ) -> None | str:
     return console.debug(
       *values,
