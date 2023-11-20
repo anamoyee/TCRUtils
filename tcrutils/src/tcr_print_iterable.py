@@ -32,6 +32,7 @@ def print_iterable(
   raw=False,
   item_limit=100,
   syntax_highlighting=False,
+  printhook=print,
 ) -> str | None:
   """Print an iterable in a nicely formatted way. If raw=True return the nicely formatted string instead of printing.
 
@@ -216,6 +217,8 @@ def print_iterable(
     text += f'\n{parenthesis[1]}'
 
   if raw:
+    if raw == 'both':
+      printhook(text)
     return text
-  print(text)
+  printhook(text)
   return it

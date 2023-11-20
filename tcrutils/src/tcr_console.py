@@ -134,7 +134,7 @@ class console:
     )
 
 
-def breakpoint(*vals, printhook=console, clear=True, ctrlc=exit) -> None:  # noqa: A001 - That's intentional
+def breakpoint(*vals, printhook=console, clear=True, ctrlc=exit) -> None:
   """Stop the program execution until a key is pressed. Optionally pass in things to print."""
   for val in vals:
     printhook(val)
