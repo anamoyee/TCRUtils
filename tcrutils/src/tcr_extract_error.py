@@ -8,6 +8,7 @@ def extract_error(e: Exception, pattern='%s: %s', *, raw=False):
   two = str(e)
   return (one, two) if raw else pattern % (one, two)
 
+
 def extract_traceback(e: Exception) -> str:
-    traceback_details = traceback.format_tb(e.__traceback__)
-    return ''.join(traceback_details)
+  traceback_details = traceback.format_tb(e.__traceback__)
+  return ''.join(traceback_details)

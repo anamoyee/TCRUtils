@@ -74,7 +74,7 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
       *,
       printhook=None,
       color=True,
-      pattern='%(c_White)s%(name)s%(c_Gold)s took %(c_White)s%(time)s%(c_Gold)s seconds to execute.%(c_reset)s',
+      pattern='\n%(c_White)s%(name)s%(c_Gold)s took %(c_White)s%(time)s%(c_Gold)s seconds to execute.%(c_reset)s\n',
     ):
       if func is None:
         return partial(timeit, printhook=printhook, pattern=pattern, color=color)
@@ -94,11 +94,14 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 
   timeit = Timeit()
 
-if True:  # \/ # @autorun
+if True:  # \/ # @autorun, @instance
 
   def autorun(func):
     func()
     return func
+
+  def instance(func):
+    return func()
 
 
 if True:  # \/ # @convert.stringify

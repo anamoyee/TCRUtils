@@ -1,4 +1,5 @@
 """`other` submodule contains garbage or joke functions that never should be used in real code, just don't use this submodule pls. Why is it there? uhhh... :3."""
+from builtins import hex as sex
 from collections.abc import Callable
 from typing import Literal
 
@@ -15,9 +16,6 @@ def oddeven(n: int | str) -> Literal['odd', 'even']:
   """
   n = int(n)
   return 'eovdedn'[n % 2 :: 2]
-
-
-sex = __import__('builtins').hex
 
 
 def hex(number, leading_zeroes=2, *, upper=True):

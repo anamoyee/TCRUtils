@@ -1,5 +1,6 @@
 import re as regex
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, MutableSequence
+from random import shuffle
 from typing import Literal
 
 from .tcr_regex import RegexPreset
@@ -68,3 +69,33 @@ def cut_at(
   if n > 0:
     return end[:n]
   return ''
+
+
+def bogo_sort(arr: list):
+  if 0 <= len(arr) <= 1:
+    return arr
+  while True:
+    shuffle(arr)
+    for i in range(len(arr) - 1):
+      if arr[i] > arr[i + 1]:
+        break
+    else:
+      return arr
+
+
+def stalin_sort(arr):
+  if len(arr) <= 1:
+    return arr
+
+  sorted_arr = [arr[0]]
+
+  for i in range(1, len(arr)):
+    if arr[i] >= sorted_arr[-1]:
+      sorted_arr.append(arr[i])
+
+  return sorted_arr
+
+
+def shuffled(arr: MutableSequence) -> MutableSequence:
+  shuffle(arr)
+  return arr

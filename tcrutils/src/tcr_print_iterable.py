@@ -6,7 +6,9 @@ from .tcr_color import c
 from .tcr_null import Null
 from .tcr_other import hex
 
-PIRepassable: TypeAlias = list | tuple | dict | set | Generator | range | bytes | bytearray | str | None | bool
+PIRepassable: TypeAlias = (
+  list | tuple | dict | set | Generator | range | bytes | bytearray | str | None | bool
+)
 
 # fmt: off
 BRACKET_COLOR    = "Cyan"
@@ -25,6 +27,7 @@ NONE_COLOR       = "Light\\_gray"
 MORE_ITEMS_COLOR = "Purple\\_1B"
 # fmt: on
 
+
 def print_iterable(
   it: Iterable,
   *its: Iterable,
@@ -41,10 +44,18 @@ def print_iterable(
   `syntax_highlighting` adds ansi codes to highlight syntax (may be buggy)
   """
 
-  if its: return print_iterable((it, *its), recursive=recursive, raw=raw, item_limit=item_limit, syntax_highlighting=syntax_highlighting)
+  if its:
+    return print_iterable(
+      (it, *its),
+      recursive=recursive,
+      raw=raw,
+      item_limit=item_limit,
+      syntax_highlighting=syntax_highlighting,
+    )
 
   def synhi_s(symbol):
-    if not syntax_highlighting: return symbol
+    if not syntax_highlighting:
+      return symbol
     # fmt: off
     colors = {
       ":": COLON_COLOR,
@@ -72,19 +83,19 @@ def print_iterable(
     }
     # fmt: on
 
-
     # input(f"> {ncstr!r} // {origitem!r} ({type(origitem)}) <")
-    if not syntax_highlighting: return ncstr
-    if origitem == "more":
+    if not syntax_highlighting:
+      return ncstr
+    if origitem == 'more':
       return c(MORE_ITEMS_COLOR) + ncstr + c('reset')
     elif origitem is Null:
-      return "Null" if not syntax_highlighting else c(NULL_COLOR) + "Null" + c('reset')
+      return 'Null' if not syntax_highlighting else c(NULL_COLOR) + 'Null' + c('reset')
     elif origitem is None:
-      return "None" if not syntax_highlighting else c(NONE_COLOR) + "None" + c('reset')
+      return 'None' if not syntax_highlighting else c(NONE_COLOR) + 'None' + c('reset')
     elif origitem is True:
-      return "True" if not syntax_highlighting else c(TRUE_COLOR) + "True" + c('reset')
+      return 'True' if not syntax_highlighting else c(TRUE_COLOR) + 'True' + c('reset')
     elif origitem is False:
-      return "False" if not syntax_highlighting else c(FALSE_COLOR) + "False" + c('reset')
+      return 'False' if not syntax_highlighting else c(FALSE_COLOR) + 'False' + c('reset')
     elif isinstance(origitem, str):
       return f"{c(colors['str+'])}{ncstr[0]}{c('reset')+c(colors['str'])}{ncstr[1:-1]}{c('reset')}{c(colors['str+'])}{ncstr[-1]}{c('reset')}"
     elif isinstance(origitem, int):
@@ -95,25 +106,27 @@ def print_iterable(
     return ncstr
 
   if it is Null:
-    return "Null" if not syntax_highlighting else c(NULL_COLOR) + "Null" + c('reset')
+    return 'Null' if not syntax_highlighting else c(NULL_COLOR) + 'Null' + c('reset')
 
   if it is None:
-    return "None" if not syntax_highlighting else c(NONE_COLOR) + "None" + c('reset')
+    return 'None' if not syntax_highlighting else c(NONE_COLOR) + 'None' + c('reset')
 
   if it is True:
-    return "True" if not syntax_highlighting else c(TRUE_COLOR) + "True" + c('reset')
+    return 'True' if not syntax_highlighting else c(TRUE_COLOR) + 'True' + c('reset')
 
   if it is False:
-    return "False" if not syntax_highlighting else c(FALSE_COLOR) + "False" + c('reset')
+    return 'False' if not syntax_highlighting else c(FALSE_COLOR) + 'False' + c('reset')
 
   if isinstance(it, str):
     it = repr(it)
-    if syntax_highlighting: it = synhi(it, '')
+    if syntax_highlighting:
+      it = synhi(it, '')
     return it if raw else print(it)
 
   if isinstance(it, bytes):
     it = repr(it)
-    if syntax_highlighting: it = synhi(it, b'')
+    if syntax_highlighting:
+      it = synhi(it, b'')
     return it if raw else print(it)
 
   if it == []:
@@ -178,7 +191,13 @@ def print_iterable(
     for key, value in it.items():
       ovalu = copy(value)
       if recursive and isinstance(value, PIRepassable):
-        value = print_iterable(value, raw=True, item_limit=item_limit, recursive=True, syntax_highlighting=syntax_highlighting).replace('\n', '\n  ')
+        value = print_iterable(
+          value,
+          raw=True,
+          item_limit=item_limit,
+          recursive=True,
+          syntax_highlighting=syntax_highlighting,
+        ).replace('\n', '\n  ')
       elif orig_bytearray:
         value = value
       elif orig_bytes:
@@ -197,7 +216,13 @@ def print_iterable(
       vals += 1
       ovalu = copy(value)
       if recursive and isinstance(value, PIRepassable) and not orig_bytearray and not orig_bytes:
-        value = print_iterable(value, raw=True, item_limit=item_limit, recursive=True, syntax_highlighting=syntax_highlighting).replace('\n', '\n  ')
+        value = print_iterable(
+          value,
+          raw=True,
+          item_limit=item_limit,
+          recursive=True,
+          syntax_highlighting=syntax_highlighting,
+        ).replace('\n', '\n  ')
       else:
         if orig_bytearray:
           pass
@@ -210,7 +235,7 @@ def print_iterable(
       addmore = False
     if addmore:
       try:
-        ns = len(it)-item_limit
+        ns = len(it) - item_limit
       except TypeError:
         ns = '?'
       text += f'\n  {synhi("(", "more")}{synhi(ns, 1)}{synhi(" more items...)", "more")}'
