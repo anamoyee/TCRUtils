@@ -5,7 +5,7 @@ from collections.abc import Callable
 from functools import partial, wraps
 
 from .tcr_color import color as c
-from .tcr_void import void
+from .tcr_other import print_block
 
 if True:  # \/ # @test
 
@@ -18,13 +18,7 @@ if True:  # \/ # @test
       name = name.removeprefix('test_')
       name = name.replace('_', ' ')
       name = name.title()
-      print(
-        f"""
-  {c('White')}####{len(name)*"#"}####
-  {""}### {c('Gold')}{    name     }{c('White')} ###
-  {""}####{len(name)*"#"}####{c('reset')}
-  """[1:-1]
-      )
+      print_block(name)
       return func(*args, **kwargs)
 
     return wrapper

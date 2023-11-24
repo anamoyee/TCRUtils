@@ -82,6 +82,7 @@ class console:
     if isinstance(out, type({}.values()) | type({}.keys())):
       out = list(out)
     if print_iterable_ and isinstance(out, Iterable):
+      print_iterable_ = False
       out = print_iterable(
         out,
         raw=True,
@@ -90,6 +91,8 @@ class console:
         syntax_highlighting=syntax_highlighting,
       )
     out = str(out)
+    if print_iterable_ and syntax_highlighting:
+      out = print_iterable(out, syntax_highlighting='?', raw=True)
     if withprefix:
       out = (f'D {cls._get_timestamp()} ') + out
     out = stylize(out, c('Purple\\_1A'))  # + attr("underlined"))

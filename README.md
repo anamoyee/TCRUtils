@@ -18,6 +18,7 @@ Useful stuff for tcr projects.
 - [x] Add optional syntax highlighting to print_iterable
   - [ ] *Rewrite print_iterable, maybeeee?*
 - [ ] dir2()
+- [ ] Timestr: make the . and , work the same and : + ;
 
 
 ~~<style>s{color: crimson;} b,strong{text-decoration:underline}</style>~~

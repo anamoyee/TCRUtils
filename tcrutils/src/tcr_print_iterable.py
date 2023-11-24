@@ -69,6 +69,7 @@ def print_iterable(
       "<": BRACKET_COLOR,
       ">": BRACKET_COLOR,
       "b": B_COLOR,
+      "?": B_COLOR,
     }
     # fmt: on
 
@@ -97,7 +98,7 @@ def print_iterable(
     elif origitem is False:
       return 'False' if not syntax_highlighting else c(FALSE_COLOR) + 'False' + c('reset')
     elif isinstance(origitem, str):
-      return f"{c(colors['str+'])}{ncstr[0]}{c('reset')+c(colors['str'])}{ncstr[1:-1]}{c('reset')}{c(colors['str+'])}{ncstr[-1]}{c('reset')}"
+      return f"{c(colors['str+'] if syntax_highlighting != '?' else B_COLOR)}{ncstr[0]}{c('reset')+c(colors['str'])}{ncstr[1:-1]}{c('reset')}{c(colors['str+'] if syntax_highlighting != '?' else B_COLOR)}{ncstr[-1]}{c('reset')}"
     elif isinstance(origitem, int):
       return f"{c(colors['int'])}{ncstr}{c('reset')}"
     elif isinstance(origitem, bytes):

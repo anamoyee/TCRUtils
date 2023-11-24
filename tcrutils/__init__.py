@@ -14,7 +14,7 @@ from .src.tcr_iterable import batched, bogo_sort, cut_at, shuffled, stalin_sort
 from .src.tcr_markdown import codeblock, uncodeblock
 from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null
-from .src.tcr_other import commafy, fizzbuz, hex, intbool, oddeven
+from .src.tcr_other import commafy, dir2, dir3, fizzbuz, hex, intbool, oddeven, print_block
 from .src.tcr_path import path
 from .src.tcr_print_iterable import print_iterable
 from .src.tcr_regex import RegexPreset
@@ -35,7 +35,7 @@ __all__ = [
   "asert", "trei",                      # misspellings
   "Null",                               # null
   "commafy", "hex", "intbool",          # other
-  "path",                               # path
+  "print_block", "dir2", "dir3",        # other
   "print_iterable",                     # print_iterable
   "RegexPreset",                        # regex
   "run_sac",                            # run
