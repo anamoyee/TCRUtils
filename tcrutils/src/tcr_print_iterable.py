@@ -7,7 +7,7 @@ from .tcr_null import Null
 from .tcr_other import hex
 
 PIRepassable: TypeAlias = (
-  list | tuple | dict | set | Generator | range | bytes | bytearray | str | None | bool
+  type(Null) | list | tuple | dict | set | Generator | range | bytes | bytearray | str | None | bool | int
 )
 
 # fmt: off
@@ -107,16 +107,20 @@ def print_iterable(
     return ncstr
 
   if it is Null:
-    return 'Null' if not syntax_highlighting else c(NULL_COLOR) + 'Null' + c('reset')
+    a = 'Null' if not syntax_highlighting else c(NULL_COLOR) + 'Null' + c('reset')
+    return a if raw else print(a)
 
   if it is None:
-    return 'None' if not syntax_highlighting else c(NONE_COLOR) + 'None' + c('reset')
+    a = 'None' if not syntax_highlighting else c(NONE_COLOR) + 'None' + c('reset')
+    return a if raw else print(a)
 
   if it is True:
-    return 'True' if not syntax_highlighting else c(TRUE_COLOR) + 'True' + c('reset')
+    a = 'True' if not syntax_highlighting else c(TRUE_COLOR) + 'True' + c('reset')
+    return a if raw else print(a)
 
   if it is False:
-    return 'False' if not syntax_highlighting else c(FALSE_COLOR) + 'False' + c('reset')
+    a = 'False' if not syntax_highlighting else c(FALSE_COLOR) + 'False' + c('reset')
+    return a if raw else print(a)
 
   if isinstance(it, str):
     it = repr(it)
@@ -129,6 +133,10 @@ def print_iterable(
     if syntax_highlighting:
       it = synhi(it, b'')
     return it if raw else print(it)
+
+  if isinstance(it, int):
+    if not syntax_highlighting: return repr(it) if raw else print(it)
+    return synhi(it, 1) if raw else print(synhi(it, 1))
 
   if it == []:
     if not raw:
@@ -243,8 +251,6 @@ def print_iterable(
     text += f'\n{parenthesis[1]}'
 
   if raw:
-    if raw == 'both':
-      printhook(text)
     return text
   printhook(text)
   return it

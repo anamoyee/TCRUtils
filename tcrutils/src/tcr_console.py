@@ -9,7 +9,7 @@ from colored import attr, bg, fg, stylize
 from .tcr_color import c
 from .tcr_extract_error import extract_error
 from .tcr_getch import getch
-from .tcr_print_iterable import print_iterable
+from .tcr_print_iterable import PIRepassable, print_iterable
 
 a = 1 if 1 else 0
 
@@ -81,7 +81,7 @@ class console:
     out = values if len(values) > 1 else values[0]
     if isinstance(out, type({}.values()) | type({}.keys())):
       out = list(out)
-    if print_iterable_ and isinstance(out, Iterable):
+    if print_iterable_ and isinstance(out, PIRepassable):
       print_iterable_ = False
       out = print_iterable(
         out,
