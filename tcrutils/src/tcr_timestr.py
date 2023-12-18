@@ -59,12 +59,19 @@ timestr_lookup = {
   }
 
 weekday_lookup = [
+  "po",     "wt",      "sr",        "cz",       "pi",     "so",       "ni",
+  "pn",     "wt",      "śr",        "cz",       "pt",     "so",       "nd",
+  "pon",    "wto",     "śro",       "czw",      "pią",    "sob",      "nie",
+  "pon",    "wto",     "sro",       "czw",      "pia",    "sob",      "nie",
+  "poniedzialek", "wtorek", "sroda", "czwartek", "piatek", "sobota", "niedziela",
+  "poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota", "niedziela",
   'mo',     'tu',      'we',        'th',       'fr',     'sa',       'su',
   'mon',    'tue',     'wed',       'thu',      'fri',    'sat',      'sun',
   'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
 ]
 # fmt: on
 
+# console((weekday_lookup, len(weekday_lookup), len(weekday_lookup) % 7)); exit()
 
 def days_until_next_weekday(target_weekday):
   if not (1 <= target_weekday <= 7):

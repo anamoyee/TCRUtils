@@ -1,10 +1,11 @@
-"""`other` submodule contains garbage or joke functions that never should be used in real code, just don't use this submodule pls. Why is it there? uhhh... :3."""
+"""`other` submodule contains various weird OR rarely used OR not deserving their own file OR garbage OR joke functions that never should be used in real code :3."""
 from builtins import hex as sex
 from collections.abc import Callable
 from typing import Literal
 
 from .tcr_color import c
 from .tcr_constants import NEWLINE
+from .tcr_error import error
 from .tcr_null import Null
 
 
@@ -49,7 +50,7 @@ def intbool(__o: object, /):
   return int(bool(__o))
 
 
-fizzbuz: Callable[[int], str] = lambda n: 'Fizz' * (n % 3 == 0) + 'Buzz' * (n % 5 == 0) or str(n)
+fizzbuzz: Callable[[int], str] = lambda n: 'Fizz' * (n % 3 == 0) + 'Buzz' * (n % 5 == 0) or str(n)
 
 
 def dir2(__o: object, /):
@@ -113,3 +114,41 @@ def print_block(
 
   print(block)
   return None
+
+
+def nth(n: int):
+  """Return a string containing original number + numeric suffix (st, nd, rd, th).
+
+  Takes into account edge cases like 11, 12.
+  Supports negative numbers & zero.
+
+  Examples:
+  ```py
+  >>> nth(1)
+  '1st'
+  >>> nth(4)
+  '4th'
+  >>> nth(12)
+  '12th'
+  ```
+  """
+  if not isinstance(n, int):
+    raise error.NotIntegerError(n)
+
+  if n < 0:
+    return '-' + nth(-n)
+
+  if 10 < n % 100 < 14:
+    suffix = "th"
+  else:
+    match n % 10:
+      case 1:
+        suffix = "st"
+      case 2:
+        suffix = "nd"
+      case 3:
+        suffix = "rd"
+      case _:
+        suffix = "th"
+
+  return str(n) + suffix

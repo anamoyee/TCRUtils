@@ -12,13 +12,9 @@ Useful stuff for tcr projects.
 - [x] Also weekdays now need `days -= 1` (`((number_of_date_syntaxes) ^ (number_of_weekday_syntaxes) == 1) and`)
 - [x] Add docstring to dict_zip and others
 - [x] make docstrings use \<h1> // ###
-- [ ] add to timestr: random and someday
-- [ ] add "+" timestr to add random few minutes
-- [ ] timestr.to_int() by parts, [("weekday", 1000), ("robostr", 20)]
 - [x] Add optional syntax highlighting to print_iterable
   - [ ] *Rewrite print_iterable, maybeeee?*
-- [ ] dir2()
-- [ ] Timestr: make the . and , work the same and : + ;
+- [x] dir2()
 
 
 ~~<style>s{color: crimson;} b,strong{text-decoration:underline}</style>~~
