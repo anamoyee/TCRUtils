@@ -7,6 +7,7 @@ from sys import exit
 from colored import attr, bg, fg, stylize
 
 from .tcr_color import c
+from .tcr_decorator import autorun
 from .tcr_extract_error import extract_error
 from .tcr_getch import getch
 from .tcr_print_iterable import PIRepassable, print_iterable
@@ -24,49 +25,45 @@ class console:
   def _get_timestamp():
     return str(datetime.datetime.now())[:-3].replace('.', ',')
 
-  @classmethod
-  def log(cls, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
+  def log(self, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
     if not values:
       values = ['']
     out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
     if withprefix:
-      out = (f'I {cls._get_timestamp()} ') + out
+      out = (f'I {self._get_timestamp()} ') + out
     out = stylize(out, fg('light_green') + attr('bold'))
     if returnonly:
       return out
     print(out)
     return None
 
-  @classmethod
-  def warn(cls, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
+  def warn(self, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
     if not values:
       values = ['']
     out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
     if withprefix:
-      out = (f'W {cls._get_timestamp()} ') + out
+      out = (f'W {self._get_timestamp()} ') + out
     out = stylize(out, fg('yellow') + attr('bold'))
     if returnonly:
       return out
     print(out)
     return None
 
-  @classmethod
-  def error(cls, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
+  def error(self, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
     if not values:
       values = ['']
     values = [(extract_error(x) if isinstance(x, Exception) else x) for x in values]
     out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
     if withprefix:
-      out = (f'E {cls._get_timestamp()} ') + out
+      out = (f'E {self._get_timestamp()} ') + out
     out = stylize(out, fg('red') + attr('bold'))
     if returnonly:
       return out
     print(out)
     return None
 
-  @classmethod
   def debug(
-    cls,
+    self,
     *values,
     returnonly=False,
     withprefix=True,
@@ -94,28 +91,27 @@ class console:
     if print_iterable_ and syntax_highlighting:
       out = print_iterable(out, syntax_highlighting='?', raw=True)
     if withprefix:
-      out = (f'D {cls._get_timestamp()} ') + out
+      out = (f'D {self._get_timestamp()} ') + out
     out = stylize(out, c('Purple\\_1A'))  # + attr("underlined"))
     if returnonly:
       return out
     print(out)
     return None if not passthrough else values[0]
 
-  @classmethod
-  def critical(cls, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
+  def critical(self, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
     if not values:
       values = ['']
     out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
     if withprefix:
-      out = (f'C {cls._get_timestamp()} ') + out
+      out = (f'C {self._get_timestamp()} ') + out
     out = stylize(out, bg('red') + attr('bold'))
     if returnonly:
       return out
     print(out)
     return None
 
-  def __new__(
-    cls,
+  def __call__(
+    self,
     *values,
     returnonly=False,
     withprefix=True,
@@ -136,6 +132,13 @@ class console:
       syntax_highlighting=syntax_highlighting,
     )
 
+  def __or__(self, other):
+    return self.debug(other)
+
+  def __ror__(self, other):
+    return self.debug(other)
+
+console = console()
 
 def breakpoint(*vals, printhook=console, clear=True, ctrlc=exit) -> None:
   """Stop the program execution until a key is pressed. Optionally pass in things to print."""
