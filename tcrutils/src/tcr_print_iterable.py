@@ -198,7 +198,10 @@ def print_iterable(
   if isinstance(it, dict):
     text = parenthesis[0]
     for key, value in it.items():
-      ovalu = copy(value)
+      try:
+        ovalu = copy(value)
+      except TypeError:
+        ovalu = value
       if recursive and isinstance(value, PIRepassable):
         value = print_iterable(
           value,
