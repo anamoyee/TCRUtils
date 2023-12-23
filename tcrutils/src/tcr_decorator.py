@@ -5,7 +5,7 @@ from collections.abc import Callable
 from functools import partial, wraps
 
 from .tcr_color import color as c
-from .tcr_other import print_block
+from .tcr_print import print_block
 
 if True:  # \/ # @test
 

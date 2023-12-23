@@ -4,8 +4,8 @@ from typing import TypeAlias
 
 from .tcr_color import c
 from .tcr_constants import NEWLINE
+from .tcr_int import hex
 from .tcr_null import Null
-from .tcr_other import hex
 
 PIRepassable: TypeAlias = (
   type(Null)

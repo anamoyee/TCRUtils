@@ -59,11 +59,11 @@ __all__ = [
   "codeblock", "uncodeblock",           # markdown
   "asert", "trei",                      # misspellings
   "Null",                               # null
-  "commafy", "nth"                      # string
+  "commafy", "nth",                     # string
   "hex",                                # int
   "intbool",                            # other
   "dir2", "dir3",                       # dir
-  "print_iterable", "print_block"       # print
+  "print_iterable", "print_block",      # print
   "RegexPreset",                        # regex
   "run_sac",                            # run
   "timestr",                            # timestr
