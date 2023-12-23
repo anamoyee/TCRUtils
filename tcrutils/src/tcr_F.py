@@ -1,3 +1,3 @@
 def F(item: str) -> str:
-  """Fs strings."""
+  """F-s the strings."""
   return eval(f'f{item!r}')

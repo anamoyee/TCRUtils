@@ -11,12 +11,17 @@ async def avoid(*args: Any, **kwargs: Any) -> None:
 
 def raiser(e: Exception) -> NoReturn:
   """With decorator-like structure return a synchronous callable which raises specified exception on call, no matter what (with *args, **kwargs which are ignored)."""
+
   def inner_raiser(*args, **kwargs):
     raise e
+
   return inner_raiser
+
 
 async def araiser(e: Exception) -> NoReturn:
   """With decorator-like structure return a synchronous callable which raises specified exception on call, no matter what (with *args, **kwargs which are ignored)."""
+
   async def inner_raiser(*args, **kwargs):
     raise e
+
   return inner_raiser

@@ -73,6 +73,7 @@ weekday_lookup = [
 
 # console((weekday_lookup, len(weekday_lookup), len(weekday_lookup) % 7)); exit()
 
+
 def days_until_next_weekday(target_weekday):
   if not (1 <= target_weekday <= 7):
     msg = 'target_weekday must be an integer between 1 and 7.'

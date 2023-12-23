@@ -20,35 +20,29 @@ NameError: name 'fizzbuzz' is not defined # fizzbuzz is not included in __all__,
 """
 
 from .src.tcr_color import c, color, colour, printc
+from .src.tcr_compare import able
 from .src.tcr_console import breakpoint, console
 from .src.tcr_constants import *
 from .src.tcr_decorator import autorun, convert, instance, test, timeit
 from .src.tcr_dict import dict_zip, merge_dicts
+from .src.tcr_dir import dir2, dir3
 from .src.tcr_error import error
 from .src.tcr_error import error as tcrerror
 from .src.tcr_extract_error import extract_error, extract_traceback
 from .src.tcr_F import F
 from .src.tcr_getch import getch
+from .src.tcr_int import hex
 from .src.tcr_iterable import batched, bogo_sort, cut_at, shuffled, stalin_sort
+from .src.tcr_joke import christmas_tree, fizzbuzz, oddeven
 from .src.tcr_markdown import codeblock, uncodeblock
 from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null
-from .src.tcr_other import (
-    christmas_tree,
-    commafy,
-    dir2,
-    dir3,
-    fizzbuzz,
-    hex,
-    intbool,
-    nth,
-    oddeven,
-    print_block,
-)
+from .src.tcr_other import intbool
 from .src.tcr_path import path
-from .src.tcr_print_iterable import print_iterable
+from .src.tcr_print import print_block, print_iterable
 from .src.tcr_regex import RegexPreset
 from .src.tcr_run import RunSACAble, run_sac
+from .src.tcr_string import commafy, nth
 from .src.tcr_timestr import timestr
 from .src.tcr_void import araiser, avoid, raiser, void
 
@@ -65,9 +59,11 @@ __all__ = [
   "codeblock", "uncodeblock",           # markdown
   "asert", "trei",                      # misspellings
   "Null",                               # null
-  "commafy", "hex", "intbool",          # other
-  "print_block", "dir2", "dir3",        # other
-  "print_iterable",                     # print_iterable
+  "commafy", "nth"                      # string
+  "hex",                                # int
+  "intbool",                            # other
+  "dir2", "dir3",                       # dir
+  "print_iterable", "print_block"       # print
   "RegexPreset",                        # regex
   "run_sac",                            # run
   "timestr",                            # timestr

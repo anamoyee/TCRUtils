@@ -4,6 +4,7 @@ format.bat
 .sourcery.yaml
 test.py
 codex.py
+gitadd.bat
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

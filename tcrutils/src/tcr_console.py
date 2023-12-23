@@ -10,7 +10,7 @@ from .tcr_color import c
 from .tcr_decorator import autorun
 from .tcr_extract_error import extract_error
 from .tcr_getch import getch
-from .tcr_print_iterable import PIRepassable, print_iterable
+from .tcr_print import PIRepassable, print_iterable
 
 a = 1 if 1 else 0
 
@@ -138,7 +138,9 @@ class console:
   def __ror__(self, other):
     return self.debug(other)
 
+
 console = console()
+
 
 def breakpoint(*vals, printhook=console, clear=True, ctrlc=exit) -> None:
   """Stop the program execution until a key is pressed. Optionally pass in things to print."""
