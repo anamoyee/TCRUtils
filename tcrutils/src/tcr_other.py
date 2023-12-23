@@ -52,6 +52,20 @@ def intbool(__o: object, /):
 
 fizzbuzz: Callable[[int], str] = lambda n: 'Fizz' * (n % 3 == 0) + 'Buzz' * (n % 5 == 0) or str(n)
 
+def christmas_tree(*, height=10, symbol='*'):
+  """Generate a christmas tree for printing in a console.
+
+  Height is the number of lines the tree will have.\\
+  Symbol is any 1-2 long string for example 'C#' or '*'.
+  """
+  if len(symbol) == 1: symbol = 2*symbol
+
+  def transform(symbols: str):
+    return symbols.center(height*2, ' ')
+
+  return '\n'.join(
+    [transform(symbol*x) for x in range(height+1) if x]
+  )
 
 def dir2(__o: object, /):
   return [x for x in dir(__o) if not x.startswith('__')]

@@ -33,7 +33,18 @@ from .src.tcr_iterable import batched, bogo_sort, cut_at, shuffled, stalin_sort
 from .src.tcr_markdown import codeblock, uncodeblock
 from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null
-from .src.tcr_other import commafy, dir2, dir3, fizzbuzz, hex, intbool, nth, oddeven, print_block
+from .src.tcr_other import (
+    christmas_tree,
+    commafy,
+    dir2,
+    dir3,
+    fizzbuzz,
+    hex,
+    intbool,
+    nth,
+    oddeven,
+    print_block,
+)
 from .src.tcr_path import path
 from .src.tcr_print_iterable import print_iterable
 from .src.tcr_regex import RegexPreset
