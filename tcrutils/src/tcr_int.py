@@ -1,4 +1,5 @@
 from builtins import hex as sex  # nocom (actually yescom because this text is a comment dummy!!)
+from collections.abc import Iterable, Mapping
 
 
 def hex(number: int, leading_zeroes=2, *, upper=True) -> str:
@@ -13,3 +14,12 @@ def hex(number: int, leading_zeroes=2, *, upper=True) -> str:
     formatted_output = formatted_output.lower()
 
   return formatted_output
+
+
+def recursive_sum(it: Iterable):
+  s = 0
+
+  for item in it.values() if isinstance(it, Mapping) else it:
+    s = s + recursive_sum(item) if isinstance(item, Iterable) else s + item
+
+  return s

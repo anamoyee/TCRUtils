@@ -19,6 +19,7 @@ Star-importing is fine, check __init__.py to see __all__.
 NameError: name 'fizzbuzz' is not defined # fizzbuzz is not included in __all__, use tcr.fizzbuzz or from tcrutils import fizzbuzz
 """
 
+from .discord.limits import DiscordLimits
 from .src.tcr_color import c, color, colour, printc
 from .src.tcr_compare import able
 from .src.tcr_console import breakpoint, console
@@ -31,7 +32,7 @@ from .src.tcr_error import error as tcrerror
 from .src.tcr_extract_error import extract_error, extract_traceback
 from .src.tcr_F import F
 from .src.tcr_getch import getch
-from .src.tcr_int import hex
+from .src.tcr_int import hex, recursive_sum
 from .src.tcr_iterable import batched, bogo_sort, cut_at, shuffled, stalin_sort
 from .src.tcr_joke import christmas_tree, fizzbuzz, oddeven
 from .src.tcr_markdown import codeblock, uncodeblock
@@ -43,6 +44,7 @@ from .src.tcr_print import print_block, print_iterable
 from .src.tcr_regex import RegexPreset
 from .src.tcr_run import RunSACAble, run_sac
 from .src.tcr_string import commafy, nth
+from .src.tcr_terminal import terminal
 from .src.tcr_timestr import timestr
 from .src.tcr_void import araiser, avoid, raiser, void
 
@@ -67,6 +69,7 @@ __all__ = [
   "RegexPreset",                        # regex
   "run_sac",                            # run
   "timestr",                            # timestr
+  "DiscordLimits",                      # Discord
 
   "BACKSLASH",                          # constants
   "NEWLINE",
@@ -75,5 +78,4 @@ __all__ = [
   "BACKTICK", "BACKTICKS",
   "APOSTROPHE", "QUOTE",
   "FAKE_PIPE",
-  "DiscordLimits",
 ]
