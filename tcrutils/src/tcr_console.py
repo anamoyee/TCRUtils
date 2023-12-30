@@ -15,7 +15,7 @@ from .tcr_print import PIRepassable, print_iterable
 a = 1 if 1 else 0
 
 
-class console:
+class Console:
   """### Provides logging capabilities.
 
   btw `console(...)` == `console.debug(...)`
@@ -139,7 +139,7 @@ class console:
     return self.debug(other)
 
 
-console = console()
+console = Console()
 
 
 def breakpoint(*vals, printhook=console, clear=True, ctrlc=exit) -> None:
