@@ -33,6 +33,7 @@ from .src.tcr_error import error as tcrerror
 from .src.tcr_extract_error import extract_error, extract_traceback
 from .src.tcr_F import F
 from .src.tcr_getch import getch
+from .src.tcr_input import insist
 from .src.tcr_int import hex, recursive_sum
 from .src.tcr_iterable import batched, bogo_sort, cut_at, shuffled, stalin_sort
 from .src.tcr_joke import christmas_tree, fizzbuzz, oddeven
@@ -70,6 +71,7 @@ __all__ = [
   "RegexPreset",                        # regex
   "run_sac",                            # run
   "timestr",                            # timestr
+  "insist",                             # input
   "DiscordLimits",                      # Discord
 
   "BACKSLASH",                          # constants

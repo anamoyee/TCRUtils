@@ -1,7 +1,10 @@
 """Functions related to comparisons, didn't want to name the file tcr_test.py to avoid confusion with testing as in testing if code works."""
 
+from collections.abc import Callable
+from typing import Any
 
-def able(func, x, *, exception: BaseException = Exception):
+
+def able(func: Callable, *args, able_exception__: BaseException = Exception, **kwargs):
   """### Return True if x is func(x)-able aka does not raise any errors while passed in to func otherwise return False.
 
   This does not return the result, only bool whether it didn't raise an error in the process.
@@ -15,7 +18,9 @@ def able(func, x, *, exception: BaseException = Exception):
   >>> [int(x) for x in [] if able(int, x)]
   ```
   """
-  try: ...
-  except exception:
+  try:
+    func(*args, **kwargs)
+  except able_exception__:
     return False
-  return True
+  else:
+    return True
