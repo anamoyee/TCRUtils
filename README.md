@@ -15,6 +15,7 @@ Useful stuff for tcr projects.
 - [x] Add optional syntax highlighting to print_iterable
   - [ ] *Rewrite print_iterable, maybeeee?*
 - [x] dir2()
+- [ ] add IFYs to discord.string
 
 
 ~~<style>s{color: crimson;} b,strong{text-decoration:underline}</style>~~

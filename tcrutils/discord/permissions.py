@@ -10,6 +10,7 @@ PERMISSIONS_DICT = {
   if not x.startswith('_') and x == x.upper() and x not in ['MANAGE_EMOJIS_AND_STICKERS']
 }
 
+
 class _Permissions:
   """### Contains useful utilities related to checking discord permissions.
 
@@ -25,6 +26,7 @@ class _Permissions:
   # or any other short name you wish to use, although that's the name that will be used in many explainations and examples
   ```
   """
+
   _devs: tuple | None = None
 
   @property
@@ -66,23 +68,44 @@ class _Permissions:
     """
     return bool(possessed & required)
 
-  def has(self, possessed: int, required: int, method: Callable[[int, int], bool] = ALL, *, allow_administrator=False) -> bool:
+  def has(
+    self,
+    possessed: int,
+    required: int,
+    method: Callable[[int, int], bool] = ALL,
+    *,
+    allow_administrator=False,
+  ) -> bool:
     """Return bool whether `possessed` shares `ALL` (or `ANY` if that method is selected) bits or more with `required`.
 
     `allow_administrator`: Will ignore method and required permissions and return True if possessed permissions have the admininistrator bit set.
     """
-    if allow_administrator and (possessed & Permission.ADMINISTRATOR): return True
+    if allow_administrator and (possessed & Permission.ADMINISTRATOR):
+      return True
 
     return method(possessed, required)
 
-  def has_by_GMCE(self, event: hikari.GuildMessageCreateEvent, required: int, *, method: Callable[[int, int], bool] = ALL, allow_administrator=False, allow_owner=False, allow_dev=False) -> bool:
+  def has_by_GMCE(
+    self,
+    event: hikari.GuildMessageCreateEvent,
+    required: int,
+    *,
+    method: Callable[[int, int], bool] = ALL,
+    allow_administrator=False,
+    allow_owner=False,
+    allow_dev=False,
+  ) -> bool:
     if allow_dev:
       if self._devs is not None:
-        if event.author.id in self._devs: return True
+        if event.author.id in self._devs:
+          return True
       else:
-        raise ValueError("You can't use allow_dev=True without setting up devs first with `perms.devlist = [1337, 1234] # A list of ints (discord user ids)`")
+        raise ValueError(
+          "You can't use allow_dev=True without setting up devs first with `perms.devlist = [1337, 1234] # A list of ints (discord user ids)`"
+        )
 
-    if allow_owner and event.author.id == event.get_guild().owner_id: return True
+    if allow_owner and event.author.id == event.get_guild().owner_id:
+      return True
 
     roles = event.message.member.get_roles()
 
@@ -102,5 +125,6 @@ class _Permissions:
         if value & permissions
       ]
     )
+
 
 permissions = _Permissions()

@@ -1,3 +1,4 @@
+import inspect
 import os
 import pathlib as p
 import re
@@ -9,14 +10,17 @@ class path:
 
   @staticmethod
   def center(path: str | p.Path) -> p.Path:
-    """Change directory to the location of the passed in __file__ (or any string path or pathlib Path). This will NOT detect if the passed in location is a directory, it will go to parent of it instead. Return previous path as a pathlib.Path object."""
+    """### Change directory to the location of the passed in __file__ (or any string path or pathlib Path). This will NOT detect if the passed in location is a directory, it will go to parent of it instead. Return previous path as a pathlib.Path object.
+
+    This function is shit use tcr.path.thisdir() instead.
+    """
     a = os.getcwd()
     os.chdir(p.Path(path).resolve().parent)
     return p.Path(a)
 
   @staticmethod
   def nextname(name='New folder') -> str:
-    """If passed in name does not end with "`({int})" where `{int}` is any integer, return it with "` (1)`" appended else return it with the previously mentioned `{int}` incremented and leave it otherwise unchanged."""
+    """### If passed in name does not end with "`({int})" where `{int}` is any integer, return it with "` (1)`" appended else return it with the previously mentioned `{int}` incremented and leave it otherwise unchanged."""
     match = re.match(r'^(.*) \((\d+)\)$', name)
 
     if match:
@@ -34,7 +38,7 @@ class path:
     path: p.Path | str | None = None,
     nextname: Callable[[str | None], str] = nextname,
   ) -> str:
-    """Return unused directory or file with the name `name` in directory `path` or the current directory if not passed in."""
+    """### Return unused directory or file with the name `name` in directory `path` or the current directory if not passed in."""
     if path is None:
       path = os.getcwd()
     path = str(path)
@@ -43,5 +47,13 @@ class path:
       name = nextname(name)
     return name
 
+  @staticmethod
+  def thisdir(*, chdir=False) -> p.Path:
+    """### Return the directory of the furthest back file in the callstack as pathlib.Path, optionally navigate to it with os.chdir()."""
+    frames = inspect.stack()
+    pth = frames[-1].filename  # Get the filename of the furthest back frame
+    pth = p.Path(pth).parent
+    if chdir: os.chdir(pth)
+    return pth
 
 __all__ = ['path']

@@ -20,6 +20,7 @@ NameError: name 'fizzbuzz' is not defined # fizzbuzz is not included in __all__,
 """
 
 from .discord.limits import DiscordLimits
+from .discord.string import get_token
 from .src.tcr_color import c, color, colour, printc
 from .src.tcr_compare import able
 from .src.tcr_console import breakpoint, console

@@ -18,7 +18,7 @@ a = 1 if 1 else 0
 class Console:
   """### Provides logging capabilities.
 
-  btw `console(...)` == `console.debug(...)`
+  `console(...)` == `console.debug(...)`
   """
 
   @staticmethod
@@ -140,6 +140,10 @@ class Console:
 
 
 console = Console()
+"""### Provides logging capabilities.
+
+  `console(...)` == `console.debug(...)`
+"""
 
 
 def breakpoint(*vals, printhook=console, clear=True, ctrlc=exit) -> None:
