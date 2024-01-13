@@ -10,13 +10,11 @@ It's also recommended to import stuff directly instead of the entire module
 >>> from tcrutils import timestr
 ```
 
-Star-importing is fine, check __init__.py to see __all__.
+Star-importing is fine, ctrl-click whatever you're hovering on to see __all__ if you wish.
 ```py
 >>> from tcrutils import *
->>> timestr
-<Timestr object at ...> # Fine, no errors, timestr is included in __all__
->>> fizzbuzz
-NameError: name 'fizzbuzz' is not defined # fizzbuzz is not included in __all__, use tcr.fizzbuzz or from tcrutils import fizzbuzz
+```
+Joke functions and other barely useful crap is not included in star imports.
 """
 
 from .discord.limits import DiscordLimits
@@ -28,7 +26,7 @@ from .src.tcr_constants import *
 from .src.tcr_decorator import autorun, convert, instance, test, timeit
 from .src.tcr_dict import dict_zip, merge_dicts
 from .src.tcr_dir import dir2, dir3
-from .src.tcr_error import error
+from .src.tcr_error import error  # 'tcrerror' in star imports, either in 'tcr.error'/'tcr.tcrerror'
 from .src.tcr_error import error as tcrerror
 from .src.tcr_extract_error import extract_error, extract_traceback
 from .src.tcr_F import F
@@ -72,6 +70,7 @@ __all__ = [
   "run_sac",                            # run
   "timestr",                            # timestr
   "insist",                             # input
+  "able",                               # compare
   "DiscordLimits",                      # Discord
 
   "BACKSLASH",                          # constants
