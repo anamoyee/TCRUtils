@@ -56,4 +56,16 @@ class path:
     if chdir: os.chdir(pth)
     return pth
 
+  @staticmethod
+  def nt_validname(nt_objname: str | p.Path) -> bool:
+    """### Return True if the passed in `nt_objname` is a valid NT File/Folder/whatever, else return False.
+
+    This does NOT check if the path exists.
+    ### The passed in path is stripped(), the used one should be as well!
+    """
+    nt_objname: str = str((p.Path(nt_objname) if isinstance(nt_objname, str) else nt_objname).absolute().name)
+
+    return bool(all((x not in nt_objname) for x in ('\n', '\r')) and nt_objname.strip() not in ('', '.', '..') and re.match(r'^[^<>:"\/\\|?*\n]*$', nt_objname.strip()))
+
+
 __all__ = ['path']
