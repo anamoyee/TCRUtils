@@ -4,6 +4,8 @@ import pathlib as p
 import re
 from collections.abc import Callable
 
+from .tcr_console import console
+
 
 class path:
   """Provides path-related utilities."""
@@ -63,9 +65,10 @@ class path:
     This does NOT check if the path exists.
     ### The passed in path is stripped(), the used one should be as well!
     """
-    nt_objname: str = str((p.Path(nt_objname) if isinstance(nt_objname, str) else nt_objname).absolute().name)
+    if not isinstance(nt_objname, str):
+      nt_objname: str = str(nt_objname.absolute().name)
 
-    return bool(all((x not in nt_objname) for x in ('\n', '\r')) and nt_objname.strip() not in ('', '.', '..') and re.match(r'^[^<>:"\/\\|?*\n]*$', nt_objname.strip()))
+    return bool((all((x not in nt_objname) for x in ('\n', '\r'))) and (nt_objname.strip() not in ('', '.', '..')) and (re.match(r'^[^<>:"\/\\|?*\n]*$', nt_objname.strip())))
 
 
 __all__ = ['path']
