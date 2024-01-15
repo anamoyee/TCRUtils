@@ -10,10 +10,6 @@ import sys
 
 version = [*sys.argv, None][1] or None
 
-print('=========================')
-print('| NO NEED FOR __TOKEN__ |')
-print('=========================')
-
 if version is not None:
   with open('VERSION.txt', 'w') as f:  # noqa: PTH123
     f.write(version)
