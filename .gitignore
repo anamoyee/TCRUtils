@@ -5,6 +5,9 @@ format.bat
 test.py
 codex.py
 gitadd.bat
+archive/*
+archive
+upload.bat
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
