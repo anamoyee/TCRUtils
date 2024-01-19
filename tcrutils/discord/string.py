@@ -3,62 +3,10 @@ import pathlib as p
 import re as regex
 from typing import Literal, NoReturn
 
+from ..src.tcr_compare import able
 from ..src.tcr_constants import BACKTICKS
-from ..src.tcr_regex import RegexPreset
+from .validate import is_snowflake
 
-cleanse_replacement = {
-  BACKTICKS: '\''*3,
-  '`': '\'',
-  '#': '%', # Couldn't find a good candidate
-  '*': '^', # here neither, just use non-replacement
-  '_': ''
-}
-
-def _cleanse_invalid_method(method: str) -> NoReturn:
-  raise ValueError(f'Invalid method: {method} for codeblock_only')
-
-def cleanse(
-  s: str,
-  *,
-  codeblock_only: Literal['none', 'replace', 'remove', 'escape'] = 'none',
-  heading: Literal['none', 'replace', 'remove', 'escape'] = 'remove',
-
-):
-  """### Cleanse string `s` of any discord markdown.
-
-  Method: whether to 'none', 'replace', 'remove' or 'escape' markdown.
-   - 'none' (or false-y) will skip that perticular type of markdown and not touch it.
-   - 'replace' will take a simillar character and replace the markdown character with it, for example backtick -> apostrophe
-   - 'remove' will remove any characters effectively replacing them with ''
-   - 'escape' will prepend every instance of that character with a backslash ('\\\\\\\\')
-
-  Parts examples:
-   - Codeblock: `"\\`\\`\\`py\\\\nimport os; os.unlink(__file__)\\`\\`\\`"`
-   - Heading: `"# H1 heading"`, `"## H2 heading"`
-
-  If `codeblock_only != 'none'` disregard any other setting and modify/remove/whatever triple backticks only
-  """
-
-  if codeblock_only and codeblock_only != 'none':
-    match codeblock_only:
-      case 'replace':
-        return s.replace(BACKTICKS, cleanse_replacement[BACKTICKS])
-      case 'remove':
-        return s.replace(BACKTICKS, '')
-      case 'escape':
-        return s.replace(BACKTICKS, '\\`\\`\\`')
-      case method:
-        _cleanse_invalid_method(method)
-  else: # not codeblock_only
-    match heading:
-      case 'replace':
-        s = s.replace('#', cleanse_replacement['#'])
-      case 'remove':
-        s = regex.sub(*RegexPreset.MARKDOWN_HEADING, s)
-      case 'escape':
-        s = regex.sub(*RegexPreset.MARKDOWN_HEADING_E, s)
-      case method:
-        _cleanse_invalid_method(method)
 
 def get_token(filename: str = 'TOKEN.txt', depth=2) -> None | str:
   """Get the nearest file with name=filename (default 'TOKEN.txt') and return its stripped contents.
@@ -82,3 +30,57 @@ def get_token(filename: str = 'TOKEN.txt', depth=2) -> None | str:
     f = ((origin_path / '/'.join(['..'] * i)) / filename)
     if f.is_file():
       return rexit(f.read_text().strip())
+
+class IFYs:
+  """Features related to turning IDs into user/channel/command/etc. mentions, emojis, and more if i can think of any.
+
+  Example:
+  ```py
+  >>> IFYs.userify(1234)
+  '<@1234>'
+  ```
+
+  Includes argument validation:
+  - Raises TypeError if invalid type was supplied (not str or int)
+  - Raises ValueError if the type is valid, but snowflake in it is not (for example if negative int was passed in)
+  """
+
+  @staticmethod
+  def userify(user_id: int | str):
+    """### User mentions.
+
+    ```py
+    >>> IFYs.userify(1234)
+    '<@1234>'
+    ```
+    """
+
+    if not is_snowflake(user_id, allow_string=True):
+      if isinstance(user_id, int | str):
+        err = ValueError('user_id is not a valid snowflake, use tcr.discord.is_snowflake() to validate if needed.')
+      else:
+        err = TypeError(f"Expected str or int, got {type(user_id)} instead.")
+
+      raise err
+
+    return f"<@{user_id}>"
+
+  @staticmethod
+  def channelify(channel_id: int | str):
+    """### User mentions.
+
+    ```py
+    >>> IFYs.channelify(1234)
+    '<#1234>'
+    ```
+    """
+
+    if not is_snowflake(channel_id, allow_string=True):
+      if isinstance(channel_id, int | str):
+        err = ValueError('channel_id is not a valid snowflake, use tcr.discord.is_snowflake() to validate if needed.')
+      else:
+        err = TypeError(f"Expected str or int, got {type(channel_id)} instead.")
+
+      raise err
+
+    return f"<#{channel_id}>"

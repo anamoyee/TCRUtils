@@ -17,7 +17,7 @@ Useful stuff for tcr projects.
 - [x] dir2()
 - [ ] add IFYs to discord.string
 - [ ] add Components[] constructor (returns both view and view.build())
-- [ ] tcr.insist()
+- [x] tcr.insist()
 
 
 ~~<style>s{color: crimson;} b,strong{text-decoration:underline}</style>~~

@@ -35,6 +35,19 @@ class path:
     return new_name
 
   @staticmethod
+  def nextname_file_ext_fix(name='New file.txt') -> str:
+    match = re.match(r'^(.*?)(?:\s*\((\d+)\))?(?:\.(\w+))?$', name)
+    if not match:
+        raise ValueError("Invalid filename format")
+
+    base_name, number, extension = match.groups()
+
+    new_number = int(number) + 1 if number else 1
+
+    return f"{base_name} ({new_number}).{extension}" if extension else f"{base_name} ({new_number})"
+
+
+  @staticmethod
   def newdir(
     name: str | None = None,
     path: p.Path | str | None = None,
