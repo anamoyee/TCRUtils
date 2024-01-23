@@ -6,7 +6,7 @@ indent-style = "space"
 
 [tool.poetry]
 name = "tcrutils"
-version = "0.0.86"
+version = "0.0.87"
 description = "Useful stuff for TCR projects!"
 authors = ["TheCreatorrrr"]
 license = "GPL-3.0"
@@ -17,6 +17,7 @@ python = ">=3.11.0,<3.12"
 hikari = "^2.0.0.dev122"
 colored = "^2.2.4"
 hikari-toolbox = "^0.1.6"
+hikari-miru = "^4.0.0"
 
 
 [build-system]

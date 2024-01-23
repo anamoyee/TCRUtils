@@ -110,6 +110,17 @@ files = [
 frozenlist = ">=1.1.0"
 
 [[package]]
+name = "alluka"
+version = "0.1.4"
+description = "A type based dependency injection framework for Python 3.9+."
+optional = false
+python-versions = ">=3.9.0,<3.13"
+files = [
+    {file = "alluka-0.1.4-py3-none-any.whl", hash = "sha256:702fbc13ade0c85ac9a6e0fac9c596ab2906ee3c09cf4d1750a4d52c23ffad9d"},
+    {file = "alluka-0.1.4.tar.gz", hash = "sha256:3855a459498bfe4292862057d0df7f130323ad98451b2d9345abd498f24e8d8c"},
+]
+
+[[package]]
 name = "attrs"
 version = "23.2.0"
 description = "Classes Without Boilerplate"
@@ -273,6 +284,27 @@ multidict = ">=6.0,<7.0"
 [package.extras]
 server = ["pynacl (>=1.5,<2.0)"]
 speedups = ["aiohttp[speedups] (>=3.8,<4.0)", "ciso8601 (>=2.3,<3.0)", "orjson (>=3.9,<4.0)"]
+
+[[package]]
+name = "hikari-miru"
+version = "4.0.0"
+description = "An alternative component handler for hikari, inspired by discord.py's views."
+optional = false
+python-versions = ">=3.10.0,<3.13"
+files = [
+    {file = "hikari-miru-4.0.0.tar.gz", hash = "sha256:b530fdbfa5733347aa5c889f8c4b99ba7107d2f18dbb0a3a768c440cadaae641"},
+    {file = "hikari_miru-4.0.0-py3-none-any.whl", hash = "sha256:13b2c143b6a64c52d7fdec0728cd2ce6a149b002b585bca9f4dd5d6374fadc66"},
+]
+
+[package.dependencies]
+alluka = ">=0.1.4"
+attrs = ">=23.1"
+colorama = {version = "*", markers = "sys_platform == \"win32\""}
+hikari = ">=2.0.0.dev122"
+
+[package.extras]
+dev = ["hikari-arc (==1.0.0)", "hikari-tanjun (==2.17.2)", "nox (==2023.4.22)", "pyright (==1.1.347)", "pytest (==7.4.4)", "pytest-asyncio (==0.23.3)", "ruff (==0.1.13)", "slotscheck (==0.17.1)", "typing-extensions (==4.9.0)"]
+docs = ["black (>=23.12.1,<23.13.0)", "griffe-inherited-docstrings (>=1.0.0,<1.1.0)", "mkdocs (>=1.5.3,<1.6.0)", "mkdocs-glightbox (>=0.3.6,<0.4.0)", "mkdocs-material[imaging] (>=9.5.4,<9.6.0)", "mkdocstrings-python (>=1.8.0,<1.9.0)"]
 
 [[package]]
 name = "hikari-toolbox"
@@ -492,4 +524,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11.0,<3.12"
-content-hash = "9456ba64dbb6076b50704682ce40708902ef2419566f46f9e497b74f3c91bfe0"
+content-hash = "d3bea3c31b2807bccc33f3ee50d4224484d9e6472c82f27b2e8c42fcdfd4a792"

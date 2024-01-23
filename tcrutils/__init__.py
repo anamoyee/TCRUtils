@@ -18,6 +18,7 @@ Joke functions and other barely useful crap is not included in star imports.
 """
 
 from . import discord, src
+from .discord.embed import embed
 from .discord.limits import DiscordLimits
 from .discord.string import get_token
 from .src.tcr_color import c, color, colour, printc
