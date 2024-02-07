@@ -9,10 +9,13 @@ def _escaper(groups: Iterable[int], match: Match):
   s = ''
   for groupint in groups:
     group = match.group(abs(groupint))
-    if groupint < 0: group = console(type(group), repr(group))
+    if groupint < 0:
+      group = console(type(group), repr(group))
     s += group
 
+
 handler = partial(_escaper, [1, -2, 3, 4])
+
 
 class RegexPreset:
   """Provies documented preset regex patterns."""
@@ -35,5 +38,6 @@ class RegexPreset:
 
   MARKDOWN_HEADING = (r'(^|\n)#{1,3}\s(.|\n|\Z)(.*)', partial(_escaper, [1, -2, 3, 4]))
   """Used when wanting to remove discord heading markdown from a string. re.sub(*MARKDOWN_HEADING, to_replace)"""
+
 
 __all__ = ['RegexPreset']

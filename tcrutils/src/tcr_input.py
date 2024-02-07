@@ -1,9 +1,12 @@
-from collections.abc import Callable, Iterable, Mapping
-from types import MappingProxyType
-from typing import Any, Optional
+from collections.abc import Callable
+from typing import Any
 
 
-def insist(func: Callable[[], Any], validator: Callable[[Any], bool] = bool, func2: Callable[[], Any] | None = None):
+def insist(
+  func: Callable[[], Any],
+  validator: Callable[[Any], bool] = bool,
+  func2: Callable[[], Any] | None = None,
+):
   """### Keep invoking `func` until `validator(func())` returns Truey result, return it.
 
   # Use `functools.partial` for this!!!
@@ -21,9 +24,11 @@ def insist(func: Callable[[], Any], validator: Callable[[Any], bool] = bool, fun
   Keep in mind that insist won't convert the, str that was returned by `input()` in the above example, only verify its compliance with validator.
   """
   result = func()
-  if validator(result): return result
+  if validator(result):
+    return result
   while True:
     result = (func2 if func2 else func)()
-    if not validator(result): continue
+    if not validator(result):
+      continue
 
     return result

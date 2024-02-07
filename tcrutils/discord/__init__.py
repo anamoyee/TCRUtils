@@ -12,5 +12,5 @@ __all__ = [
   'DiscordPermission',
   'discord_permissions',
   'embeds',
-  "get_token",
+  'get_token',
 ]

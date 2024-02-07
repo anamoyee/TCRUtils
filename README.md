@@ -13,11 +13,14 @@ Useful stuff for tcr projects.
 - [x] Add docstring to dict_zip and others
 - [x] make docstrings use \<h1> // ###
 - [x] Add optional syntax highlighting to print_iterable
-  - [ ] *Rewrite print_iterable, maybeeee?*
+  - [x] *Rewrite print_iterable, maybeeee?*
 - [x] dir2()
 - [ ] add IFYs to discord.string
 - [ ] add Components[] constructor (returns both view and view.build())
 - [x] tcr.insist()
+- [x] Move the printer decorator into decorators file
+- [x] Add doc to fmt_iterable when done
+- [x] Fix when trailing_commas=False breaks 1-element tuples
 
 
 ~~<style>s{color: crimson;} b,strong{text-decoration:underline}</style>~~

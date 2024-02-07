@@ -42,9 +42,10 @@ from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null
 from .src.tcr_other import intbool
 from .src.tcr_path import path
-from .src.tcr_print import print_block, print_iterable
+from .src.tcr_print import fmt_iterable, print_block, print_iterable
 from .src.tcr_regex import RegexPreset
 from .src.tcr_run import RunSACAble, run_sac
+from .src.tcr_sdb import ShelveDB
 from .src.tcr_string import commafy, nth
 from .src.tcr_terminal import terminal
 from .src.tcr_timestr import timestr

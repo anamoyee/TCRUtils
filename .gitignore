@@ -8,6 +8,8 @@ gitadd.bat
 archive/*
 archive
 upload.bat
+test_db/*
+test_db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

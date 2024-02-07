@@ -38,14 +38,13 @@ class path:
   def nextname_file_ext_fix(name='New file.txt') -> str:
     match = re.match(r'^(.*?)(?:\s*\((\d+)\))?(?:\.(\w+))?$', name)
     if not match:
-        raise ValueError("Invalid filename format")
+      raise ValueError('Invalid filename format')
 
     base_name, number, extension = match.groups()
 
     new_number = int(number) + 1 if number else 1
 
-    return f"{base_name} ({new_number}).{extension}" if extension else f"{base_name} ({new_number})"
-
+    return f'{base_name} ({new_number}).{extension}' if extension else f'{base_name} ({new_number})'
 
   @staticmethod
   def newdir(
@@ -68,7 +67,8 @@ class path:
     frames = inspect.stack()
     pth = frames[-1].filename  # Get the filename of the furthest back frame
     pth = p.Path(pth).parent
-    if chdir: os.chdir(pth)
+    if chdir:
+      os.chdir(pth)
     return pth
 
   @staticmethod
@@ -81,7 +81,11 @@ class path:
     if not isinstance(nt_objname, str):
       nt_objname: str = str(nt_objname.absolute().name)
 
-    return bool((all((x not in nt_objname) for x in ('\n', '\r'))) and (nt_objname.strip() not in ('', '.', '..')) and (re.match(r'^[^<>:"\/\\|?*\n]*$', nt_objname.strip())))
+    return bool(
+      (all((x not in nt_objname) for x in ('\n', '\r')))
+      and (nt_objname.strip() not in ('', '.', '..'))
+      and (re.match(r'^[^<>:"\/\\|?*\n]*$', nt_objname.strip()))
+    )
 
 
 __all__ = ['path']

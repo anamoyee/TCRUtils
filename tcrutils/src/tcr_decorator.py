@@ -10,7 +10,7 @@ from .tcr_print import print_block
 if True:  # \/ # @test
 
   def test(func: Callable) -> Callable:
-    """A decorator for adding."""
+    """A decorator for adding test label."""
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -182,3 +182,18 @@ if True:  # \/ # @convert.stringify
       return decorator
 
   convert = Convert()
+
+if True:  # \/ # @printer
+
+  def printer(*, printhook: Callable[[str], None] = print, passthrough: bool = True):
+    def decorator(func: Callable):
+      @wraps(func)
+      def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        printhook(result)
+        if passthrough:
+          return result
+
+      return wrapper
+
+    return decorator

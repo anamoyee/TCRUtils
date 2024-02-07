@@ -19,7 +19,7 @@ class Color:
 
   def _get_default_color(self, name=''):
     if self._default is None:
-      msg = f"Invalid color: '{name}'"
+      msg = f'Invalid color: {name!r}'
       raise ValueError(msg)
     return self._default
 
@@ -43,13 +43,15 @@ class Color:
     if len(colors) >= 2:
       return ''.join([self.__call__(x) for x in colors])
     else:
+      if colors == ():
+        return self.RESET
       colors = colors[0]
-
-    if colors == ():
-      return self._get_default_color()
 
     if str(colors).lower() in ['reset', '0']:
       return self.RESET
+
+    if isinstance(colors, int):
+      return fg(colors)
 
     colors = colors.replace(
       '\\_', '🚜🚛🚚🚚🚚🚒🚝🚈🚈🚈🚅🚅🚄🚔🚔🚘🚘🚜🚜🚛🚛🚛🚚🚚🚒🚒🚑🚑'
@@ -69,7 +71,7 @@ class Color:
     colors = colors.replace('#', '')  # Hidden     if it contains #
 
     attr_bold = colors[0] == colors[0].upper()  # Bold if the first letter is uppercase
-    is_bg = colors == colors.upper()  # bg if all caps
+    is_bg = colors == colors.upper() and not colors.isnumeric()  # bg if all caps
 
     colors = colors.lower()
 
@@ -95,6 +97,9 @@ class Color:
       styles.append(attr('hidden'))
 
     return stylize('', ''.join(styles), reset=False)
+
+  def __str__(self) -> str:
+    return c()
 
 
 color = Color()

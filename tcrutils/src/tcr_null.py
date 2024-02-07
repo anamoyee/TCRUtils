@@ -24,9 +24,9 @@ def _new(cls, *args, **kwargs):
 Null.__or__ = or_
 Null.__ror__ = ror_
 
-Null, _NullClass = Null(), Null
+Null, NullType = Null(), Null
 
-_NullClass.__new__ = _new
-Null.__class__ = _NullClass
+NullType.__new__ = _new
+Null.__class__ = NullType
 
 assert (Null) is (Null.__class__())  # No sneaky sneakies with making two different Nulls

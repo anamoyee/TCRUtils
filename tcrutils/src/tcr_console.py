@@ -1,5 +1,5 @@
 import datetime
-from collections.abc import Iterable
+from collections.abc import Callable
 from functools import reduce
 from sys import exit
 
@@ -7,10 +7,9 @@ from sys import exit
 from colored import attr, bg, fg, stylize
 
 from .tcr_color import c
-from .tcr_decorator import autorun
 from .tcr_extract_error import extract_error
 from .tcr_getch import getch
-from .tcr_print import PIRepassable, print_iterable
+from .tcr_print import fmt_iterable
 
 a = 1 if 1 else 0
 
@@ -64,39 +63,22 @@ class Console:
 
   def debug(
     self,
-    *values,
-    returnonly=False,
-    withprefix=True,
-    print_iterable_=True,
-    passthrough=True,
-    recursive=True,
-    item_limit=100,
+    value: object,
+    /,
+    *values: object,
+    withprefix: bool = True,
+    passthrough: bool = True,
+    printhook: Callable[[str], None] = print,
     syntax_highlighting=True,
-  ) -> None | str:
-    if not values:
-      values = ['']
-    out = values if len(values) > 1 else values[0]
-    if isinstance(out, type({}.values()) | type({}.keys())):
-      out = list(out)
-    if print_iterable_ and isinstance(out, PIRepassable):
-      print_iterable_ = False
-      out = print_iterable(
-        out,
-        raw=True,
-        recursive=recursive,
-        item_limit=item_limit,
-        syntax_highlighting=syntax_highlighting,
-      )
-    out = str(out)
-    if print_iterable_ and syntax_highlighting:
-      out = print_iterable(out, syntax_highlighting='?', raw=True)
+    **kwargs,
+  ) -> None | object:
+    out = fmt_iterable(*(value, *values), syntax_highlighting=syntax_highlighting, **kwargs)
     if withprefix:
-      out = (f'D {self._get_timestamp()} ') + out
-    out = stylize(out, c('Purple\\_1A'))  # + attr("underlined"))
-    if returnonly:
-      return out
-    print(out)
-    return None if not passthrough else values[0]
+      out = f'D {self._get_timestamp()} {out}'
+    if syntax_highlighting:
+      out = stylize(out, c('Purple\\_1B'))
+    printhook(out)
+    return None if not passthrough else value
 
   def critical(self, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
     if not values:
@@ -110,27 +92,8 @@ class Console:
     print(out)
     return None
 
-  def __call__(
-    self,
-    *values,
-    returnonly=False,
-    withprefix=True,
-    print_iterable_=True,
-    passthrough=True,
-    recursive=True,
-    item_limit=100,
-    syntax_highlighting=True,
-  ) -> None | str:
-    return console.debug(
-      *values,
-      returnonly=returnonly,
-      withprefix=withprefix,
-      print_iterable_=print_iterable_,
-      passthrough=passthrough,
-      recursive=recursive,
-      item_limit=item_limit,
-      syntax_highlighting=syntax_highlighting,
-    )
+  def __call__(self, *args, **kwargs) -> None | str:
+    return console.debug(*args, **kwargs)
 
   def __or__(self, other):
     return self.debug(other)
