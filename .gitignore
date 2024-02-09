@@ -2,7 +2,7 @@ src/commit_and_push.bat
 commit_and_push.bat
 format.bat
 .sourcery.yaml
-test.py
+#test.py
 codex.py
 gitadd.bat
 archive/*
