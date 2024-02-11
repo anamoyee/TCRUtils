@@ -1,5 +1,7 @@
 src/commit_and_push.bat
 commit_and_push.bat
+upload.bat
+cmp.bat
 format.bat
 .sourcery.yaml
 #test.py
@@ -7,7 +9,6 @@ codex.py
 gitadd.bat
 archive/*
 archive
-upload.bat
 test_db/*
 test_db
 

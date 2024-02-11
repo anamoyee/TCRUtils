@@ -1,8 +1,10 @@
 import re as regex
-from collections.abc import Callable, Iterable, MutableSequence
+from collections.abc import Callable, Iterable, Iterator, MutableSequence
 from random import shuffle
-from typing import Literal
+from typing import Any, Literal
 
+from .tcr_compare import able
+from .tcr_null import UniqueDefault as RaiseError
 from .tcr_regex import RegexPreset
 
 
@@ -99,3 +101,90 @@ def stalin_sort(arr):
 def shuffled(arr: MutableSequence) -> MutableSequence:
   shuffle(arr)
   return arr
+
+
+def limited_iterable(it: Iterable | Iterator, limit: int) -> tuple[list, int]:
+  """## Return tuple[list, int] of (limited_iterable, overflow_from_limit).
+
+  ### This is different from it[:limit] because it works with iterators
+
+  Examples:
+  ```py
+  >>> limited_iterable([10, 20, 30], 10)
+  ([10, 20, 30], 0) # Nothing is cut off
+  >>> limited_iterable([10, 20, 30], 3)
+  ([10, 20, 30], 0)
+  >>> limited_iterable([10, 20, 30], 2)
+  ([10, 20], 1)
+  >>> limited_iterable([10, 20, 30], 1)
+  ([10], 2)
+  >>> limited_iterable([10, 20, 30], 0)
+  ([], 3)
+  >>> limited_iterable([10, 20, 30], -1)
+  ([], 4) # Overflow counter counts the negative limit even though it makes no sense, for predictability reasons
+  ```
+  ---
+
+  ### When there's no len method on the passed in iterable (eg. generator) and the iterable takes longer than the limit the overflow returned is -1**
+
+  ```py
+  >>> limited_iterable(range(10), 7)
+  ([0, 1, 2, 3, 4, 5, 6], 3) # range by itself has len support even though it's a generator due to comparing boundaries
+  >>> limited_iterable(iter(range(10)), 7)
+  ([0, 1, 2, 3, 4, 5, 6], -1) # when wrapped into an iter() the length can't be determined within the limit
+  >>> limited_iterable(iter(range(5)), 7)
+  ([0, 1, 2, 3, 4], 0) # 0 was returned even though it's a non-len object because the iterator was exhausted and the end of it being within limit could be determined.
+  ```
+  """
+  if limit <= 0:
+    return ([], len(it) - limit if able(len, it) else -1)
+  list_ = []
+  breaknext = False
+  for i, item in enumerate(it):
+    if breaknext:
+      return breaknext
+    list_.append(item)
+    if i + 2 > limit:
+      overflow = len(it) - limit if able(len, it) else -1
+      breaknext = (list_, overflow)
+  return list_, 0
+
+
+def getattr_queue(
+  obj: object, /, *queue: str, return_as_str: bool = False, default: Any | RaiseError = RaiseError
+):
+  """## Try to access `obj`'s attrs in order.
+
+  ```py
+  queue = ('__qualname__', '__name__')
+
+  getattr(obj, '__qualname__') # return this if hasattr(obj, '__qualname__') else go to the next line
+  getattr(obj, '__name__')     # return this if hasattr(obj, '__name__') else go to the next line
+  if default is not RaiseError # RaiseError is the default value for default (if nothing is passed in)
+    return default
+  raise KeyError("Unable to find any attrs from queue in obj.") # Nothing could be found, error raised.
+  ```
+
+  In other words: try to get name #1, if not found, get name #2, if not found get #3, etc. etc. until the queue is exhausted.
+  """
+  if not queue:
+    raise ValueError('queue cannot be empty.')
+  for name in queue:
+    if hasattr(obj, name):
+      if return_as_str:
+        return name
+      else:
+        return getattr(obj, name)
+  if default is not RaiseError:
+    return default
+  raise KeyError('Unable to find any attrs from queue in obj.')
+
+
+def Or(arg: Any, *args: Any, none: Any = None):
+  args = (arg, *args)
+
+  for a in args:
+    if a != none:
+      return a
+
+  return args[-1]

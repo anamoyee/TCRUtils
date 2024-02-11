@@ -155,18 +155,21 @@ if True:  # \/ # Tests
 
   @tcr.timeit
   def test_print_iterable(print_iterable=print_iterable, **kwargs):
+    mappingproxy = (type.__dict__)
+    print_iterable(mappingproxy, **kwargs)
     print_iterable("aasd", **kwargs)
     print_iterable({"a": 1, "b": "2"}, **kwargs)
     print_iterable({"a": range(3)}, **kwargs)
+    print_iterable(range(1 << 1000), **kwargs)
     print_iterable((), **kwargs)
     print_iterable([], **kwargs)
     print_iterable({1, 2}, **kwargs)
     print_iterable("asdf", **kwargs)
-    print_iterable([3, 4, 5, range(105)], item_limit=5, **kwargs)
+    print_iterable([3, 4, 5, range(105)], item_limit=5, **{x: y for x, y in kwargs.items() if x != 'item_limit'})
     def a():
       while True:
         yield 1
-    print_iterable(a(), item_limit=3, **kwargs)
+    print_iterable(a(), item_limit=3, **{x: y for x, y in kwargs.items() if x != 'item_limit'})
     print_iterable(b'100', **kwargs)
     print_iterable(bytearray([10, 20, 30]), **kwargs)
     print_iterable(b'uwu"\'', **kwargs)
@@ -189,6 +192,63 @@ if True:  # \/ # Tests
     print_iterable((1,), **kwargs)
     print_iterable([[[[]]]], **kwargs)
     print_iterable([[[10, 20, [345234582346748673485678673, 40, "a", ()]]]], **kwargs)
+
+    class UnknownThing:
+      ...
+
+    unknown_thing = UnknownThing()
+    print_iterable(unknown_thing, **kwargs)
+    print_iterable(UnknownThing, **kwargs)
+
+    ### Copied from _collections_abc.py ###
+    bytes_iterator = (iter(b'asdf'))
+    print_iterable(bytes_iterator, **kwargs)
+    bytearray_iterator = (iter(bytearray([0xFF, 0x10])))
+    print_iterable(bytearray_iterator, **kwargs)
+    #callable_iterator = ???
+    dict_keyiterator = (iter({"a": 1, "b": 10, "c": 100}.keys()))
+    dict_valueiterator = (iter({"a": 1, "b": 10, "c": 100}.values()))
+    dict_itemiterator = (iter({"a": 1, "b": 10, "c": 100}.items()))
+    print_iterable(dict_keyiterator, **kwargs)
+    print_iterable(dict_valueiterator, **kwargs)
+    print_iterable(dict_itemiterator, **kwargs)
+    list_iterator = (iter([10, 20, 30]))
+    print_iterable(list_iterator, **kwargs)
+    list_reverseiterator = (iter(reversed([1, 2, 3])))
+    print_iterable(list_reverseiterator, **kwargs)
+    range_iterator = (iter(range(3)))
+    longrange_iterator = (iter(range(1 << 1000)))
+    print_iterable(range_iterator, **kwargs)
+    print_iterable(longrange_iterator, **kwargs)
+    set_iterator = (iter({15, 25, 35}))
+    print_iterable(set_iterator, **kwargs)
+    str_iterator = (iter("str iterator"))
+    print_iterable(str_iterator, **kwargs)
+    tuple_iterator = (iter(((30, 40),)))
+    print_iterable(tuple_iterator, **kwargs)
+    zip_iterator = (iter(zip('abcdefg', range(3), range(4), strict=False)))
+    print_iterable(zip_iterator, **kwargs)
+
+    ## misc ##
+    generator = ((lambda: (yield))())
+    print_iterable(generator, **kwargs)
+    print_iterable(range(0), **kwargs)
+
+    ## coroutine ##
+    async def _coro(): pass
+    _coro = _coro()
+    coroutine = (_coro)
+    print_iterable(coroutine, **kwargs)
+    _coro.close()  # Prevent ResourceWarning
+    del _coro
+    ## asynchronous generator ##
+    async def _ag(): yield
+    _ag = _ag()
+    async_generator = (_ag)
+    print_iterable(async_generator, **kwargs)
+    del _ag
+    print_iterable(range(10), **kwargs)
+    print_iterable([['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'h', 'i'], ['j', 'k', 'l']], **kwargs)
 
 
   def test_color():
@@ -392,6 +452,8 @@ if True:  # \/ # Tests
     printhook(tcr.fmt_iterable({Null: Null, None: None, True: True, False: False}, **kwargs))
     printhook(tcr.fmt_iterable(bytearray([0x10, 0x2A, 0x3D]), **kwargs))
 
+  def test_getattr_queue():
+    print(test_getattr_queue())
 
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @test decorator
@@ -412,7 +474,17 @@ if __name__ == '__main__':
   # test_iterable(batched_=True, cut_at_=False)
   # test_path()
   # test_ifys()
-  test_print_iterable(print_iterable=console, syntax_highlighting=1, let_no_indent=1, force_no_indent=0, force_no_spaces=0, force_complex_parenthesis=1)
+  test_print_iterable(
+    print_iterable=console,
+    syntax_highlighting=1,
+    let_no_indent=1,
+    force_no_indent=0,
+    force_no_spaces=0,
+    force_complex_parenthesis=1,
+    item_limit=10,
+    let_no_inder_max_non_iterables=10,
+    let_no_inder_max_iterables=10,
+  )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=False)

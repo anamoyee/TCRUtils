@@ -1,41 +1,38 @@
-from collections.abc import (
-  Callable,
-  Generator,
-  ItemsView,
-  Iterable,
-  KeysView,
-  Mapping,
-  ValuesView,
-)
 from functools import cache, partial, wraps
 from types import GeneratorType
 from typing import TypeAlias
 from warnings import warn
 
+from _collections_abc import (
+  Callable,
+  Iterable,
+  Mapping,
+  bytearray_iterator,
+  bytes_iterator,
+  coroutine,
+  dict_itemiterator,
+  dict_items,
+  dict_keyiterator,
+  dict_keys,
+  dict_valueiterator,
+  dict_values,
+  list_iterator,
+  list_reverseiterator,
+  longrange_iterator,
+  range_iterator,
+  set_iterator,
+  str_iterator,
+  tuple_iterator,
+  zip_iterator,
+)
 from colored import attr, fg
 
 from .tcr_color import c
 from .tcr_compare import able
 from .tcr_constants import NEWLINE
 from .tcr_int import hex as tcrhex
+from .tcr_iterable import Or, getattr_queue, limited_iterable
 from .tcr_null import Null
-
-PIRepassable: TypeAlias = (
-  type(Null)
-  | list
-  | tuple
-  | dict
-  | set
-  | Generator
-  | range
-  | bytes
-  | bytearray
-  | str
-  | None
-  | bool
-  | int
-  | float
-)
 
 # fmt: off
 BRACKET_COLOR    = "Cyan"
@@ -112,7 +109,8 @@ def print_block(
 
 if True:  # \/ # fmt & print iterable
   # fmt: off
-  class _F:
+  # Format Colors, name kept short so lines don't get THAT long if this thing is used like 10 times in a single fstring
+  class FMTC:
     _          = attr(0) # Reset
     NUMBER     = fg('blue')       + attr('bold')
     DECIMAL    = fg('white')      + attr('bold')
@@ -120,39 +118,51 @@ if True:  # \/ # fmt & print iterable
     STRING     = attr(0)          + fg('yellow')
     QUOTES     = fg('white')      + attr('bold')
     COLON      = fg('orange_1')   + attr('bold')
+    COROUTINE  = fg('orange_1')   + attr('bold')
+    FUNCTION   = fg('orange_1')   + attr('bold')
     COMPLEX    = fg('orange_1')   + attr('bold')
     COMMA      = fg('dark_gray')  + attr('bold')
-    BYTESTR_B  = fg('red')        + attr('bold')
+    UNKNOWN    = fg('dark_gray')  + attr('bold')
     TRUE       = fg('green')      + attr('bold')
     FALSE      = fg('red')        + attr('bold')
     NULL       = fg('dark_gray')  + attr('bold')
     NONE       = fg('light_gray') + attr('bold')
-    MORE_ITEMS = fg('purple_1B')  + attr('bold')
+    BYTESTR_B  = fg('red')        + attr('bold')
+    ITER_I     = fg('red_3b')     + attr('bold')
+    SPECIAL    = fg('purple_1B')  + attr('bold')
 
-  _F_BRACKETS: dict[type | None, tuple[str, str]] = { # Format Brackets
-    None:              ('[%s]', f'{_F.BRACKET}[{_F._}%s{_F.BRACKET}]{_F._}'),
-    list:              ('[%s]', f'{_F.BRACKET}[{_F._}%s{_F.BRACKET}]{_F._}'),
-    type({}.keys()):   ('[%s]', f'{_F.MORE_ITEMS}K{_F.BRACKET}[{_F._}%s{_F.BRACKET}]{_F._}'),
-    type({}.values()): ('[%s]', f'{_F.MORE_ITEMS}V{_F.BRACKET}[{_F._}%s{_F.BRACKET}]{_F._}'),
-    type({}.items()):  ('[%s]', f'{_F.MORE_ITEMS}I{_F.BRACKET}[{_F._}%s{_F.BRACKET}]{_F._}'),
-    set:               ('{%s}', f'{_F.BRACKET}{{{_F._}%s{_F.BRACKET}}}{_F._}'),
-    frozenset:         ('frozenset({%s})', f'{_F.MORE_ITEMS}F{_F.BRACKET}{{{_F._}%s{_F.BRACKET}}}{_F._}'),
-    dict:              ('{%s}', f'{_F.BRACKET}{{{_F._}%s{_F.BRACKET}}}{_F._}'),
-    tuple:             ('(%s)', f'{_F.BRACKET}({_F._}%s{_F.BRACKET}){_F._}'),
-    GeneratorType:     ('((%s))', f'{_F.BRACKET}<{_F._}%s{_F.BRACKET}>{_F._}'),
-    range:             ('((%s))', f'{_F.BRACKET}<{_F._}%s{_F.BRACKET}>{_F._}'),
-    bytearray:         ('bytearray([%s])', f'{_F.BYTESTR_B}b{_F.BRACKET}[{_F._}%s{_F.BRACKET}]{_F._}'),
+  class FMT_LETTERS:
+    b  = f'{FMTC.BYTESTR_B}b'
+    i  = f'{FMTC.ITER_I}i{FMTC._}'
+    F  = f'{FMTC.SPECIAL}F'
+    K  = f'{FMTC.SPECIAL}K'
+    V  = f'{FMTC.SPECIAL}V'
+    I  = f'{FMTC.SPECIAL}I'
+    C  = f'{FMTC.COROUTINE}C'
+
+  # Format Brackets templates.
+  # (FMT_BRACKETS[_t][syntax_highlighting: bool] % content) -> attaches brackets to the content with respect to syntax highlighting
+  FMT_BRACKETS: dict[type | None, tuple[str, str]] = { # Format Brackets
+    None:          ('[%s]',            f'{FMTC.BRACKET}[{FMTC._}%s{FMTC.BRACKET}]{FMTC._}'),
+    list:          ('[%s]',            f'{FMTC.BRACKET}[{FMTC._}%s{FMTC.BRACKET}]{FMTC._}'),
+    dict_keys:     ('[%s]',            f'{FMT_LETTERS.K}{FMTC.BRACKET}[{FMTC._}%s{FMTC.BRACKET}]{FMTC._}'),
+    dict_values:   ('[%s]',            f'{FMT_LETTERS.V}{FMTC.BRACKET}[{FMTC._}%s{FMTC.BRACKET}]{FMTC._}'),
+    dict_items:    ('[%s]',            f'{FMT_LETTERS.I}{FMTC.BRACKET}[{FMTC._}%s{FMTC.BRACKET}]{FMTC._}'),
+    set:           ('{%s}',            f'{FMTC.BRACKET}{{{FMTC._}%s{FMTC.BRACKET}}}{FMTC._}'),
+    frozenset:     ('frozenset({%s})', f'{FMT_LETTERS.F}{FMTC.BRACKET}{{{FMTC._}%s{FMTC.BRACKET}}}{FMTC._}'),
+    dict:          ('{%s}',            f'{FMTC.BRACKET}{{{FMTC._}%s{FMTC.BRACKET}}}{FMTC._}'),
+    tuple:         ('(%s)',            f'{FMTC.BRACKET}({FMTC._}%s{FMTC.BRACKET}){FMTC._}'),
+    GeneratorType: ('[%s]',            f'{FMTC.BRACKET}<{FMTC._}%s{FMTC.BRACKET}>{FMTC._}'),
+    range:         ('range([%s])',     f'{FMTC.BRACKET}<{FMTC._}%s{FMTC.BRACKET}>{FMTC._}'),
+    bytearray:     ('bytearray([%s])', f'{FMT_LETTERS.b}{FMTC.BRACKET}[{FMTC._}%s{FMTC.BRACKET}]{FMTC._}'),
+    coroutine:     ('coroutine_%s',    f'{FMT_LETTERS.C}{FMTC.DECIMAL}\'{FMTC.FUNCTION}%s')
   }
-  # fmt: on
 
-  def _limited_iterator(it: Iterable, limit: int) -> tuple[Iterable, int]:
-    list_ = []
-    for i, item in enumerate(it):
-      list_.append(item)
-      if i + 2 > limit:
-        overflow = len(it) - limit if able(len, it) else -1
-        return list_, overflow
-    return list_, 0
+  # (FMT_ITER[syntax_highlighting: bool] % content) -> attaches 'i' or 'iter()' to the content with respect to syntax highlighting
+  FMT_ITER = ('iter(%s)', f'{FMT_LETTERS.i}%s')
+  # (FMT_UNKNOWN[syntax_highlighting: bool] % (name, content)) -> attaches name and content to an unknown object
+  FMT_UNKNOWN = ('%s(%s)', f'{FMTC.UNKNOWN}%s({FMTC._}%s{FMTC.UNKNOWN}){FMTC._}')
+  # fmt: on
 
   class _OverflowClass:
     amount: int
@@ -167,7 +177,7 @@ if True:  # \/ # fmt & print iterable
     @wraps(func)
     def wrapper(*args, append_syntax_reset: bool = True, **kwargs):
       if kwargs.get('syntax_highlighting') and append_syntax_reset:
-        return f'{_F._}{func(*args, **kwargs)}{_F._}'
+        return f'{FMTC._}{func(*args, **kwargs)}{FMTC._}'
       return func(*args, **kwargs)
 
     return wrapper
@@ -185,6 +195,8 @@ if True:  # \/ # fmt & print iterable
     force_no_indent: bool = False,
     force_no_spaces: bool = False,
     force_complex_parenthesis: bool = False,
+    prefer_full_names: bool = True,
+    **kwargs,
   ) -> str:
     """### Return iterable as formatted string with optional syntax highlighting.
 
@@ -213,17 +225,21 @@ if True:  # \/ # fmt & print iterable
         force_no_indent: bool, Force the condition above (let_no_spaces), skip any conditions listed there, never add extra enters or indents even if it may make the result unreadable. This effectively makes `indent` or `let_no_indent` irrelevant. This also sets `trailing_commas` to False.
         force_no_spaces: bool, Force remove any extra spaces (not including the objects' values for example strings will still be displayed with spaces). It removes spaces for example after commas, colons, etc. This effectively enables `force_no_indent` thus making `indent` or `let_no_indent` irrelevant.
         force_complex_parenthesis: bool, Force parenthesis when displaying `complex` type for example `(3 + 1j)` instead of `3+1j`. This has no effect when syntax highlighting is turned off.
+        prefer_full_names: bool, whether or not to use the full names of objects if possible.
+        let_no_inder_max_iterables: int = 1, (advanced) override the limit for iterables for the let_no_indent feature
+        let_no_inder_max_non_iterables: int = 4, (advanced) override the limit for non-iterables for the let_no_indent feature
     """
     if its:
       it = (it, *its)
 
     item_limit = int(item_limit)
-    if item_limit < 1:
+    if item_limit < 0:
       item_limit = 1
 
     if (
       # if this feature is turned on:
-      let_no_indent and not force_no_spaces
+      let_no_indent
+      and not force_no_spaces
       # for all Iterables...
       and isinstance(it, Iterable)
       # ...that don't have already hardcoded displays or mapping because mapping
@@ -235,12 +251,20 @@ if True:  # \/ # fmt & print iterable
     ):
       # Case 1: If the iterable in question contains iterables
       # If there is at most 1 iterable in the outer iterable of iterables
-      if len(it) <= 1 and isinstance(it[0], Iterable):
+      if len(it) <= Or(kwargs.get('let_no_inder_max_iterables'), 1) and any(
+        isinstance(x, Iterable) for x in it
+      ):
         force_no_indent = -1
       # Case 2: If the outer iterable consists of non-iterables: If there are at most 4 non-iterables
-      if all((not isinstance(x, Iterable)) or isinstance(x, str | bytes) or (able(len, x) and len(x) == 0) for x in it) and len(it) <= 5:
+      if all(
+        (not isinstance(x, Iterable))
+        or isinstance(x, str | bytes)
+        or (able(len, x) and len(x) == 0)
+        for x in it
+      ) and len(it) <= Or(kwargs.get('let_no_inder_max_non_iterables'), 4):
         force_no_indent = -1
 
+    name = '__qualname__' if prefer_full_names else '__name__'
     space = ' ' if not force_no_spaces else ''
     indent = space * indentation if not force_no_indent else ''
     enter = '\n' if not force_no_indent else ''
@@ -249,7 +273,8 @@ if True:  # \/ # fmt & print iterable
     if int_formatter is None and isinstance(it, bytearray):
       int_formatter = tcrhex
 
-    if force_no_indent < 0: force_no_indent += 1
+    if force_no_indent < 0:
+      force_no_indent += 1
 
     this = partial(
       fmt_iterable,
@@ -263,92 +288,142 @@ if True:  # \/ # fmt & print iterable
       force_no_spaces=force_no_spaces,
       force_complex_parenthesis=force_complex_parenthesis,
     )
+    if a := kwargs.get('let_no_inder_max_iterables'):
+      this = partial(this, let_no_inder_max_iterables=a)
+    if a := kwargs.get('let_no_inder_max_non_iterables'):
+      this = partial(this, let_no_inder_max_non_iterables=a)
 
     if isinstance(it, _OverflowClass):
       return (
-        f'{_F.MORE_ITEMS}({_F.NUMBER}{it}{_F.MORE_ITEMS} more items...){_F._}'
+        f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}'
         if syntax_highlighting
         else f'({it} more items...)'
       )
     if it is Null:
-      return f'{_F.NULL}{it}{_F._}' if syntax_highlighting else str(it)
+      return f'{FMTC.NULL}{it}{FMTC._}' if syntax_highlighting else str(it)
     if it is None:
-      return f'{_F.NONE}{it}{_F._}' if syntax_highlighting else str(it)
+      return f'{FMTC.NONE}{it}{FMTC._}' if syntax_highlighting else str(it)
     if it is True:
-      return f'{_F.TRUE}{it}{_F._}' if syntax_highlighting else str(it)
+      return f'{FMTC.TRUE}{it}{FMTC._}' if syntax_highlighting else str(it)
     if it is False:
-      return f'{_F.FALSE}{it}{_F._}' if syntax_highlighting else str(it)
+      return f'{FMTC.FALSE}{it}{FMTC._}' if syntax_highlighting else str(it)
 
-    _t = type(it)
+    _t = kwargs.get('_force_next_type') or type(it)
 
     if _t == int:
       if int_formatter:
         it = int_formatter(it)
-      return f'{_F.NUMBER}{it}{_F._}' if syntax_highlighting else str(it)
+      return f'{FMTC.NUMBER}{it}{FMTC._}' if syntax_highlighting else str(it)
     if _t == float:
       return (
-        f'{_F.NUMBER}{str(it).replace(".", f"{_F.DECIMAL}.{_F.NUMBER}")}{_F._}'
+        f'{FMTC.NUMBER}{str(it).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC._}'
         if syntax_highlighting
         else str(it)
       )
     if _t == str:
       reprit = repr(it)
       return (
-        f'{_F.QUOTES}{reprit[0]}{_F.STRING}{reprit[1:-1]}{_F.QUOTES}{reprit[-1]}{_F._}'
+        f'{FMTC.QUOTES}{reprit[0]}{FMTC.STRING}{reprit[1:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}'
         if syntax_highlighting
         else repr(it)
       )
     if _t == bytes:
       reprit = repr(it)
       return (
-        f'{_F.BYTESTR_B}{reprit[0]}{_F.QUOTES}{reprit[1]}{_F.STRING}{reprit[2:-1]}{_F.QUOTES}{reprit[-1]}{_F._}'
+        f'{FMTC.BYTESTR_B}{reprit[0]}{FMTC.QUOTES}{reprit[1]}{FMTC.STRING}{reprit[2:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}'
         if syntax_highlighting
         else repr(it)
       )
     if _t == complex:
       brackets = (
-        ('', '') if (not force_complex_parenthesis) else (f'{_F.BRACKET}(', f'{_F.BRACKET})')
+        ('', '') if (not force_complex_parenthesis) else (f'{FMTC.BRACKET}(', f'{FMTC.BRACKET})')
       )
       return (
-        f"""{brackets[0]}{_F.NUMBER}{int(it.real) if int(it.real) == it.real else str(it.real).replace(".", f"{_F.DECIMAL}.{_F.NUMBER}")}{_F._}{space}{_F.COMPLEX}+{space}{_F.NUMBER}{int(it.imag) if int(it.imag) == it.imag else str(it.imag).replace(".", f"{_F.DECIMAL}.{_F.NUMBER}")}{_F.COMPLEX}j{brackets[1]}{_F._}"""
+        f"""{brackets[0]}{FMTC.NUMBER}{int(it.real) if int(it.real) == it.real else str(it.real).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC._}{space}{FMTC.COMPLEX}+{space}{FMTC.NUMBER}{int(it.imag) if int(it.imag) == it.imag else str(it.imag).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC.COMPLEX}j{brackets[1]}{FMTC._}"""
         if syntax_highlighting
         else repr(it)
       )
+    if _t == bytes_iterator:
+      return FMT_ITER[syntax_highlighting] % this(bytes(it))
+    if _t == str_iterator:
+      return FMT_ITER[syntax_highlighting] % this(''.join(it))
+    if _t == bytearray_iterator:
+      return FMT_ITER[syntax_highlighting] % this(bytearray(it))
+    if _t == dict_keyiterator:
+      listit, ov = limited_iterable(it, item_limit)
+      return FMT_ITER[syntax_highlighting] % this(listit, _force_next_type=dict_keys, _ov=ov)
+    if _t == dict_valueiterator:
+      listit, ov = limited_iterable(it, item_limit)
+      return FMT_ITER[syntax_highlighting] % this(listit, _force_next_type=dict_values, _ov=ov)
+    if _t == dict_itemiterator:
+      listit, ov = limited_iterable(it, item_limit)
+      return FMT_ITER[syntax_highlighting] % this(listit, _force_next_type=dict_items, _ov=ov)
+    if _t in (list_iterator, list_reverseiterator, zip_iterator):
+      listit, ov = limited_iterable(it, item_limit)
+      return FMT_ITER[syntax_highlighting] % this(listit, _ov=ov)
+    if _t in (range_iterator, longrange_iterator):
+      listit, ov = limited_iterable(it, item_limit)
+      return FMT_ITER[syntax_highlighting] % this(listit, _force_next_type=range, _ov=ov)
+    if _t == set_iterator:
+      listit, ov = limited_iterable(it, item_limit)
+      return FMT_ITER[syntax_highlighting] % this(listit, _force_next_type=set, _ov=ov)
+    if _t == tuple_iterator:
+      listit, ov = limited_iterable(it, item_limit)
+      return FMT_ITER[syntax_highlighting] % this(listit, _force_next_type=tuple, _ov=ov)
+    if _t == coroutine:
+      return FMT_BRACKETS[coroutine][syntax_highlighting] % (getattr_queue(it, name, '__name__'))
 
-    comma = f'{_F.COMMA},' if syntax_highlighting else ','
+    comma = f'{FMTC.COMMA},' if syntax_highlighting else ','
     if isinstance(it, Iterable):
-      itl, overflow = _limited_iterator(it, item_limit)
+      itl, overflow = limited_iterable(it, item_limit)
       if not able(len, it) or len(it) > 0:
         if isinstance(it, Mapping):
           inner = f'{comma}{enter or space}'.join(
             [
               indent
               + (
-                f'{k}{_F.COLON}:{_F._}{space}{v}' if syntax_highlighting else f'{k}:{space}{v}'
+                f'{k}{FMTC.COLON}:{FMTC._}{space}{v}' if syntax_highlighting else f'{k}:{space}{v}'
               ).replace('\n', f'{enter}{indent}')
               for k, v in {this(key): this(value) for key, value in it.items()}.items()
             ]
           ) + (comma if trailing_commas else '')
 
-          return (_F_BRACKETS[_t] if _t in _F_BRACKETS else _F_BRACKETS[None])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
+          return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[dict])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
         else:
           inner = f'{comma}{enter or space}'.join(
             [
               indent + x.replace('\n', f'\n{indent}')
               for x in [this(element) for element in itl]
-              + ([] if not overflow else [this(_OverflowClass(overflow))])
+              + (
+                []
+                if not (overflow if not kwargs.get('_ov') else kwargs.get('_ov'))
+                else [
+                  this(_OverflowClass(overflow if not kwargs.get('_ov') else kwargs.get('_ov')))
+                ]
+              )
             ]
-          ) + (comma if (trailing_commas or (isinstance(it, tuple) and len(it) == 1)) else '')
+          ) + (comma if (trailing_commas or (_t == tuple and len(it) == 1)) else '')
 
-          return (_F_BRACKETS[_t] if _t in _F_BRACKETS else _F_BRACKETS[None])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
+          return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
       else:
         if _t == set and not syntax_highlighting:
           return 'set()'
-        return (_F_BRACKETS[_t] if _t in _F_BRACKETS else _F_BRACKETS[None])[syntax_highlighting] % (comma if _t == set else '')  # fmt: skip
+        return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % (comma if _t == set else '')  # fmt: skip
 
-    return str(it)
+    return FMT_UNKNOWN[syntax_highlighting] % (
+      getattr_queue(
+        type(it),
+        name,
+        '__name__',
+        default=('<???>' if syntax_highlighting else '__unknown_object__'),
+      ),
+      repr(it),
+    )  # If no hardcoded patterns match, return a repred version of whatever it is
 
   globals()['fmt_iterable'] = _reset_return_wrapper(fmt_iterable)
+  # Done this way to trick the IDE code snippets since the deco forwards the *args, **kwargs to the decorated func anyway...
+  # If i were to @decorate the def fmt_iterable it'd replace the code snippets with the decorated function's code snippets.
+  # Or i'm a dumbass and there's a better way of doing it.. (<- probably this)
 
   def print_iterable(
     it: Iterable,
@@ -395,6 +470,7 @@ if True:  # \/ # fmt & print iterable
         force_no_indent: bool, Force the condition above (let_no_spaces), skip any conditions listed there, never add extra enters or indents even if it may make the result unreadable. This effectively makes `indent` or `let_no_indent` irrelevant. This also sets `trailing_commas` to False.
         force_no_spaces: bool, Force remove any extra spaces (not including the objects' values for example strings will still be displayed with spaces). It removes spaces for example after commas, colons, etc. This effectively enables `force_no_indent` thus making `indent` or `let_no_indent` irrelevant.
         force_complex_parenthesis: bool, Force parenthesis when displaying `complex` type for example `(3 + 1j)` instead of `3+1j`. This has no effect when syntax highlighting is turned off.
+        prefer_full_names: bool, whether or not to use the full names of objects if possible.
         **kwargs: Anything from there is passed in into the fmt_iterable call
     """
     result = fmt_iterable(it, *its, **kwargs)

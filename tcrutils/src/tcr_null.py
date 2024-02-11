@@ -30,3 +30,20 @@ NullType.__new__ = _new
 Null.__class__ = NullType
 
 assert (Null) is (Null.__class__())  # No sneaky sneakies with making two different Nulls
+
+
+class UniqueDefault:
+  """Used as a default parameter for the parameter named default (yeah i know that's uh... let's just see the example).
+
+  Example:
+  ```py
+  from tcrutils import UniqueDefault as RaiseError
+
+  def get_something(..., *, default: Any | RaiseError = RaiseError):
+  ... # Function implementation
+
+  # Nothing was found, falling to raising error or returning default value if such was specified.
+  if default is not RaiseError:
+    return default
+  raise KeyError("Unable to find something.")
+  """

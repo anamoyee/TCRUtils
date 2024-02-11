@@ -2,15 +2,13 @@ from collections.abc import Iterable
 from functools import partial
 from re import Match
 
-from ..src.tcr_console import console
-
 
 def _escaper(groups: Iterable[int], match: Match):
   s = ''
   for groupint in groups:
     group = match.group(abs(groupint))
     if groupint < 0:
-      group = console(type(group), repr(group))
+      group = (type(group), repr(group))
     s += group
 
 

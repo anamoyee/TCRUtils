@@ -35,11 +35,20 @@ from .src.tcr_F import F
 from .src.tcr_getch import getch
 from .src.tcr_input import insist
 from .src.tcr_int import hex, recursive_sum
-from .src.tcr_iterable import batched, bogo_sort, cut_at, shuffled, stalin_sort
+from .src.tcr_iterable import (
+  Or,
+  batched,
+  bogo_sort,
+  cut_at,
+  getattr_queue,
+  limited_iterable,
+  shuffled,
+  stalin_sort,
+)
 from .src.tcr_joke import christmas_tree, fizzbuzz, oddeven
 from .src.tcr_markdown import codeblock, uncodeblock
 from .src.tcr_misspellings import asert, trei
-from .src.tcr_null import Null
+from .src.tcr_null import Null, UniqueDefault
 from .src.tcr_other import intbool
 from .src.tcr_path import path
 from .src.tcr_print import fmt_iterable, print_block, print_iterable
@@ -52,6 +61,7 @@ from .src.tcr_timestr import timestr
 from .src.tcr_void import araiser, avoid, raiser, void
 
 # fmt: off
+
 __all__ = [
   "c", "color", "colour", "printc",     # color
   "console",                            # console
@@ -61,9 +71,10 @@ __all__ = [
   "extract_error", "extract_traceback", # extract_error
   "getch",                              # getch
   "batched", "cut_at", "shuffled",      # iterable
+  "limited_iterable", "getattr_queue", "Or",
   "codeblock", "uncodeblock",           # markdown
   "asert", "trei",                      # misspellings
-  "Null",                               # null
+  "Null", "UniqueDefault",              # null
   "commafy", "nth",                     # string
   "hex",                                # int
   "intbool",                            # other
