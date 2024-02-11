@@ -455,8 +455,28 @@ if True:  # \/ # Tests
   def test_getattr_queue():
     print(test_getattr_queue())
 
+  def test_language():
+    console((a := "Michael"), make_plural(a))
+    console((a := "Box"), make_plural(a))
+    console((a := "Bench"), make_plural(a))
+    console((a := "BenCH"), make_plural(a))
+    console((a := "BENCH"), make_plural(a))
+    console((a := "Wife"), make_plural(a))
+    console((a := "Wolf"), make_plural(a))
+    console((a := "Play"), make_plural(a))
+    console((a := "Cry"), make_plural(a))
+    console((a := "child"), make_plural(a))
+    console((a := "Child"), make_plural(a))
+    console((a := "CHILD"), make_plural(a))
+    console((a := "wharf"), make_plural(a))
+    console((a := "furry"), make_plural(a))
+    console((a := "furry"), make_plural(a))
+    print()
+    console((a := "furry"), apostrophe_s(a))
+    console((a := "mass"), apostrophe_s(a))
+
 if True:  # \/ # Test setup
-  for k, v in globals().copy().items():  # Decorate each test_... function with the @test decorator
+  for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
       globals()[k] = tcr.test(v)
 
@@ -474,17 +494,17 @@ if __name__ == '__main__':
   # test_iterable(batched_=True, cut_at_=False)
   # test_path()
   # test_ifys()
-  test_print_iterable(
-    print_iterable=console,
-    syntax_highlighting=1,
-    let_no_indent=1,
-    force_no_indent=0,
-    force_no_spaces=0,
-    force_complex_parenthesis=1,
-    item_limit=10,
-    let_no_inder_max_non_iterables=10,
-    let_no_inder_max_iterables=10,
-  )
+  # test_print_iterable(
+  #   print_iterable=console,
+  #   syntax_highlighting=1,
+  #   let_no_indent=1,
+  #   force_no_indent=0,
+  #   force_no_spaces=0,
+  #   force_complex_parenthesis=1,
+  #   item_limit=10,
+  #   let_no_inder_max_non_iterables=10,
+  #   let_no_inder_max_iterables=10,
+  # )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=False)
@@ -511,5 +531,5 @@ if __name__ == '__main__':
   # test_ntpath()
   # test_newdir2()
   # test_sdb()
-  # test_fmt_iterable(printhook=print, syntax_highlighting=True, trailing_commas=True, indentation=2, item_limit=5, int_formatter=tcr.hex)
+  # test_language()
   pass  # noqa: PIE790, RUF100

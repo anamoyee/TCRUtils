@@ -16,7 +16,7 @@ def hex(number: int, leading_zeroes=2, *, upper=True) -> str:
   return formatted_output
 
 
-def recursive_sum(it: Iterable):
+def recursive_sum(it: Iterable) -> int | float:
   s = 0
 
   for item in it.values() if isinstance(it, Mapping) else it:
