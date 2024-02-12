@@ -1,7 +1,7 @@
 import traceback
 
 
-def extract_error(e: Exception, pattern='%s: %s', *, raw=False):
+def extract_error(e: Exception, pattern='%s: %s', *, raw=False) -> tuple[str, str] | str:
   if callable(e):
     e = e()
   one = e.__class__.__name__

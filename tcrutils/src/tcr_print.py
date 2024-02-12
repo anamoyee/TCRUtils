@@ -30,6 +30,7 @@ from colored import attr, fg
 from .tcr_color import c
 from .tcr_compare import able
 from .tcr_constants import NEWLINE
+from .tcr_extract_error import extract_error
 from .tcr_int import hex as tcrhex
 from .tcr_iterable import Or, getattr_queue, limited_iterable
 from .tcr_null import Null
@@ -130,6 +131,7 @@ if True:  # \/ # fmt & print iterable
     BYTESTR_B  = fg('red')        + attr('bold')
     ITER_I     = fg('red_3b')     + attr('bold')
     SPECIAL    = fg('purple_1B')  + attr('bold')
+    EXCEPTION  = fg('red_3b')     + attr('bold')
 
   class FMT_LETTERS:
     b  = f'{FMTC.BYTESTR_B}b'
@@ -162,6 +164,9 @@ if True:  # \/ # fmt & print iterable
   FMT_ITER = ('iter(%s)', f'{FMT_LETTERS.i}%s')
   # (FMT_UNKNOWN[syntax_highlighting: bool] % (name, content)) -> attaches name and content to an unknown object
   FMT_UNKNOWN = ('%s(%s)', f'{FMTC.UNKNOWN}%s({FMTC._}%s{FMTC.UNKNOWN}){FMTC._}')
+  #
+  FMT_EXCEPTION = ("An exception occured while trying to display this item (%s).", f"{FMTC.EXCEPTION}An exception occured while trying to display this item ({FMTC.UNKNOWN}%s{FMTC.EXCEPTION}).{FMTC._}")
+
   # fmt: on
 
   class _OverflowClass:
@@ -228,6 +233,19 @@ if True:  # \/ # fmt & print iterable
         prefer_full_names: bool, whether or not to use the full names of objects if possible.
         let_no_inder_max_iterables: int = 1, (advanced) override the limit for iterables for the let_no_indent feature
         let_no_inder_max_non_iterables: int = 4, (advanced) override the limit for non-iterables for the let_no_indent feature
+
+    If no formatting is set for an object, it can be defined using the __tcr_display__ method.
+
+    ```py
+    class PrintableObj:
+      def __tcr_display__(self=None, **kwargs) -> str:
+        return 'tcr.fmt-able object' + ('\'s instance' if self is not None else '')
+
+    >>> fmt_iterable([PrintableObj])
+    'tcr.fmt-able object'
+    >>> fmt_iterable([PrintableObj()])
+    "tcr.fmt-able object's instance"
+    ```
     """
     if its:
       it = (it, *its)
@@ -276,22 +294,24 @@ if True:  # \/ # fmt & print iterable
     if force_no_indent < 0:
       force_no_indent += 1
 
-    this = partial(
-      fmt_iterable,
-      indentation=indentation,
-      item_limit=item_limit,
-      syntax_highlighting=syntax_highlighting,
-      trailing_commas=trailing_commas,
-      int_formatter=int_formatter,
-      let_no_indent=let_no_indent,
-      force_no_indent=force_no_indent,
-      force_no_spaces=force_no_spaces,
-      force_complex_parenthesis=force_complex_parenthesis,
-    )
+    thisdict = {
+      'indentation': indentation,
+      'item_limit': item_limit,
+      'syntax_highlighting': syntax_highlighting,
+      'trailing_commas': trailing_commas,
+      'int_formatter': int_formatter,
+      'let_no_indent': let_no_indent,
+      'force_no_indent': force_no_indent,
+      'force_no_spaces': force_no_spaces,
+      'force_complex_parenthesis': force_complex_parenthesis,
+      'prefer_full_names': prefer_full_names,
+    }
     if a := kwargs.get('let_no_inder_max_iterables'):
-      this = partial(this, let_no_inder_max_iterables=a)
+      thisdict['let_no_inder_max_iterables'] = a
     if a := kwargs.get('let_no_inder_max_non_iterables'):
-      this = partial(this, let_no_inder_max_non_iterables=a)
+      thisdict['let_no_inder_max_non_iterables'] = a
+
+    this = partial(fmt_iterable, **thisdict)
 
     if isinstance(it, _OverflowClass):
       return (
@@ -410,13 +430,21 @@ if True:  # \/ # fmt & print iterable
           return 'set()'
         return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % (comma if _t == set else '')  # fmt: skip
 
+    queue_name = getattr_queue(
+      type(it),
+      name,
+      '__name__',
+      default=('<???>' if syntax_highlighting else '__unknown_object__'),
+    )
+
+    if hasattr(it, '__tcr_display__'):
+      try:
+        return it.__tcr_display__(**thisdict)
+      except Exception as e:
+        return FMT_EXCEPTION[syntax_highlighting] % f"{queue_name}, {extract_error(e, raw=True)[0]}"
+
     return FMT_UNKNOWN[syntax_highlighting] % (
-      getattr_queue(
-        type(it),
-        name,
-        '__name__',
-        default=('<???>' if syntax_highlighting else '__unknown_object__'),
-      ),
+      queue_name,
       repr(it),
     )  # If no hardcoded patterns match, return a repred version of whatever it is
 

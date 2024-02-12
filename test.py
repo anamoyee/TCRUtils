@@ -250,6 +250,12 @@ if True:  # \/ # Tests
     print_iterable(range(10), **kwargs)
     print_iterable([['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'h', 'i'], ['j', 'k', 'l']], **kwargs)
 
+    class PrintableObj:
+      def __tcr_display__(self=None, **kwargs) -> str:
+        return 'tcr.fmt-able object' + ('\'s instance' if self is not None else '')
+
+    print_iterable([PrintableObj])
+    print_iterable([PrintableObj()])
 
   def test_color():
     printc(c("Red") + "UwU")
@@ -498,17 +504,18 @@ if __name__ == '__main__':
   # test_iterable(batched_=True, cut_at_=False)
   # test_path()
   # test_ifys()
-  # test_print_iterable(
-  #   print_iterable=console,
-  #   syntax_highlighting=1,
-  #   let_no_indent=1,
-  #   force_no_indent=0,
-  #   force_no_spaces=0,
-  #   force_complex_parenthesis=1,
-  #   item_limit=10,
-  #   let_no_inder_max_non_iterables=10,
-  #   let_no_inder_max_iterables=10,
-  # )
+  test_print_iterable(
+    print_iterable=console,
+    syntax_highlighting=1,
+    let_no_indent=1,
+    force_no_indent=0,
+    force_no_spaces=0,
+    force_complex_parenthesis=1,
+    item_limit=10,
+    # let_no_inder_max_non_iterables=10,
+    # let_no_inder_max_iterables=10,
+    prefer_full_names=0,
+  )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=False)
@@ -536,5 +543,5 @@ if __name__ == '__main__':
   # test_newdir2()
   # test_sdb()
   # test_language()
-  test_float2int()
+  # test_float2int()
   pass  # noqa: PIE790, RUF100
