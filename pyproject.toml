@@ -6,7 +6,7 @@ indent-style = "space"
 
 [tool.poetry]
 name = "tcrutils"
-version = "0.0.92"
+version = "0.0.94"
 description = "Useful stuff for TCR projects!"
 authors = ["TheCreatorrrr"]
 license = "GPL-3.0"

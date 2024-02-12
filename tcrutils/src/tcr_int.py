@@ -23,3 +23,8 @@ def recursive_sum(it: Iterable) -> int | float:
     s = s + recursive_sum(item) if isinstance(item, Iterable) else s + item
 
   return s
+
+def float2int(n: float) -> float | int:
+  if round(n) == n:
+    return int(n)
+  return float(n)

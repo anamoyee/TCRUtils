@@ -475,6 +475,10 @@ if True:  # \/ # Tests
     console((a := "furry"), apostrophe_s(a))
     console((a := "mass"), apostrophe_s(a))
 
+  def test_float2int():
+    console(float2int(10.2))
+    console(float2int(10))
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -532,4 +536,5 @@ if __name__ == '__main__':
   # test_newdir2()
   # test_sdb()
   # test_language()
+  test_float2int()
   pass  # noqa: PIE790, RUF100

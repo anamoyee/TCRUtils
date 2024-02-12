@@ -34,7 +34,7 @@ from .src.tcr_extract_error import extract_error, extract_traceback
 from .src.tcr_F import F
 from .src.tcr_getch import getch
 from .src.tcr_input import insist
-from .src.tcr_int import hex, recursive_sum
+from .src.tcr_int import float2int, hex, recursive_sum
 from .src.tcr_iterable import (
     Or,
     batched,
@@ -90,10 +90,10 @@ __all__ = [
 
   "commafy",                            # string
 
-  "nth", "make_plural",             # language
+  "nth", "make_plural",                 # language
   "apostrophe_s",
 
-  "hex",                                # int
+  "hex", "float2int",                   # int
 
   "intbool",                            # other
 
