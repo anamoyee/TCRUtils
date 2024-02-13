@@ -41,6 +41,8 @@ from .src.tcr_iterable import (
     bogo_sort,
     cut_at,
     getattr_queue,
+    getmanyattrs,
+    hasmanyattrs,
     limited_iterable,
     shuffled,
     stalin_sort,
@@ -80,7 +82,7 @@ __all__ = [
 
   "batched", "cut_at", "shuffled",      # iterable
   "limited_iterable", "getattr_queue",
-  "Or",
+  "Or", "hasmanyattrs", "getmanyattrs",
 
   "codeblock", "uncodeblock",           # markdown
 

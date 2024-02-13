@@ -423,7 +423,30 @@ if True:  # \/ # Tests
       directory = p.Path(__file__).parent / 'test_db'
 
     db = DB("0")
+    db.clear()
 
+    console(db)
+
+    db['OwO'] = 'UwU'
+    console(db)
+
+    del db['OwO']
+    console(db)
+
+    db.setdefault("a", "A")
+    console(db)
+    db.setdefault("b", "B")
+    db.setdefault("c", "C")
+    db.setdefault("d", "D")
+    console(db)
+
+    console(db.pop('a'))
+    console(db)
+    console(db.popitem())
+    console(db)
+    console(db.popitem())
+    console(db)
+    console(db.popitem())
     console(db)
 
   def test_fmt_iterable(*, printhook=print, **kwargs):
@@ -485,6 +508,15 @@ if True:  # \/ # Tests
     console(float2int(10.2))
     console(float2int(10))
 
+  def test_manyattrs():
+    class Cld:
+      attr1 = {}
+
+    cld = Cld()
+
+    console(hasmanyattrs(cld, *"attr1.clear".split('.')))
+    console(getmanyattrs(cld, *"attr1.clear".split('.')))
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -504,18 +536,18 @@ if __name__ == '__main__':
   # test_iterable(batched_=True, cut_at_=False)
   # test_path()
   # test_ifys()
-  test_print_iterable(
-    print_iterable=console,
-    syntax_highlighting=1,
-    let_no_indent=1,
-    force_no_indent=0,
-    force_no_spaces=0,
-    force_complex_parenthesis=1,
-    item_limit=10,
-    # let_no_inder_max_non_iterables=10,
-    # let_no_inder_max_iterables=10,
-    prefer_full_names=0,
-  )
+  # test_print_iterable(
+  #   print_iterable=console,
+  #   syntax_highlighting=1,
+  #   let_no_indent=1,
+  #   force_no_indent=0,
+  #   force_no_spaces=0,
+  #   force_complex_parenthesis=1,
+  #   item_limit=10,
+  #   # let_no_inder_max_non_iterables=10,
+  #   # let_no_inder_max_iterables=10,
+  #   prefer_full_names=0,
+  # )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=False)
@@ -544,4 +576,5 @@ if __name__ == '__main__':
   # test_sdb()
   # test_language()
   # test_float2int()
+  # test_manyattrs()
   pass  # noqa: PIE790, RUF100

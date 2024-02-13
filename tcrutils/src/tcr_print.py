@@ -153,6 +153,7 @@ if True:  # \/ # fmt & print iterable
     set:           ('{%s}',            f'{FMTC.BRACKET}{{{FMTC._}%s{FMTC.BRACKET}}}{FMTC._}'),
     frozenset:     ('frozenset({%s})', f'{FMT_LETTERS.F}{FMTC.BRACKET}{{{FMTC._}%s{FMTC.BRACKET}}}{FMTC._}'),
     dict:          ('{%s}',            f'{FMTC.BRACKET}{{{FMTC._}%s{FMTC.BRACKET}}}{FMTC._}'),
+    Mapping:       ('{%s}',            f'{FMTC.BRACKET}{{{FMTC._}%s{FMTC.BRACKET}}}{FMTC._}'),
     tuple:         ('(%s)',            f'{FMTC.BRACKET}({FMTC._}%s{FMTC.BRACKET}){FMTC._}'),
     GeneratorType: ('[%s]',            f'{FMTC.BRACKET}<{FMTC._}%s{FMTC.BRACKET}>{FMTC._}'),
     range:         ('range([%s])',     f'{FMTC.BRACKET}<{FMTC._}%s{FMTC.BRACKET}>{FMTC._}'),
@@ -329,6 +330,15 @@ if True:  # \/ # fmt & print iterable
       return f'{FMTC.FALSE}{it}{FMTC._}' if syntax_highlighting else str(it)
 
     _t = kwargs.get('_force_next_type') or type(it)
+
+    if not kwargs.get('_force_next_type'):
+      itsmro = getattr_queue(it, '__mro__', '__class__.__mro__', default=())
+      # It's-a me mro
+
+      for item in itsmro:
+        if item in FMT_BRACKETS:
+          _t = item
+          break
 
     if _t == int:
       if int_formatter:

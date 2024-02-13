@@ -150,6 +150,25 @@ def limited_iterable(it: Iterable | Iterator, limit: int) -> tuple[list, int]:
   return list_, 0
 
 
+def hasmanyattrs(obj, attr: str, *attrs: str) -> bool:
+  attrs = (attr, *attrs)
+
+  for attr in attrs:
+    if not hasattr(obj, attr):
+      return False
+
+    obj = getattr(obj, attr)
+
+  return True
+
+def getmanyattrs(obj, attr: str, *attrs: str) -> Any:
+  attrs = (attr, *attrs)
+
+  for attr in attrs:
+    obj = getattr(obj, attr)
+
+  return obj
+
 def getattr_queue(
   obj: object, /, *queue: str, return_as_str: bool = False, default: Any | RaiseError = RaiseError
 ):
@@ -170,11 +189,11 @@ def getattr_queue(
   if not queue:
     raise ValueError('queue cannot be empty.')
   for name in queue:
-    if hasattr(obj, name):
+    if hasmanyattrs(obj, *name.split('.')):
       if return_as_str:
         return name
       else:
-        return getattr(obj, name)
+        return getmanyattrs(obj, *name.split('.'))
   if default is not RaiseError:
     return default
   raise KeyError('Unable to find any attrs from queue in obj.')

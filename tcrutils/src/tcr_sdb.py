@@ -69,7 +69,8 @@ class ShelveDB(dict):
 
     if self.__directory.is_file():
       raise NotADirectoryError(
-        "Provide a path to a directory or a nonexistent path (a directory will be created if it doesn't exist)."
+        "Provide a path to a directory or a nonexistent path "
+        "(a directory will be created if it doesn't exist)."
       )
 
     self.__directory.mkdir(exist_ok=True, parents=True)
@@ -81,7 +82,9 @@ class ShelveDB(dict):
       raise ValueError(f'alnum_id must not be any of theese: {", ".join(DISALLOWED_SEQUENCES)}')
 
     self.alnum_id = str(alnum_id)
-    self.s = shelve.open(self.__directory / self.alnum_id)
+    alnum_dirpath = self.__directory / self.alnum_id
+    alnum_dirpath.mkdir(exist_ok=True)
+    self.s = shelve.open(alnum_dirpath / self.alnum_id)
 
     super().__init__(self.s)
 
@@ -121,3 +124,21 @@ class ShelveDB(dict):
   def copy(self) -> dict:
     """Relinquishes the database connection and returns the underlying's dict copy."""
     return super().copy()
+
+  def pop(self, *args, **kwargs) -> Any:
+    super().pop(*args, **kwargs)
+    res = self.s.pop(*args, **kwargs)
+    self.s.sync()
+    return res
+
+  def popitem(self) -> tuple[Any, Any]:
+    res = self.s.popitem()
+    super().pop(res[0])
+    self.s.sync()
+    return res
+
+  def setdefault(self, key, default=None):
+    super().setdefault(key, default)
+    res = self.s.setdefault(key, default)
+    self.s.sync()
+    return res
