@@ -1,6 +1,6 @@
 # fmt: off
-if __import__('sys').version_info[:2] != (3, 11):
-  __import__('os').system(r'"C:\Users\TheCreatorrrr\AppData\Local\Programs\Python\Python311\python.exe" test.py')
+if __import__('sys').version_info[:2] != (3, 12):
+  __import__('os').system(r'"C:\Users\TheCreatorrrr\AppData\Local\Programs\Python\Python312\python.exe" test.py')
   exit()
 
 
@@ -18,6 +18,7 @@ if True:  # \/ # Imports
   from tcrutils.discord import permissions as perms
 
 console.debug(sorted(a := [x for x in globals() if not x.startswith('_')]), len(a)); del a
+console.log(f"{tcr.c}Running on Python %s.%s" % sys.version_info[:2])
 
 if True:  # \/ # Tests
 

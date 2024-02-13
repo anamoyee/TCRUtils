@@ -1,4 +1,4 @@
-from functools import cache, partial, wraps
+from functools import partial, wraps
 from types import GeneratorType
 from typing import TypeAlias
 from warnings import warn
