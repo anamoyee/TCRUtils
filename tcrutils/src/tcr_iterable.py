@@ -14,9 +14,14 @@ def batched(
   *,
   back_to_front: bool = False,
 ) -> list:
-  """### Poor man's `itertools.batched()` (on Py3.11).
+  """### ~~Poor man's `itertools.batched()` (on Py3.11)~~.
 
-  Returns a list of splits of the original `it` Iterable that was passed in, split every `n` items. Last group may be smaller than `n` items if the source was exhausted
+  # **DEPRECATED** - may be removed in the future:
+  # From python 3.12 onward use itertools.batched()
+
+  Left in due to my familiarity and i may keep using it...
+
+  Return a list of splits of the original `it` Iterable that was passed in, split every `n` items. Last group may be smaller than `n` items if the source was exhausted
   `back_to_front`: makes the items pile up in the back and now the first item is the one to have less than n items if there's not enough to pack it with. For example:
   - `batched("1234567890", n=3)                    ` returns `["123", "456", "789", "0"]`
   - `batched("1234567890", n=3, back_to_front=True)` returns `["1", "234", "567", "890"]`
@@ -24,7 +29,6 @@ def batched(
   if back_to_front:
     return [x[::-1] for x in batched(it[::-1], n=n, back_to_front=False)[::-1]]
   return [it[i : i + n] for i in range(0, len(it), n)]
-
 
 def cut_at(
   it: str | Iterable,

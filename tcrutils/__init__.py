@@ -115,6 +115,8 @@ __all__ = [
 
   "DiscordLimits",                      # Discord
 
+  "ShelveDB",                           # sdb
+
   "BACKSLASH",                          # constants
   "NEWLINE",
   "CARR_RET",
