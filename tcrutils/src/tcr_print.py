@@ -335,10 +335,15 @@ if True:  # \/ # fmt & print iterable
       itsmro = getattr_queue(it, '__mro__', '__class__.__mro__', default=())
       # It's-a me mro
 
-      for item in itsmro:
-        if item in FMT_BRACKETS:
-          _t = item
-          break
+      if str in itsmro:
+        _t = str # Things displayed as ['a', 'b', 'c', 'd'] if they inherited from str
+      elif bytes in itsmro:
+        _t = bytes
+      else:
+        for item in itsmro:
+          if item in FMT_BRACKETS:
+            _t = item
+            break
 
     if _t == int:
       if int_formatter:
