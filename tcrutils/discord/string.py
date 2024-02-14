@@ -5,14 +5,16 @@ from typing import Literal, NoReturn
 
 from ..src.tcr_compare import able
 from ..src.tcr_constants import BACKTICKS
+from ..src.tcr_null import UniqueDefault as RaiseError
 from .validate import is_snowflake
 
 
-def get_token(filename: str = 'TOKEN.txt', depth=2, *, dont_strip=False) -> None | str:
+def get_token(filename: str = 'TOKEN.txt', depth=2, *, dont_strip=False, default=RaiseError) -> None | str:
   """Get the nearest file with name=filename (default 'TOKEN.txt') and return its stripped contents (unless specified not to strip with `dont_strip=True`).
 
   This algoritm searches for files named TOKEN.txt (or custom name) in the current directory, then the parent directory, then the parent of parent and so on.
   The search continues up to depth `depth` (depth=0: current directory only, depth=1, current directory and its parent, etc.). If multiple files are found, return the closest one to the current directory.
+  If no file is found, an error will be raised unless `default` is provided.
   """
 
   def rexit(x):
@@ -20,8 +22,6 @@ def get_token(filename: str = 'TOKEN.txt', depth=2, *, dont_strip=False) -> None
     return x
 
   origin_path = p.Path.cwd().absolute()
-
-  print(origin_path)
 
   os.chdir(origin_path)
 
@@ -35,6 +35,10 @@ def get_token(filename: str = 'TOKEN.txt', depth=2, *, dont_strip=False) -> None
         t = t.strip()
       return rexit(t)
 
+  if default is not RaiseError:
+    return default
+
+  raise FileNotFoundError(f"Unable to locate token file: {filename}")
 
 class IFYs:
   """Features related to turning IDs into user/channel/command/etc. mentions, emojis, and more if i can think of any.
