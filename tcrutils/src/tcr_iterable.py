@@ -8,12 +8,12 @@ from .tcr_null import UniqueDefault as RaiseError
 from .tcr_regex import RegexPreset
 
 
-def batched(
-  it: str | Iterable,
+def batched[T](
+  it: Iterable[T],
   n: int,
   *,
   back_to_front: bool = False,
-) -> list:
+) -> list[tuple[T, ...]]:
   """### ~~Poor man's `itertools.batched()` (on Py3.11)~~.
 
   # **DEPRECATED** - may be removed in the future:
@@ -29,6 +29,7 @@ def batched(
   if back_to_front:
     return [x[::-1] for x in batched(it[::-1], n=n, back_to_front=False)[::-1]]
   return [it[i : i + n] for i in range(0, len(it), n)]
+
 
 def cut_at(
   it: str | Iterable,
@@ -77,7 +78,7 @@ def cut_at(
   return ''
 
 
-def bogo_sort(arr: list):
+def bogo_sort[T](arr: list[T]) -> list[T]:
   if 0 <= len(arr) <= 1:
     return arr
   while True:
@@ -89,7 +90,7 @@ def bogo_sort(arr: list):
       return arr
 
 
-def stalin_sort(arr):
+def stalin_sort[T](arr: Iterable[T]) -> list[T]:
   if len(arr) <= 1:
     return arr
 
@@ -102,12 +103,12 @@ def stalin_sort(arr):
   return sorted_arr
 
 
-def shuffled(arr: MutableSequence) -> MutableSequence:
+def shuffled[T](arr: MutableSequence[T]) -> MutableSequence[T]:
   shuffle(arr)
   return arr
 
 
-def limited_iterable(it: Iterable | Iterator, limit: int) -> tuple[list, int]:
+def limited_iterable[T](it: Iterable[T] | Iterator[T], limit: int) -> tuple[list[T], int]:
   """## Return tuple[list, int] of (limited_iterable, overflow_from_limit).
 
   ### This is different from it[:limit] because it works with iterators
@@ -165,6 +166,7 @@ def hasmanyattrs(obj, attr: str, *attrs: str) -> bool:
 
   return True
 
+
 def getmanyattrs(obj, attr: str, *attrs: str) -> Any:
   attrs = (attr, *attrs)
 
@@ -173,8 +175,13 @@ def getmanyattrs(obj, attr: str, *attrs: str) -> Any:
 
   return obj
 
+
 def getattr_queue(
-  obj: object, /, *queue: str, return_as_str: bool = False, default: Any | RaiseError = RaiseError
+  obj: object,
+  /,
+  *queue: str,
+  return_as_str: bool = False,
+  default: Any | RaiseError = RaiseError,
 ):
   """## Try to access `obj`'s attrs in order.
 
@@ -203,7 +210,12 @@ def getattr_queue(
   raise KeyError('Unable to find any attrs from queue in obj.')
 
 
-def Or(arg: Any, *args: Any, none: Any = None):
+def Or[T, TArgs](arg: T, *args: TArgs, none: Any = None) -> T | TArgs:
+  """### Returns the first element of the tuple (arg, *args) that does not equal the supplied (`none`) variable, by default None.
+
+  This is different from or chaining because this does not check for truthy values but rather non-none values.\\
+  Keep in mind, the passed in none may be unrelateed to built-in None however that is its default.
+  """
   args = (arg, *args)
 
   for a in args:

@@ -1,6 +1,5 @@
 from functools import partial, wraps
 from types import GeneratorType
-from typing import TypeAlias
 from warnings import warn
 
 from _collections_abc import (
@@ -34,23 +33,6 @@ from .tcr_extract_error import extract_error
 from .tcr_int import hex as tcrhex
 from .tcr_iterable import Or, getattr_queue, limited_iterable
 from .tcr_null import Null
-
-# fmt: off
-BRACKET_COLOR    = "Cyan"
-
-COLON_COLOR      = "Orange\\_1"
-COMMA_COLOR      = "Dark\\_gray"
-
-B_COLOR          = "Red" # b''
-
-TRUE_COLOR       = "Green"
-FALSE_COLOR      = "Red"
-
-NULL_COLOR       = "Dark\\_gray"
-NONE_COLOR       = "Light\\_gray"
-
-MORE_ITEMS_COLOR = "Purple\\_1B"
-# fmt: on
 
 
 def print_block(
@@ -165,7 +147,7 @@ if True:  # \/ # fmt & print iterable
   FMT_ITER = ('iter(%s)', f'{FMT_LETTERS.i}%s')
   # (FMT_UNKNOWN[syntax_highlighting: bool] % (name, content)) -> attaches name and content to an unknown object
   FMT_UNKNOWN = ('%s(%s)', f'{FMTC.UNKNOWN}%s({FMTC._}%s{FMTC.UNKNOWN}){FMTC._}')
-  #
+  # (FMT_EXCEPTION[syntax_highlighting: bool] % getattr_queue(obj, '__name__', '__class__.__name__') -> Self explainatory
   FMT_EXCEPTION = ("An exception occured while trying to display this item (%s).", f"{FMTC.EXCEPTION}An exception occured while trying to display this item ({FMTC.UNKNOWN}%s{FMTC.EXCEPTION}).{FMTC._}")
 
   # fmt: on
@@ -336,7 +318,7 @@ if True:  # \/ # fmt & print iterable
       # It's-a me mro
 
       if str in itsmro:
-        _t = str # Things displayed as ['a', 'b', 'c', 'd'] if they inherited from str
+        _t = str  # Things displayed as ['a', 'b', 'c', 'd'] if they inherited from str
       elif bytes in itsmro:
         _t = bytes
       else:
@@ -449,6 +431,7 @@ if True:  # \/ # fmt & print iterable
       type(it),
       name,
       '__name__',
+      '__class__.__name__',
       default=('<???>' if syntax_highlighting else '__unknown_object__'),
     )
 
@@ -456,7 +439,7 @@ if True:  # \/ # fmt & print iterable
       try:
         return it.__tcr_display__(**thisdict)
       except Exception as e:
-        return FMT_EXCEPTION[syntax_highlighting] % f"{queue_name}, {extract_error(e, raw=True)[0]}"
+        return FMT_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
 
     return FMT_UNKNOWN[syntax_highlighting] % (
       queue_name,

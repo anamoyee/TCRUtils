@@ -1,7 +1,8 @@
-from ..src.tcr_compare import able
+class Snowflake(int):
+  """Snowflake is an integer in `range((1 << 64) - 1)`."""
 
 
-def is_snowflake(snowflake: int | str, *, allow_string=True) -> bool:
+def is_snowflake(snowflake: Snowflake | int | str, *, allow_string=True) -> bool:
   if not isinstance(snowflake, ((int | str) if allow_string else int)):
     return False
 

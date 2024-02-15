@@ -51,9 +51,9 @@ class ShelveDB(dict):
   ```
 
   Raises:
-    - ValueError: provided alnum_id is invalid
-    - RuntimeError: You did not or incorrectly set up the class declaration (shown above)
-    - NotADirectoryError: The directory path you provided is a file
+    - ValueError: provided alnum_id is invalid.
+    - RuntimeError: You did not or incorrectly set up the class declaration (shown above).
+    - NotADirectoryError: The directory path you provided points to a file, not a directory or nothing.
   """
 
   directory: str | p.Path | None = None
@@ -69,7 +69,7 @@ class ShelveDB(dict):
 
     if self.__directory.is_file():
       raise NotADirectoryError(
-        "Provide a path to a directory or a nonexistent path "
+        'Provide a path to a directory or a nonexistent path '
         "(a directory will be created if it doesn't exist)."
       )
 

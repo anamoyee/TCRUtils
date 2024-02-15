@@ -6,10 +6,12 @@ from typing import Literal, NoReturn
 from ..src.tcr_compare import able
 from ..src.tcr_constants import BACKTICKS
 from ..src.tcr_null import UniqueDefault as RaiseError
-from .validate import is_snowflake
+from .snowflake import is_snowflake
 
 
-def get_token(filename: str = 'TOKEN.txt', depth=2, *, dont_strip=False, default=RaiseError) -> None | str:
+def get_token(
+  filename: str = 'TOKEN.txt', depth=2, *, dont_strip=False, default=RaiseError
+) -> None | str:
   """Get the nearest file with name=filename (default 'TOKEN.txt') and return its stripped contents (unless specified not to strip with `dont_strip=True`).
 
   This algoritm searches for files named TOKEN.txt (or custom name) in the current directory, then the parent directory, then the parent of parent and so on.
@@ -38,7 +40,8 @@ def get_token(filename: str = 'TOKEN.txt', depth=2, *, dont_strip=False, default
   if default is not RaiseError:
     return default
 
-  raise FileNotFoundError(f"Unable to locate token file: {filename}")
+  raise FileNotFoundError(f'Unable to locate token file: {filename}')
+
 
 class IFYs:
   """Features related to turning IDs into user/channel/command/etc. mentions, emojis, and more if i can think of any.

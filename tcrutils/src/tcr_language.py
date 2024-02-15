@@ -16,6 +16,7 @@ def apostrophe_s(word: str):
     return word + "'"
   return word + "'s"
 
+
 def _caps_deco(func):
   @wraps(func)
   def wrapper(word: str, *args, **kwargs):
@@ -25,7 +26,9 @@ def _caps_deco(func):
     if word[0].isupper() and word[1:].islower():
       return result[0].upper() + result[1:].lower()
     return result
+
   return wrapper
+
 
 irregular_plurals = {
   'child': 'children',
@@ -61,6 +64,7 @@ irregular_plurals = {
   'roof': 'roofs',
 }
 
+
 def make_plural(word: str, n: int = 2) -> str:
   """### Tries its best to convert the word to plural if n != 1 else return the original word."""
   if n == 1:
@@ -68,16 +72,18 @@ def make_plural(word: str, n: int = 2) -> str:
   if word.lower() in irregular_plurals:
     return irregular_plurals[word.lower()]
   if word.lower().endswith(('s', 'x', 'z', 'ch', 'sh', 'o')):
-    return word + "es"
-  if word.lower().endswith("y") and word[-2] not in "aeiou":
-    return word[:-1] + "ies"
-  if word.lower().endswith("f"):
-    return word[:-1] + "ves"
-  if word.lower().endswith("fe"):
-    return word[:-2] + "ves"
-  return word + "s"
+    return word + 'es'
+  if word.lower().endswith('y') and word[-2] not in 'aeiou':
+    return word[:-1] + 'ies'
+  if word.lower().endswith('f'):
+    return word[:-1] + 'ves'
+  if word.lower().endswith('fe'):
+    return word[:-2] + 'ves'
+  return word + 's'
+
 
 globals()['make_plural'] = _caps_deco(make_plural)
+
 
 def nth(n: int):
   """### Return a string containing original number + numeric suffix (st, nd, rd, th).

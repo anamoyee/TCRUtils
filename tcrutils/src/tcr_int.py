@@ -24,6 +24,7 @@ def recursive_sum(it: Iterable) -> int | float:
 
   return s
 
+
 def float2int(n: float) -> float | int:
   if round(n) == n:
     return int(n)
