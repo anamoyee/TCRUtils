@@ -6,7 +6,7 @@ from typing import Literal, NoReturn
 from ..src.tcr_compare import able
 from ..src.tcr_constants import BACKTICKS
 from ..src.tcr_null import UniqueDefault as RaiseError
-from .snowflake import is_snowflake
+from .tcrd_snowflake import is_snowflake
 
 
 def get_token(

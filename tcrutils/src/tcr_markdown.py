@@ -1,6 +1,6 @@
 from collections.abc import Callable
 
-from ..discord.limits import DiscordLimits
+from ..discord.tcrd_limits import DiscordLimits
 from .tcr_constants import BACKTICKS, NEWLINE
 from .tcr_iterable import cut_at
 

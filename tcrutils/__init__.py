@@ -18,9 +18,9 @@ Joke functions and other barely useful crap is not included in star imports.
 """
 
 from . import discord, src
-from .discord.embeds import embed
-from .discord.limits import DiscordLimits
-from .discord.string import get_token
+from .discord.tcrd_embeds import embed
+from .discord.tcrd_limits import DiscordLimits
+from .discord.tcrd_string import get_token
 from .src.tcr_color import c, color, colour, printc
 from .src.tcr_compare import able
 from .src.tcr_console import breakpoint, console
@@ -36,16 +36,16 @@ from .src.tcr_getch import getch
 from .src.tcr_input import insist
 from .src.tcr_int import float2int, hex, recursive_sum
 from .src.tcr_iterable import (
-  Or,
-  batched,
-  bogo_sort,
-  cut_at,
-  getattr_queue,
-  getmanyattrs,
-  hasmanyattrs,
-  limited_iterable,
-  shuffled,
-  stalin_sort,
+    Or,
+    batched,
+    bogo_sort,
+    cut_at,
+    getattr_queue,
+    getmanyattrs,
+    hasmanyattrs,
+    limited_iterable,
+    shuffled,
+    stalin_sort,
 )
 from .src.tcr_joke import christmas_tree, fizzbuzz, oddeven
 from .src.tcr_language import apostrophe_s, make_plural, nth
