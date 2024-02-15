@@ -154,7 +154,7 @@ if True:  # \/ # Tests
       return ':3'
     console.debug(f'{a()!r}')
 
-  @tcr.timeit
+  #@tcr.timeit
   def test_print_iterable(print_iterable=print_iterable, **kwargs):
     mappingproxy = (type.__dict__)
     print_iterable(mappingproxy, **kwargs)
@@ -531,7 +531,15 @@ if True:  # \/ # Tests
     tcr.alert("Running in testmode")
     tcr.alert("Running in testmode", printhook=console.log)
 
-if True:  # \/ # Test setup
+  def test_uptime():
+    uptime = tcr.Uptime()
+    console(str(uptime))
+
+    [test_print_iterable(print_iterable=tcr.void) for _ in range(300000)]
+
+    console(str(uptime))
+
+if False:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
       globals()[k] = tcr.test(v)
@@ -591,5 +599,6 @@ if __name__ == '__main__':
   # test_language()
   # test_float2int()
   # test_manyattrs()
-  test_alert()
+  # test_alert()
+  test_uptime()
   pass  # noqa: PIE790, RUF100

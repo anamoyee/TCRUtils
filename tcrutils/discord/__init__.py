@@ -12,7 +12,8 @@ __all__ = [
   'DiscordPermission',
   'discord_permissions',
   'tcrd_embeds',
-  "is_snowflake", "Snowflake",
-  "embed",
+  'is_snowflake',
+  'Snowflake',
+  'embed',
   'get_token',
 ]

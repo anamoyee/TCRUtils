@@ -61,6 +61,7 @@ from .src.tcr_sdb import ShelveDB
 from .src.tcr_string import commafy
 from .src.tcr_terminal import terminal
 from .src.tcr_timestr import timestr
+from .src.tcr_uptime import Uptime
 from .src.tcr_void import araiser, avoid, raiser, void
 
 # fmt: off

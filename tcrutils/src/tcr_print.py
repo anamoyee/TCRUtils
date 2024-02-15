@@ -518,11 +518,11 @@ if True:  # \/ # fmt & print iterable
 
 def alert(s: str, *, printhook: Callable[[str], None] = print, raw=False) -> None:
   text = ''.join(
-      [
-        f'{fg('black') + bg('red') + attr('bold') if i % 2 == 0 else fg('white') + bg('yellow')}{x}'
-        for i, x in enumerate(s)
-      ]
-    ) + attr(0)
+    [
+      f'{fg('black') + bg('red') + attr('bold') if i % 2 == 0 else fg('white') + bg('yellow')}{x}'
+      for i, x in enumerate(s)
+    ]
+  ) + attr(0)
 
   if raw:
     return text
