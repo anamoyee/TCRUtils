@@ -54,7 +54,7 @@ from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null, UniqueDefault
 from .src.tcr_other import intbool
 from .src.tcr_path import path
-from .src.tcr_print import fmt_iterable, print_block, print_iterable
+from .src.tcr_print import alert, fmt_iterable, print_block, print_iterable
 from .src.tcr_regex import RegexPreset
 from .src.tcr_run import RunSACAble, run_sac
 from .src.tcr_sdb import ShelveDB

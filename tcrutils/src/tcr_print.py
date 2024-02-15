@@ -24,7 +24,7 @@ from _collections_abc import (
   tuple_iterator,
   zip_iterator,
 )
-from colored import attr, fg
+from colored import attr, bg, fg
 
 from .tcr_color import c
 from .tcr_compare import able
@@ -514,3 +514,17 @@ if True:  # \/ # fmt & print iterable
       )
       return result
     printhook(result)
+
+
+def alert(s: str, *, printhook: Callable[[str], None] = print, raw=False) -> None:
+  text = ''.join(
+      [
+        f'{fg('black') + bg('red') + attr('bold') if i % 2 == 0 else fg('white') + bg('yellow')}{x}'
+        for i, x in enumerate(s)
+      ]
+    ) + attr(0)
+
+  if raw:
+    return text
+
+  printhook(text)

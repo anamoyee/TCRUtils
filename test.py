@@ -527,6 +527,10 @@ if True:  # \/ # Tests
     console(hasmanyattrs(cld, *"attr1.clear".split('.')))
     console(getmanyattrs(cld, *"attr1.clear".split('.')))
 
+  def test_alert():
+    tcr.alert("Running in testmode")
+    tcr.alert("Running in testmode", printhook=console.log)
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -587,4 +591,5 @@ if __name__ == '__main__':
   # test_language()
   # test_float2int()
   # test_manyattrs()
+  test_alert()
   pass  # noqa: PIE790, RUF100
