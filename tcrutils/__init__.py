@@ -21,6 +21,8 @@ from . import discord, src
 from .discord.tcrd_embeds import embed
 from .discord.tcrd_limits import DiscordLimits
 from .discord.tcrd_string import get_token
+from .src import tcr_types as tcrtypes
+from .src import tcr_types as types
 from .src.tcr_class import Singleton
 from .src.tcr_color import c, color, colour, printc
 from .src.tcr_compare import able
@@ -112,6 +114,8 @@ __all__ = [
   "ShelveDB",                           # sdb
 
   "Overload", "overload",               # overload
+
+  "tcrtypes",                           # types
 
   "BACKSLASH",                          # constants
   "NEWLINE",

@@ -34,6 +34,7 @@ from .tcr_extract_error import extract_error
 from .tcr_int import hex as tcrhex
 from .tcr_iterable import Or, getattr_queue, limited_iterable
 from .tcr_null import Null
+from .tcr_types import QuotelessString
 
 
 def print_block(
@@ -340,6 +341,10 @@ if True:  # \/ # fmt & print iterable
       return f'{FMTC.FALSE}{it}{FMTC._}' if syntax_highlighting else str(it)
 
     _t = kwargs.get('_force_next_type') or type(it)
+
+    if _t == QuotelessString:
+      reprit = repr(it)
+      return f'{FMTC.STRING}{reprit[1:-1]}' if syntax_highlighting else repr(it)
 
     if not kwargs.get('_force_next_type'):
       itsmro = getattr_queue(it, '__mro__', '__class__.__mro__', default=())
