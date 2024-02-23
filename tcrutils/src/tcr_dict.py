@@ -26,9 +26,7 @@ def dict_zip(dict1: Mapping, *dicts: Mapping) -> Generator[tuple[Hashable, Any],
     yield (k, (v, *(dick[k] for dick in dicks[1:])))
 
 
-def merge_dicts(
-  master: Mapping, slave: Mapping, *dicts: Mapping, recursive=True, strict=False
-) -> Mapping:
+def merge_dicts(master: Mapping, slave: Mapping, *dicts: Mapping, recursive=True, strict=False) -> Mapping:
   """Merge dictionaries, made to prioritize the `master` dictionary and if key is not found there, then it takes from the `slave` dictionary.
 
   Optionally if `recursive=True`, then if the same key is a dict in both master and slave, merge dicts operation is performed on both of them.\\
@@ -66,3 +64,30 @@ def merge_dicts(
       merged[key] = slave[key]
 
   return merged
+
+
+def clean_dunder_dict(
+  __dict__: dict[str, Any],
+  strategy: int = 1,
+) -> dict:
+  """Filter the __dict__ passed in (or any other str-keyed dict for that matter).
+
+  Strategy types:
+  - 0: Remove only __dunder__ keys
+  - 1: Do whatever lower-number strategies do but also remove __double_underscore_prefixed keys (default)
+  - 2: Do whatever lower-number strategies do but also remove _single_underscore_prefixed keys
+  """
+
+  if strategy == 0:
+    return {x: y for x, y in __dict__.items() if not (x.startswith('__') and x.endswith('__'))}
+
+  if strategy == 1:
+    return {x: y for x, y in __dict__.items() if not x.startswith('__')}
+
+  if strategy == 2:
+    return {x: y for x, y in __dict__.items() if not x.startswith('_')}
+
+  if strategy == -2:
+    raise ValueError('Invalid strategy, choose 0, 1 or 2 (not literally `0-2` you fucking idiot)')
+
+  raise ValueError('Invalid strategy, choose 0-2')

@@ -17,9 +17,7 @@ def codeblock(
   May return str with len > max_length if max_length is ridicously low such that not even `'''\\nlangcode'''` fits
   """
   maxlen = (
-    max_length - (len(BACKTICKS) + len(langcode) + len(NEWLINE) + len(BACKTICKS))
-    if max_length != -1
-    else 9999999999999999  # Eh...
+    max_length - (len(BACKTICKS) + len(langcode) + len(NEWLINE) + len(BACKTICKS)) if max_length != -1 else 9999999999999999  # Eh...
   )
   return BACKTICKS + langcode + NEWLINE + cut_at_func(text, maxlen) + BACKTICKS
 

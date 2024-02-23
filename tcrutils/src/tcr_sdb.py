@@ -5,9 +5,7 @@ from typing import Any
 
 from .tcr_color import c
 
-ALLOWED_CHARACTERS = (
-  string.ascii_letters + string.digits + "!&#'^~$,.%`{}[]();@_-+="
-)  # Allowed characters in DB ID
+ALLOWED_CHARACTERS = string.ascii_letters + string.digits + "!&#'^~$,.%`{}[]();@_-+="  # Allowed characters in DB ID
 
 DISALLOWED_SEQUENCES = (
   'PRN',
@@ -68,10 +66,7 @@ class ShelveDB(dict):
       raise RuntimeError('Set up the db as follows:\n' + A)  # noqa: TRY004
 
     if self.__directory.is_file():
-      raise NotADirectoryError(
-        'Provide a path to a directory or a nonexistent path '
-        "(a directory will be created if it doesn't exist)."
-      )
+      raise NotADirectoryError('Provide a path to a directory or a nonexistent path ' "(a directory will be created if it doesn't exist).")
 
     self.__directory.mkdir(exist_ok=True, parents=True)
 
@@ -142,3 +137,6 @@ class ShelveDB(dict):
     res = self.s.setdefault(key, default)
     self.s.sync()
     return res
+
+  def get_directory(self) -> p.Path:
+    return self.__directory

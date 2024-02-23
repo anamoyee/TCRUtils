@@ -40,9 +40,7 @@ if True:  # \/ # @trei
 
 if True:  # \/ # asert
 
-  def asert(
-    condition_func: Callable, errmsg: str | None = None, *args: Any, **kwargs: Any
-  ) -> Any | MayNotReturn:
+  def asert(condition_func: Callable, errmsg: str | None = None, *args: Any, **kwargs: Any) -> Any | MayNotReturn:
     if not condition_func(*args, **kwargs):
       if errmsg:
         raise AssertionError(errmsg)

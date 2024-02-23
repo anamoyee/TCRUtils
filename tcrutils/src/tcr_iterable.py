@@ -1,14 +1,17 @@
 import re as regex
 from collections.abc import Callable, Iterable, Iterator, MutableSequence
 from random import shuffle
-from typing import Any, Literal
+from typing import Any, Literal, TypeVar
 
 from .tcr_compare import able
 from .tcr_null import UniqueDefault as RaiseError
 from .tcr_regex import RegexPreset
 
+T = TypeVar('T')
+Ts = TypeVar('Ts')
 
-def batched[T](
+
+def batched(
   it: Iterable[T],
   n: int,
   *,
@@ -58,10 +61,7 @@ def cut_at(
   `shrink_links_visually_if_fits` replaces links with their markdown counterparts where the visible text is http(s):/subdomain.domain.tld/ (no further part of the links is visible, but the entire link is contained)
   """
   if len(it) <= n:
-    if (
-      shrink_links_visually_if_fits
-      and len(a := regex.sub(RegexPreset.URL, r'[\2:/\3/](<\1>)', it)) <= n
-    ):  # :/ instead of :// because discord bruh
+    if shrink_links_visually_if_fits and len(a := regex.sub(RegexPreset.URL, r'[\2:/\3/](<\1>)', it)) <= n:  # :/ instead of :// because discord bruh
       return a
     return it
   if filter_links is not False and isinstance(it, str):
@@ -78,7 +78,7 @@ def cut_at(
   return ''
 
 
-def bogo_sort[T](arr: list[T]) -> list[T]:
+def bogo_sort(arr: list[T]) -> list[T]:
   if 0 <= len(arr) <= 1:
     return arr
   while True:
@@ -90,7 +90,7 @@ def bogo_sort[T](arr: list[T]) -> list[T]:
       return arr
 
 
-def stalin_sort[T](arr: Iterable[T]) -> list[T]:
+def stalin_sort(arr: Iterable[T]) -> list[T]:
   if len(arr) <= 1:
     return arr
 
@@ -103,12 +103,12 @@ def stalin_sort[T](arr: Iterable[T]) -> list[T]:
   return sorted_arr
 
 
-def shuffled[T](arr: MutableSequence[T]) -> MutableSequence[T]:
+def shuffled(arr: MutableSequence[T]) -> MutableSequence[T]:
   shuffle(arr)
   return arr
 
 
-def limited_iterable[T](it: Iterable[T] | Iterator[T], limit: int) -> tuple[list[T], int]:
+def limited_iterable(it: Iterable[T] | Iterator[T], limit: int) -> tuple[list[T], int]:
   """## Return tuple[list, int] of (limited_iterable, overflow_from_limit).
 
   ### This is different from it[:limit] because it works with iterators
@@ -210,7 +210,7 @@ def getattr_queue(
   raise KeyError('Unable to find any attrs from queue in obj.')
 
 
-def Or[T, TArgs](arg: T, *args: TArgs, none: Any = None) -> T | TArgs:
+def Or(arg: T, *args: Ts, none: Any = None) -> T | Ts:
   """### Returns the first element of the tuple (arg, *args) that does not equal the supplied (`none`) variable, by default None.
 
   This is different from or chaining because this does not check for truthy values but rather non-none values.\\

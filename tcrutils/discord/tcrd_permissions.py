@@ -4,11 +4,7 @@ import hikari
 
 Permission = hikari.Permissions
 
-PERMISSIONS_DICT = {
-  x: int(y)
-  for x, y in hikari.Permissions.__dict__.items()
-  if not x.startswith('_') and x == x.upper() and x not in ['MANAGE_EMOJIS_AND_STICKERS']
-}
+PERMISSIONS_DICT = {x: int(y) for x, y in hikari.Permissions.__dict__.items() if not x.startswith('_') and x == x.upper() and x not in ['MANAGE_EMOJIS_AND_STICKERS']}
 
 
 class _Permissions:
@@ -100,9 +96,7 @@ class _Permissions:
         if event.author.id in self._devs:
           return True
       else:
-        raise ValueError(
-          "You can't use allow_dev=True without setting up devs first with `perms.devlist = [1337, 1234] # A list of ints (discord user ids)`"
-        )
+        raise ValueError("You can't use allow_dev=True without setting up devs first with `perms.devlist = [1337, 1234] # A list of ints (discord user ids)`")
 
     if allow_owner and event.author.id == event.get_guild().owner_id:
       return True
@@ -118,13 +112,7 @@ class _Permissions:
     if not permissions:
       return f'`No permissions`'
 
-    return ', '.join(
-      [
-        f'`{name.replace("_", " ").title()}`'
-        for name, value in PERMISSIONS_DICT.items()
-        if value & permissions
-      ]
-    )
+    return ', '.join([f'`{name.replace("_", " ").title()}`' for name, value in PERMISSIONS_DICT.items() if value & permissions])
 
 
 permissions = _Permissions()

@@ -1,7 +1,7 @@
 # fmt: off
-if __import__('sys').version_info[:2] != (3, 12):
-  __import__('os').system(r'"C:\Users\TheCreatorrrr\AppData\Local\Programs\Python\Python312\python.exe" test.py')
-  exit()
+#if __import__('sys').version_info[:2] != (3, 12):
+#  __import__('os').system(r'"C:\Users\TheCreatorrrr\AppData\Local\Programs\Python\Python312\python.exe" test.py')
+#  exit()
 
 
 if True:  # \/ # Imports
@@ -13,6 +13,7 @@ if True:  # \/ # Imports
 
   import tcrutils as tcr
   from tcrutils import *
+  from tcrutils import asshole, raises, rashole
   from tcrutils.discord import Permission as Perm
   from tcrutils.discord import get_token
   from tcrutils.discord import permissions as perms
@@ -100,7 +101,7 @@ if True:  # \/ # Tests
 
   def test_asert():
     asert(lambda: 1 == 1)
-    asert(lambda: 1 == 2)
+    asert(lambda: 1 != 2)
 
   def test_iterable(*, batched_=True, cut_at_=True):
     if batched_:
@@ -179,8 +180,8 @@ if True:  # \/ # Tests
     print_iterable({Null: Null, None: None, True: True, False: False}, **kwargs)
     print_iterable(1, **kwargs)
     print_iterable(1.5, **kwargs)
-    print_iterable(True, **kwargs)  # noqa: FBT003
-    print_iterable(False, **kwargs)  # noqa: FBT003
+    print_iterable(True, **kwargs)
+    print_iterable(False, **kwargs)
     print_iterable(None, **kwargs)
     print_iterable(Null, **kwargs)
     print_iterable(set(), **kwargs)
@@ -266,6 +267,24 @@ if True:  # \/ # Tests
       hikari.Status.DO_NOT_DISTURB,
       hikari.Status.OFFLINE,
     ), **kwargs)
+
+    class PrintableObj2:
+      value: int = -1
+
+      def __init__(self, value: int) -> None:
+        self.value = value
+
+      def __tcr_display__(self=None, **kwargs) -> str:
+        return tcr.fmt_iterable(
+          tcr.clean_dunder_dict((self if self is not None else PrintableObj2).__dict__),
+          _force_next_type=PrintableObj2,
+          _i_am_class=not self,
+          **kwargs,
+        )
+
+    print_iterable(PrintableObj2, **kwargs)
+    print_iterable(PrintableObj2(69), **kwargs)
+    print_iterable(tcr.discord.Snowflake(1234), **kwargs)
 
   def test_color():
     printc(c("Red") + "UwU")
@@ -392,7 +411,7 @@ if True:  # \/ # Tests
     print(tcr.terminal.size, type(tcr.terminal.size), complex(tcr.terminal.size))
 
   def test_get_token():
-    print(tcr.get_token())
+    rashole(tcr.get_token)(FileNotFoundError)
 
   def test_thisdir():
     console(os.getcwd())
@@ -534,12 +553,76 @@ if True:  # \/ # Tests
   def test_uptime():
     uptime = tcr.Uptime()
     console(str(uptime))
+    console(int(uptime))
 
-    [test_print_iterable(print_iterable=tcr.void) for _ in range(300000)]
+    [sum(range(1000)) for _ in range(3000)]
 
     console(str(uptime))
+    console(int(uptime))
 
-if False:  # \/ # Test setup
+  def test_clean_dunder_dict():
+    console(tcr.clean_dunder_dict({
+      "UwU": "OwO",
+      "__UwU__": "__OwO__",
+      "__UwU": "__OwO",
+      "_UwU": "_OwO",
+    }, strategy=2))
+
+  def test_class():
+    class SingleTuple(tcr.Singleton, tuple):
+      ...
+
+    tup = SingleTuple(('tup1',))
+    tup2 = SingleTuple(('tup2',))
+
+    console(tup)  # -> ('tup1',)
+    console(tup2) # -> ('tup1',)
+
+  def test_overload():
+    class A(tcr.Overload):
+      @tcr.overload
+      def f(self, arg1: int):
+        console('1-arg f:', arg1)
+
+      @tcr.overload
+      def f(self, arg1: int, arg2: int):  # noqa: F811
+        console('2-arg f:', arg1, arg2)
+
+      @tcr.overload
+      def f(self, arg1: str):  # noqa: F811
+        console('str-arg f:', arg1)
+
+    a = A()
+
+    a.f(10)
+    a.f(20, 30)
+    a.f('')
+
+  def test_raises():
+    asshole(raises((lambda x: 1 / x), x=1)(ZeroDivisionError), False)
+    asshole(raises((lambda x: 1 / x), x=0)(ZeroDivisionError), True)
+
+  def test_asshole():
+    asshole("Expected pass", "Expected pass")
+    asshole("Expected fail (suppressed)", 69, suppress=True)
+    asshole(1, 2, expr=" a < b")
+
+  def test_discord_ifys():
+    rashole(tcr.discord.IFYs.userify, -1)(ValueError)
+    asshole(tcr.discord.IFYs.userify(1 << 63), f"<@{1 << 63}>")
+    rashole(tcr.discord.IFYs.userify, 1 << 63 + 1)(ValueError)
+    asshole(tcr.discord.IFYs.userify(1234), '<@1234>')
+    asshole(tcr.discord.IFYs.userbangify(1234), '<@!1234>')
+    asshole(tcr.discord.IFYs.channelify(1234), '<#1234>')
+    asshole(tcr.discord.IFYs.commandify('cmd', 1234), '</cmd:1234>')
+    asshole(tcr.discord.IFYs.emojify('emo', 1234), '<:emo:1234>')
+    asshole(tcr.discord.IFYs.emojify('uwu', 69, animated=True), '<a:uwu:69>')
+    asshole(tcr.discord.IFYs.timeify(1), '<t:1>')
+    asshole(tcr.discord.IFYs.timeify(1, 'F'), '<t:1:F>')
+    rashole(tcr.discord.IFYs.timeify, 1, 'r')(ValueError)
+    asshole(tcr.discord.IFYs.timeify(1, 'F'), '<t:1:F>')
+
+if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
       globals()[k] = tcr.test(v)
@@ -568,7 +651,7 @@ if __name__ == '__main__':
   #   # item_limit=10,
   #   # # let_no_inder_max_non_iterables=10,
   #   # # let_no_inder_max_iterables=10,
-  #   # prefer_full_names=0,
+  #   # prefer_full_names=1,
   # )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)
@@ -600,5 +683,11 @@ if __name__ == '__main__':
   # test_float2int()
   # test_manyattrs()
   # test_alert()
-  test_uptime()
+  # test_uptime()
+  # test_clean_dunder_dict()
+  # test_class()
+  # test_overload()
+  # test_discord_ifys()
+  # test_asshole()
+  # test_raises()
   pass  # noqa: PIE790, RUF100

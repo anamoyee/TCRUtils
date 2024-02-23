@@ -15,13 +15,13 @@ Useful stuff for tcr projects.
 - [x] Add optional syntax highlighting to print_iterable
   - [x] *Rewrite print_iterable, maybeeee?*
 - [x] dir2()
-- [ ] add IFYs to discord.string
-- [ ] add Components[] constructor (returns both view and view.build())
+- [X] add IFYs to discord.string
+- [ ] ~~add Components[] constructor (returns both view and view.build())~~
 - [x] tcr.insist()
 - [x] Move the printer decorator into decorators file
 - [x] Add doc to fmt_iterable when done
 - [x] Fix when trailing_commas=False breaks 1-element tuples
-
+- [x] Test ifys
 
 ~~<style>s{color: crimson;} b,strong{text-decoration:underline}</style>~~
 <!-- I am MEGUMIN the greatest mage among crimson demons and wielder of EXPLOSION MAGIC -->

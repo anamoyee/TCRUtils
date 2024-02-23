@@ -17,9 +17,7 @@ def embed(
   image=None,
   fields: list | None = None,
 ) -> hikari.Embed:
-  if (title is not Null and not title.strip()) or (
-    description is not Null and not description.strip()
-  ):
+  if (title is not Null and not title.strip()) or (description is not Null and not description.strip()):
     msg = f'Both title and description must be non-whitespace-only strings unless explicitly specified the title to be Null, got Title: {title!r}, Description: {description!r}'
     raise ValueError(msg)
 

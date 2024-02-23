@@ -1,3 +1,4 @@
+import inspect
 from functools import partial, wraps
 from types import GeneratorType
 from warnings import warn
@@ -94,26 +95,29 @@ if True:  # \/ # fmt & print iterable
   # fmt: off
   # Format Colors, name kept short so lines don't get THAT long if this thing is used like 10 times in a single fstring
   class FMTC:
-    _          = attr(0) # Reset
-    NUMBER     = fg('blue')       + attr('bold')
-    DECIMAL    = fg('white')      + attr('bold')
-    BRACKET    = fg('cyan')       + attr('bold')
-    STRING     = attr(0)          + fg('yellow')
-    QUOTES     = fg('white')      + attr('bold')
-    COLON      = fg('orange_1')   + attr('bold')
-    COROUTINE  = fg('orange_1')   + attr('bold')
-    FUNCTION   = fg('orange_1')   + attr('bold')
-    COMPLEX    = fg('orange_1')   + attr('bold')
-    COMMA      = fg('dark_gray')  + attr('bold')
-    UNKNOWN    = fg('dark_gray')  + attr('bold')
-    TRUE       = fg('green')      + attr('bold')
-    FALSE      = fg('red')        + attr('bold')
-    NULL       = fg('dark_gray')  + attr('bold')
-    NONE       = fg('light_gray') + attr('bold')
-    BYTESTR_B  = fg('red')        + attr('bold')
-    ITER_I     = fg('red_3b')     + attr('bold')
-    SPECIAL    = fg('purple_1B')  + attr('bold')
-    EXCEPTION  = fg('red_3b')     + attr('bold')
+    _                   = attr(0) # Reset
+    NUMBER              = fg('blue')       + attr('bold')
+    DECIMAL             = fg('white')      + attr('bold')
+    BRACKET             = fg('cyan')       + attr('bold')
+    STRING              = attr(0)          + fg('yellow')
+    QUOTES              = fg('white')      + attr('bold')
+    COLON               = fg('orange_1')   + attr('bold')
+    ASTERISK            = fg('orange_1')   + attr('bold')
+    COROUTINE           = fg('orange_1')   + attr('bold')
+    FUNCTION            = fg('orange_1')   + attr('bold')
+    COMPLEX             = fg('orange_1')   + attr('bold')
+    COMMA               = fg('dark_gray')  + attr('bold')
+    UNKNOWN             = fg('dark_gray')  + attr('bold')
+    TRUE                = fg('green')      + attr('bold')
+    FALSE               = fg('red')        + attr('bold')
+    NULL                = fg('dark_gray')  + attr('bold')
+    NONE                = fg('light_gray') + attr('bold')
+    BYTESTR_B           = fg('red')        + attr('bold')
+    ITER_I              = fg('red_3b')     + attr('bold')
+    SPECIAL             = fg('purple_1B')  + attr('bold')
+    INTERNAL_EXCEPTION  = fg('red_3b')     + attr('bold')
+    BUILT_IN_EXCEPTION  = fg('blue')       + attr('bold')
+    CLASS               = fg('blue')       + attr('bold')
 
   class FMT_LETTERS:
     b  = f'{FMTC.BYTESTR_B}b'
@@ -148,7 +152,11 @@ if True:  # \/ # fmt & print iterable
   # (FMT_UNKNOWN[syntax_highlighting: bool] % (name, content)) -> attaches name and content to an unknown object
   FMT_UNKNOWN = ('%s(%s)', f'{FMTC.UNKNOWN}%s({FMTC._}%s{FMTC.UNKNOWN}){FMTC._}')
   # (FMT_EXCEPTION[syntax_highlighting: bool] % getattr_queue(obj, '__name__', '__class__.__name__') -> Self explainatory
-  FMT_EXCEPTION = ("An exception occured while trying to display this item (%s).", f"{FMTC.EXCEPTION}An exception occured while trying to display this item ({FMTC.UNKNOWN}%s{FMTC.EXCEPTION}).{FMTC._}")
+  FMT_INTERNAL_EXCEPTION = ("An exception occured while trying to display this item (%s).", f"{FMTC.INTERNAL_EXCEPTION}An exception occured while trying to display this item ({FMTC.UNKNOWN}%s{FMTC.INTERNAL_EXCEPTION}).{FMTC._}")
+  # (FMT_CLASS[syntax_highlighting: bool]) % (getattr_queue(obj, '__name__', '__class__.__name__'), this(it))
+  FMT_CLASS = ("%s(%s)", f"{FMTC.CLASS}%s{FMTC.BRACKET}({FMTC._}%s{FMTC.BRACKET}){FMTC._}")
+
+  FMT_ASTERISK = ('*', f'{FMTC.ASTERISK}*')
 
   # fmt: on
 
@@ -183,7 +191,7 @@ if True:  # \/ # fmt & print iterable
     force_no_indent: bool = False,
     force_no_spaces: bool = False,
     force_complex_parenthesis: bool = False,
-    prefer_full_names: bool = True,
+    prefer_full_names: bool = False,
     **kwargs,
   ) -> str:
     """### Return iterable as formatted string with optional syntax highlighting.
@@ -252,17 +260,10 @@ if True:  # \/ # fmt & print iterable
     ):
       # Case 1: If the iterable in question contains iterables
       # If there is at most 1 iterable in the outer iterable of iterables
-      if len(it) <= Or(kwargs.get('let_no_inder_max_iterables'), 1) and any(
-        isinstance(x, Iterable) for x in it
-      ):
+      if len(it) <= Or(kwargs.get('let_no_inder_max_iterables'), 1) and any(isinstance(x, Iterable) for x in it):
         force_no_indent = -1
       # Case 2: If the outer iterable consists of non-iterables: If there are at most 4 non-iterables
-      if all(
-        (not isinstance(x, Iterable))
-        or isinstance(x, str | bytes)
-        or (able(len, x) and len(x) == 0)
-        for x in it
-      ) and len(it) <= Or(kwargs.get('let_no_inder_max_non_iterables'), 4):
+      if all((not isinstance(x, Iterable)) or isinstance(x, str | bytes) or (able(len, x) and len(x) == 0) for x in it) and len(it) <= Or(kwargs.get('let_no_inder_max_non_iterables'), 4):
         force_no_indent = -1
 
     name = '__qualname__' if prefer_full_names else '__name__'
@@ -270,6 +271,13 @@ if True:  # \/ # fmt & print iterable
     indent = space * indentation if not force_no_indent else ''
     enter = '\n' if not force_no_indent else ''
     trailing_commas = trailing_commas if (trailing_commas == 2 or not force_no_indent) else False
+
+    if isinstance(it, Mapping):
+      asterisks = FMT_ASTERISK[syntax_highlighting] * 2
+    elif isinstance(it, Iterable):
+      asterisks = FMT_ASTERISK[syntax_highlighting] * 1
+    else:
+      asterisks = ''
 
     if int_formatter is None and isinstance(it, bytearray):
       int_formatter = tcrhex
@@ -296,12 +304,32 @@ if True:  # \/ # fmt & print iterable
 
     this = partial(fmt_iterable, **thisdict)
 
-    if isinstance(it, _OverflowClass):
-      return (
-        f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}'
-        if syntax_highlighting
-        else f'({it} more items...)'
+    if '_force_next_type' in kwargs and kwargs.get('_ran_from_tcr_display'):
+      queue_name = getattr_queue(
+        kwargs['_force_next_type'],
+        name,
+        '__name__',
+        '__class__.__name__',
+        default=('<???>' if syntax_highlighting else '__unknown_object__'),
       )
+
+      return (FMT_LETTERS.C if syntax_highlighting and kwargs.get('_i_am_class') else '') + (
+        FMT_CLASS[syntax_highlighting]
+        % (
+          queue_name + ('(...)' if not syntax_highlighting and not kwargs.get('_i_am_class') else ''),
+          asterisks + this(it),
+        )
+      )
+
+    if isinstance(it, _OverflowClass):
+      return f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}' if syntax_highlighting else f'({it} more items...)'
+    if able(issubclass, it, BaseException) and issubclass(it, BaseException):
+      exc_name = extract_error(it, raw=True)[0]
+
+      if not syntax_highlighting:
+        return exc_name
+
+      return f'{FMTC.BUILT_IN_EXCEPTION}{exc_name}'
     if it is Null:
       return f'{FMTC.NULL}{it}{FMTC._}' if syntax_highlighting else str(it)
     if it is None:
@@ -332,29 +360,15 @@ if True:  # \/ # fmt & print iterable
         it = int_formatter(it)
       return f'{FMTC.NUMBER}{it}{FMTC._}' if syntax_highlighting else str(it)
     if _t == float:
-      return (
-        f'{FMTC.NUMBER}{str(it).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC._}'
-        if syntax_highlighting
-        else str(it)
-      )
+      return f'{FMTC.NUMBER}{str(it).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC._}' if syntax_highlighting else str(it)
     if _t == str:
       reprit = repr(it)
-      return (
-        f'{FMTC.QUOTES}{reprit[0]}{FMTC.STRING}{reprit[1:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}'
-        if syntax_highlighting
-        else repr(it)
-      )
+      return f'{FMTC.QUOTES}{reprit[0]}{FMTC.STRING}{reprit[1:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}' if syntax_highlighting else repr(it)
     if _t == bytes:
       reprit = repr(it)
-      return (
-        f'{FMTC.BYTESTR_B}{reprit[0]}{FMTC.QUOTES}{reprit[1]}{FMTC.STRING}{reprit[2:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}'
-        if syntax_highlighting
-        else repr(it)
-      )
+      return f'{FMTC.BYTESTR_B}{reprit[0]}{FMTC.QUOTES}{reprit[1]}{FMTC.STRING}{reprit[2:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}' if syntax_highlighting else repr(it)
     if _t == complex:
-      brackets = (
-        ('', '') if (not force_complex_parenthesis) else (f'{FMTC.BRACKET}(', f'{FMTC.BRACKET})')
-      )
+      brackets = ('', '') if (not force_complex_parenthesis) else (f'{FMTC.BRACKET}(', f'{FMTC.BRACKET})')
       return (
         f"""{brackets[0]}{FMTC.NUMBER}{int(it.real) if int(it.real) == it.real else str(it.real).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC._}{space}{FMTC.COMPLEX}+{space}{FMTC.NUMBER}{int(it.imag) if int(it.imag) == it.imag else str(it.imag).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC.COMPLEX}j{brackets[1]}{FMTC._}"""
         if syntax_highlighting
@@ -397,10 +411,7 @@ if True:  # \/ # fmt & print iterable
         if isinstance(it, Mapping):
           inner = f'{comma}{enter or space}'.join(
             [
-              indent
-              + (
-                f'{k}{FMTC.COLON}:{FMTC._}{space}{v}' if syntax_highlighting else f'{k}:{space}{v}'
-              ).replace('\n', f'{enter}{indent}')
+              indent + (f'{k}{FMTC.COLON}:{FMTC._}{space}{v}' if syntax_highlighting else f'{k}:{space}{v}').replace('\n', f'{enter}{indent}')
               for k, v in {this(key): this(value) for key, value in it.items()}.items()
             ]
           ) + (comma if trailing_commas else '')
@@ -411,13 +422,7 @@ if True:  # \/ # fmt & print iterable
             [
               indent + x.replace('\n', f'\n{indent}')
               for x in [this(element) for element in itl]
-              + (
-                []
-                if not (overflow if not kwargs.get('_ov') else kwargs.get('_ov'))
-                else [
-                  this(_OverflowClass(overflow if not kwargs.get('_ov') else kwargs.get('_ov')))
-                ]
-              )
+              + ([] if not (overflow if not kwargs.get('_ov') else kwargs.get('_ov')) else [this(_OverflowClass(overflow if not kwargs.get('_ov') else kwargs.get('_ov')))])
             ]
           ) + (comma if (trailing_commas or (_t == tuple and len(it) == 1)) else '')
 
@@ -437,9 +442,11 @@ if True:  # \/ # fmt & print iterable
 
     if hasattr(it, '__tcr_display__'):
       try:
-        return it.__tcr_display__(**thisdict)
+        return it.__tcr_display__(**thisdict, _ran_from_tcr_display=True)
       except Exception as e:
-        return FMT_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
+        if kwargs.get('_raise_errors'):
+          raise
+        return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
 
     return FMT_UNKNOWN[syntax_highlighting] % (
       queue_name,
@@ -517,12 +524,7 @@ if True:  # \/ # fmt & print iterable
 
 
 def alert(s: str, *, printhook: Callable[[str], None] = print, raw=False) -> None:
-  text = ''.join(
-    [
-      f'{fg('black') + bg('red') + attr('bold') if i % 2 == 0 else fg('white') + bg('yellow')}{x}'
-      for i, x in enumerate(s)
-    ]
-  ) + attr(0)
+  text = ''.join([f"{fg('black') + bg('red') + attr('bold') if i % 2 == 0 else fg('white') + bg('yellow')}{x}" for i, x in enumerate(s)]) + attr(0)
 
   if raw:
     return text

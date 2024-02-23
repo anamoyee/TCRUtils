@@ -81,11 +81,7 @@ class path:
     if not isinstance(nt_objname, str):
       nt_objname: str = str(nt_objname.absolute().name)
 
-    return bool(
-      (all((x not in nt_objname) for x in ('\n', '\r')))
-      and (nt_objname.strip() not in ('', '.', '..'))
-      and (re.match(r'^[^<>:"\/\\|?*\n]*$', nt_objname.strip()))
-    )
+    return bool((all((x not in nt_objname) for x in ('\n', '\r'))) and (nt_objname.strip() not in ('', '.', '..')) and (re.match(r'^[^<>:"\/\\|?*\n]*$', nt_objname.strip())))
 
 
 __all__ = ['path']

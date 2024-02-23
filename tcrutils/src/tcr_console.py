@@ -70,14 +70,16 @@ class Console:
     passthrough: bool = True,
     printhook: Callable[[str], None] = print,
     syntax_highlighting=True,
+    margin: str = '',
+    padding: str = ' ',
     **kwargs,
   ) -> None | object:
     out = fmt_iterable(*(value, *values), syntax_highlighting=syntax_highlighting, **kwargs)
     if withprefix:
-      out = f'D {self._get_timestamp()} {out}'
+      out = f'D {self._get_timestamp()}{padding}{out}'
     if syntax_highlighting:
       out = stylize(out, c('Purple\\_1B'))
-    printhook(out)
+    printhook(f'{margin}{out}')
     return None if not passthrough else value
 
   def critical(self, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:

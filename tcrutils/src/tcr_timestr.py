@@ -293,13 +293,7 @@ $
   def valid(self, s: str, *, segment_splitter='!') -> bool:
     """Return `True` if specified string is a valid input for `to_int()` conversion, otherwise `False`."""
     if s := s.replace(' ', ''):
-      return all(
-        bool(x)
-        for x in [
-          regex.match(self.pattern, x) or x.lower() in weekday_lookup
-          for x in s.split(segment_splitter)
-        ]
-      )
+      return all(bool(x) for x in [regex.match(self.pattern, x) or x.lower() in weekday_lookup for x in s.split(segment_splitter)])
     else:
       return True
 
@@ -349,20 +343,8 @@ $
     partial_sum = sum(fix_from_tuple(evaluate_single_timestr(x, units=units)) for x in segments)
 
     if rolled_over:  # Fixes the days being rolled back when they shouldn't be because there weren't actyually two rollovers
-      time_syntaxes_number = len(
-        [
-          seg
-          for seg in segments
-          if regex.match(r'^(?:[0-9]{1,2}:(?:[0-9]{1,2}(?::[0-9]{1,2})?)?)$', seg)
-        ]
-      )
-      date_syntaxes_number = len(
-        [
-          seg
-          for seg in segments
-          if regex.match(r'^(?:[0-9]{1,2}\.(?:[0-9]{1,2}(?:\.[0-9]{2,4})?)?)$', seg)
-        ]
-      )
+      time_syntaxes_number = len([seg for seg in segments if regex.match(r'^(?:[0-9]{1,2}:(?:[0-9]{1,2}(?::[0-9]{1,2})?)?)$', seg)])
+      date_syntaxes_number = len([seg for seg in segments if regex.match(r'^(?:[0-9]{1,2}\.(?:[0-9]{1,2}(?:\.[0-9]{2,4})?)?)$', seg)])
       weekday_syntaxes_number = len([seg for seg in segments if seg.lower() in weekday_lookup])
 
       if time_syntaxes_number == 1 and (date_syntaxes_number + weekday_syntaxes_number) == 1:
@@ -444,9 +426,7 @@ $
     future_time = self.to_date(seconds, tz=tz)
     return future_time.strftime(pattern)
 
-  def to_datestr_from_unix(
-    self, unix: int | str, *, pattern='%a, %Y-%m-%d %H:%M:%S', tz=None
-  ) -> str:
+  def to_datestr_from_unix(self, unix: int | str, *, pattern='%a, %Y-%m-%d %H:%M:%S', tz=None) -> str:
     """Return `datetime.strftime()` string of the passed in unix timestamp."""
     if isinstance(unix, str):
       unix = int(unix)

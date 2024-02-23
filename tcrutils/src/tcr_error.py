@@ -1,4 +1,5 @@
 """TCRUtils-specific errors."""
+from types import TracebackType
 from typing import Any
 
 
@@ -20,6 +21,9 @@ class error:
 
     def __init__(self) -> None:
       super().__init__()
+
+  class NoMatchingOverloadError(Exception):
+    """Used in tcr.Overload."""
 
 
 for attr_name, attr_value in error.__dict__.items():

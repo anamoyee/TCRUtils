@@ -10,7 +10,7 @@ It's also recommended to import stuff directly instead of the entire module
 >>> from tcrutils import timestr
 ```
 
-Star-importing is fine, ctrl-click whatever you're hovering on to see __all__ if you wish.
+Star-importing is fine, ctrl-click whatever you're hovering on right now to see __all__ if you wish.
 ```py
 >>> from tcrutils import *
 ```
@@ -21,12 +21,13 @@ from . import discord, src
 from .discord.tcrd_embeds import embed
 from .discord.tcrd_limits import DiscordLimits
 from .discord.tcrd_string import get_token
+from .src.tcr_class import Singleton
 from .src.tcr_color import c, color, colour, printc
 from .src.tcr_compare import able
 from .src.tcr_console import breakpoint, console
 from .src.tcr_constants import *
 from .src.tcr_decorator import autorun, convert, instance, test, timeit
-from .src.tcr_dict import dict_zip, merge_dicts
+from .src.tcr_dict import clean_dunder_dict, dict_zip, merge_dicts
 from .src.tcr_dir import dir2, dir3
 from .src.tcr_error import error  # 'tcrerror' in star imports, either in 'tcr.error'/'tcr.tcrerror'
 from .src.tcr_error import error as tcrerror
@@ -35,24 +36,14 @@ from .src.tcr_F import F
 from .src.tcr_getch import getch
 from .src.tcr_input import insist
 from .src.tcr_int import float2int, hex, recursive_sum
-from .src.tcr_iterable import (
-    Or,
-    batched,
-    bogo_sort,
-    cut_at,
-    getattr_queue,
-    getmanyattrs,
-    hasmanyattrs,
-    limited_iterable,
-    shuffled,
-    stalin_sort,
-)
+from .src.tcr_iterable import Or, batched, bogo_sort, cut_at, getattr_queue, getmanyattrs, hasmanyattrs, limited_iterable, shuffled, stalin_sort
 from .src.tcr_joke import christmas_tree, fizzbuzz, oddeven
 from .src.tcr_language import apostrophe_s, make_plural, nth
 from .src.tcr_markdown import codeblock, uncodeblock
 from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null, UniqueDefault
 from .src.tcr_other import intbool
+from .src.tcr_overload import Overload, OverloadMeta, overload
 from .src.tcr_path import path
 from .src.tcr_print import alert, fmt_iterable, print_block, print_iterable
 from .src.tcr_regex import RegexPreset
@@ -60,6 +51,7 @@ from .src.tcr_run import RunSACAble, run_sac
 from .src.tcr_sdb import ShelveDB
 from .src.tcr_string import commafy
 from .src.tcr_terminal import terminal
+from .src.tcr_test import asshole, raises, rashole
 from .src.tcr_timestr import timestr
 from .src.tcr_uptime import Uptime
 from .src.tcr_void import araiser, avoid, raiser, void
@@ -103,6 +95,7 @@ __all__ = [
   "dir2", "dir3",                       # dir
 
   "print_iterable", "print_block",      # print
+  "fmt_iterable",
 
   "RegexPreset",                        # regex
 
@@ -117,6 +110,8 @@ __all__ = [
   "DiscordLimits",                      # Discord
 
   "ShelveDB",                           # sdb
+
+  "Overload", "overload",               # overload
 
   "BACKSLASH",                          # constants
   "NEWLINE",

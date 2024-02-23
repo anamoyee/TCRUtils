@@ -8,6 +8,7 @@ class DiscordLimits:
   class Embed:
     TITLE = 256
     DESCRIPTION = 4096
+    DESCRIPTION_SAFE = 4000
     AUTHOR_NAME = 256
 
     class Fields:

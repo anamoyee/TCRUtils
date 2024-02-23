@@ -43,6 +43,8 @@ class UptimeResult:
 
 
 class Uptime:
+  """Counts time from when it's initialised. Returns as formatted str, datetime.delta, total_seconds or each number component (days, hours, minutes, seconds)."""
+
   def __init__(self) -> None:
     self.__start_time = datetime.datetime.now(tz=datetime.UTC)
 
