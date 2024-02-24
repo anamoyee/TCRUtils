@@ -10,6 +10,7 @@ from .tcr_color import c
 from .tcr_extract_error import extract_error
 from .tcr_getch import getch
 from .tcr_print import fmt_iterable
+from .tcr_types import QuotelessString
 
 a = 1 if 1 else 0
 
@@ -72,9 +73,10 @@ class Console:
     syntax_highlighting=True,
     margin: str = '',
     padding: str = ' ',
+    quoteless: bool = False,
     **kwargs,
   ) -> None | object:
-    out = fmt_iterable(*(value, *values), syntax_highlighting=syntax_highlighting, **kwargs)
+    out = fmt_iterable(*[(x if ((not quoteless) or (not isinstance(x, str))) else QuotelessString(x)) for x in (value, *values)], syntax_highlighting=syntax_highlighting, **kwargs)
     if withprefix:
       out = f'D {self._get_timestamp()}{padding}{out}'
     if syntax_highlighting:
