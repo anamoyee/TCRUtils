@@ -2,7 +2,7 @@
 
 from . import tcrd_types as types
 from .tcrd_constants import DISCORD_EPOCH
-from .tcrd_embeds import embed
+from .tcrd_embeds import embed, modal
 from .tcrd_limits import DiscordLimits
 from .tcrd_permissions import PERMISSIONS_DICT, Permission, permissions
 from .tcrd_permissions import Permission as DiscordPermission
@@ -18,5 +18,6 @@ __all__ = [
   'is_snowflake',
   'Snowflake',
   'embed',
+  'modal',
   'get_token',
 ]

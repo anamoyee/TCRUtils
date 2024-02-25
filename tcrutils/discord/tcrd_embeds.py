@@ -1,4 +1,9 @@
+import datetime
+from collections.abc import Callable, Coroutine
+from typing import Any, NotRequired, TypedDict, Unpack
+
 import hikari
+import miru
 
 from ..src.tcr_null import Null
 
@@ -50,3 +55,29 @@ def embed(
       field = (*field, False)
     out = out.add_field(field[0], field[1], inline=field[2])
   return out
+
+
+class ModalKwargs(TypedDict):
+  title: str
+  custom_id: NotRequired[str | None]
+  timeout: NotRequired[str | None]
+
+
+async def modal(
+  responder: Callable[[miru.Modal], Coroutine[Any, Any, None]],
+  callback: Callable[[miru.Modal, miru.ModalContext, list[str]], Coroutine[Any, Any, None]],
+  *fields: miru.TextInput,
+  **modal_kwargs: Unpack[ModalKwargs],
+) -> dict[str, str]:
+  """Create modal with passed fields, respond with it with passed responder (ctx.respond_with_modal), then return dict[field: str, user_input: str]."""
+
+  class Modal(miru.Modal):
+    async def callback(self, ctx: miru.ModalContext) -> None:
+      await callback(self, ctx, list(self.values.values()))
+
+  modal = Modal(**modal_kwargs)
+
+  for field in fields:
+    modal.add_item(field)
+
+  await responder(modal)

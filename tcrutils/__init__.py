@@ -18,7 +18,7 @@ Joke functions and other barely useful crap is not included in star imports.
 """
 
 from . import discord, src
-from .discord.tcrd_embeds import embed
+from .discord.tcrd_embeds import embed, modal
 from .discord.tcrd_limits import DiscordLimits
 from .discord.tcrd_string import get_token
 from .src import tcr_types as tcrtypes
