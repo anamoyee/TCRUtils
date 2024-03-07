@@ -623,6 +623,16 @@ if True:  # \/ # Tests
     rashole(tcr.discord.IFYs.timeify, 1, 'r')(ValueError)
     asshole(tcr.discord.IFYs.timeify(1, 'F'), '<t:1:F>')
 
+  def test_extract_error2():
+    console(extract_error(BaseException))
+    console(extract_error(Exception))
+    console(extract_error(BaseException("Message")))
+    console(extract_error(Exception("Message")))
+    console(extract_error(BaseExceptionGroup))
+    console(extract_error(ExceptionGroup))
+    console(extract_error(BaseExceptionGroup("Message", (Exception(),))))
+    console(extract_error(ExceptionGroup("Message", (Exception(),))))
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -691,4 +701,5 @@ if __name__ == '__main__':
   # test_discord_ifys()
   # test_asshole()
   # test_raises()
+  test_extract_error2()
   pass  # noqa: PIE790, RUF100
