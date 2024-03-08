@@ -5,18 +5,26 @@ from typing import Any
 
 from colored import attr, bg, fg
 
+from .tcr_compare import able
 from .tcr_console import console
+from .tcr_extract_error import extract_error
+from .tcr_iterable import getattr_queue
+from .tcr_print import FMT_BRACKETS, FMTC, fmt_iterable
+from .tcr_void import raiser
 
 ASSERTION_ASS = f"{attr(0)}{fg('green')}{attr('bold')} PASS {attr(0)}"
 """Uh i meant assertion_pass..."""
 ASSERTION_FAIL = f"{attr(0)}{bg('red')}{attr('bold')} FAIL {attr(0)}"
 
 
-def default_asshook(obj, result: bool) -> None:
+def default_asshook(obj, result: bool, *, comment: str = '') -> None:
   """Default assertion hook (hehe)."""
 
-  console(obj, padding=f" {(ASSERTION_ASS if randint(1, 100) != 69 else ASSERTION_ASS.replace('PASS', ' ASS')) if result else ASSERTION_FAIL} ")
-
+  console(
+    obj,
+    padding=f" {(ASSERTION_ASS if randint(1, 100) != 69 else ASSERTION_ASS.replace('PASS', ' ASS')) if result else ASSERTION_FAIL} ",
+    printhook=lambda x, **kwargs: print(x + comment, **kwargs),
+  )
 
 def asshole(
   a: Any,
@@ -25,9 +33,10 @@ def asshole(
   *,
   expr: str = 'a == b',
   assert_first: bool = False,
-  msg: str = 'Assholertion failed',
+  msg: str | Callable[[Any], Any] = 'Assholertion failed',
   printhook: Callable[[Any, bool], None] = default_asshook,
   suppress: bool = False,
+  fmt_iterable_kwrags: dict[str, Any] | None = None,
   **printhook_kwargs: Any,
 ) -> None:
   """### assert + tcr.console (yes i couldn't find a better name for this one).
@@ -47,10 +56,37 @@ def asshole(
       printhook: Callable[[Any, bool], None], the function to be used for printing the object, first argument: the object, second argument: assertion result (default: tcr.console-ish printer)
       suppress: bool, whether or not to suppress the assertion error and only use the printing functions (default: False)
   """
+  if fmt_iterable_kwrags is None:
+    fmt_iterable_kwrags = {"syntax_highlighting": True}
 
-  result = eval(expr)
+  SH = bool(fmt_iterable_kwrags.get('syntax_highlighting'))
 
-  printhook_partial = partial(printhook, a, result, **printhook_kwargs)
+  C_TEXT = '' if not SH else FMTC.ITER_I
+  C_RESET = '' if not SH else FMTC._
+  C_FUNC = '' if not SH else FMTC.FUNCTION
+  C_EXC = '' if not SH else FMTC.INTERNAL_EXCEPTION
+  comment =''
+
+  try:
+    result = eval(expr) if isinstance(expr, str) else ((expr(a) == expr(b)) if callable(expr) else raiser(TypeError('Invalid typeof expr: ' + str(type(expr))))())
+  except Exception as e:
+    comment = f' {C_EXC}{attr('reverse')} {extract_error(e)} {C_RESET}'
+    result = False
+
+  if comment:
+    pass
+  elif result:
+    comment = ''
+  elif expr == 'a == b' or (able(isinstance, b, expr) and isinstance(b, expr)):
+    comment = f' {C_TEXT}({C_RESET}{fmt_iterable(b, **fmt_iterable_kwrags)}{C_TEXT} expected){C_RESET}'
+  elif callable(expr):
+    comment = (
+      f' {C_TEXT}({C_RESET}{C_FUNC}{getattr_queue(expr, '__name__', '__class__.__name__', '__qualname__', default='unknown_callable')}{C_RESET}{FMT_BRACKETS[tuple][SH] % fmt_iterable(b, **fmt_iterable_kwrags)}{C_TEXT} expected){C_RESET}'
+    )
+  elif isinstance(expr, str):
+    comment = f' {C_TEXT}({fmt_iterable(expr, **fmt_iterable_kwrags)}{C_TEXT} expected){C_RESET}'
+
+  printhook_partial = partial(printhook, a, result, comment=comment, **printhook_kwargs)
 
   if not assert_first:
     printhook_partial()

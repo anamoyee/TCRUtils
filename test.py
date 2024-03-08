@@ -605,8 +605,12 @@ if True:  # \/ # Tests
 
   def test_asshole():
     asshole("Expected pass", "Expected pass")
-    asshole("Expected fail (suppressed)", 69, suppress=True)
-    asshole(1, 2, expr=" a < b")
+    asshole(2137, 69, suppress=True)
+    asshole(1, 2, expr="a < b")
+    asshole('1', expr=int)
+    asshole([1], expr=bool)
+    asshole([], expr=bool, suppress=True)
+    asshole([], expr=list, suppress=True)
 
   def test_discord_ifys():
     rashole(tcr.discord.IFYs.userify, -1)(ValueError)
@@ -701,5 +705,5 @@ if __name__ == '__main__':
   # test_discord_ifys()
   # test_asshole()
   # test_raises()
-  test_extract_error2()
+  # test_extract_error2()
   pass  # noqa: PIE790, RUF100

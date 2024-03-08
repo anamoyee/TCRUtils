@@ -7,11 +7,11 @@ from .tcr_iterable import getattr_queue
 
 def extract_error(e: BaseException, pattern='%s: %s', *, raw=False) -> tuple[str, str] | str:
   if able(issubclass, e, BaseException) and issubclass(e, BaseException):
-    tup = (getattr_queue(e, '__name__', '__class__.__name__', default='!UnknownExceptionGroupClass'), "<class>")
+    tup = (getattr_queue(e, '__name__', '__class__.__name__', default='!UnknownExceptionGroupClass'), '<class>')
     return tup if raw else pattern % tup
 
   if able(issubclass, e, Exception) and issubclass(e, Exception):
-    tup = (getattr_queue(e, '__name__', '__class__.__name__', default='!UnknownExceptionClass'), "<class>")
+    tup = (getattr_queue(e, '__name__', '__class__.__name__', default='!UnknownExceptionClass'), '<class>')
     return tup if raw else pattern % tup
 
   if callable(e):
