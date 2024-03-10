@@ -1,4 +1,3 @@
-import inspect
 from functools import partial, wraps
 from types import GeneratorType
 from warnings import warn
@@ -173,6 +172,30 @@ if True:  # \/ # fmt & print iterable
       return func(*args, **kwargs)
 
     return wrapper
+
+  def _non_double_repr(obj: object, /) -> str:
+    rep = repr(obj)
+
+    if not rep:
+      return rep
+
+    if not hasattr(obj, '__class__'):
+      return rep
+
+    if not hasattr(obj.__class__, '__name__'):
+      return rep
+
+    if rep.removeprefix(obj.__class__.__name__) == rep:
+      return rep
+
+    if rep.removeprefix(obj.__class__.__name__)[0] != '(':
+      return rep
+
+    if rep[-1] != ')':
+      return rep
+
+    return (rep[(len(obj.__class__.__name__)+1):-1])
+
 
   def fmt_iterable(
     it: Iterable,
@@ -450,7 +473,7 @@ if True:  # \/ # fmt & print iterable
 
     return FMT_UNKNOWN[syntax_highlighting] % (
       queue_name,
-      repr(it),
+      _non_double_repr(it),
     )  # If no hardcoded patterns match, return a repred version of whatever it is
 
   globals()['fmt_iterable'] = _reset_return_wrapper(fmt_iterable)
