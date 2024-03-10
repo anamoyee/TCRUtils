@@ -24,7 +24,6 @@ from .discord.tcrd_string import get_token
 from .src import tcr_types as tcrtypes
 from .src import tcr_types as types
 from .src.tcr_class import Singleton
-from .src.tcr_color import c, color, colour, printc
 from .src.tcr_compare import able
 from .src.tcr_console import breakpoint, console
 from .src.tcr_constants import *
@@ -36,6 +35,7 @@ from .src.tcr_error import error as tcrerror
 from .src.tcr_extract_error import extract_error, extract_traceback
 from .src.tcr_F import F
 from .src.tcr_getch import getch
+from .src.tcr_inject import ErrorCatcher, WarningCatcher
 from .src.tcr_input import insist
 from .src.tcr_int import float2int, hex, recursive_sum
 from .src.tcr_iterable import Or, batched, bogo_sort, cut_at, getattr_queue, getmanyattrs, hasmanyattrs, limited_iterable, shuffled, stalin_sort
@@ -61,8 +61,6 @@ from .src.tcr_void import araiser, avoid, raiser, void
 # fmt: off
 
 __all__ = [
-  "c", "color", "colour", "printc",     # color
-
   "console",                            # console
 
   "autorun", "convert",                 # decorator

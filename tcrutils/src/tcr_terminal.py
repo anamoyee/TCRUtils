@@ -21,6 +21,24 @@ class Cursor:
     else:
       _send(a)
 
+class TerminalColor:
+  @staticmethod
+  def set_terminal_rgb(r: int, g: int, b: int):
+    """
+    Sets the terminal text color to the specified RGB value.
+
+    Parameters:
+        r: int, The red component (0-255).
+        g: int, The green component (0-255).
+        b: int, The blue component (0-255).
+    """
+    if not all(isinstance(x, int) for x in (r, g, b)):
+      raise ValueError('All RGB values must be integers.')
+
+
+    color_sequence = f"\033[38;2;{r};{g};{b}m"
+
+    print(color_sequence, end='')
 
 class _TerminalSizeTuple(tuple):
   def __new__(cls, width: int, height: int):
@@ -36,7 +54,6 @@ class _TerminalSizeTuple(tuple):
   def __str__(self):
     return f'{self.width}x{self.height}'
 
-
 class Terminal:
   @property
   def width(self):
@@ -51,6 +68,9 @@ class Terminal:
     return _TerminalSizeTuple(*os.get_terminal_size())
 
   cursor = Cursor()
+
+  color = TerminalColor()
+  
 
 
 terminal = Terminal()

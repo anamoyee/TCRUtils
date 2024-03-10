@@ -4,7 +4,8 @@ from asyncio import iscoroutinefunction
 from collections.abc import Callable
 from functools import partial, wraps
 
-from .tcr_color import color as c
+from colored import Back, Fore, Style
+
 from .tcr_print import print_block
 
 if True:  # \/ # @test
@@ -39,9 +40,9 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
         % {
           'name': name,
           'time': f'{elapsed_time:.4f}',
-          'c_White': c('White') if color else '',
-          'c_Gold': c('Gold') if color else '',
-          'c_reset': c('reset') if color else '',
+          'c_White': (Fore.white + Style.bold) if color else '',
+          'c_Gold': (Fore.yellow + Style.bold) if color else '',
+          'c_reset': Style.reset if color else '',
         }
       )
 

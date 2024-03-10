@@ -3,8 +3,6 @@ import shelve
 import string
 from typing import Any
 
-from .tcr_color import c
-
 ALLOWED_CHARACTERS = string.ascii_letters + string.digits + "!&#'^~$,.%`{}[]();@_-+="  # Allowed characters in DB ID
 
 DISALLOWED_SEQUENCES = (
@@ -33,6 +31,9 @@ DISALLOWED_SEQUENCES = (
   'LPT9',
   'LPT0',
 )
+
+def c(a):
+  return f'\x1b[{a}m'
 
 A = f"""
 {c("208")}class {c("39")}DB{c("7")}({c}{c(39)}tcr.ShelveDB{c("7")}){c}{c(231)}:

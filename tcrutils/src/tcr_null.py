@@ -1,7 +1,9 @@
-from typing import Any, Union
+from typing import Any, Self, Union
 
 
 class Null:
+  """None alternative when None is not available. Yeah null is the programming's greaters mistake yadda yadda i don't care. It's useful to have a module-specific None-ish value."""
+
   def __str__(self):
     return self.__repr__()
 

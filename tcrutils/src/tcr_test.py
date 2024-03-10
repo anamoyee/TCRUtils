@@ -3,7 +3,7 @@ from functools import partial
 from random import randint
 from typing import Any
 
-from colored import attr, bg, fg
+from colored import Back, Fore, Style
 
 from .tcr_compare import able
 from .tcr_console import console
@@ -12,9 +12,9 @@ from .tcr_iterable import getattr_queue
 from .tcr_print import FMT_BRACKETS, FMTC, fmt_iterable
 from .tcr_void import raiser
 
-ASSERTION_ASS = f"{attr(0)}{fg('green')}{attr('bold')} PASS {attr(0)}"
+ASSERTION_ASS = f"{Style.reset}{Fore.GREEN + Style.bold} PASS {Style.reset}"
 """Uh i meant assertion_pass..."""
-ASSERTION_FAIL = f"{attr(0)}{bg('red')}{attr('bold')} FAIL {attr(0)}"
+ASSERTION_FAIL = f"{Style.reset}{Fore.RED + Style.bold} FAIL {Style.reset}"
 
 
 def default_asshook(obj, result: bool, *, comment: str = '') -> None:
@@ -25,6 +25,7 @@ def default_asshook(obj, result: bool, *, comment: str = '') -> None:
     padding=f" {(ASSERTION_ASS if randint(1, 100) != 69 else ASSERTION_ASS.replace('PASS', ' ASS')) if result else ASSERTION_FAIL} ",
     printhook=lambda x, **kwargs: print(x + comment, **kwargs),
   )
+
 
 def asshole(
   a: Any,
@@ -57,7 +58,7 @@ def asshole(
       suppress: bool, whether or not to suppress the assertion error and only use the printing functions (default: False)
   """
   if fmt_iterable_kwrags is None:
-    fmt_iterable_kwrags = {"syntax_highlighting": True}
+    fmt_iterable_kwrags = {'syntax_highlighting': True}
 
   SH = bool(fmt_iterable_kwrags.get('syntax_highlighting'))
 
@@ -65,12 +66,13 @@ def asshole(
   C_RESET = '' if not SH else FMTC._
   C_FUNC = '' if not SH else FMTC.FUNCTION
   C_EXC = '' if not SH else FMTC.INTERNAL_EXCEPTION
-  comment =''
+  comment = ''
 
   try:
     result = eval(expr) if isinstance(expr, str) else ((expr(a) == expr(b)) if callable(expr) else raiser(TypeError('Invalid typeof expr: ' + str(type(expr))))())
   except Exception as e:
-    comment = f' {C_EXC}{attr('reverse')} {extract_error(e)} {C_RESET}'
+    _revcode = '\x1b[7m'
+    comment = f' {C_EXC}{_revcode} {extract_error(e)} {C_RESET}'
     result = False
 
   if comment:
@@ -80,9 +82,7 @@ def asshole(
   elif expr == 'a == b' or (able(isinstance, b, expr) and isinstance(b, expr)):
     comment = f' {C_TEXT}({C_RESET}{fmt_iterable(b, **fmt_iterable_kwrags)}{C_TEXT} expected){C_RESET}'
   elif callable(expr):
-    comment = (
-      f' {C_TEXT}({C_RESET}{C_FUNC}{getattr_queue(expr, '__name__', '__class__.__name__', '__qualname__', default='unknown_callable')}{C_RESET}{FMT_BRACKETS[tuple][SH] % fmt_iterable(b, **fmt_iterable_kwrags)}{C_TEXT} expected){C_RESET}'
-    )
+    comment = f' {C_TEXT}({C_RESET}{C_FUNC}{getattr_queue(expr, '__name__', '__class__.__name__', '__qualname__', default='unknown_callable')}{C_RESET}{FMT_BRACKETS[tuple][SH] % fmt_iterable(b, **fmt_iterable_kwrags)}{C_TEXT} expected){C_RESET}'
   elif isinstance(expr, str):
     comment = f' {C_TEXT}({fmt_iterable(expr, **fmt_iterable_kwrags)}{C_TEXT} expected){C_RESET}'
 

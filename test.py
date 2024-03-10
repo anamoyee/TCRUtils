@@ -19,7 +19,7 @@ if True:  # \/ # Imports
   from tcrutils.discord import permissions as perms
 
 console.debug(sorted(a := [x for x in globals() if not x.startswith('_')]), len(a)); del a
-console.log(f"{tcr.c}Running on Python %s.%s" % sys.version_info[:2])
+console.log(f"Running on Python %s.%s" % sys.version_info[:2])
 
 if True:  # \/ # Tests
 
@@ -286,11 +286,6 @@ if True:  # \/ # Tests
     print_iterable(PrintableObj2(69), **kwargs)
     print_iterable(tcr.discord.Snowflake(1234), **kwargs)
     print_iterable([tcr.types.QuotelessString("quoteless string")]*3, **kwargs)
-
-  def test_color():
-    printc(c("Red") + "UwU")
-    printc(c("!Red") + "UwU")
-    printc(c("!Red", "Yellow") + "UwU")
 
   def test_markdown():
     console.debug(codeblock("asdf"))
@@ -637,6 +632,26 @@ if True:  # \/ # Tests
     console(extract_error(BaseExceptionGroup("Message", (Exception(),))))
     console(extract_error(ExceptionGroup("Message", (Exception(),))))
 
+  def test_warning_catcher():
+    tcr.WarningCatcher()
+    async def a():
+      ...
+    a()
+
+  def test_error_catcher():
+    tcr.ErrorCatcher()
+    # import rich.traceback
+    # rich.traceback.install()
+
+    raise ValueError("err")
+
+  def test_console_new():
+    console('test')
+    console.log('test')
+    console.error('test')
+    console.warn('test')
+    console.critical('test')
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -656,18 +671,18 @@ if __name__ == '__main__':
   # test_iterable(batched_=True, cut_at_=False)
   # test_path()
   # test_ifys()
-  test_print_iterable(
-    print_iterable=print_iterable,
-    syntax_highlighting=1,
-    # let_no_indent=0,
-    # force_no_indent=0,
-    # force_no_spaces=0,
-    # force_complex_parenthesis=1,
-    # item_limit=10,
-    # # let_no_inder_max_non_iterables=10,
-    # # let_no_inder_max_iterables=10,
-    # prefer_full_names=1,
-  )
+  # test_print_iterable(
+  #   print_iterable=print_iterable,
+  #   syntax_highlighting=1,
+  #   # let_no_indent=0,
+  #   # force_no_indent=0,
+  #   # force_no_spaces=0,
+  #   # force_complex_parenthesis=1,
+  #   # item_limit=10,
+  #   # # let_no_inder_max_non_iterables=10,
+  #   # # let_no_inder_max_iterables=10,
+  #   # prefer_full_names=1,
+  # )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=False)
@@ -706,4 +721,7 @@ if __name__ == '__main__':
   # test_asshole()
   # test_raises()
   # test_extract_error2()
+  test_warning_catcher()
+  # test_error_catcher()
+  # test_console_new()
   pass  # noqa: PIE790, RUF100

@@ -25,9 +25,8 @@ from _collections_abc import (
   tuple_iterator,
   zip_iterator,
 )
-from colored import attr, bg, fg
+from colored import Back, Fore, Style
 
-from .tcr_color import c
 from .tcr_compare import able
 from .tcr_constants import NEWLINE
 from .tcr_extract_error import extract_error
@@ -46,8 +45,8 @@ def print_block(
   padding: int = 0,
   padding_top: int = 1,
   padding_bottom: int = 1,
-  text_color: str = 'Gold',
-  border_color: str = 'White',
+  text_color: str = Fore.YELLOW + Style.bold,
+  border_color: str = Fore.WHITE + Style.bold,
   raw: bool = False,
   allow_invalid_config: bool = False,
 ) -> str | None:
@@ -70,11 +69,7 @@ def print_block(
     msg = f'border_char must be 1 character long (got {border_char!r} which is {len(border_char)!r} characters long). Override this by passing in allow_invalid_config=True'
     raise ValueError(msg)
 
-  if text_color != '':
-    text_color = c(text_color)
-  if border_color != '':
-    border_color = c(border_color)
-  reset = c('reset')
+  reset = Style.reset
 
   if not text_color and not border_color:
     reset = ''
@@ -96,29 +91,29 @@ if True:  # \/ # fmt & print iterable
   # fmt: off
   # Format Colors, name kept short so lines don't get THAT long if this thing is used like 10 times in a single fstring
   class FMTC:
-    _                   = attr(0) # Reset
-    NUMBER              = fg('blue')       + attr('bold')
-    DECIMAL             = fg('white')      + attr('bold')
-    BRACKET             = fg('cyan')       + attr('bold')
-    STRING              = attr(0)          + fg('yellow')
-    QUOTES              = fg('white')      + attr('bold')
-    COLON               = fg('orange_1')   + attr('bold')
-    ASTERISK            = fg('orange_1')   + attr('bold')
-    COROUTINE           = fg('orange_1')   + attr('bold')
-    FUNCTION            = fg('orange_1')   + attr('bold')
-    COMPLEX             = fg('orange_1')   + attr('bold')
-    COMMA               = fg('dark_gray')  + attr('bold')
-    UNKNOWN             = fg('dark_gray')  + attr('bold')
-    TRUE                = fg('green')      + attr('bold')
-    FALSE               = fg('red')        + attr('bold')
-    NULL                = fg('dark_gray')  + attr('bold')
-    NONE                = fg('light_gray') + attr('bold')
-    BYTESTR_B           = fg('red')        + attr('bold')
-    ITER_I              = fg('red_3b')     + attr('bold')
-    SPECIAL             = fg('purple_1B')  + attr('bold')
-    INTERNAL_EXCEPTION  = fg('red_3b')     + attr('bold')
-    BUILT_IN_EXCEPTION  = fg('blue')       + attr('bold')
-    CLASS               = fg('blue')       + attr('bold')
+    _                   = Style.reset # Reset
+    NUMBER              = Fore.BLUE + Style.bold
+    DECIMAL             = Fore.WHITE + Style.bold
+    BRACKET             = Fore.CYAN + Style.bold
+    STRING              = Style.reset + Fore.YELLOW
+    QUOTES              = Fore.WHITE + Style.bold
+    COLON               = Fore.orange_1 + Style.bold
+    ASTERISK            = Fore.orange_1 + Style.bold
+    COROUTINE           = Fore.orange_1 + Style.bold
+    FUNCTION            = Fore.orange_1 + Style.bold
+    COMPLEX             = Fore.orange_1 + Style.bold
+    COMMA               = Fore.dark_gray + Style.bold
+    UNKNOWN             = Fore.dark_gray + Style.bold
+    TRUE                = Fore.GREEN + Style.bold
+    FALSE               = Fore.RED + Style.bold
+    NULL                = Fore.dark_gray + Style.bold
+    NONE                = Fore.light_gray + Style.bold
+    BYTESTR_B           = Fore.RED + Style.bold
+    ITER_I              = Fore.red_3b + Style.bold
+    SPECIAL             = Fore.purple_1b + Style.bold
+    INTERNAL_EXCEPTION  = Fore.red_3b + Style.bold
+    BUILT_IN_EXCEPTION  = Fore.BLUE + Style.bold
+    CLASS               = Fore.BLUE + Style.bold
 
   class FMT_LETTERS:
     b  = f'{FMTC.BYTESTR_B}b'
@@ -529,7 +524,7 @@ if True:  # \/ # fmt & print iterable
 
 
 def alert(s: str, *, printhook: Callable[[str], None] = print, raw=False) -> None:
-  text = ''.join([f"{fg('black') + bg('red') + attr('bold') if i % 2 == 0 else fg('white') + bg('yellow')}{x}" for i, x in enumerate(s)]) + attr(0)
+  text = ''.join([f"{(Fore.BLACK + Back.RED + Style.bold) if i % 2 == 0 else Fore.WHITE + Back.YELLOW}{x}" for i, x in enumerate(s)]) + Style.reset
 
   if raw:
     return text

@@ -23,6 +23,7 @@ Useful stuff for tcr projects.
 - [x] Fix when trailing_commas=False breaks 1-element tuples
 - [x] Test ifys
 - [ ] Fix exception groups crashing extract_error
+- [ ] make exceptionhook like warning catcher
 
 ~~<style>s{color: crimson;} b,strong{text-decoration:underline}</style>~~
 <!-- I am MEGUMIN the greatest mage among crimson demons and wielder of EXPLOSION MAGIC -->

@@ -15,9 +15,10 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.11.0,<3.13"
 hikari = "^2.0.0.dev122"
-colored = "^2.2.4"
 hikari-toolbox = "^0.1.6"
 hikari-miru = "^4.0.0"
+colored = "^2.2.4"
+colorama = "^0.4.6"
 
 
 [build-system]
