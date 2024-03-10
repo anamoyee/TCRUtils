@@ -17,6 +17,8 @@ Star-importing is fine, ctrl-click whatever you're hovering on right now to see 
 Joke functions and other barely useful crap is not included in star imports.
 """
 
+_, __version__ = (__import__('pathlib').Path(__file__).resolve().parent / '__version__.txt').read_text().strip().split(' ')
+
 from . import discord, src
 from .discord.tcrd_embeds import embed, modal
 from .discord.tcrd_limits import DiscordLimits

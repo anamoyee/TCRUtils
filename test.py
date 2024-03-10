@@ -652,6 +652,13 @@ if True:  # \/ # Tests
     console.warn('test')
     console.critical('test')
 
+  def test_dunder_version():
+    console({
+      '__version__': tcr.__version__,
+      '__name__': tcr.__name__,
+      '__file__': tcr.__file__,
+    })
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -721,7 +728,8 @@ if __name__ == '__main__':
   # test_asshole()
   # test_raises()
   # test_extract_error2()
-  test_warning_catcher()
+  # test_warning_catcher()
   # test_error_catcher()
   # test_console_new()
+  test_dunder_version()
   pass  # noqa: PIE790, RUF100
