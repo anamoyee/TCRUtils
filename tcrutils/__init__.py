@@ -23,14 +23,14 @@ from . import discord, src
 from .discord.tcrd_embeds import embed, modal
 from .discord.tcrd_limits import DiscordLimits
 from .discord.tcrd_string import get_token
-from .src import tcr_types as tcrtypes
 from .src import tcr_types as types
 from .src.tcr_class import Singleton
-from .src.tcr_compare import able
+from .src.tcr_classfuncs import get_classname, get_name_classname, get_qualname_classname
+from .src.tcr_compare import able, isdunder
 from .src.tcr_console import breakpoint, console
 from .src.tcr_constants import *
 from .src.tcr_decorator import autorun, convert, instance, test, timeit
-from .src.tcr_dict import clean_dunder_dict, dict_zip, merge_dicts
+from .src.tcr_dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zip, merge_dicts
 from .src.tcr_dir import dir2, dir3
 from .src.tcr_error import error  # 'tcrerror' in star imports, either in 'tcr.error'/'tcr.tcrerror'
 from .src.tcr_error import error as tcrerror
@@ -45,7 +45,7 @@ from .src.tcr_joke import christmas_tree, fizzbuzz, oddeven
 from .src.tcr_language import apostrophe_s, make_plural, nth
 from .src.tcr_markdown import codeblock, uncodeblock
 from .src.tcr_misspellings import asert, trei
-from .src.tcr_null import Null, UniqueDefault
+from .src.tcr_null import Null, Undefined, UniqueDefault
 from .src.tcr_other import intbool
 from .src.tcr_overload import Overload, OverloadMeta, overload
 from .src.tcr_path import path
@@ -83,7 +83,7 @@ __all__ = [
 
   "asert", "trei",                      # misspellings
 
-  "Null", "UniqueDefault",              # null
+  "Null", "Undefined", "UniqueDefault", # null
 
   "commafy",                            # string
 
@@ -114,8 +114,6 @@ __all__ = [
   "ShelveDB",                           # sdb
 
   "Overload", "overload",               # overload
-
-  "tcrtypes",                           # types
 
   "BACKSLASH",                          # constants
   "NEWLINE",

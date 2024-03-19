@@ -670,6 +670,54 @@ if True:  # \/ # Tests
       '__file__': tcr.__file__,
     })
 
+  def test_dotdicts():
+    dd = tcr.DotDict({"a": 1, "b": 2})
+    asshole(dd.a, 1)
+    asshole(dd.b, 2)
+    rashole(lambda: dd.c)(KeyError)
+    del dd.a
+    asshole(dd, {"b": 2})
+
+
+    dd = tcr.DotDict({"a": 1, "b": {"c": 3}})
+    asshole(dd.b.c, 3)
+
+    jsd = tcr.JSDict({"a": 1, "b": 2})
+    asshole(jsd['a'], 1)
+    asshole(jsd['b'], 2)
+    asshole(jsd['c'], Undefined)
+
+    jsdd = tcr.JSDotDict({"a": 1, "b": 2})
+    asshole(jsdd.a, 1)
+    asshole(jsdd.b, 2)
+    asshole(jsdd.c | 3, 3)
+    del jsdd.asdfa # Nothing should happen because jsdict will suppress the invalid item - because javascript
+
+  def test_null():
+    console(Null)
+    console(Undefined)
+    asshole(Null is Null.__class__())
+    asshole(Undefined is Undefined.__class__())
+    asshole(Undefined is not Null)
+    console(type(Null))
+    console(type(Undefined))
+    console(str(Null))
+    console(repr(Null))
+    console(str(Undefined))
+    console(repr(Undefined))
+    asshole(Null | 0, 0)
+    asshole(Null | 1, 1)
+    asshole(0 | Null, 0)
+    asshole(1 | Null, 1)
+    asshole(Undefined | 0, 0)
+    asshole(Undefined | 1, 1)
+    asshole(0 | Undefined, 0)
+    asshole(1 | Undefined, 1)
+    console(Null | Undefined)
+    console(Undefined | Null)
+    console(Undefined | Undefined)
+    console(Null | Null)
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -689,18 +737,18 @@ if __name__ == '__main__':
   # test_iterable(batched_=True, cut_at_=False)
   # test_path()
   # test_ifys()
-  # test_print_iterable(
-  #   print_iterable=print_iterable,
-  #   syntax_highlighting=1,
-  #   # let_no_indent=0,
-  #   # force_no_indent=0,
-  #   # force_no_spaces=0,
-  #   # force_complex_parenthesis=1,
-  #   # item_limit=10,
-  #   # # let_no_inder_max_non_iterables=10,
-  #   # # let_no_inder_max_iterables=10,
-  #   # prefer_full_names=1,
-  # )
+  test_print_iterable(
+    print_iterable=print_iterable,
+    syntax_highlighting=1,
+    # let_no_indent=0,
+    # force_no_indent=0,
+    # force_no_spaces=0,
+    # force_complex_parenthesis=1,
+    # item_limit=10,
+    # # let_no_inder_max_non_iterables=10,
+    # # let_no_inder_max_iterables=10,
+    # prefer_full_names=1,
+  )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=False)
@@ -739,8 +787,10 @@ if __name__ == '__main__':
   # test_asshole()
   # test_raises()
   # test_extract_error2()
-  test_warning_catcher()
+  # test_warning_catcher()
   # test_error_catcher()
   # test_console_new()
   # test_dunder_version()
+  # test_null()
+  test_dotdicts()
   pass  # noqa: PIE790, RUF100

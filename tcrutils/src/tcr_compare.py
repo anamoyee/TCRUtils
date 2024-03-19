@@ -24,3 +24,12 @@ def able(func: Callable, *args, able_exception__: BaseException = Exception, **k
     return False
   else:
     return True
+
+
+def isdunder(s: str):
+  """Return True if the string ends and starts with at least two underscores each.
+
+  A 2-char string containing just underscores is considered dunder.
+  """
+
+  return s.startswith('__') and (s.endswith('__'))

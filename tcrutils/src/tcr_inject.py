@@ -7,7 +7,7 @@ from collections.abc import Callable
 
 from colored import Back, Fore, Style
 
-from .tcr_class import get_classname
+from .tcr_classfuncs import get_classname
 from .tcr_console import console
 from .tcr_iterable import cut_at
 from .tcr_print import FMTC
@@ -17,6 +17,7 @@ C_NUMBER = FMTC.NUMBER
 C_WARNING = Fore.yellow + Style.bold
 C_ERROR = Fore.red + Style.bold
 C_EXCEPTION = FMTC.INTERNAL_EXCEPTION
+
 
 def default_err_or_warning_printhook(s: str, warning: Warning | Exception, filename: str, lineno: int, *, tb=None) -> None:
   """Default printhook for tcr.WarningCatcher."""
@@ -35,7 +36,7 @@ def default_err_or_warning_printhook(s: str, warning: Warning | Exception, filen
     lines = ''
   else:
     lines = path.read_text().split('\n')
-    lines = lines[max(0, lineno - (AROUND+1)) : lineno + AROUND]
+    lines = lines[max(0, lineno - (AROUND + 1)) : lineno + AROUND]
     while all(x.startswith(' ') for x in lines):
       lines = [x[1:] for x in lines]
     lines = [f'{C_NUMBER}{lineno-AROUND+i}{color} {">" if i == AROUND else "|"}{FMTC._} {cut_at(x, CUTOFF)}' for i, x in enumerate(lines)]
@@ -48,11 +49,13 @@ def default_err_or_warning_printhook(s: str, warning: Warning | Exception, filen
   func = console.warn if is_warning else console.error
   func(f'{color}{filename}{C_WHITE}:{C_NUMBER}{lineno}{C_WHITE}: {C_EXCEPTION}{get_classname(warning)}{C_WHITE}: {color}{str(warning).replace("<locals>.", "")}{lines}')
 
+
 def _errorcatcher_excepthook(type, value, traceback):
   frame = traceback.tb_frame
   filename = frame.f_code.co_filename
   lineno = frame.f_lineno
   default_err_or_warning_printhook(str(value), value, filename, lineno, tb=traceback)
+
 
 class ErrorCatcher:
   def __init__(self, **kwargs) -> None:
@@ -61,6 +64,7 @@ class ErrorCatcher:
   @staticmethod
   def install():
     sys.excepthook = _errorcatcher_excepthook
+
 
 class WarningCatcher:
   """Catches any warnings (for example "Coroutine X was not awaited") and forwards them as text to the selected (or default: tcr.console.warn) printhook.
@@ -95,6 +99,7 @@ class WarningCatcher:
     _WarningCatcher.install(
       printhook=printhook,
     )
+
 
 class _WarningCatcher(th.Thread):
   _initiated = False

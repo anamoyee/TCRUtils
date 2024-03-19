@@ -13,11 +13,12 @@ from .tcr_types import QuotelessString
 
 class CC:
   _ = Style.reset
-  LOG = Fore.light_green + Style.bold # 10
+  LOG = Fore.light_green + Style.bold  # 10
   WARN = Fore.YELLOW + Style.bold
   ERROR = Fore.RED + Style.bold
-  DEBUG = Fore.purple_1b + Style.bold # 129
+  DEBUG = Fore.purple_1b + Style.bold  # 129
   CRITICAL = Back.RED + Style.bold
+
 
 class Console:
   """### Provides logging capabilities.

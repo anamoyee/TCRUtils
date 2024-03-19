@@ -12,9 +12,9 @@ from .tcr_iterable import getattr_queue
 from .tcr_print import FMT_BRACKETS, FMTC, fmt_iterable
 from .tcr_void import raiser
 
-ASSERTION_ASS = f"{Style.reset}{Fore.GREEN + Style.bold} PASS {Style.reset}"
+ASSERTION_ASS = f'{Style.reset}{Fore.GREEN + Style.bold} PASS {Style.reset}'
 """Uh i meant assertion_pass..."""
-ASSERTION_FAIL = f"{Style.reset}{Fore.RED + Style.bold} FAIL {Style.reset}"
+ASSERTION_FAIL = f'{Style.reset}{Fore.RED + Style.bold} FAIL {Style.reset}'
 
 
 def default_asshook(obj, result: bool, *, comment: str = '') -> None:
@@ -22,7 +22,7 @@ def default_asshook(obj, result: bool, *, comment: str = '') -> None:
 
   console(
     obj,
-    padding=f" {(ASSERTION_ASS if randint(1, 100) != 69 else ASSERTION_ASS.replace('PASS', ' ASS')) if result else ASSERTION_FAIL} ",
+    padding=f" {(ASSERTION_ASS if randint(1, 1000) != 69 else ASSERTION_ASS.replace('PASS', ' ASS')) if result else ASSERTION_FAIL} ",
     printhook=lambda x, **kwargs: print(x + comment, **kwargs),
   )
 

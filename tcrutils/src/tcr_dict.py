@@ -1,5 +1,9 @@
+import contextlib
 from collections.abc import Generator, Hashable, Mapping
 from typing import Any
+
+from .tcr_compare import isdunder
+from .tcr_null import Undefined
 
 
 def _check_strict(master: Mapping, slave: Mapping, *, recursive: bool) -> bool:
@@ -91,3 +95,75 @@ def clean_dunder_dict(
     raise ValueError('Invalid strategy, choose 0, 1 or 2 (not literally `0-2` you fucking idiot)')
 
   raise ValueError('Invalid strategy, choose 0-2')
+
+
+class DotDict(dict):
+  """### dot.notation access to dictionary attributes.
+
+  This will ignore any dunder attributes, and will not try to look them up in the underlying dict.
+
+  ```py
+  >>> d = {"a": 1, "b": 2}
+  >>> dd = DotDict(d) # or DotDict({"a": ...})
+  >>> dd.a
+  1
+  >>> dd.b
+  2
+  ```
+
+  This will convert any Mapping that is not already a DotDict into a DotDict on access.
+
+  Raises:
+      - KeyError (tried to convert the dot-access to item-access but failed to find item)
+      - AttributeError (the dot-accessed attribute was dunder, did not try to convert to item-access and said attribute was not found)
+      - Other standard dict errors if any.
+  """
+
+  def __getattr__(self, attr):
+    if isdunder(attr):
+      return object.__getattribute__(self, attr)
+
+    a = super().__getitem__(attr)
+
+    if not isinstance(a, DotDict) and isinstance(a, Mapping):
+      return DotDict(a)
+
+    return a
+
+  def __setattr__(self, attr, value):
+    if isdunder(attr):
+      return setattr(self, attr, value)
+
+    super().__setitem__(attr, value)
+
+  def __delattr__(self, attr):
+    if isdunder(attr):
+      return delattr(self, attr)
+
+    super().__delitem__(attr)
+
+
+class JSDict(dict):
+  """Returns tcr.Undefined when a value is not found rather than erroring.
+
+  In order to effectively replace the undefined value (tcr.Undefined) bitwise or it with any other value, (`tcr.Undefined | T -> T`).
+  """
+
+  def __getitem__(self, key):
+    try:
+      return super().__getitem__(key)
+    except KeyError:
+      return Undefined
+
+  def __delitem__(self, __key: Any) -> None:
+    with contextlib.suppress(KeyError):
+      return super().__delitem__(__key)
+
+
+class JSDotDict(DotDict, JSDict):
+  """Combines tcr.DotDict and tcr.JSDict.
+
+  (Allows for dot-access and returns tcr.Undefined when a value is not found rather than erroring.)
+
+  For full description see the previously mentioned class doc strings.
+  """

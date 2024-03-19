@@ -1,37 +1,46 @@
-from typing import Any, Self, Union
+from types import UnionType
+from typing import Any, Self, TypeVar, Union
+
+from .tcr_class import Singleton
 
 
-class Null:
-  """None alternative when None is not available. Yeah null is the programming's greaters mistake yadda yadda i don't care. It's useful to have a module-specific None-ish value."""
+def instance(func):
+  return func()
+
+
+T = TypeVar('T')
+
+
+class _NullLike:
+  """Base class for null-like objects (Null, Undefined).
+
+  Can be bitwise-ored with any other value to yield that other value. (If both values in bitwise or are null-like, return the directionally right one)
+  """
 
   def __str__(self):
     return self.__repr__()
 
   def __repr__(self):
-    return 'Null'
+    return self.__class__.__name__
+
+  def __bool__(self):
+    return False
+
+  def __or__(self, __value: T) -> T:
+    return __value
+
+  def __ror__(self, __value: T) -> T:
+    return __value
 
 
-def or_(self, __value: Any) -> Union[Null, Any]:  # noqa: UP007
-  return Union[Null, __value]  # noqa: UP007
+@instance
+class Null(Singleton, _NullLike):
+  """Value is explicitly declared as absent."""
 
 
-def ror_(self, __value: Any) -> Union[Null, Any]:  # noqa: UP007
-  return Union[Null, __value]  # noqa: UP007
-
-
-def _new(cls, *args, **kwargs):
-  return Null
-
-
-Null.__or__ = or_
-Null.__ror__ = ror_
-
-Null, NullType = Null(), Null
-
-NullType.__new__ = _new
-Null.__class__ = NullType
-
-assert (Null) is (Null.__class__())  # No sneaky sneakies with making two different Nulls
+@instance
+class Undefined(Singleton, _NullLike):
+  """Value is missing."""
 
 
 class UniqueDefault:

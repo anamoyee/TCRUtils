@@ -31,7 +31,7 @@ from .tcr_constants import NEWLINE
 from .tcr_extract_error import extract_error
 from .tcr_int import hex as tcrhex
 from .tcr_iterable import Or, getattr_queue, limited_iterable
-from .tcr_null import Null
+from .tcr_null import Null, Undefined
 from .tcr_types import QuotelessString
 
 
@@ -106,6 +106,7 @@ if True:  # \/ # fmt & print iterable
     TRUE                = Fore.GREEN + Style.bold
     FALSE               = Fore.RED + Style.bold
     NULL                = Fore.dark_gray + Style.bold
+    UNDEFINED           = Fore.dark_gray + Style.bold
     NONE                = Fore.light_gray + Style.bold
     BYTESTR_B           = Fore.RED + Style.bold
     ITER_I              = Fore.red_3b + Style.bold
@@ -188,14 +189,16 @@ if True:  # \/ # fmt & print iterable
     if rep.removeprefix(obj.__class__.__name__) == rep:
       return rep
 
+    if not rep.removeprefix(obj.__class__.__name__):
+      return ''
+
     if rep.removeprefix(obj.__class__.__name__)[0] != '(':
       return rep
 
     if rep[-1] != ')':
       return rep
 
-    return (rep[(len(obj.__class__.__name__)+1):-1])
-
+    return rep[(len(obj.__class__.__name__) + 1) : -1]
 
   def fmt_iterable(
     it: Iterable,
@@ -270,20 +273,24 @@ if True:  # \/ # fmt & print iterable
       and not force_no_spaces
       # for all Iterables...
       and isinstance(it, Iterable)
-      # ...that don't have already hardcoded displays or mapping because mapping
-      and not isinstance(it, str | bytes | Mapping)
+      # ...that don't have already hardcoded displays
+      and not isinstance(it, str | bytes)
       # If their length can be checked (e.g. not generators)
       and able(len, it)
       # And they have any length:
       and len(it) > 0
     ):
-      # Case 1: If the iterable in question contains iterables
-      # If there is at most 1 iterable in the outer iterable of iterables
-      if len(it) <= Or(kwargs.get('let_no_inder_max_iterables'), 1) and any(isinstance(x, Iterable) for x in it):
-        force_no_indent = -1
-      # Case 2: If the outer iterable consists of non-iterables: If there are at most 4 non-iterables
-      if all((not isinstance(x, Iterable)) or isinstance(x, str | bytes) or (able(len, x) and len(x) == 0) for x in it) and len(it) <= Or(kwargs.get('let_no_inder_max_non_iterables'), 4):
-        force_no_indent = -1
+      if isinstance(it, Mapping):
+        if len(it) == 1:
+          force_no_indent = -1
+      else:
+        # Case 1: If the iterable in question contains iterables
+        # If there is at most 1 iterable in the outer iterable of iterables
+        if len(it) <= Or(kwargs.get('let_no_inder_max_iterables'), 1) and any(isinstance(x, Iterable) for x in it):
+          force_no_indent = -1
+        # Case 2: If the outer iterable consists of non-iterables: If there are at most 4 non-iterables
+        if all((not isinstance(x, Iterable)) or isinstance(x, str | bytes) or (able(len, x) and len(x) == 0) for x in it) and len(it) <= Or(kwargs.get('let_no_inder_max_non_iterables'), 4):
+          force_no_indent = -1
 
     name = '__qualname__' if prefer_full_names else '__name__'
     space = ' ' if not force_no_spaces else ''
@@ -351,6 +358,8 @@ if True:  # \/ # fmt & print iterable
       return f'{FMTC.BUILT_IN_EXCEPTION}{exc_name}'
     if it is Null:
       return f'{FMTC.NULL}{it}{FMTC._}' if syntax_highlighting else str(it)
+    if it is Undefined:
+      return f'{FMTC.UNDEFINED}{it}{FMTC._}' if syntax_highlighting else str(it)
     if it is None:
       return f'{FMTC.NONE}{it}{FMTC._}' if syntax_highlighting else str(it)
     if it is True:
@@ -547,7 +556,7 @@ if True:  # \/ # fmt & print iterable
 
 
 def alert(s: str, *, printhook: Callable[[str], None] = print, raw=False) -> None:
-  text = ''.join([f"{(Fore.BLACK + Back.RED + Style.bold) if i % 2 == 0 else Fore.WHITE + Back.YELLOW}{x}" for i, x in enumerate(s)]) + Style.reset
+  text = ''.join([f'{(Fore.BLACK + Back.RED + Style.bold) if i % 2 == 0 else Fore.WHITE + Back.YELLOW}{x}' for i, x in enumerate(s)]) + Style.reset
 
   if raw:
     return text

@@ -21,6 +21,7 @@ class Cursor:
     else:
       _send(a)
 
+
 class _TerminalSizeTuple(tuple):
   def __new__(cls, width: int, height: int):
     return super().__new__(cls, (width, height))
@@ -34,6 +35,7 @@ class _TerminalSizeTuple(tuple):
 
   def __str__(self):
     return f'{self.width}x{self.height}'
+
 
 class Terminal:
   @property
@@ -49,6 +51,7 @@ class Terminal:
     return _TerminalSizeTuple(*os.get_terminal_size())
 
   cursor = Cursor()
+
 
 terminal = Terminal()
 

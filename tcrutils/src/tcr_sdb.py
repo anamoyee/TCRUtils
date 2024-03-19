@@ -32,8 +32,10 @@ DISALLOWED_SEQUENCES = (
   'LPT0',
 )
 
+
 def c(a):
   return f'\x1b[{a}m'
+
 
 A = f"""
 {c("208")}class {c("39")}DB{c("7")}({c}{c(39)}tcr.ShelveDB{c("7")}){c}{c(231)}:
