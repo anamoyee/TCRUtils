@@ -82,7 +82,7 @@ def asshole(
   elif expr == 'a == b' or (able(isinstance, b, expr) and isinstance(b, expr)):
     comment = f' {C_TEXT}({C_RESET}{fmt_iterable(b, **fmt_iterable_kwrags)}{C_TEXT} expected){C_RESET}'
   elif callable(expr):
-    comment = f' {C_TEXT}({C_RESET}{C_FUNC}{getattr_queue(expr, '__name__', '__class__.__name__', '__qualname__', default='unknown_callable')}{C_RESET}{FMT_BRACKETS[tuple][SH] % fmt_iterable(b, **fmt_iterable_kwrags)}{C_TEXT} expected){C_RESET}'
+    comment = f" {C_TEXT}({C_RESET}{C_FUNC}{getattr_queue(expr, '__name__', '__class__.__name__', '__qualname__', default='unknown_callable')}{C_RESET}{FMT_BRACKETS[tuple][SH] % fmt_iterable(b, **fmt_iterable_kwrags)}{C_TEXT} expected){C_RESET}"
   elif isinstance(expr, str):
     comment = f' {C_TEXT}({fmt_iterable(expr, **fmt_iterable_kwrags)}{C_TEXT} expected){C_RESET}'
 
