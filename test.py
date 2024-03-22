@@ -719,7 +719,9 @@ if True:  # \/ # Tests
     console(Null | Null)
 
   def test_get_caller_line_number():
-    console(tcr.get_caller_line_number())
+    console(tcr.get_lineno())
+    console(tcr.get_file_colon_lineno())
+    console(tcr.get_file_colon_lineno(additional_offset=10))
 
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
