@@ -723,6 +723,25 @@ if True:  # \/ # Tests
     console(tcr.get_file_colon_lineno())
     console(tcr.get_file_colon_lineno(additional_offset=10))
 
+  def test_diff():
+    console({
+      1: 2,
+      3: 2,
+      5: 6,
+    }, diff=True)
+    console({
+      1: 2,
+      3: 4,
+      5: 6,
+    }, diff=True)
+    console({
+      1: 4,
+      3: 4,
+      6: 4,
+      7: 4,
+      5: 6,
+    }, diff=True)
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -798,5 +817,6 @@ if __name__ == '__main__':
   # test_dunder_version()
   # test_null()
   # test_dotdicts()
-  test_get_caller_line_number()
+  # test_get_caller_line_number()
+  test_diff()
   pass  # noqa: PIE790, RUF100
