@@ -1,5 +1,6 @@
 from functools import partial, wraps
 from types import GeneratorType
+from typing import Any
 from warnings import warn
 
 from _collections_abc import (
@@ -201,9 +202,9 @@ if True:  # \/ # fmt & print iterable
     return rep[(len(obj.__class__.__name__) + 1) : -1]
 
   def fmt_iterable(
-    it: Iterable,
+    it: Iterable | Any,
     /,
-    *its: Iterable,
+    *its: Iterable | Any,
     indentation: int = 2,
     item_limit: int = 100,
     syntax_highlighting: bool = False,
@@ -475,6 +476,14 @@ if True:  # \/ # fmt & print iterable
     if hasattr(it, '__tcr_display__'):
       try:
         return it.__tcr_display__(**thisdict, _ran_from_tcr_display=True)
+      except Exception as e:
+        if kwargs.get('_raise_errors'):
+          raise
+        return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
+
+    if hasattr(it, '__tcr_fmt__'):
+      try:
+        return it.__tcr_fmt__(fmt_iterable, **thisdict, _ran_from_tcr_display=True)
       except Exception as e:
         if kwargs.get('_raise_errors'):
           raise

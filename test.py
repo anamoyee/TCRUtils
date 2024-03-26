@@ -297,6 +297,8 @@ if True:  # \/ # Tests
         return f'{self.__class__.__name__}(test={self.test!r})'
 
     print_iterable(Client('test'), **kwargs)
+    print_iterable(0x7FFFFFFF, **kwargs)
+    print_iterable(tcr.types.HexInt(0x7FFFFFFF), **kwargs)
 
   def test_markdown():
     console.debug(codeblock("asdf"))
@@ -761,18 +763,18 @@ if __name__ == '__main__':
   # test_iterable(batched_=True, cut_at_=False)
   # test_path()
   # test_ifys()
-  # test_print_iterable(
-  #   print_iterable=print_iterable,
-  #   syntax_highlighting=1,
-  #   # let_no_indent=0,
-  #   # force_no_indent=0,
-  #   # force_no_spaces=0,
-  #   # force_complex_parenthesis=1,
-  #   # item_limit=10,
-  #   # # let_no_inder_max_non_iterables=10,
-  #   # # let_no_inder_max_iterables=10,
-  #   # prefer_full_names=1,
-  # )
+  test_print_iterable(
+    print_iterable=print_iterable,
+    syntax_highlighting=1,
+    # let_no_indent=0,
+    # force_no_indent=0,
+    # force_no_spaces=0,
+    # force_complex_parenthesis=1,
+    # item_limit=10,
+    # # let_no_inder_max_non_iterables=10,
+    # # let_no_inder_max_iterables=10,
+    # prefer_full_names=1,
+  )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=False)
@@ -818,5 +820,5 @@ if __name__ == '__main__':
   # test_null()
   # test_dotdicts()
   # test_get_caller_line_number()
-  test_diff()
+  # test_diff()
   pass  # noqa: PIE790, RUF100
