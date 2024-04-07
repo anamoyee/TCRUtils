@@ -117,9 +117,7 @@ class Console:
         while len(last_lines) < len(out_lines):
           last_lines.append('')
 
-        diff_out = '\n'.join([
-          ('  ' if line == line_old else f'{c_bang}*{c_reset} ') + line for line, line_old in zip(out_lines, last_lines, strict=True)
-        ])
+        diff_out = '\n'.join([('  ' if line == line_old else f'{c_bang}*{c_reset} ') + line for line, line_old in zip(out_lines, last_lines, strict=True)])
 
         printhook(compose('\n' + diff_out))
 

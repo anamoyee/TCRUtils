@@ -4,6 +4,7 @@ from typing import TypeVar
 
 T = TypeVar('T')
 
+
 def get_lineno(*, default: T | None = None, backtrack_frames: int = 1) -> int | T:
   """Return the python file's line number at which this function was called as an int.
 
@@ -17,6 +18,7 @@ def get_lineno(*, default: T | None = None, backtrack_frames: int = 1) -> int | 
       return default
     frame = frame.f_back
   return frame.f_lineno if frame else default
+
 
 def get_file_colon_lineno(default: T | None = None, backtrack_frames: int = 1, additional_offset: int = 0) -> str:
   """Return the python file's line number at which this function was called as a string, in the form 'filename:lineno'.
@@ -33,8 +35,8 @@ def get_file_colon_lineno(default: T | None = None, backtrack_frames: int = 1, a
       raise RuntimeError('Invalid frame.')
     frame = frame.f_back
 
-
   return f'{frame.f_code.co_filename}:{get_lineno(default=default, backtrack_frames=backtrack_frames+1)+additional_offset}'
 
+
 def get_pyversion_str(precision=2) -> str:
-  return ".".join([str(x) for x in sys.version_info[:precision]])
+  return '.'.join([str(x) for x in sys.version_info[:precision]])

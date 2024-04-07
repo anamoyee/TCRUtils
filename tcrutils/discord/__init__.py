@@ -11,15 +11,4 @@ from .tcrd_permissions import permissions as discord_permissions
 from .tcrd_snowflake import Snowflake, is_snowflake
 from .tcrd_string import IFYs, get_token
 
-__all__ = [
-  'DiscordLimits',
-  'DiscordPermission',
-  'discord_permissions',
-  'tcrd_embeds',
-  'is_snowflake',
-  'Snowflake',
-  'embed',
-  'modal',
-  'get_token',
-  'get_guild_count'
-]
+__all__ = ['DiscordLimits', 'DiscordPermission', 'discord_permissions', 'tcrd_embeds', 'is_snowflake', 'Snowflake', 'embed', 'modal', 'get_token', 'get_guild_count']

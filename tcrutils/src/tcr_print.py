@@ -1,6 +1,7 @@
 from functools import partial, wraps
-from types import GeneratorType
+from types import GeneratorType, UnionType
 from typing import Any
+from typing import get_args as unpack_union
 from warnings import warn
 
 from _collections_abc import (
@@ -93,6 +94,7 @@ if True:  # \/ # fmt & print iterable
   class FMTC:
     _                   = Style.reset # Reset
     NUMBER              = Fore.BLUE + Style.bold
+    TYPE                = Fore.BLUE + Style.bold
     DECIMAL             = Fore.WHITE + Style.bold
     BRACKET             = Fore.CYAN + Style.bold
     STRING              = Style.reset + Fore.YELLOW
@@ -103,6 +105,7 @@ if True:  # \/ # fmt & print iterable
     FUNCTION            = Fore.orange_1 + Style.bold
     COMPLEX             = Fore.orange_1 + Style.bold
     COMMA               = Fore.dark_gray + Style.bold
+    PIPE                = Fore.dark_gray + Style.bold
     UNKNOWN             = Fore.dark_gray + Style.bold
     TRUE                = Fore.GREEN + Style.bold
     FALSE               = Fore.RED + Style.bold
@@ -144,6 +147,8 @@ if True:  # \/ # fmt & print iterable
     coroutine:     ('coroutine_%s',    f'{FMT_LETTERS.C}{FMTC.DECIMAL}\'{FMTC.FUNCTION}%s')
   }
 
+  # FMT_UNION_SEPARATOR[syntax_highlighting: bool] -> attaches ' | ' to the content with respect to syntax highlighting
+  FMT_UNION_SEPARATOR = ('|', f'{FMTC.PIPE} | {FMTC._}')
   # (FMT_ITER[syntax_highlighting: bool] % content) -> attaches 'i' or 'iter()' to the content with respect to syntax highlighting
   FMT_ITER = ('iter(%s)', f'{FMT_LETTERS.i}%s')
   # (FMT_UNKNOWN[syntax_highlighting: bool] % (name, content)) -> attaches name and content to an unknown object
@@ -214,6 +219,7 @@ if True:  # \/ # fmt & print iterable
     force_no_indent: bool = False,
     force_no_spaces: bool = False,
     force_complex_parenthesis: bool = False,
+    force_union_parenthesis: bool = True,
     prefer_full_names: bool = False,
     **kwargs,
   ) -> str:
@@ -322,6 +328,7 @@ if True:  # \/ # fmt & print iterable
       'force_no_indent': force_no_indent,
       'force_no_spaces': force_no_spaces,
       'force_complex_parenthesis': force_complex_parenthesis,
+      'force_union_parenthesis': force_union_parenthesis,
       'prefer_full_names': prefer_full_names,
     }
     if a := kwargs.get('let_no_inder_max_iterables'):
@@ -357,6 +364,31 @@ if True:  # \/ # fmt & print iterable
         return exc_name
 
       return f'{FMTC.BUILT_IN_EXCEPTION}{exc_name}'
+
+    queue_name = getattr_queue(
+      type(it),
+      name,
+      '__name__',
+      '__class__.__name__',
+      default=('<???>' if syntax_highlighting else '__unknown_object__'),
+    )
+
+    if hasattr(it, '__tcr_display__'):
+      try:
+        return it.__tcr_display__(**thisdict, _ran_from_tcr_display=True)
+      except Exception as e:
+        if kwargs.get('_raise_errors'):
+          raise
+        return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
+
+    if hasattr(it, '__tcr_fmt__'):
+      try:
+        return it.__tcr_fmt__(fmt_iterable, **thisdict, _ran_from_tcr_display=True)
+      except Exception as e:
+        if kwargs.get('_raise_errors'):
+          raise
+        return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
+
     if it is Null:
       return f'{FMTC.NULL}{it}{FMTC._}' if syntax_highlighting else str(it)
     if it is Undefined:
@@ -388,6 +420,8 @@ if True:  # \/ # fmt & print iterable
             _t = item
             break
 
+    if _t == type:
+      return f'{FMTC.TYPE}{getattr_queue(it, "__name__", "__class__.__name__", default=it)}{FMTC._}' if syntax_highlighting else str(it)
     if _t == int:
       if int_formatter:
         it = int_formatter(it)
@@ -407,6 +441,12 @@ if True:  # \/ # fmt & print iterable
         if syntax_highlighting
         else repr(it)
       )
+    if _t == UnionType:
+      if force_union_parenthesis:
+        return FMT_BRACKETS[tuple][syntax_highlighting] % (FMT_UNION_SEPARATOR[syntax_highlighting].join(this(x) for x in unpack_union(it)))
+      else:
+        return FMT_UNION_SEPARATOR[syntax_highlighting].join(this(x) for x in unpack_union(it))
+
     if _t == bytes_iterator:
       return FMT_ITER[syntax_highlighting] % this(bytes(it))
     if _t == str_iterator:
@@ -464,30 +504,6 @@ if True:  # \/ # fmt & print iterable
         if _t == set and not syntax_highlighting:
           return 'set()'
         return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % (comma if _t == set else '')  # fmt: skip
-
-    queue_name = getattr_queue(
-      type(it),
-      name,
-      '__name__',
-      '__class__.__name__',
-      default=('<???>' if syntax_highlighting else '__unknown_object__'),
-    )
-
-    if hasattr(it, '__tcr_display__'):
-      try:
-        return it.__tcr_display__(**thisdict, _ran_from_tcr_display=True)
-      except Exception as e:
-        if kwargs.get('_raise_errors'):
-          raise
-        return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
-
-    if hasattr(it, '__tcr_fmt__'):
-      try:
-        return it.__tcr_fmt__(fmt_iterable, **thisdict, _ran_from_tcr_display=True)
-      except Exception as e:
-        if kwargs.get('_raise_errors'):
-          raise
-        return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
 
     return FMT_UNKNOWN[syntax_highlighting] % (
       queue_name,
