@@ -17,7 +17,23 @@ Star-importing is fine, ctrl-click whatever you're hovering on right now to see 
 Joke functions and other barely useful crap is not included in star imports.
 """
 
-_, __version__ = (__import__('pathlib').Path(__file__).resolve().parent / '__version__.txt').read_text().strip().split(' ')
+if (__version__ := (__import__('pathlib').Path(__file__).resolve().parent / '__version__.txt')).is_file():
+  __version__, __version__ = __version__.read_text().strip().split(' ')
+else:
+  __version__ = ''
+
+__version__: str
+"""this module's version.
+
+May be '' if no version file is found.
+
+Make sure to use in this manner:
+```py
+# The below 'if __version__' to check if __version__ is not ''. This should only be the case if you bundled your code with pyinstaller which ommits the version file.
+if __version__ and your_function_to_check_if_ver_is_correct(__version__):
+  # do something
+```
+"""
 
 from . import discord, src
 from .discord.tcrd_embeds import embed, modal

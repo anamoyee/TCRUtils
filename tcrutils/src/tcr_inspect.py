@@ -1,4 +1,5 @@
 import inspect
+import sys
 from typing import TypeVar
 
 T = TypeVar('T')
@@ -34,3 +35,6 @@ def get_file_colon_lineno(default: T | None = None, backtrack_frames: int = 1, a
 
 
   return f'{frame.f_code.co_filename}:{get_lineno(default=default, backtrack_frames=backtrack_frames+1)+additional_offset}'
+
+def get_pyversion_str(precision=2) -> str:
+  return ".".join([str(x) for x in sys.version_info[:precision]])
