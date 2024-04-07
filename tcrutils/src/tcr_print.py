@@ -406,6 +406,9 @@ if True:  # \/ # fmt & print iterable
       reprit = repr(it)
       return f'{FMTC.STRING}{reprit[1:-1]}' if syntax_highlighting else repr(it)
 
+    if _t == type:
+      return f'{FMTC.TYPE}{getattr_queue(it, "__name__", "__class__.__name__", default=it)}{FMTC._}' if syntax_highlighting else str(it)
+
     if not kwargs.get('_force_next_type'):
       itsmro = getattr_queue(it, '__mro__', '__class__.__mro__', default=())
       # It's-a me mro
@@ -419,9 +422,6 @@ if True:  # \/ # fmt & print iterable
           if item in FMT_BRACKETS:
             _t = item
             break
-
-    if _t == type:
-      return f'{FMTC.TYPE}{getattr_queue(it, "__name__", "__class__.__name__", default=it)}{FMTC._}' if syntax_highlighting else str(it)
     if _t == int:
       if int_formatter:
         it = int_formatter(it)

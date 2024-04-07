@@ -300,6 +300,7 @@ if True:  # \/ # Tests
     print_iterable(0x7FFFFFFF, **kwargs)
     print_iterable(tcr.types.HexInt(0x7FFFFFFF), **kwargs)
     print_iterable(float | int, **kwargs)
+    print_iterable(str, **kwargs)
 
   def test_markdown():
     console.debug(codeblock("asdf"))
