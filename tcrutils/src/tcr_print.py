@@ -376,6 +376,8 @@ if True:  # \/ # fmt & print iterable
     if hasattr(it, '__tcr_display__'):
       try:
         return it.__tcr_display__(**thisdict, _ran_from_tcr_display=True)
+      except NotImplementedError:
+        pass
       except Exception as e:
         if kwargs.get('_raise_errors'):
           raise
@@ -383,7 +385,9 @@ if True:  # \/ # fmt & print iterable
 
     if hasattr(it, '__tcr_fmt__'):
       try:
-        return it.__tcr_fmt__(fmt_iterable, **thisdict, _ran_from_tcr_display=True)
+        return it.__tcr_fmt__(**thisdict, fmt_iterable=fmt_iterable, _ran_from_tcr_display=True)
+      except NotImplementedError:
+        pass
       except Exception as e:
         if kwargs.get('_raise_errors'):
           raise
