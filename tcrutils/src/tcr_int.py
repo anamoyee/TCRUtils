@@ -1,5 +1,6 @@
 from builtins import hex as sex  # nocom (actually yescom because this text is a comment dummy!!)
 from collections.abc import Iterable, Mapping
+from numbers import Number
 
 
 def hex(number: int, leading_zeroes=2, *, upper=True) -> str:
@@ -27,3 +28,7 @@ def float2int(n: float) -> float | int:
   if round(n) == n:
     return int(n)
   return float(n)
+
+
+def clamp(min: Number, n: Number, max: Number) -> Number:
+  return min if n < min else max if n > max else n
