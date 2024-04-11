@@ -757,6 +757,13 @@ if True:  # \/ # Tests
 
     console(await execute("asdfasdfgsdfg {uwu} {nyaaa} {mirror{uwu}|2345}"))
 
+  def test_divstring():
+    s = tcr.SlashableString("uwu")
+
+    a = s / s / s
+
+    console.debug(a)
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -835,5 +842,6 @@ if __name__ == '__main__':
   # test_dotdicts()
   # test_get_caller_line_number()
   # test_diff()
-  asyncio.run(test_execute())
+  # asyncio.run(test_execute())
+  # test_divstring()
   pass  # noqa: PIE790, RUF100
