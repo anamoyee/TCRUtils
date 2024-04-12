@@ -147,6 +147,8 @@ if True:  # \/ # fmt & print iterable
     coroutine:     ('coroutine_%s',    f'{FMT_LETTERS.C}{FMTC.DECIMAL}\'{FMTC.FUNCTION}%s')
   }
 
+  # FMT_TOO_DEEP[syntax_highlighting: bool] -> attaches '[ ... ]' to the content with respect to syntax highlighting
+  FMT_TOO_DEEP = ('[ ... ]', f'{FMTC.BRACKET}[ {FMTC.DECIMAL}... {FMTC.BRACKET}]{FMTC._}')
   # FMT_UNION_SEPARATOR[syntax_highlighting: bool] -> attaches ' | ' to the content with respect to syntax highlighting
   FMT_UNION_SEPARATOR = ('|', f'{FMTC.PIPE} | {FMTC._}')
   # (FMT_ITER[syntax_highlighting: bool] % content) -> attaches 'i' or 'iter()' to the content with respect to syntax highlighting
@@ -212,6 +214,7 @@ if True:  # \/ # fmt & print iterable
     *its: Iterable | Any,
     indentation: int = 2,
     item_limit: int = 100,
+    depth_limit: int = 100,
     syntax_highlighting: bool = False,
     trailing_commas: bool = True,
     int_formatter: Callable[[int], str] | None = None,
@@ -267,6 +270,11 @@ if True:  # \/ # fmt & print iterable
     "tcr.fmt-able object's instance"
     ```
     """
+    if depth_limit < 0:
+      depth_limit = 0
+    if kwargs.get('__depth', 0) > depth_limit:
+      return FMT_TOO_DEEP[syntax_highlighting]
+
     if its:
       it = (it, *its)
 
@@ -330,6 +338,8 @@ if True:  # \/ # fmt & print iterable
       'force_complex_parenthesis': force_complex_parenthesis,
       'force_union_parenthesis': force_union_parenthesis,
       'prefer_full_names': prefer_full_names,
+      'depth_limit': depth_limit,
+      '__depth': kwargs.get('__depth', 2) + 1,
     }
     if a := kwargs.get('let_no_inder_max_iterables'):
       thisdict['let_no_inder_max_iterables'] = a
