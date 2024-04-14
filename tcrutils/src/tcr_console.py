@@ -158,7 +158,7 @@ def breakpoint(*vals, printhook=console, clear=True, ctrlc=exit) -> None:
   for val in vals:
     printhook(val)
   print(
-    (a := f'{Fore.WHITE + Style.BRIGHT} >>> {Back.RED}BREAKPOINT{Style.RESET_ALL} {Fore.WHITE + Style.BRIGHT}<<<{Style.RESET_ALL}'),
+    (a := f'{Fore.WHITE + Style.BOLD} >>> {Back.RED}BREAKPOINT{Style.RESET} {Fore.WHITE + Style.BOLD}<<<{Style.RESET}'),
     end='\r',
   )
 
