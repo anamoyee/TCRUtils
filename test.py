@@ -286,7 +286,6 @@ if True:  # \/ # Tests
     print_iterable(PrintableObj2, **kwargs)
     print_iterable(PrintableObj2(69), **kwargs)
     print_iterable(tcr.discord.Snowflake(1234), **kwargs)
-    print_iterable([tcr.types.QuotelessString("quoteless string")]*3, **kwargs)
 
     class Client:
       test: str
@@ -303,6 +302,7 @@ if True:  # \/ # Tests
     print_iterable(float | int, **kwargs)
     print_iterable(str, **kwargs)
     print_iterable([[[[[[[[[[[[]]]]]]]]]]]], **{**kwargs, "let_no_indent": False})
+    print_iterable([tcr.types.QuotelessString("quoteless string")]*3, **kwargs)
 
   def test_markdown():
     console.debug(codeblock("asdf"))
@@ -784,20 +784,20 @@ if __name__ == '__main__':
   # test_iterable(batched_=True, cut_at_=False)
   # test_path()
   # test_ifys()
-  # test_print_iterable(
-  #   print_iterable=print_iterable,
-  #   syntax_highlighting=1,
-  #   # let_no_indent=0,
-  #   # force_no_indent=0,
-  #   # force_no_spaces=0,
-  #   # force_complex_parenthesis=1,
-  #   # item_limit=10,
-  #   # # let_no_inder_max_non_iterables=10,
-  #   # # let_no_inder_max_iterables=10,
-  #   # prefer_full_names=1,
-  #   # force_union_parenthesis=1,
-  #   # depth_limit=3,
-  # )
+  test_print_iterable(
+    print_iterable=print_iterable,
+    syntax_highlighting=0,
+    # let_no_indent=0,
+    # force_no_indent=0,
+    # force_no_spaces=0,
+    # force_complex_parenthesis=1,
+    # item_limit=10,
+    # # let_no_inder_max_non_iterables=10,
+    # # let_no_inder_max_iterables=10,
+    # prefer_full_names=1,
+    # force_union_parenthesis=1,
+    # depth_limit=3,
+  )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=False)
