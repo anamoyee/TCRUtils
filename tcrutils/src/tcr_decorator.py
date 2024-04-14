@@ -24,7 +24,6 @@ if True:  # \/ # @test
 
     return wrapper
 
-
 if True:  # \/ # @timeit // timeit.start() and .stop()
 
   class Timeit:
@@ -97,7 +96,6 @@ if True:  # \/ # @autorun, @instance
 
   def instance(func):
     return func()
-
 
 if True:  # \/ # @convert.stringify
 
@@ -198,3 +196,11 @@ if True:  # \/ # @printer
       return wrapper
 
     return decorator
+
+if True:  # \/ # @copy_kwargs
+  def copy_kwargs(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+      return func(*args, __kwargs=kwargs, **kwargs)
+
+    return wrapper
