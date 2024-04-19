@@ -15,9 +15,11 @@ if True:  # \/ # Imports
   import tcrutils as tcr
   from tcrutils import *
   from tcrutils import asshole, raises, rashole
+  from tcrutils import console as c
   from tcrutils.discord import Permission as Perm
   from tcrutils.discord import get_token
   from tcrutils.discord import permissions as perms
+
 
 console.debug(sorted(a := [x for x in globals() if not x.startswith('_')]), len(a)); del a
 console.log(f"Running on Python %s.%s" % sys.version_info[:2])
@@ -765,6 +767,25 @@ if True:  # \/ # Tests
 
     console.debug(a)
 
+  def test_cint():
+    i: int = tcr.CInt(11)
+
+    c(i)
+    ++i;
+    c(i)
+
+    print()
+
+    c(i)
+    -i;
+    c(i)
+    -i;
+    c(i)
+
+    print()
+
+    c(--i.bit_length())
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -786,7 +807,7 @@ if __name__ == '__main__':
   # test_ifys()
   test_print_iterable(
     print_iterable=print_iterable,
-    syntax_highlighting=0,
+    syntax_highlighting=1,
     # let_no_indent=0,
     # force_no_indent=0,
     # force_no_spaces=0,
@@ -845,4 +866,5 @@ if __name__ == '__main__':
   # test_diff()
   # asyncio.run(test_execute())
   # test_divstring()
+  test_cint()
   pass  # noqa: PIE790, RUF100

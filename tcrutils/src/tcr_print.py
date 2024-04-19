@@ -404,7 +404,7 @@ if True:  # \/ # fmt & print iterable
         return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
 
     if not syntax_highlighting and isinstance(it, QuotelessString):
-      return it
+      return str(it)
 
     if it is Null:
       return f'{FMTC.NULL}{it}{FMTC._}' if syntax_highlighting else str(it)
