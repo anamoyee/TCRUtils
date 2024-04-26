@@ -24,6 +24,7 @@ if True:  # \/ # @test
 
     return wrapper
 
+
 if True:  # \/ # @timeit // timeit.start() and .stop()
 
   class Timeit:
@@ -96,6 +97,7 @@ if True:  # \/ # @autorun, @instance
 
   def instance(func):
     return func()
+
 
 if True:  # \/ # @convert.stringify
 
@@ -197,7 +199,9 @@ if True:  # \/ # @printer
 
     return decorator
 
+
 if True:  # \/ # @copy_kwargs
+
   def copy_kwargs(func):
     """Pack all of that func's kwargs into __kwargs and pass the kwarguments normally along with __kwargs kwarg which contains all the kwargs in a dict.
 
@@ -209,6 +213,7 @@ if True:  # \/ # @copy_kwargs
     TypeError: __main__.a() got multiple values for keyword argument '__kwargs'
     ```
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
       return func(*args, __kwargs=kwargs, **kwargs)

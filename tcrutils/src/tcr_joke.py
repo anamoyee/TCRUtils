@@ -3,8 +3,9 @@
 from collections.abc import Callable
 from typing import Any, Literal
 
-fizzbuzz=lambda n:'Fizz'*(n%3==0)+'Buzz'*(n%5==0)or str(n) # noqa # fmt: skip
+fizzbuzz = lambda n: 'Fizz' * (n % 3 == 0) + 'Buzz' * (n % 5 == 0) or str(n)  # fmt: skip
 fizzbuzz: Callable[[int], str]
+
 
 def oddeven(n: int | str) -> Literal['odd', 'even']:
   """### Outputs a string `'odd'` or `'even'` based on the supplied int `n`.
@@ -36,13 +37,15 @@ def christmas_tree(*, height=10, symbol='*'):
 
 
 def _cint_decorate_int_method(func):
-    def wrapper(*args, **kwargs):
-        result = func(*args, **kwargs)
-        if isinstance(result, int):
-            return CInt(result)
-        else:
-            return result
-    return wrapper
+  def wrapper(*args, **kwargs):
+    result = func(*args, **kwargs)
+    if isinstance(result, int):
+      return CInt(result)
+    else:
+      return result
+
+  return wrapper
+
 
 class CInt:
   def __init__(self, value):
@@ -70,7 +73,7 @@ class CInt:
 
   def __tcr_fmt__(self, fmt_iterable, **kwargs):
     if self.neg_flag or self.pos_flag:
-      return fmt_iterable(complex(int(self), .5*(self.pos_flag - self.neg_flag)), **kwargs)
+      return fmt_iterable(complex(int(self), 0.5 * (self.pos_flag - self.neg_flag)), **kwargs)
     else:
       return fmt_iterable(int(self), **kwargs)
 

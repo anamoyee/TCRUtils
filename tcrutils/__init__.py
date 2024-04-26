@@ -29,6 +29,7 @@ from .src.tcr_compare import able, isdunder
 from .src.tcr_console import breakpoint, console
 from .src.tcr_constants import *
 from .src.tcr_decorator import autorun, convert, copy_kwargs, instance, test, timeit
+from .src.tcr_dev import generate_function_argument_typehints, generate_type_hinter
 from .src.tcr_dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zip, merge_dicts
 from .src.tcr_dir import dir2, dir3
 from .src.tcr_error import error  # 'tcrerror' in star imports, either in 'tcr.error'/'tcr.tcrerror'

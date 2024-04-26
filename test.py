@@ -12,6 +12,8 @@ if True:  # \/ # Imports
   import time
   from functools import partial
 
+  import rich
+
   import tcrutils as tcr
   from tcrutils import *
   from tcrutils import asshole, raises, rashole
@@ -434,8 +436,8 @@ if True:  # \/ # Tests
     console(os.getcwd())
 
   def test_able():
-    console(tcr.able(int, '1'))
-    console(tcr.able(int, 'a'))
+    asshole(tcr.able(int, 'ff8000', base=16), (True, 16744448), expr='tuple(a) == b')
+    asshole(tcr.able(int, 'ff8000'), expr='not a')
 
   def test_insist():
     from functools import partial
@@ -771,20 +773,51 @@ if True:  # \/ # Tests
     i: int = tcr.CInt(11)
 
     c(i)
-    ++i;
+    ++i; # noqa
     c(i)
 
     print()
 
     c(i)
-    -i;
+    -i; # noqa
     c(i)
-    -i;
+    -i; # noqa
     c(i)
 
     print()
 
-    c(--i.bit_length())
+    c(--i.bit_length()) # noqa
+
+  def test_generate_type_hinter():
+    class Example:
+      def __init__(self):
+        self.name = "John"
+        self.age = 30
+        self.is_active = True
+
+      class InnerClass:
+        def __init__(self):
+          ...
+
+      def func(self, value: int, clause: InnerClass):
+        pass
+
+      def func2(self) -> int:
+        pass
+
+      def argskwargsfunc(self, *args, **kwargs) -> int:
+        pass
+
+      def defaultfunc(self, /, value: int = 1, *, s: str | None = None) -> int:
+        pass
+
+    tcr.generate_type_hinter(Example(), print=rich.print, clipboard=False)
+
+  def test_generate_type_hinter2():
+    imgui = __import__('imgui')
+
+    tcr.generate_type_hinter(imgui, print=True, clipboard=False)
+
 
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
@@ -805,20 +838,20 @@ if __name__ == '__main__':
   # test_iterable(batched_=True, cut_at_=False)
   # test_path()
   # test_ifys()
-  test_print_iterable(
-    print_iterable=print_iterable,
-    syntax_highlighting=1,
-    # let_no_indent=0,
-    # force_no_indent=0,
-    # force_no_spaces=0,
-    # force_complex_parenthesis=1,
-    # item_limit=10,
-    # # let_no_inder_max_non_iterables=10,
-    # # let_no_inder_max_iterables=10,
-    # prefer_full_names=1,
-    # force_union_parenthesis=1,
-    # depth_limit=3,
-  )
+  # test_print_iterable(
+  #   print_iterable=print_iterable,
+  #   syntax_highlighting=1,
+  #   # let_no_indent=0,
+  #   # force_no_indent=0,
+  #   # force_no_spaces=0,
+  #   # force_complex_parenthesis=1,
+  #   # item_limit=10,
+  #   # # let_no_inder_max_non_iterables=10,
+  #   # # let_no_inder_max_iterables=10,
+  #   # prefer_full_names=1,
+  #   # force_union_parenthesis=1,
+  #   # depth_limit=3,
+  # )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=False)
@@ -866,5 +899,7 @@ if __name__ == '__main__':
   # test_diff()
   # asyncio.run(test_execute())
   # test_divstring()
-  test_cint()
+  # test_cint()
+  # test_generate_type_hinter()
+  test_generate_type_hinter2()
   pass  # noqa: PIE790, RUF100
