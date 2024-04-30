@@ -818,6 +818,38 @@ if True:  # \/ # Tests
 
     tcr.generate_type_hinter(imgui, print=True, clipboard=False)
 
+  def test_imgui_handler():
+    import glfw as gf
+    import imgui
+
+    from tcrutils.imgui import ImGuiHandler, ensure_dependencies, imtypes
+
+    imgui: imtypes.ImguiType
+
+    ensure_dependencies()
+
+    def frame():
+      with imgui.begin():
+        imgui.text("UwU")
+
+    himgui = ImGuiHandler(frame, start_maximised=False)  # noqa: F841
+
+  async def test_execute_parsed():
+    from tcrutils.src.tcr_execute_parsed import Execute
+    execute = Execute()
+
+  def test_b64():
+    def get_enc_len(text: str, I: int):
+      encoded = tcr.b64.encode(text)
+
+      for _ in range(I):
+        encoded = tcr.b64.encode(encoded)
+
+      return len(encoded)
+
+    c([
+      get_enc_len("uwu", x) for x in range(40)
+    ])
 
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
@@ -901,5 +933,8 @@ if __name__ == '__main__':
   # test_divstring()
   # test_cint()
   # test_generate_type_hinter()
-  test_generate_type_hinter2()
+  # test_generate_type_hinter2()
+  # test_imgui_handler()
+  # asyncio.run(test_execute_parsed())
+  test_b64()
   pass  # noqa: PIE790, RUF100

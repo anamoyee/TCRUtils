@@ -23,6 +23,7 @@ from .discord.tcrd_embeds import embed, modal
 from .discord.tcrd_limits import DiscordLimits
 from .discord.tcrd_string import get_token
 from .src import tcr_types as types
+from .src.tcr_b64 import b64
 from .src.tcr_class import Singleton
 from .src.tcr_classfuncs import get_classname, get_name_classname, get_qualname_classname
 from .src.tcr_compare import able, isdunder

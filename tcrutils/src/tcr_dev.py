@@ -51,7 +51,7 @@ def generate_type_hinter(
   print: bool = False,
   skip_leading_underscore: bool = False,
   attrib_whitelist: tuple[str] = (),
-  attrib_blacklist: tuple[str] = ('sys', 'os'),
+  attrib_blacklist: tuple[str] = ('sys', 'os', 'warnings'),
 ) -> str | None:
   """Generates a string class definition for typehinting based on the object's dir() and the types of its attributes.
 
@@ -96,7 +96,7 @@ def generate_type_hinter(
 
   # hint types (imports)
 
-  result = f'class {get_name_classname(obj)}:\n' + '\n'.join(f'  {x}' for x in hints)
+  result = f'class {get_name_classname(obj).split('.')[-1]}:\n' + '\n'.join(f'  {x}' for x in hints)
 
   if print:
     if callable(print):
@@ -121,11 +121,11 @@ def generate_type_hinter(
         import pyperclip
 
         pyperclip.copy(result)
-        console.log('Copied to clipboard!')
+        console.log(f'Copied to clipboard! ({len(result)} characters)')
       del __sp
     else:
       pyperclip.copy(result)
-      console.log('Copied to clipboard!')
+      console.log(f'Copied to clipboard! ({len(result)} characters)')
 
   if not (clipboard or print):
     return result
