@@ -13,7 +13,7 @@ from ..src.tcr_console import console as c
 
 
 def ctrlc_grace_exit() -> bool:
-  c.info('Exitting due to Ctrl+C...')
+  print('^C', end='')
   return True  # Exit
 
 

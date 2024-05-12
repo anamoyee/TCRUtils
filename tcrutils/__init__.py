@@ -10,24 +10,31 @@ It's also recommended to import stuff directly instead of the entire module
 >>> from tcrutils import timestr
 ```
 
-Star-importing is fine, ctrl-click whatever you're hovering on right now to see __all__ if you wish.
+~~Star-importing is fine, ctrl-click whatever you're hovering on right now to see __all__ if you wish.~~
+Update: neeevermind there's just so much stuff you better import directly. __all__ is still maintained tho...
 ```py
 >>> from tcrutils import *
 ```
-Joke functions and other barely useful crap is not included in star imports.
+Joke functions and other barely useful crap are not included in star imports.
 """
 
 from . import discord, src
+from . import dr as dynamic_responses
+from . import dr as execute
 from ._version import __version__
 from .discord.tcrd_embeds import embed, modal
 from .discord.tcrd_limits import DiscordLimits
 from .discord.tcrd_string import get_token
+from .dr import placeholder_set as dr_placeholder_sets
+from .dr import placeholders as dr_placeholders
+from .src import tcr_joke as joke
 from .src import tcr_types as types
 from .src.tcr_b64 import b64
 from .src.tcr_class import Singleton
 from .src.tcr_classfuncs import get_classname, get_name_classname, get_qualname_classname
 from .src.tcr_compare import able, isdunder
-from .src.tcr_console import breakpoint, console
+from .src.tcr_console import breakpoint, console, start_eval_session
+from .src.tcr_console import console as c
 from .src.tcr_constants import *
 from .src.tcr_decorator import autorun, convert, copy_kwargs, instance, test, timeit
 from .src.tcr_dev import generate_function_argument_typehints, generate_type_hinter
@@ -44,7 +51,6 @@ from .src.tcr_input import insist
 from .src.tcr_inspect import get_file_colon_lineno, get_lineno
 from .src.tcr_int import float2int, hex, recursive_sum
 from .src.tcr_iterable import Or, batched, bogo_sort, cut_at, getattr_queue, getmanyattrs, hasmanyattrs, limited_iterable, shuffled, stalin_sort
-from .src.tcr_joke import CInt, christmas_tree, fizzbuzz, oddeven
 from .src.tcr_language import apostrophe_s, make_plural, nth
 from .src.tcr_markdown import codeblock, uncodeblock
 from .src.tcr_misspellings import asert, trei

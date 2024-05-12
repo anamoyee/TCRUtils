@@ -48,7 +48,7 @@ class ShelveDB(dict):
 
   ```py
   class DB(tcr.ShelveDB):
-  directory = "/VALID/path/to/db/dir/" # Or pathlib.Path object
+    directory = "/VALID/path/to/db/dir/" # Or pathlib.Path object
   ```
 
   Raises:
@@ -59,6 +59,7 @@ class ShelveDB(dict):
 
   directory: str | p.Path | None = None
   __directory: p.Path
+  s: shelve.Shelf
 
   def __init__(self, alnum_id: str | int) -> None:
     if isinstance(self.directory, str | p.Path):

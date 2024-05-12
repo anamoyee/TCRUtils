@@ -1,13 +1,17 @@
 import datetime
+import inspect
 from collections.abc import Callable
 from functools import reduce
 from sys import exit
 
 from colored import Back, Fore, Style
 
-from .tcr_extract_error import extract_error
+from .tcr_dict import clean_dunder_dict
+from .tcr_extract_error import extract_error, extract_traceback
 from .tcr_getch import getch
-from .tcr_print import fmt_iterable
+from .tcr_iterable import cut_at
+from .tcr_print import FMTC, fmt_iterable
+from .tcr_terminal import terminal
 from .tcr_types import QuotelessString
 
 
@@ -83,9 +87,13 @@ class Console:
     padding: str = ' ',
     quoteless: bool = False,
     diff: bool = False,
+    fmt_iterable: Callable[..., str] = fmt_iterable,
     **kwargs,
   ) -> None | object:
     out = fmt_iterable(*[(x if ((not quoteless) or (not isinstance(x, str))) else QuotelessString(x)) for x in (value, *values)], syntax_highlighting=syntax_highlighting, **kwargs)
+
+    if padding == ' ' and not withprefix:
+      padding = ''
 
     prefix = ''
     if withprefix:
@@ -136,6 +144,9 @@ class Console:
     print(out)
     return None
 
+  def hr(self, **kwargs):
+    self.debug(QuotelessString('=' * (terminal.width)), margin='\n', withprefix=False, **kwargs)
+
   def __call__(self, *args, **kwargs) -> None | str:
     return console.debug(*args, **kwargs)
 
@@ -153,10 +164,54 @@ console = Console()
 """
 
 
-def breakpoint(*vals, printhook=console, clear=True, ctrlc=exit) -> None:
+def _clean_built_in_methods(d: dict) -> dict:
+  return {k: v for k, v in d.items() if not isinstance(v, type(abs))}
+
+
+def start_eval_session(f_backs: int = 2) -> None:
+  """Starts an interactive shell. For debugging purposes."""
+  try:
+    current_frame = inspect.currentframe()
+    for _ in range(f_backs):
+      current_frame = current_frame.f_back
+    desired_locals = current_frame.f_locals
+    desired_globals = current_frame.f_globals
+
+    a = ' '
+    while a:
+      a = input('\n\r>>> ')
+      if a:
+        try:
+          if a.strip().lower() == 'locals':
+            console(_clean_built_in_methods(clean_dunder_dict(desired_locals)))
+          elif a.strip().lower() == 'globals':
+            console(_clean_built_in_methods(clean_dunder_dict(desired_globals)))
+          elif a.strip().lower() == 'code':
+            lines, start_line = inspect.findsource(current_frame)
+            lineno = current_frame.f_lineno
+
+            AROUND = 2
+            CUTOFF = 70
+
+            lines = lines[max(0, lineno - (AROUND + 1)) : lineno + AROUND]
+            while all(x.startswith(' ') for x in lines):
+              lines = [x[1:] for x in lines]
+            lines = [f'{FMTC.NUMBER}{lineno-AROUND+i}{Fore.yellow + Style.bold} {">" if i == AROUND else "|"}{FMTC._} {cut_at(x, CUTOFF)}' for i, x in enumerate(lines)]
+            lines = ''.join(lines)
+
+            print(lines)
+          else:
+            console(eval(a, desired_locals, desired_globals))
+        except Exception as e:
+          console.error(f'\n\n{extract_traceback(e)}\n{extract_error(e)}')
+  except (KeyboardInterrupt, EOFError):
+    print('\r' + (' ' * terminal.width) + '\r', end='')
+    exit()
+
+
+def breakpoint(*vals, printhook=console, clear=True, ctrlc: Callable[[], None] = start_eval_session) -> None:
   """Stop the program execution until a key is pressed. Optionally pass in things to print."""
-  for val in vals:
-    printhook(val)
+  vals and printhook(*vals)
   print(
     (a := f'{Fore.WHITE + Style.BOLD} >>> {Back.RED}BREAKPOINT{Style.RESET} {Fore.WHITE + Style.BOLD}<<<{Style.RESET}'),
     end='\r',

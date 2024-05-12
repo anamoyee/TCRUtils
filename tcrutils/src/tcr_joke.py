@@ -1,10 +1,15 @@
-"""Contains joke functions or the ones that will never be used in a serious situations."""
+"""Contains joke functions or the ones that will never be used in a serious situations/prod (This entire package sucks so much it should never be used in prod but uhhhhh.....)."""
 
 from collections.abc import Callable
 from typing import Any, Literal
 
-fizzbuzz = lambda n: 'Fizz' * (n % 3 == 0) + 'Buzz' * (n % 5 == 0) or str(n)  # fmt: skip
-fizzbuzz: Callable[[int], str]
+from ..src import tcr_cloud_imports as cloud_imports
+
+
+def fizzbuzz(n: int) -> str: ...
+
+
+fizzbuzz: Callable[[int], str] = lambda n: 'Fizz' * (n % 3 == 0) + 'Buzz' * (n % 5 == 0) or str(n)  # fmt: skip  # noqa: F811
 
 
 def oddeven(n: int | str) -> Literal['odd', 'even']:
@@ -71,6 +76,9 @@ class CInt:
   def __str__(self):
     return str(self.value)
 
+  def __repr__(self) -> str:
+    return self.__str__()
+
   def __tcr_fmt__(self, fmt_iterable, **kwargs):
     if self.neg_flag or self.pos_flag:
       return fmt_iterable(complex(int(self), 0.5 * (self.pos_flag - self.neg_flag)), **kwargs)
@@ -83,3 +91,27 @@ class CInt:
       return _cint_decorate_int_method(method)
     else:
       raise AttributeError(f"'CInt' object has no attribute '{name}'")
+
+
+class Private:
+  """Makes every attribute private, like in other languages that support private/public attribute modifiers.
+
+  Unfortunately i haven't gotten to writing a Public version of it so you can only private every single field :3
+
+  Usage:
+  ```py
+
+  class PrivateString(Private, str): ...
+
+  s = PrivateString('abc')
+
+  print(s) # -> abc
+  print(s.upper) # -> AttributeError: 'PrivateString' object has no attribute 'upper'
+  print(s.__getattribute__) # -> AttributeError: 'PrivateString' object has no attribute '__getattribute__'
+
+  ```
+  """
+
+  def __getattribute__(self, name):
+    class_name = object.__getattribute__(self, '__class__').__name__
+    raise AttributeError(f'{class_name!r} object has no attribute {name!r}')

@@ -3,16 +3,26 @@
 #  __import__('os').system(r'"C:\Users\TheCreatorrrr\AppData\Local\Programs\Python\Python312\python.exe" test.py')
 #  exit()
 
+import sys
+
+if '--syntax-only' in sys.argv:
+  import tcrutils as tcr
+  tcr.console.log(f"Syntax test passed on Python %s.%s" % sys.version_info[:2])
+  exit(0)
 
 if True:  # \/ # Imports
   import asyncio
   import os
   import pathlib as p
-  import sys
   import time
   from functools import partial
+  from typing import Any
+  from typing import TypedDict as TD
 
+  import arc
+  import hikari
   import rich
+  from rich.traceback import install as _rich_traceback_install
 
   import tcrutils as tcr
   from tcrutils import *
@@ -23,8 +33,21 @@ if True:  # \/ # Imports
   from tcrutils.discord import permissions as perms
 
 
-console.debug(sorted(a := [x for x in globals() if not x.startswith('_')]), len(a)); del a
-console.log(f"Running on Python %s.%s" % sys.version_info[:2])
+# _rich_traceback_install(width=tcr.terminal.width-1)
+
+c(sorted(a := [x for x in globals() if not x.startswith('_')]), len(a)); del a
+c.log(f"Running on Python %s.%s" % sys.version_info[:2])
+
+
+BOT: hikari.GatewayBot | None = None
+ACL: arc.GatewayClient | None = None
+def spin_up_bot(*, bot_kwargs: dict[str, Any] = {}, acl_kwargs: dict[str, Any] = {}) -> None:  # noqa: B006
+  global BOT
+  global ACL
+  if BOT is not None:
+    return # Already spun up
+  BOT = hikari.GatewayBot(token=tcr.get_token('TESTBOT_TOKEN.txt'), intents=hikari.Intents.ALL, **bot_kwargs)
+  ACL = arc.GatewayClient(BOT, **acl_kwargs)
 
 if True:  # \/ # Tests
 
@@ -94,6 +117,7 @@ if True:  # \/ # Tests
   def test_breakpoint():
     tcr.breakpoint()
     tcr.breakpoint('asdf')
+    tcr.breakpoint('uwu', 'owo', '^w^')
     tcr.breakpoint(clear=False)
     tcr.breakpoint(printhook=print)
 
@@ -465,10 +489,11 @@ if True:  # \/ # Tests
     console(tcr.path.nextname_file_ext_fix(tcr.path.nextname_file_ext_fix()))
 
   def test_sdb():
-    class DB(tcr.ShelveDB):
+    class Database(tcr.ShelveDB):
       directory = p.Path(__file__).parent / 'test_db'
 
-    db = DB("0")
+    db = Database("test")
+
     db.clear()
 
     console(db)
@@ -829,14 +854,10 @@ if True:  # \/ # Tests
     ensure_dependencies()
 
     def frame():
-      with imgui.begin():
-        imgui.text("UwU")
+      with imgui.begin("nya"):
+        imgui.text("nyaaaa")
 
     himgui = ImGuiHandler(frame, start_maximised=False)  # noqa: F841
-
-  async def test_execute_parsed():
-    from tcrutils.src.tcr_execute_parsed import Execute
-    execute = Execute()
 
   def test_b64():
     def get_enc_len(text: str, I: int):
@@ -850,6 +871,126 @@ if True:  # \/ # Tests
     c([
       get_enc_len("uwu", x) for x in range(40)
     ])
+
+  async def test_dynamic_responses():
+    EXECUTE = tcr.dynamic_responses.DynamicResponseBuilder(
+      tcr.dr.placeholder_set.ALL_NON_DISCORD,
+      parens=('{', '}'),
+      error_on_missing_placeholder=False,
+    )
+
+    asshole.error_func = lambda *_, **__: ...
+
+    asshole(await EXECUTE("owo"), "owo")
+    print(); c('COMMENT', quoteless=True)
+    asshole(await EXECUTE("cu{comment|comment}ment"), "cument")
+    asshole(await EXECUTE("#cu{#|comment}ment"), "#cument")
+    asshole(await EXECUTE("//cu{//|comment}ment"), "//cument")
+    print(); c('VAR', quoteless=True)
+    asshole(await EXECUTE("{var|var1|nya}{var1} {var|var1}"), "nya nya")
+    print(); c('TEST', quoteless=True)
+    asshole(await EXECUTE("{test|a|a|T|F}F2"), "TF2")
+    asshole(await EXECUTE("T{test|a|ż|F|F}2"), "TF2")
+    asshole(await EXECUTE("{test|a|a}"), "true")
+    asshole(await EXECUTE("{test|a|ż}"), "false")
+    asshole(await EXECUTE("{test|a}"), "{test|a}")
+    asshole.total(prefix='\n')
+
+    c.hr()
+    print(); c('ADD', quoteless=True)
+    asshole(await EXECUTE("{add}"), "0")
+    asshole(await EXECUTE("{add|4}"), "4")
+    asshole(await EXECUTE("{add|1|1}"), "2")
+    asshole(await EXECUTE("{add|1|1|2.4}"), "4.4")
+    print(); c('SUBTRACT', quoteless=True)
+    asshole(await EXECUTE("{sub}"), "0")
+    asshole(await EXECUTE("{sub|5}"), "5")
+    asshole(await EXECUTE("{sub|1|2}"), "-1")
+    asshole(await EXECUTE("{sub|1|2|3}"), "-4")
+    print(); c('MULTIPLY', quoteless=True)
+    asshole(await EXECUTE("{mul}"), "1")
+    asshole(await EXECUTE("{mul|3|3}"), "9")
+    asshole(await EXECUTE("{mul|3|3|4}"), "36")
+    asshole(await EXECUTE("{mul|2|3.4}"), "6.8")
+    print(); c('DIVIDE', quoteless=True)
+    asshole(await EXECUTE("{div}"), "1")
+    asshole(await EXECUTE("{div|3}"), "3")
+    asshole(await EXECUTE("{div|1|2}"), "0.5")
+    asshole(await EXECUTE("{div|15|3|5}"), "1")
+    print(); c('FLOOR DIVIDE', quoteless=True)
+    asshole(await EXECUTE("{floordiv}"), "1")
+    asshole(await EXECUTE("{fdiv|3}"), "3")
+    asshole(await EXECUTE("{fdiv|1|2}"), "0")
+    asshole(await EXECUTE("{fdiv|34|3}"), "11")
+    print(); c('POWER', quoteless=True)
+    asshole(await EXECUTE("{pow}"), "{pow}")
+    asshole(await EXECUTE("{pow|3}"), "9")
+    asshole(await EXECUTE("{pow|2|3}"), "8")
+    asshole(await EXECUTE("{pow|2|2|2|2}"), "256")
+    print(); c('MOD', quoteless=True)
+    asshole(await EXECUTE("{mod}"), "{mod}")
+    asshole(await EXECUTE("{mod|5}"), "5")
+    asshole(await EXECUTE("{mod|15|3}"), "0")
+    asshole(await EXECUTE("{mod|15|2|3}"), "1")
+    print(); c('ROUND', quoteless=True)
+    asshole(await EXECUTE("{round}"), "{round}")
+    asshole(await EXECUTE("{round|1.3}"), "1")
+    asshole(await EXECUTE("{round|1.7}"), "2")
+    asshole(await EXECUTE("{round|1.5}"), "2")
+    print(); c('FLOOR', quoteless=True)
+    asshole(await EXECUTE("{floor}"), "{floor}")
+    asshole(await EXECUTE("{floor|6.1}"), "6")
+    asshole(await EXECUTE("{floor|6.9}"), "6")
+    print(); c('CEIL', quoteless=True)
+    asshole(await EXECUTE("{ceil}"), "{ceil}")
+    asshole(await EXECUTE("{ceil|9.1}"), "10")
+    asshole(await EXECUTE("{ceil|9.9}"), "10")
+
+  async def test_dynamic_responses_bot():
+    spin_up_bot()
+
+    EXECUTE = tcr.dynamic_responses.DynamicResponseBuilder(
+      tcr.dr.placeholder_set.ALL,
+      error_on_missing_placeholder=False,
+      error_on_invalid_placeholder_return=False,
+    )
+
+    @ACL.include
+    @arc.slash_command(*2*["test_dynamic_responses"])
+    async def cmd_test_dynamic_responses(
+      ctx: arc.Context,
+      text: arc.Option[str, arc.StrParams('The reminder syntax (use /help for help)')] = None,
+    ) -> None:
+      if text is None:
+        text = "owo{#|comment}asdfasdfgsdfg {uwu} {nyaaa} {mirror{uwu}|2345}"
+
+      result = await EXECUTE(text, **{
+        'ctx': ctx,
+        'user_mentions': [],
+      })
+
+      c(result)
+      await ctx.respond(result, user_mentions=result.contexts['user_mentions'])
+
+    @BOT.listen(hikari.MessageCreateEvent)
+    async def on_message(event: hikari.MessageCreateEvent) -> None:
+      if not event.is_human:
+        return
+
+      if event.channel_id != 1125889206586183682:
+        return
+
+      if not event.content:
+        return
+
+      result = await EXECUTE(event.content, **{
+        'event': event,
+        'user_mentions': [],
+      })
+
+      c(result)
+
+      await event.message.respond(result, user_mentions=result.contexts['user_mentions'])
 
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
@@ -934,7 +1075,13 @@ if __name__ == '__main__':
   # test_cint()
   # test_generate_type_hinter()
   # test_generate_type_hinter2()
-  # test_imgui_handler()
-  # asyncio.run(test_execute_parsed())
-  test_b64()
+  test_imgui_handler()
+  # test_b64()
+  # asyncio.run(test_dynamic_responses())
+  # asyncio.run(test_dynamic_responses_bot())
+
+  asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100
+
+if BOT:
+  BOT.run()

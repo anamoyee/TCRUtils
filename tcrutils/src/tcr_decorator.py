@@ -184,6 +184,20 @@ if True:  # \/ # @convert.stringify
 
   convert = Convert()
 
+  def aconvert(converter: Callable, await_converter: bool = False):
+    def decorator(afunc):
+      @wraps(afunc)
+      async def wrapper(*args, **kwargs):
+        if await_converter:
+          return await converter(await afunc(*args, **kwargs))
+        else:
+          return converter(await afunc(*args, **kwargs))
+
+      return wrapper
+
+    return decorator
+
+
 if True:  # \/ # @printer
 
   def printer(*, printhook: Callable[[str], None] = print, passthrough: bool = True):

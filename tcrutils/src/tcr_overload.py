@@ -1,12 +1,12 @@
 """### This code was not written by me, however it's licensed with the MIT License which allows for free copy and sublicensing of the licensed material.
 
-This code was written by [James Murphy](https://github.com/jamesmurphy-mc) from [MCoding](https://github.com/mCodingLLC/) ((YouTube)[https://www.youtube.com/@mCoding])
+This code was written by [James Murphy](https://github.com/jamesmurphy-mc) from [MCoding](https://github.com/mCodingLLC/) ([YouTube](https://www.youtube.com/@mCoding))
 
 [Original Source Code](https://github.com/mCodingLLC/VideosSampleCode/blob/master/videos/077_metaclasses_in_python/overloading.py)
 
 Copy of the original license (applies only to this file):
 
-```
+```txt
 MIT License
 
 Copyright (c) 2022 MCODING, LLC

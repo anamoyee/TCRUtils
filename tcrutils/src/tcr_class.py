@@ -53,3 +53,8 @@ class SingletonForced:
     if cls.__singleton_instance__ is None:
       cls.__singleton_instance__ = super().__new__(cls, *args, **kwargs)
     return cls.__singleton_instance__
+
+
+class NoInit:
+  def __init__(self, *args, **kwargs) -> None:
+    raise NotImplementedError('You cannot instiantiate this class')
