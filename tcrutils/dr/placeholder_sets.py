@@ -73,5 +73,3 @@ ALL = merge_dicts(
 ALL_NON_DISCORD = {x: y for x, y in ALL.items() if x not in DISCORD}
 ALL_NON_UNSAFEMATH = {x: y for x, y in ALL.items() if x not in UNSAFE_MATH}
 ALL_NON_UNSAFEMATH_NON_DISCORD = {x: y for x, y in ALL.items() if x not in UNSAFE_MATH and x not in DISCORD}
-
-c(ALL)
