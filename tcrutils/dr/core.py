@@ -1,6 +1,7 @@
 from collections.abc import Callable, Mapping
 from typing import Any
 
+from ..src.tcr_console import breakpoint as bp
 from ..src.tcr_dict import merge_dicts
 from ..src.tcr_run import run_sac
 from .error import *
@@ -124,30 +125,28 @@ class _DRParser:
 
   async def process_placeholders(self, tokens: list[_Token]) -> list[_Token]:
     first_open_index = None
-    for i in range(len(tokens)):
-      if tokens[i].type == _TT.PAREN_OPEN:
-        first_open_index = i
-        break
-
-    if first_open_index is None:
-      return tokens
-
     first_close_index = None
-    for i in range(first_open_index, len(tokens)):
-      if tokens[i].type == _TT.PAREN_CLOSE:
-        first_close_index = i
+
+    for token in tokens:
+      if token.type == _TT.PAREN_OPEN:
+        first_open_index = tokens.index(token)
+      if token.type == _TT.PAREN_CLOSE:
+        first_close_index = tokens.index(token)
         break
 
-    if first_close_index is None:
+    if first_open_index is None and first_close_index is None:
       return tokens
+    elif first_open_index is None or first_close_index is None:
+      raise RuntimeError('Internal error how the fuck are parenthesis mismatched again')
 
     for token in tokens[first_open_index + 1 : first_close_index]:
       if token.type != _TT.TEXT:
-        return tokens
+        raise RuntimeError('Shit is broken again (internal error) report this fucking piece of shit not fucking working FUUUUCK!!!!!!!!')
 
     placeholder_text_tokens = tokens[first_open_index + 1 : first_close_index]
 
     try:
+      # print(f"[DEBUG] Processing {'|'.join(x.value for x in placeholder_text_tokens)}")
       processed_text_tokens = await self.process_single_placeholder(placeholder_text_tokens)
     # except BaseException:
     #   ...
@@ -170,12 +169,11 @@ class _DRParser:
 
     return await self.process_placeholders(tokens)
 
-  async def __call__(self) -> str:
+  async def __call__(self) -> tuple[str, dict]:
     self.check_integrity()
-    if not [x for x in self.tokens if x.type == _TT.PAREN_OPEN]:
-      return ''.join(x.value for x in self.tokens), self.contexts
 
-    return ''.join(x.value for x in (await self.process_placeholders(self.tokens[:]))), self.contexts
+    processed = await self.process_placeholders(self.tokens[:])
+    return ''.join(x.value for x in processed), self.contexts
 
 
 ### Dynamic Response Builder

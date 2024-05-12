@@ -58,7 +58,7 @@ SAFE_MATH = {
 Ctrl+click whatever you're hovering on to see aliases for all the safe math placeholders.
 """
 
-MATH = {**UNSAFE_MATH, **SAFE_MATH}
+SAFE_AND_UNSAFE_MATH = {**UNSAFE_MATH, **SAFE_MATH}
 """WARNING: This contains both UNSAFE and safe sides of the math module. To see more see .UNSAFE_MATH docstring.
 
 Ctrl+click whatever you're hovering on to see aliases for all the math placeholders.
