@@ -42,7 +42,6 @@ from .src.tcr_dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zi
 from .src.tcr_dir import dir2, dir3
 from .src.tcr_error import error  # 'tcrerror' in star imports, either in 'tcr.error'/'tcr.tcrerror'
 from .src.tcr_error import error as tcrerror
-from .src.tcr_execute import Execute, MissingPlaceholderError
 from .src.tcr_extract_error import extract_error, extract_traceback
 from .src.tcr_F import F
 from .src.tcr_getch import getch
