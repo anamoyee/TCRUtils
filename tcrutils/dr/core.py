@@ -1,6 +1,7 @@
 from collections.abc import Callable, Mapping
 from typing import Any
 
+from ..discord.tcrd_types import HikariDictMessage
 from ..src.tcr_console import breakpoint as bp
 from ..src.tcr_dict import merge_dicts
 from ..src.tcr_run import run_sac
@@ -155,8 +156,6 @@ class _DRParser:
     except RecursionError as e:
       raise DynamicResponseRecursionError(f'{e}') from e
     except TypeError as e:
-      print(str(e))
-      input()
       if 'missing' in str(e) and 'required positional argument' in str(e):
         raise DynamicResponsePlaceholderTooFewArgumentsError(f'Placeholder {placeholder_text_tokens} requires more arguments than were provided.') from e
       raise DynamicResponsePythonErrorInPlaceholerError(f'An error occured within a placeholder {placeholder_text_tokens}.') from e
@@ -178,6 +177,22 @@ class _DRParser:
 
 ### Dynamic Response Builder
 
+RESP_CONTEXTS = (
+  'content',
+  'attachments',
+  'components',
+  'embed',
+  'stickers',
+  'tts',
+  'reply',
+  'reply_must_exist',
+  'mentions_everyone',
+  'mentions_reply',
+  'user_mentions',
+  'role_mentions',
+  'flags',
+)
+
 
 class DynamicResponseResult(str):
   contexts: dict[str, Any]
@@ -187,12 +202,16 @@ class DynamicResponseResult(str):
     instance.contexts = contexts
     return instance
 
+  @property
+  def resp(self) -> HikariDictMessage:
+    return merge_dicts({'content': self}, {x: y for x, y in self.contexts.items() if x in RESP_CONTEXTS})
+
 
 class DynamicResponseBuilder:
   placeholders: dict[str, Callable]
   parens: tuple[str, str]
   splitter: str
-  builtin_contexts: dict[str, Any]
+  instance_contexts: dict[str, Any]
 
   def __init__(
     self,
@@ -201,7 +220,8 @@ class DynamicResponseBuilder:
     splitter: str = '|',
     error_on_missing_placeholder: bool = True,
     error_on_invalid_placeholder_return: bool = True,
-    global_like_contexts: dict[str, Any] | None = None,
+    instance_contexts: dict[str, Any] | None = None,
+    context_constructors: dict[str, Callable[[], Any]] = {},  # noqa: B006
   ) -> None:
     if not all(isinstance(x, dict) for x in placeholders):
       raise TypeError('placeholders must be a dict or list of dicts')
@@ -212,12 +232,13 @@ class DynamicResponseBuilder:
     self.splitter = splitter
     self.error_on_missing_placeholder = error_on_missing_placeholder
     self.error_on_invalid_placeholder_return = error_on_invalid_placeholder_return
-    self.builtin_contexts = global_like_contexts or {}
+    self.instance_contexts = instance_contexts or {}
+    self.context_constructors = context_constructors
 
   async def __call__(self, text: str, **contexts: Any) -> DynamicResponseResult:
     tokens = _DRLexer(text, parens=self.parens)()
     parsed, contexts = await _DRParser(
-      contexts={**self.builtin_contexts, **contexts},
+      contexts={**self.instance_contexts, **{x: y() for x, y in self.context_constructors.items()}, **contexts},
       placeholders=self.placeholders,
       splitter=self.splitter,
       tokens=tokens,

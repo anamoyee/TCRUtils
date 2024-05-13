@@ -1,11 +1,19 @@
 import functools
 import math
 import typing as t
+
+if t.TYPE_CHECKING:
+  import arc
+import re as regex
 from collections.abc import Callable
 from enum import Enum, auto
 from functools import wraps
 
+import hikari
+
 from ..src.tcr_compare import able
+from ..src.tcr_console import console as c
+from ..src.tcr_regex import RegexPreset
 from ..src.tcr_run import run_sac
 from .error import *
 
@@ -66,6 +74,15 @@ def REQUIRE(*ctxs: str):
   return decorator
 
 
+def REQUIRE_AUTHOR(func):
+  @REQUIRE('event', 'ctx')
+  @wraps(func)
+  async def wrapper(*args, event, ctx, **kwargs):
+    return await run_sac(func, *args, author=(ctx.author if ctx else event.author), event=event, ctx=ctx, **kwargs)
+
+  return wrapper
+
+
 def SWITCH(switch_name: str, *, remove: bool = True):
   """Append a bool context depending on whether or not the passed phrase is in args. Optionally remove it."""
 
@@ -73,6 +90,8 @@ def SWITCH(switch_name: str, *, remove: bool = True):
     @wraps(func)
     async def wrapper(*args, **kwargs):
       if switch_name in args:
+        if remove:
+          args = tuple(x for x in args if x != switch_name)
         kwargs[switch_name] = True
       else:
         kwargs[switch_name] = False
@@ -81,19 +100,6 @@ def SWITCH(switch_name: str, *, remove: bool = True):
     return wrapper
 
   return decorator
-
-
-def rebuild_yourself(*args: str, __parens: tuple[str, str], __splitter: str, **_):
-  """# Rebuild Yourself (RYS).
-
-  Return the placeholder as text, as if it wasnt evaluated at all.
-  For example {dummy} -> returns the str '{dummy}'. Therefore it looks like the placeholder wasnt evaluated.
-
-  This requires at least __parens and __splitter built-in contexts but can take entire **contexts and void others.
-
-  This also supports argumented placeholders for example: {div|1|0} # Division by 0 is invalid so your implementation may be to return the str '{div|1|0}' - although that's not a very good example (it'd be better to return some numeric value for consistency) it's one that ilustrates the point.
-  """
-  return f'{__parens[0]}{(__splitter.join(args))}{__parens[1]}'
 
 
 def DEBUG_CATCH_ERRORS(func):
@@ -129,6 +135,7 @@ def STRINGIFY(func: Callable):
 
   return wrapper
 
+
 def FLATTEN_IF_POSSIBLE(func: Callable):
   @wraps(func)
   async def wrapper(*args, **kwargs):
@@ -136,10 +143,59 @@ def FLATTEN_IF_POSSIBLE(func: Callable):
 
   return wrapper
 
+
+def REQUIRE_GUILD(default: Callable[..., str] | str = ''):
+  def decorator(func):
+    @REQUIRE('event', 'ctx')
+    @wraps(func)
+    async def wrapper(*args, ctx, event, **kwargs):
+      if ctx:
+        guild = ctx.get_guild()
+      elif hasattr(event, 'get_guild'):
+        guild = event.get_guild()
+      else:
+        guild = None
+
+      if guild is None:
+        return default(func, args, ctx=ctx, event=event, **kwargs) if callable(default) else default
+
+      return await run_sac(func, *args, guild=guild, ctx=ctx, event=event, **kwargs)
+
+    return wrapper
+
+  return decorator
+
+
+def REQUIRE_MEMBER_AUTHOR(default: Callable[..., str] | str = ''):
+  def decorator(func):
+    @REQUIRE_AUTHOR
+    @REQUIRE_GUILD(default)
+    @wraps(func)
+    async def wrapper(*args, guild, author, **kwargs):
+      return await run_sac(func, *args, member=guild.get_member(author), guild=guild, author=author, **kwargs)
+
+    return wrapper
+
+  return decorator
+
+def rebuild_yourself(*args: str, __parens: tuple[str, str], __splitter: str, **_):
+  """# Rebuild Yourself (RYS).
+
+  Return the placeholder as text, as if it wasnt evaluated at all.
+  For example {dummy} -> returns the str '{dummy}'. Therefore it looks like the placeholder wasnt evaluated.
+
+  This requires at least __parens and __splitter built-in contexts but can take entire **contexts and void others.
+
+  This also supports argumented placeholders for example: {div|1|0} # Division by 0 is invalid so your implementation may be to return the str '{div|1|0}' - although that's not a very good example (it'd be better to return some numeric value for consistency) it's one that ilustrates the point.
+  """
+  return f'{__parens[0]}{(__splitter.join(args))}{__parens[1]}'
+
+
 def flatten_if_possible(n: float | int) -> float | int:
-  if n == int(n):
+  if n.is_integer():
     return int(n)
   return n
+
 
 def number(
   s: str,
@@ -149,5 +205,12 @@ def number(
 ) -> float | int:
   if r := able(float, s):
     a = float(r.result)
-    return flatten_if_possible(a)
+    if flatten_to_int_when_possible:
+      return flatten_if_possible(a)
+    else:
+      return a
   return default
+
+
+def jsbool(b: bool) -> str:
+  return 'true' if b else 'false'

@@ -31,7 +31,12 @@ def default_asshook(obj, result: bool, *, comment: str = '') -> None:
 
 
 def total_default_printhook(s: str, failures: int, total: int, *args, **kwargs):
-  console(f'{s}{" " if total else f"{Fore.RED}{Style.bold}< no tests registered > "}{Fore.RED if failures else Fore.GREEN}{Style.bold}{failures}{FMTC.DECIMAL}/{FMTC.NUMBER}{total}{FMTC._}', *args, fmt_iterable=lambda a, *_, **__: str(a), **kwargs)
+  console(
+    f'{s}{" " if total else f"{Fore.RED}{Style.bold}< no tests registered > "}{Fore.RED if failures else Fore.GREEN}{Style.bold}{failures}{FMTC.DECIMAL}/{FMTC.NUMBER}{total}{FMTC._}',
+    *args,
+    fmt_iterable=lambda a, *_, **__: str(a),
+    **kwargs,
+  )
 
 
 @dataclass

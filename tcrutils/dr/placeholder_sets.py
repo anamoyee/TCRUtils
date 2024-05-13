@@ -17,12 +17,43 @@ TEXT = {
 """Ctrl+click whatever you're hovering on to see aliases for all the text placeholders"""
 
 DISCORD = {
-  'username': __.username,
-  'mention':  __.mention,
-  '@':        __.mention,
-  '@@':       __partial(__.mention, 'noping'),
+  # Author
+  'username':      __.username,
+  'user_name':     __.username,
+  'user name':     __.username,
+  'globalname':    __.globalname,
+  'global_name':   __.globalname,
+  'global name':   __.globalname,
+  'nickname':      __.nickname,
+  'nick_name':     __.nickname,
+  'nick name':     __.nickname,
+  'mention':       __.mention,
+  '@':             __.mention,
+  '@@':  __partial(__.mention, 'noping'),
+  'discriminator': __.discriminator,
+  'discrim':       __.discriminator,
+  'tag':           __.tag,
+  'id':            __.id,
+  'bot':           __.bot,
+  'isbot':         __.bot,
+  'human':         __.human,
+  'ishuman':       __.human,
+  'roles':         __.roles,
+  'avatar':        __.avatar,
+
+  # Misc
+  'indms':         __.in_dms,
+  'in_dms':        __.in_dms,
+  'in dms':        __.in_dms,
 }
 """Ctrl+click whatever you're hovering on to see aliases for all the discord placeholders."""
+
+DISCORD_TROUBLEMAKERS = {
+  'attach':     __.attach,
+  'attachment': __.attach, # May cause a BadRequestError when a technically valid link is supplied but one that doesn't point to any valid file to attach.
+}
+
+ALL_DISCORD = {**DISCORD, **DISCORD_TROUBLEMAKERS}
 
 UNSAFE_MATH = {
   'add':         __.add,
@@ -40,7 +71,7 @@ UNSAFE_MATH = {
   'modulo':      __.modulo,
   'mod':         __.modulo,
 }
-"""Unsafe math operations are those which may stall the main python thread forever if certain arguments are supplied.
+"""WARNING: Unsafe math operations are those which may stall the main python thread forever if certain arguments are supplied.
 
 I tried searching far and wide for a time-based termination solution but i couldn't find any that worked or worked not only on unix.
 
@@ -58,18 +89,18 @@ SAFE_MATH = {
 Ctrl+click whatever you're hovering on to see aliases for all the safe math placeholders.
 """
 
+# fmt: on
+
 SAFE_AND_UNSAFE_MATH = {**UNSAFE_MATH, **SAFE_MATH}
 """WARNING: This contains both UNSAFE and safe sides of the math module. To see more see .UNSAFE_MATH docstring.
 
 Ctrl+click whatever you're hovering on to see aliases for all the math placeholders.
 """
 
-# fmt: on
-
 ALL = merge_dicts(
   *[y for x, y in vars().items() if x.upper() == x and x.lower() != x],
-  {x: y for x, y in vars(__).items() if not x.startswith('_') and not x.startswith('p_')},
+  # {x: y for x, y in vars(__).items() if not x.startswith('_') and not x.startswith('p_')},
 )
-ALL_NON_DISCORD = {x: y for x, y in ALL.items() if x not in DISCORD}
+ALL_NON_DISCORD = {x: y for x, y in ALL.items() if x not in ALL_DISCORD}
 ALL_NON_UNSAFEMATH = {x: y for x, y in ALL.items() if x not in UNSAFE_MATH}
-ALL_NON_UNSAFEMATH_NON_DISCORD = {x: y for x, y in ALL.items() if x not in UNSAFE_MATH and x not in DISCORD}
+ALL_NON_UNSAFEMATH_NON_DISCORD = {x: y for x, y in ALL.items() if x not in UNSAFE_MATH and x not in ALL_DISCORD}

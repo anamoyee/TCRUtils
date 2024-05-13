@@ -11,8 +11,21 @@ Useful stuff for tcr projects.
     - [ ] Placeholders
       - [ ] How to make your own placeholders template
       - Discord
-        - [ ] mention / @ / @@
-        - [ ] username
+        - Author
+          - [x] mention / @ / @@
+          - [x] username
+          - [x] global name
+          - [x] nickname
+          - [x] discrim
+          - [x] tag
+          - [x] id
+          - [x] isbot
+          - [x] ishuman
+          - [x] indms
+          - [x] avatar
+          - [x] roles
+          - [ ] color
+        - [ ] attach (convert url to attachment)
       - Text
         - [ ] args
         - [x] var

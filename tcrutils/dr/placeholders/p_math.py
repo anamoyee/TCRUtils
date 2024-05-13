@@ -19,6 +19,7 @@ def add(_, *args: str, **ctxs) -> int | float:
   args = [__.number(x, flatten_to_int_when_possible=True) for x in args]
   return sum(args)
 
+
 @__.STRINGIFY
 @__.REQUIRE_POSITIONAL(1, 0)
 @__.FLATTEN_IF_POSSIBLE
@@ -121,7 +122,7 @@ def floordivide(_, *args: str, **ctxs) -> int | float:
 def power(_, base: str, exponent: str = '2', *args: str, **ctxs) -> int | float:
   args = [__.number(x, flatten_to_int_when_possible=True) for x in (base, exponent, *args)]
 
-  return __.functools.reduce(lambda x, y: x ** y, args)
+  return __.functools.reduce(lambda x, y: x**y, args)
 
 
 @__.STRINGIFY
@@ -214,4 +215,3 @@ def ceil(_, n: str, *args: str, **ctxs) -> int | float:
   ```
   """
   return __.math.ceil(__.number(n))
-

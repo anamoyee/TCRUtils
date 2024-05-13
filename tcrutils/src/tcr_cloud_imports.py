@@ -38,7 +38,7 @@ import importlib.machinery
 import sys
 import types
 
-import requests
+from ..src.tcr_console import console as c
 
 
 def is_valid_python_source(code: str) -> bool:
@@ -87,6 +87,12 @@ class CloudFinder(importlib.abc.MetaPathFinder):
     )
 
   def _get_remote_python_source(self, url):
+    try:
+      import requests
+    except ImportError:
+      c.error('You need to install requests to use tcr.cloud_imports: pip install requests')
+      c.error('I am not adding this as dependency because this is a joke module...')
+      raise
     try:
       response = requests.get(url)
       response.raise_for_status()

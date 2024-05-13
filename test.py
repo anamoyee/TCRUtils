@@ -963,7 +963,29 @@ if True:  # \/ # Tests
       tcr.dr.placeholder_set.ALL,
       error_on_missing_placeholder=False,
       error_on_invalid_placeholder_return=False,
+      context_constructors={
+        "user_mentions": list,
+        "role_mentions": list,
+        "attachments": list,
+      },
     )
+
+    TEST_CONTENT = """
+## Author
+Username: {username}
+Globalname: {globalname}
+Nickname: {nickname}
+Tag: {tag}
+Mention: {@}
+Discrim: {discrim}
+ID: {id}
+Bot?: {bot}
+Human?: {human}
+Avatar: <{avatar}>
+Roles: {roles}
+In DMs?: {indms}
+{attach|{avatar}}
+"""[1:-1]
 
     @ACL.include
     @arc.slash_command(*2*["test_dynamic_responses"])
@@ -972,35 +994,34 @@ if True:  # \/ # Tests
       text: arc.Option[str, arc.StrParams('The reminder syntax (use /help for help)')] = None,
     ) -> None:
       if text is None:
-        text = "owo{#|comment}asdfasdfgsdfg {uwu} {nyaaa} {mirror{uwu}|2345}"
+        text = TEST_CONTENT
 
       result = await EXECUTE(text, **{
         'ctx': ctx,
-        'user_mentions': [],
       })
 
-      c(result)
-      await ctx.respond(result, user_mentions=result.contexts['user_mentions'])
+      c(result.resp)
+
+      await ctx.respond(**result.resp)
 
     @BOT.listen(hikari.MessageCreateEvent)
     async def on_message(event: hikari.MessageCreateEvent) -> None:
-      if not event.is_human:
+      if event.author_id == BOT.get_me().id:
         return
 
-      if event.channel_id != 1125889206586183682:
+      if hasattr(event, 'guild_id') and event.channel_id != 1125889206586183682:
         return
 
       if not event.content:
         return
 
-      result = await EXECUTE(event.content, **{
+      result = await EXECUTE(event.content if event.content != 't' else TEST_CONTENT, **{
         'event': event,
-        'user_mentions': [],
       })
 
-      c(result)
+      c(result.resp)
 
-      await event.message.respond(result, user_mentions=result.contexts['user_mentions'])
+      await event.message.respond(**result.resp)
 
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
@@ -1087,8 +1108,8 @@ if __name__ == '__main__':
   # test_generate_type_hinter2()
   # test_imgui_handler()
   # test_b64()
-  asyncio.run(test_dynamic_responses())
-  # asyncio.run(test_dynamic_responses_bot())
+  # asyncio.run(test_dynamic_responses())
+  asyncio.run(test_dynamic_responses_bot())
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100

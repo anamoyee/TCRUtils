@@ -2,7 +2,7 @@
 tcr_execute.py
 
 
-
+**/.vscode/
 TESTBOT_TOKEN.txt
 src/commit_and_push.bat
 commit_and_push.bat
