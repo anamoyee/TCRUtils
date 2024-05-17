@@ -37,6 +37,9 @@ All switches are inherently optional (therefore defaulting to False)
 # Placeholders
 The below list will assume the placeholder_sets.ALL option along with all its aliases. You can import placeholders individually or in other groups.
 
+> [!NOTE]
+> Github does not display the following table in fullwidth. For ease of use use something like the VSCode markdown viewer
+
 | `{name}`                  | Description                                                                                                                                                               | Usage                                           | Example                               | Result                                                                           | Alias(es)                        | Dependencies                        | Notes                                                                       |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | ------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------- | ----------------------------------- | --------------------------------------------------------------------------- |
 | **DISCORD**               |                                                                                                                                                                           |                                                 |                                       |                                                                                  |                                  |                                     |                                                                             |
