@@ -3,12 +3,12 @@ from collections.abc import Iterable, Mapping
 from numbers import Number
 
 
-def hex(number: int, leading_zeroes=2, *, upper=True) -> str:
+def hex(number: int, leading_zeroes=2, *, upper=True, prefix: str = '0x') -> str:
   """Slightly more advanced version of builtin `hex()`, offers ability to choose if uppercase and how many leading zeroes."""
   hex_output = sex(number)
   hex_value = hex_output[2:].zfill(leading_zeroes).upper() if upper else hex_output[2:].zfill(leading_zeroes)
 
-  formatted_output = f'0x{hex_value}'
+  formatted_output = f'{prefix}{hex_value}'
   if not upper:
     formatted_output = formatted_output.lower()
 

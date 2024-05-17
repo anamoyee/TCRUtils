@@ -5,7 +5,7 @@ from ...discord.tcrd_string import IFYs
 from ...src.tcr_console import console as c
 from .. import util as __
 
-if True:  # User
+if True:  # Author
 
   @__.REQUIRE('ctx', 'event')
   @__.REQUIRE('user_mentions')
@@ -325,7 +325,7 @@ if True:  # User
     ### Dependencies
     (SlashContext && InGuild) || GuildMessageCreateEvent
     """
-    return str(len(member.role_ids)-1) # -1 to compensate for the @everyone role
+    return str(len(member.role_ids) - 1)  # -1 to compensate for the @everyone role
 
   @__.REQUIRE('attachments')
   @__.REQUIRE_POSITIONAL(1, None)
@@ -356,6 +356,102 @@ if True:  # User
     """
     url = url.strip()
     if not __.regex.match(__.RegexPreset.URL, url):
-      return f'Something went wrong while attaching a file, here\'s a link instead: <{url}>'
+      return f"Something went wrong while attaching a file, here's a link instead: <{url}>"
 
     attachments.append(url)
+
+  @__.SWITCH('nohash')
+  @__.REQUIRE_MEMBER_AUTHOR(lambda *_, nohash, **__: f'{"" if nohash else "#"}000000')
+  def color(
+    *args,
+    member: __.hikari.Member,
+    nohash: bool = False,
+    **ctxs,
+  ) -> str:
+    """### Return user's topmost role's color (skipping non-colored roles).
+
+    Example:
+    ```txt
+    Your color is {color}
+    ```
+
+    Result:
+    ```txt
+    Your color is #ff8000
+    ```
+
+    ### Dependencies
+    (SlashContext && InGuild) || GuildMessageCreateEvent
+    """
+    top_color = 0x0
+    for role in member.get_roles():
+      if str(role.color) != '#000000':
+        top_color = int(role.color)
+        break
+
+    return f'{__.tcrhex(top_color, leading_zeroes=6, prefix=("" if nohash else "#"))}'
+
+
+if True:  # Server
+
+  async def server(
+    name: str,
+    subname: str,
+    *args: str,
+    **ctxs,
+  ) -> str:
+    """### Dispatcher for all server-related subplaceholders.
+
+    Example:
+    ```txt
+    Server name: {server|name}{#|You have to specify the subplaceholder 'name'}
+    ```
+
+    Result:
+    ```txt
+    Server name: Mt. Celeste Paceping Association
+    ```
+
+    ### Dependencies
+    Technically None but all subplaceholders require (SlashContext && InGuild) || GuildMessageCreateEvent
+    """
+    LOOKUP = {
+      'name': _server_name,
+      'id': _server_id,
+    }
+
+    if subname in LOOKUP:
+      return await __.run_sac(LOOKUP[subname], name, subname, *args, **ctxs)
+    else:
+      return __.rebuild_yourself(name, subname, *args, **ctxs)
+
+  @__.REQUIRE_GUILD()
+  def _server_name(
+    *args,
+    guild: __.hikari.Guild,
+    **ctxs,
+  ):
+    """### Get the name of the server.
+
+    Example:
+    ```txt
+    Server name: {server|name}{#|You have to specify the subplaceholder 'name'}
+    ```
+
+    Result:
+    ```txt
+    Server name: Mt. Celeste Paceping Association
+    ```
+
+    ### Dependencies
+    (SlashContext && InGuild) || GuildMessageCreateEvent
+    """
+    return guild.name
+
+  @__.REQUIRE_GUILD()
+  def _server_id(
+    *args,
+    guild: __.hikari.Guild,
+    **ctxs,
+  ):
+    return str(guild.id)

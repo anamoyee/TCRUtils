@@ -13,6 +13,7 @@ import hikari
 
 from ..src.tcr_compare import able
 from ..src.tcr_console import console as c
+from ..src.tcr_int import hex as tcrhex
 from ..src.tcr_regex import RegexPreset
 from ..src.tcr_run import run_sac
 from .error import *
@@ -178,6 +179,7 @@ def REQUIRE_MEMBER_AUTHOR(default: Callable[..., str] | str = ''):
 
   return decorator
 
+
 def rebuild_yourself(*args: str, __parens: tuple[str, str], __splitter: str, **_):
   """# Rebuild Yourself (RYS).
 
@@ -212,5 +214,5 @@ def number(
   return default
 
 
-def jsbool(b: bool) -> str:
+def jsbool(b: bool) -> t.Literal['true', 'false']:
   return 'true' if b else 'false'

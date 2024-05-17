@@ -1,7 +1,7 @@
 """Contains joke functions or the ones that will never be used in a serious situations/prod (This entire package sucks so much it should never be used in prod but uhhhhh.....)."""
 
 from collections.abc import Callable
-from typing import Any, Literal
+from typing import Any, Literal, Self
 
 from ..src import tcr_cloud_imports as cloud_imports
 
@@ -69,6 +69,12 @@ class CInt:
       self.value -= 1
     self.neg_flag = not self.neg_flag
     return self
+
+  def __eq__(self, other: Self | int) -> bool:
+    if isinstance(other, CInt):
+      return self.value == other.value
+    else:
+      return self.value == other
 
   def __int__(self):
     return self.value

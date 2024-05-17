@@ -40,6 +40,11 @@ DISCORD = {
   'ishuman':       __.human,
   'roles':         __.roles,
   'avatar':        __.avatar,
+  'color':         __.color,
+  'rolecolor':     __.color,
+
+  # Server
+  'server':        __.server,
 
   # Misc
   'indms':         __.in_dms,

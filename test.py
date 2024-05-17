@@ -970,7 +970,7 @@ if True:  # \/ # Tests
       },
     )
 
-    TEST_CONTENT = """
+    T_AUTHOR = """
 ## Author
 Username: {username}
 Globalname: {globalname}
@@ -984,8 +984,16 @@ Human?: {human}
 Avatar: <{avatar}>
 Roles: {roles}
 In DMs?: {indms}
-{attach|{avatar}}
-"""[1:-1]
+Color: {color}
+"""[1:-1] # noqa: F841, RUF100
+
+    T_SERVER = """
+## Server
+Name: {server|name}
+ID: {server|id}
+"""[1:-1]  # noqa: F841, RUF100
+
+    CURRENT_TEST = T_SERVER
 
     @ACL.include
     @arc.slash_command(*2*["test_dynamic_responses"])
@@ -994,7 +1002,7 @@ In DMs?: {indms}
       text: arc.Option[str, arc.StrParams('The reminder syntax (use /help for help)')] = None,
     ) -> None:
       if text is None:
-        text = TEST_CONTENT
+        text = CURRENT_TEST
 
       result = await EXECUTE(text, **{
         'ctx': ctx,
@@ -1015,7 +1023,7 @@ In DMs?: {indms}
       if not event.content:
         return
 
-      result = await EXECUTE(event.content if event.content != 't' else TEST_CONTENT, **{
+      result = await EXECUTE(event.content if event.content != 't' else CURRENT_TEST, **{
         'event': event,
       })
 

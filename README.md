@@ -25,7 +25,20 @@ Useful stuff for tcr projects.
           - [x] avatar
           - [x] roles
           - [ ] color
-        - [ ] attach (convert url to attachment)
+        - Server
+          - [x] name
+          - [x] id
+          - [ ] members
+          - [ ] roles
+          - [ ] channels
+          - [ ] categories
+          - [ ] vcs
+          - [ ] emojis
+          - [ ] boosts
+          - [ ] icon
+        - [ ] 
+        - [ ] Other
+          - [x] attach (convert url to attachment)
       - Text
         - [ ] args
         - [x] var
