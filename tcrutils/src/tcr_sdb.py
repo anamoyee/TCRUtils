@@ -149,4 +149,4 @@ class ShelveDB(dict):
 
   def drop_db(self) -> None:
     self.s.close()
-    console(f'Dropping: {self.__directory}')
+    console(f'Dropping: {self.__directory / self.alnum_id}')
