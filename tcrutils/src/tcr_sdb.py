@@ -1,9 +1,8 @@
 import pathlib as p
 import shelve
+import shutil
 import string
 from typing import Any
-
-from ..src.tcr_console import console
 
 ALLOWED_CHARACTERS = string.ascii_letters + string.digits + "!&#'^~$,.%`{}[]();@_-+="  # Allowed characters in DB ID
 
@@ -147,6 +146,9 @@ class ShelveDB(dict):
   def get_directory(self) -> p.Path:
     return self.__directory
 
+  def get_path(self) -> p.Path:
+    return self.get_directory() / self.alnum_id
+
   def drop_db(self) -> None:
     self.s.close()
-    console(f'Dropping: {self.__directory / self.alnum_id}')
+    shutil.rmtree(self.__directory / self.alnum_id)
