@@ -1,7 +1,7 @@
 class DiscordLimits:
   class Message:
     LENGTH = 4000
-    LENGTH_SAFE = 1950
+    LENGTH_SAFE = 1984 # Slightly less than 2000 for safety & to fit in a reference hehe
     LENGTH_SAFEST = 1800
     FILE_SIZE_MB = 25
 

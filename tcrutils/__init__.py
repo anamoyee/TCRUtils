@@ -51,7 +51,7 @@ from .src.tcr_inspect import get_file_colon_lineno, get_lineno
 from .src.tcr_int import float2int, hex, recursive_sum
 from .src.tcr_iterable import Or, batched, bogo_sort, cut_at, getattr_queue, getmanyattrs, hasmanyattrs, limited_iterable, shuffled, stalin_sort
 from .src.tcr_language import apostrophe_s, make_plural, nth
-from .src.tcr_markdown import codeblock, uncodeblock
+from .src.tcr_markdown import codeblock, codeblocks, discord_error, uncodeblock
 from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null, Undefined, UniqueDefault
 from .src.tcr_other import intbool
