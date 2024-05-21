@@ -30,4 +30,9 @@ class Singleton:
 
 class NoInit:
   def __init__(self, *args, **kwargs) -> None:
-    raise RuntimeError('You cannot instiantiate this class')
+    msg = 'You cannot instiantiate this class'
+
+    if hasattr(self, '__noinit_msg'):
+      msg = str(self.__noinit_msg)
+
+    raise RuntimeError(msg)
