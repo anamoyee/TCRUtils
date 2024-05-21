@@ -331,6 +331,31 @@ if True:  # \/ # Tests
     print_iterable(str, **kwargs)
     print_iterable([[[[[[[[[[[[]]]]]]]]]]]], **{**kwargs, "let_no_indent": False})
     print_iterable([tcr.types.QuotelessString("quoteless string")]*3, **kwargs)
+    print_iterable({
+      "a": [
+        'nya', 'owo', 'uwu', {
+          "12": 34,
+          '56': 78,
+        },
+        [10, 20, 30],
+      ]
+    }, **kwargs)
+    print_iterable({
+      "b": [],
+    }, **kwargs)
+    print_iterable({
+      "b": 2,
+    }, **kwargs)
+    print_iterable({
+      "b": 2,
+      "d": 4,
+    }, **kwargs)
+    print_iterable({
+      "b": None,
+    }, **kwargs)
+    print_iterable({
+      "b": Null,
+    }, **kwargs)
 
   def test_markdown():
     console.debug(codeblock("asdf"))

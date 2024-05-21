@@ -296,7 +296,7 @@ if True:  # \/ # fmt & print iterable
       and len(it) > 0
     ):
       if isinstance(it, Mapping):
-        if len(it) == 1:
+        if len(it) == 1 and ((type(next(iter(it.values()))) in (int, float, complex, bool)) or next(iter(it.values())) in (None, Null, '', [], (), {}, set())):
           force_no_indent = -1
       else:
         # Case 1: If the iterable in question contains iterables
