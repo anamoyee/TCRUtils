@@ -233,3 +233,18 @@ if True:  # \/ # @copy_kwargs
       return func(*args, __kwargs=kwargs, **kwargs)
 
     return wrapper
+
+
+if True: # \/ # @skip_first_call
+
+  def skip_first_call(func):
+    func._first_call = True
+
+    def wrapper(*args, **kwargs):
+        if func._first_call:
+            func._first_call = False
+            return None
+        else:
+            return func(*args, **kwargs)
+
+    return wrapper

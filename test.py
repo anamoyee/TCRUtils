@@ -1069,6 +1069,15 @@ ID: {server|id}
     c(path)
     input()
 
+  def test_skip_first_call():
+    @tcr.skip_first_call
+    def _printer(x):
+      c(x)
+
+    _printer(1)
+    _printer(2)
+    _printer(3)
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -1157,6 +1166,7 @@ if __name__ == '__main__':
   # asyncio.run(test_dynamic_responses())
   # asyncio.run(test_dynamic_responses_bot())
   # test_tempfile()
+  # test_skip_first_call()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100
