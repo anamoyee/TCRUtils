@@ -33,6 +33,6 @@ class NoInit:
     msg = 'You cannot instiantiate this class'
 
     if hasattr(self, '__noinit_msg'):
-      msg = str(self.__noinit_msg)
+      msg = str(getattr(self, '__noinit_msg'))
 
     raise RuntimeError(msg)
