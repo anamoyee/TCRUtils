@@ -2,6 +2,7 @@ import pathlib as p
 import shelve
 import shutil
 import string
+from collections.abc import Callable
 from typing import Any
 
 ALLOWED_CHARACTERS = string.ascii_letters + string.digits + "!&#'^~$,.%`{}[]();@_-+="  # Allowed characters in DB ID
@@ -49,18 +50,26 @@ class ShelveDB(dict):
 
   ```py
   class DB(tcr.ShelveDB):
+    # REQUIRED:
     directory = "/VALID/path/to/db/dir/" # Or pathlib.Path object
+    # OPTIONAL:
+    defaults = {"r": list}
   ```
+  ### Defaults:
+  If key "r" is accessed but it's not found, return `list()` (`[]`, not the `list` type itself of course!) and set the value at that key to it, so the next time it's looked up a value will be present, unless deleted or overwritten in the meantime.
+  Values must be any zero-argument callables. (functions, classes, types, etc.).
+  This is to avoid mutability problems, for each key a new instance is created.
 
-  Raises:
+  ## Raises:
     - ValueError: provided alnum_id is invalid.
     - RuntimeError: You did not or incorrectly set up the class declaration (shown above).
     - NotADirectoryError: The directory path you provided points to a file, not a directory or nothing.
   """
 
-  directory: str | p.Path | None = None
+  directory: str | p.Path = None
   __directory: p.Path
   s: shelve.Shelf
+  defaults: dict[Any, Callable[[], Any]] = None
 
   def __init__(self, alnum_id: str | int) -> None:
     if isinstance(self.directory, str | p.Path):
@@ -75,6 +84,12 @@ class ShelveDB(dict):
 
     self.__directory.mkdir(exist_ok=True, parents=True)
 
+    if self.defaults is None:
+      self.defaults = {}
+
+    if not all(callable(v) for v in self.defaults.values()):
+      raise RuntimeError("All values of defaults must be callable.")
+
     if not all(char in ALLOWED_CHARACTERS for char in str(alnum_id)):
       raise ValueError(f'alnum_id must be any of those characters: {ALLOWED_CHARACTERS}')
 
@@ -87,6 +102,17 @@ class ShelveDB(dict):
     self.s = shelve.open(alnum_dirpath / self.alnum_id)
 
     super().__init__(self.s)
+
+  def __getitem__(self, __key: Any) -> Any:
+    try:
+      return super().__getitem__(__key)
+    except KeyError:
+      if __key in self.defaults:
+        val = self.defaults[__key]()
+        self[__key] = val
+        return val
+      else:
+        raise
 
   def __setitem__(self, __key: Any, __value: Any) -> None:
     self.s[__key] = __value
@@ -106,8 +132,8 @@ class ShelveDB(dict):
 
   @property
   def d(self):
-    """Convert the underlying shelf into a dictionary and return its copy()."""
-    return dict(self.s).copy()
+    """Convert the underlying shelf into a dictionary (make a copy as dict)."""
+    return dict(self.s)#.copy()
 
   def clear(self) -> None:
     """Clear both shelf and the underlying dictionary."""
@@ -150,5 +176,6 @@ class ShelveDB(dict):
     return self.get_directory() / self.alnum_id
 
   def drop_db(self) -> None:
+    """Close the shelf and delete the underlying system directory of this database instance."""
     self.s.close()
     shutil.rmtree(self.__directory / self.alnum_id)

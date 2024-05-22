@@ -517,33 +517,41 @@ if True:  # \/ # Tests
     class Database(tcr.ShelveDB):
       directory = p.Path(__file__).parent / 'test_db'
 
+      defaults = {
+        "r": list,
+      }
+
     db = Database("test")
 
     db.clear()
 
-    console(db)
+    c(db)
 
-    db['OwO'] = 'UwU'
-    console(db)
+    c(db['r'])
 
-    del db['OwO']
-    console(db)
+    c(db)
 
-    db.setdefault("a", "A")
-    console(db)
-    db.setdefault("b", "B")
-    db.setdefault("c", "C")
-    db.setdefault("d", "D")
-    console(db)
+    # db['OwO'] = 'UwU'
+    # console(db)
 
-    console(db.pop('a'))
-    console(db)
-    console(db.popitem())
-    console(db)
-    console(db.popitem())
-    console(db)
-    console(db.popitem())
-    console(db)
+    # del db['OwO']
+    # console(db)
+
+    # db.setdefault("a", "A")
+    # console(db)
+    # db.setdefault("b", "B")
+    # db.setdefault("c", "C")
+    # db.setdefault("d", "D")
+    # console(db)
+
+    # console(db.pop('a'))
+    # console(db)
+    # console(db.popitem())
+    # console(db)
+    # console(db.popitem())
+    # console(db)
+    # console(db.popitem())
+    # console(db)
 
   def test_fmt_iterable(*, printhook=print, **kwargs):
     printhook(tcr.fmt_iterable(10, **kwargs))
@@ -1148,7 +1156,7 @@ if __name__ == '__main__':
   # test_b64()
   # asyncio.run(test_dynamic_responses())
   # asyncio.run(test_dynamic_responses_bot())
-  test_tempfile()
+  # test_tempfile()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100
