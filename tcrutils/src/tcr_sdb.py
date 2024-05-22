@@ -181,7 +181,7 @@ class ShelveDB(dict):
     shutil.rmtree(self.__directory / self.alnum_id)
 
   @classmethod
-  def iter_all(cls) -> Iterator[str, Self]:
+  def iter_all(cls) -> Iterator[tuple[str, Self]]:
     for path in cls.directory.iterdir():
       yield path.name, cls(path.name)
 
