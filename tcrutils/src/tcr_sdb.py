@@ -2,8 +2,8 @@ import pathlib as p
 import shelve
 import shutil
 import string
-from collections.abc import Callable
-from typing import Any
+from collections.abc import Callable, Iterator
+from typing import Any, Self
 
 ALLOWED_CHARACTERS = string.ascii_letters + string.digits + "!&#'^~$,.%`{}[]();@_-+="  # Allowed characters in DB ID
 
@@ -179,3 +179,9 @@ class ShelveDB(dict):
     """Close the shelf and delete the underlying system directory of this database instance."""
     self.s.close()
     shutil.rmtree(self.__directory / self.alnum_id)
+
+  @classmethod
+  def iter_all(cls) -> Iterator[str, Self]:
+    for path in cls.directory.iterdir():
+      yield path.name, cls(path.name)
+

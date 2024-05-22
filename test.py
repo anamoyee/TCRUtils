@@ -521,15 +521,21 @@ if True:  # \/ # Tests
         "r": list,
       }
 
-    db = Database("test")
+    db1 = Database("test1")
+    db2 = Database("test2")
+    db3 = Database("test3")
 
-    db.clear()
+    c(dict(Database.iter_all()))
 
-    c(db)
+    # db1.clear()
 
-    c(db['r'])
+    # c(db1)
 
-    c(db)
+    # c(db1['r'])
+
+    # c(db1)
+
+    # c(db1.get_directory())
 
     # db['OwO'] = 'UwU'
     # console(db)
@@ -1135,7 +1141,7 @@ if __name__ == '__main__':
   # test_insist()
   # test_ntpath()
   # test_newdir2()
-  # test_sdb()
+  test_sdb()
   # test_language()
   # test_float2int()
   # test_manyattrs()
