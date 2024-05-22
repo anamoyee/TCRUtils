@@ -62,6 +62,7 @@ from .src.tcr_regex import RegexPreset
 from .src.tcr_run import RunSACAble, run_sac
 from .src.tcr_sdb import ShelveDB
 from .src.tcr_string import SlashableString, commafy, custom_zfill, join_urlstr, polaris_progressbar
+from .src.tcr_temp import temp_file
 from .src.tcr_terminal import terminal
 from .src.tcr_test import asshole, raises, rashole
 from .src.tcr_timestr import timestr
