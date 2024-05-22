@@ -1057,8 +1057,9 @@ ID: {server|id}
       await event.message.respond(**result.resp)
 
   def test_tempfile():
-    path = tcr.temp_file('test_tempfile.txt', "Test contents")
+    path = tcr.temp_file("Test contents")
     c(path)
+    input()
 
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
@@ -1147,7 +1148,7 @@ if __name__ == '__main__':
   # test_b64()
   # asyncio.run(test_dynamic_responses())
   # asyncio.run(test_dynamic_responses_bot())
-  # test_tempfile()
+  test_tempfile()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100

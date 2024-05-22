@@ -2,8 +2,8 @@ import tempfile
 from pathlib import Path
 
 
-def temp_file(filename: str, content: str) -> Path:
-  temp_file = tempfile.NamedTemporaryFile(delete=False, mode='w', encoding='utf-8', suffix=filename)
+def temp_file(content: str = '', *, suffix: str = None) -> Path:
+  temp_file = tempfile.NamedTemporaryFile(delete=False, mode='w', encoding='utf-8', suffix=suffix)
 
   try:
     temp_file.write(content)
