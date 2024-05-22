@@ -88,7 +88,7 @@ class ShelveDB(dict):
       self.defaults = {}
 
     if not all(callable(v) for v in self.defaults.values()):
-      raise RuntimeError("All values of defaults must be callable.")
+      raise RuntimeError('All values of defaults must be callable.')
 
     if not all(char in ALLOWED_CHARACTERS for char in str(alnum_id)):
       raise ValueError(f'alnum_id must be any of those characters: {ALLOWED_CHARACTERS}')
@@ -133,7 +133,7 @@ class ShelveDB(dict):
   @property
   def d(self):
     """Convert the underlying shelf into a dictionary (make a copy as dict)."""
-    return dict(self.s)#.copy()
+    return dict(self.s)  # .copy()
 
   def clear(self) -> None:
     """Clear both shelf and the underlying dictionary."""

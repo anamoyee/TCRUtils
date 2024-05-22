@@ -235,16 +235,28 @@ if True:  # \/ # @copy_kwargs
     return wrapper
 
 
-if True: # \/ # @skip_first_call
+if True:  # \/ # @skip_first_call
 
   def skip_first_call(func):
     func._first_call = True
 
     def wrapper(*args, **kwargs):
-        if func._first_call:
-            func._first_call = False
-            return None
-        else:
-            return func(*args, **kwargs)
+      if func._first_call:
+        func._first_call = False
+        return None
+      else:
+        return func(*args, **kwargs)
+
+    return wrapper
+
+  def skip_first_call_async(func):
+    func._first_call = True
+
+    async def wrapper(*args, **kwargs):
+      if func._first_call:
+        func._first_call = False
+        return None
+      else:
+        return await func(*args, **kwargs)
 
     return wrapper

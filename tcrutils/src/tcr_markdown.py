@@ -65,7 +65,7 @@ def codeblocks(
   out = ''
 
   for text, langcode in zip(texts, langcodes, strict=True):
-    out += codeblock(text, langcode=langcode, max_length=max_length-len(out), cut_at_func=cut_at_func, smart_empty=smart_empty)
+    out += codeblock(text, langcode=langcode, max_length=max_length - len(out), cut_at_func=cut_at_func, smart_empty=smart_empty)
 
   return out
 
