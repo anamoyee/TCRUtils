@@ -17,12 +17,11 @@ def batched(
   *,
   back_to_front: bool = False,
 ) -> list[tuple[T, ...]]:
-  """### ~~Poor man's `itertools.batched()` (on Py3.11)~~.
+  """### Poor man's `itertools.batched()` (on Py3.11).
 
-  # **DEPRECATED** - may be removed in the future:
-  # From python 3.12 onward use itertools.batched()
-
-  Left in due to my familiarity and i may keep using it...
+  itertools.batched exists but I left it here because:
+  - I still need to support py3.11
+  - I don't think itertools.batched() has an option to easily back_to_front the results.
 
   Return a list of splits of the original `it` Iterable that was passed in, split every `n` items. Last group may be smaller than `n` items if the source was exhausted
   `back_to_front`: makes the items pile up in the back and now the first item is the one to have less than n items if there's not enough to pack it with. For example:
