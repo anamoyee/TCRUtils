@@ -27,7 +27,9 @@ from .discord.tcrd_limits import DiscordLimits
 from .discord.tcrd_string import get_token
 from .dr import placeholder_set as dr_placeholder_sets
 from .dr import placeholders as dr_placeholders
+from .src import tcr_ensure_deps as ensure_depencencies
 from .src import tcr_joke as joke
+from .src import tcr_menuconfig as menuconfig
 from .src import tcr_types as types
 from .src.tcr_b64 import b64
 from .src.tcr_class import NoInit, Singleton
@@ -50,7 +52,7 @@ from .src.tcr_input import insist
 from .src.tcr_inspect import get_file_colon_lineno, get_lineno
 from .src.tcr_int import float2int, hex, recursive_sum
 from .src.tcr_iterable import Or, batched, bogo_sort, cut_at, getattr_queue, getmanyattrs, hasmanyattrs, limited_iterable, shuffled, stalin_sort
-from .src.tcr_language import apostrophe_s, make_plural, nth
+from .src.tcr_language import apostrophe_s, make_plural, nth, plural_s
 from .src.tcr_markdown import codeblock, codeblocks, discord_error, uncodeblock
 from .src.tcr_misspellings import asert, trei
 from .src.tcr_null import Null, Undefined, UniqueDefault

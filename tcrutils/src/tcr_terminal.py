@@ -1,4 +1,6 @@
 import os
+from collections.abc import Callable
+from functools import wraps
 
 
 def _send(s: str) -> None:
@@ -49,6 +51,15 @@ class Terminal:
   @property
   def size(self):
     return _TerminalSizeTuple(*os.get_terminal_size())
+
+  def hide_cursor_during_function(self, func: Callable) -> Callable:
+    def wrapper(*args, **kwargs):
+      self.cursor.hide()
+      r = func(*args, **kwargs)
+      self.cursor.unhide()
+      return r
+
+    return wrapper
 
   cursor = Cursor()
 

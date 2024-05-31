@@ -16,7 +16,7 @@ def batched(
   n: int,
   *,
   back_to_front: bool = False,
-) -> list[tuple[T, ...]]:
+) -> list[Iterable[T]]:
   """### Poor man's `itertools.batched()` (on Py3.11).
 
   itertools.batched exists but I left it here because:

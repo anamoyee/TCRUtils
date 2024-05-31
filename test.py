@@ -136,6 +136,8 @@ if True:  # \/ # Tests
     if batched_:
       console(tcr.batched('1234567890', n=3), print_iterable_=False)
       console(tcr.batched('1234567890', n=3, back_to_front=True), print_iterable_=False)
+      console(tcr.batched('', n=3), print_iterable_=False)
+      console(tcr.batched('', n=3) or [[]], print_iterable_=False)
     if cut_at_:
       console(repr(tcr.cut_at("uwuwuwuuwuwu", n=10)))
       console(repr(tcr.cut_at("uwuwuwuuwuwu", n=4)))
@@ -521,9 +523,9 @@ if True:  # \/ # Tests
         "r": list,
       }
 
-    db1 = Database("test1")
-    db2 = Database("test2")
-    db3 = Database("test3")
+    # db1 = Database("test1")
+    # db2 = Database("test2")
+    # db3 = Database("test3")
 
     c(dict(Database.iter_all()))
 
@@ -1084,6 +1086,16 @@ ID: {server|id}
     _printer(2)
     _printer(3)
 
+  def test_ensure_deps():
+    ensure_dependencies = tcr.ensure_depencencies.DependencyEnsurer(
+      tcr.ensure_depencencies.Dependency(import_as='requests'),
+      tcr.ensure_depencencies.Dependency(import_as='hikari'),
+      tcr.ensure_depencencies.Dependency(import_as='lightbulb', pip_install_as='hikari-lightbulb'),
+      tcr.ensure_depencencies.Dependency(import_as='abd', pip_install_as='abd'),
+    )
+
+    ensure_dependencies()
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -1141,7 +1153,7 @@ if __name__ == '__main__':
   # test_insist()
   # test_ntpath()
   # test_newdir2()
-  test_sdb()
+  # test_sdb()
   # test_language()
   # test_float2int()
   # test_manyattrs()
@@ -1173,6 +1185,7 @@ if __name__ == '__main__':
   # asyncio.run(test_dynamic_responses_bot())
   # test_tempfile()
   # test_skip_first_call()
+  # test_ensure_deps()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100

@@ -17,6 +17,10 @@ def apostrophe_s(word: str):
   return word + "'s"
 
 
+def plural_s(n: int, *, s: str = 's'):
+  """Return `'s'` if `n != 1` else `''`."""
+  return s if n != 1 else ''
+
 def _caps_deco(func):
   @wraps(func)
   def wrapper(word: str, *args, **kwargs):

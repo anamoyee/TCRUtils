@@ -5,6 +5,7 @@ Useful stuff for tcr projects.
 TODO: Add here an index of best features
 
 ## Todo
+  - [ ] ensure deps: apply f_back magic to automatically set global vars (instruct user)
   - [ ] finish imgui
     - [ ] add docstrings
   - [ ] finish execute
