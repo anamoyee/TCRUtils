@@ -29,7 +29,6 @@ from .dr import placeholder_set as dr_placeholder_sets
 from .dr import placeholders as dr_placeholders
 from .src import tcr_ensure_deps as ensure_depencencies
 from .src import tcr_joke as joke
-from .src import tcr_menuconfig as menuconfig
 from .src import tcr_types as types
 from .src.tcr_b64 import b64
 from .src.tcr_class import NoInit, Singleton
@@ -38,6 +37,7 @@ from .src.tcr_compare import able, isdunder
 from .src.tcr_console import breakpoint, console, start_eval_session
 from .src.tcr_console import console as c
 from .src.tcr_constants import *
+from .src.tcr_context import random_seed_lock
 from .src.tcr_decorator import autorun, convert, copy_kwargs, instance, skip_first_call, skip_first_call_async, test, timeit
 from .src.tcr_dev import generate_function_argument_typehints, generate_type_hinter
 from .src.tcr_dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zip, merge_dicts

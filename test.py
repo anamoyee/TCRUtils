@@ -1096,6 +1096,26 @@ ID: {server|id}
 
     ensure_dependencies()
 
+  def test_dpy():
+    while (a := input("Escape markdown >>> ")):
+      c(tcr.discord.escape_markdown(a))
+
+    while (a := input("Remove markdown >>> ")):
+      c(tcr.discord.remove_markdown(a))
+
+    while (a := input("Escape mentions >>> ")):
+      c(tcr.discord.escape_mentions(a))
+
+  def test_random_seed_lock():
+    import random
+
+    TIMES = 10
+    SEED = 42
+
+    c(random.randint(0, 1000000) for _ in range(TIMES))
+    with tcr.random_seed_lock(SEED) as rng:
+      c(rng.randint(0, 1000000) for _ in range(TIMES))
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -1186,6 +1206,8 @@ if __name__ == '__main__':
   # test_tempfile()
   # test_skip_first_call()
   # test_ensure_deps()
+  # test_dpy()
+  # test_random_seed_lock()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100

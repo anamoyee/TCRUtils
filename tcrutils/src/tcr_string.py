@@ -1,6 +1,6 @@
 import re as regex
 
-from .tcr_int import clamp, float2int
+from .tcr_int import clamp
 
 
 def commafy(text: str | int, splitter: str = ','):
@@ -33,7 +33,7 @@ class SlashableString(str):
   ```py
   s = SlashableString("a")
   s1 = s / 'c'
-  print(repr(s)) # -> 'a/c'
+  print(repr(s1)) # -> 'a/c'
   ```
   Splitter can be changed with the `splitter` argument. (the splitter is '/' by default to be consistent with the division symbol)
   If strip argument is True, the string will be stripped of any leading or trailing splitters.
