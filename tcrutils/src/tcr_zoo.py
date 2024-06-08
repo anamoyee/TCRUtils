@@ -1,7 +1,22 @@
 from typing import Literal, NotRequired, TypedDict
 
+# TODO: Maybe add a parse_profile() function for parsing a "No profiles" into a ListedProfileError.
+# TODO: Maybe add a parse_profile() function for parsing a "No profiles" into a ListedProfileError.
+# TODO: Maybe add a parse_profile() function for parsing a "No profiles" into a ListedProfileError.
+# TODO: Maybe add a parse_profile() function for parsing a "No profiles" into a ListedProfileError.
+# TODO: Maybe add a parse_profile() function for parsing a "No profiles" into a ListedProfileError.
 
-class ProfileIconTD(TypedDict):
+
+class ListedProfileError(TypedDict):
+  """Represents an error returned from /api/profiles.
+
+  TODO: review this..., surely there are more fields? wait no it just returns a "No profiles" (fix this)
+  """
+
+  error: Literal[True]
+
+
+class ListedProfileIconTD(TypedDict):
   """A dictionary of the user's icon options: `emoji` and `parsed`."""
 
   emoji: str
@@ -10,20 +25,40 @@ class ProfileIconTD(TypedDict):
   """Represents HTML version of that emoji, for use outside of Discord."""
 
 
+class ListedProfile(TypedDict):
+  """Not to be confused with Profile.
+
+  Represents a dict of a single user profile received from /api/profiles, plural (not to confuse with /api/profile, singular)
+  """
+
+  id: str
+  """Discord ID of that user along with the internal profile ID, example: `'507642999992352779_ox'`."""
+  name: str
+  """Name of that user's zoo."""
+  color: int
+  """Color of that user's embed."""
+  private: bool
+  """Whether or not that zoo is private."""
+  viewable: bool
+  """Whether or not that zoo is viewable."""
+  current: bool
+  """Whether or not that user's zoo is the currently selected one."""
+  score: int
+  """Zoo score of that user's profile."""
+  icon: ListedProfileIconTD
+
+
 class ProfileError(TypedDict):
-  """Represents an error returned from /api/profiles."""
-
-  error: Literal[True]
-
-
-class ListedProfileError(TypedDict):
   """Represents a an error returned from /api/profile.
 
-  This does not cover network-related issues. It's purely for errors reported by Colon's servers.
+  This does not cover network-related issues. It's purely for errors caught by Colon's servers.
   """
 
   name: str
-  """For example: "Invalid Profile!"."""
+  """For example: "Invalid Profile!".
+
+  TODO: make it a Literal["...", "...", "..."].
+  """
   msg: str
   """The error message."""
   invalid: bool
@@ -469,25 +504,3 @@ class Profile(TypedDict):
   This key is included if you have the [API Key](https://zoobot.wiki/index.php/API_Key) relic equipped.
   """
 
-
-class ListedProfile(TypedDict):
-  """Not to be confused with Profile.
-
-  Represents a dict of a single user profile received from /api/profiles, plural (not to confuse with /api/profile, singular)
-  """
-
-  id: str
-  """Discord ID of that user along with the internal profile ID, example: `'507642999992352779_ox'`."""
-  name: str
-  """Name of that user's zoo."""
-  color: int
-  """Color of that user's embed."""
-  private: bool
-  """Whether or not that zoo is private."""
-  viewable: bool
-  """Whether or not that zoo is viewable."""
-  current: bool
-  """Whether or not that user's zoo is the currently selected one."""
-  score: int
-  """Zoo score of that user's profile."""
-  icon: ProfileIconTD
