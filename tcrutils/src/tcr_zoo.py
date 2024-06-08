@@ -10,43 +10,38 @@ class ProfileIconTD(TypedDict):
   """Represents HTML version of that emoji, for use outside of Discord."""
 
 
-class Profile(TypedDict):
-  """Not to be confused with ProfileInfo.
-
-  Represents a dict of a single user profile received from /api/profiles, plural (not to confuse with /api/profile, singular)
-  """
-
-  id: str
-  """Discord ID of that user along with the internal profile ID, example: `'507642999992352779_ox'`."""
-  name: str
-  """Name of that user's zoo."""
-  color: int
-  """Color of that user's embed."""
-  private: bool
-  """Whether or not that zoo is private."""
-  viewable: bool
-  """Whether or not that zoo is viewable."""
-  current: bool
-  """Whether or not that user's zoo is the currently selected one."""
-  score: int
-  """Zoo score of that user's profile."""
-  icon: ProfileIconTD
-
-
 class ProfileError(TypedDict):
   """Represents an error returned from /api/profiles."""
 
   error: Literal[True]
 
 
-class ProfileInfoUserTD(TypedDict):
+class ListedProfileError(TypedDict):
+  """Represents a an error returned from /api/profile.
+
+  This does not cover network-related issues. It's purely for errors reported by Colon's servers.
+  """
+
+  name: str
+  """For example: "Invalid Profile!"."""
+  msg: str
+  """The error message."""
+  invalid: bool
+  """TODO: idk what that does."""
+  error: str
+  """Type of the error. for example: "invalidProfile"."""
+  login: NotRequired[bool]
+  """TODO: find out what that does exactly. (guess: true if if you logged in then you'd be able to access this profile)"""
+
+
+class ProfileUserTD(TypedDict):
   """A dictionary of the user's info: `avatar`."""
 
   avatar: str
   """Represents the URL to discord's cdn pointing to that user's avatar"""
 
 
-class ProfileInfoUniqueAnimalsTD(TypedDict):
+class ProfileUniqueAnimalsTD(TypedDict):
   """A dictionary of the user's unique animals: `common`, `rare`, `total`."""
 
   common: int
@@ -57,7 +52,7 @@ class ProfileInfoUniqueAnimalsTD(TypedDict):
   """Total of animal pairs (common-rare) of which at least one of them (either common or rare) is present."""
 
 
-class ProfileInfoTotalAnimalsTD(TypedDict):
+class ProfileTotalAnimalsTD(TypedDict):
   """A dictionary of the user's total animals: `common`, `rare`."""
 
   common: int
@@ -66,7 +61,7 @@ class ProfileInfoTotalAnimalsTD(TypedDict):
   """Represents total rare animals."""
 
 
-class ProfileInfoAnimalTD(TypedDict):
+class ProfileAnimalTD(TypedDict):
   """Represents a single animal group from the user's profile."""
 
   name: str
@@ -85,7 +80,7 @@ class ProfileInfoAnimalTD(TypedDict):
   """Whether or not user used /pin on that animal on that profile."""
 
 
-class ProfileInfoItemTD(TypedDict):
+class ProfileItemTD(TypedDict):
   name: str
   """The name of that item."""
   amount: int
@@ -105,7 +100,7 @@ class ProfileInfoItemTD(TypedDict):
   """The amount of times that item has been used on that profile."""
 
 
-class ProfileInfoRelicTD(TypedDict):
+class ProfileRelicTD(TypedDict):
   name: str
   """The name of that relic."""
   emoji: str
@@ -117,7 +112,7 @@ class ProfileInfoRelicTD(TypedDict):
   """
 
 
-class ProfileInfoCosmeticTD(TypedDict):
+class ProfileCosmeticTD(TypedDict):
   name: str
   """The name of that cosmetic."""
   emoji: str
@@ -132,8 +127,8 @@ class ProfileInfoCosmeticTD(TypedDict):
   """
 
 
-class ProfileInfoQuestsTD(TypedDict):
-  """Represents a list of quests from the user's profile. Not to be confused with `ProfileInfoQuestTD`."""
+class ProfileQuestsTD(TypedDict):
+  """Represents a list of quests from the user's profile. Not to be confused with `ProfileQuestTD`."""
 
   name: str
   """The name of that quest. (ex. 'Risky Quest')"""
@@ -147,8 +142,8 @@ class ProfileInfoQuestsTD(TypedDict):
   """How many quests of that type were completed on that profile."""
 
 
-class ProfileInfoQuestTD(TypedDict):
-  """Represents the currently pending quest on that user's profile. Not to be confused with `ProfileInfoQuestsTD`."""
+class ProfileQuestTD(TypedDict):
+  """Represents the currently pending quest on that user's profile. Not to be confused with `ProfileQuestsTD`."""
 
   type: str
   """The internal name of that quest (ex. 'risky')."""
@@ -158,14 +153,14 @@ class ProfileInfoQuestTD(TypedDict):
   """The family of the animal that went on this quest (ex. 'fox')."""
 
 
-class ProfileInfoCurseNamesTD(TypedDict):
+class ProfileCurseNamesTD(TypedDict):
   type: str
   """Type of the curse."""
   cure: str
   """Cure of the curse."""
 
 
-class ProfileInfoCurseEffectsTypeTD(TypedDict):
+class ProfileCurseEffectsTypeTD(TypedDict):
   name: str
   """Name of the curse. Ex: `'Blindness'`."""
   description: str
@@ -174,7 +169,7 @@ class ProfileInfoCurseEffectsTypeTD(TypedDict):
   """TODO: idk what it's exactly, seems to be able to be None."""
 
 
-class ProfileInfoCurseEffectsCureTD(TypedDict):
+class ProfileCurseEffectsCureTD(TypedDict):
   name: str
   """Name of the curse's cure. Ex: `'Shackled'`."""
   description: str
@@ -183,24 +178,24 @@ class ProfileInfoCurseEffectsCureTD(TypedDict):
   """TODO: idk what it's exactly, seems to be able to be None."""
 
 
-class ProfileInfoCurseEffectsTD(TypedDict):
-  type: ProfileInfoCurseEffectsTypeTD
+class ProfileCurseEffectsTD(TypedDict):
+  type: ProfileCurseEffectsTypeTD
   """Type of the curse."""
-  cure: ProfileInfoCurseEffectsCureTD
+  cure: ProfileCurseEffectsCureTD
   """Cure of the curse."""
 
 
-class ProfileInfoCurseTD(TypedDict):
+class ProfileCurseTD(TypedDict):
   name: str
   """The full name of the curse. Ex: `'Shackled Curse of Blindness'`."""
-  names: ProfileInfoCurseNamesTD
+  names: ProfileCurseNamesTD
   """Parsed curse details (`type` and `cure`)."""
   weak: bool
   """Whether or not the curse has been weakened."""
-  effects: ProfileInfoCurseEffectsTD
+  effects: ProfileCurseEffectsTD
 
 
-class ProfileInfoTerminalFishyTD(TypedDict):
+class ProfileTerminalFishyTD(TypedDict):
   commonFish: int
   uncommonFish: int
   rareFish: int
@@ -208,12 +203,12 @@ class ProfileInfoTerminalFishyTD(TypedDict):
   pebbles: int
 
 
-class ProfileInfoTerminalGardenTD(TypedDict):
+class ProfileTerminalGardenTD(TypedDict):
   unlocked: bool
   """Whether or not the garden is unlocked."""
 
 
-class ProfileInfoTerminalCardsTD(TypedDict):
+class ProfileTerminalCardsTD(TypedDict):
   total: int
   """Total amount of cards."""
   common: int
@@ -224,7 +219,7 @@ class ProfileInfoTerminalCardsTD(TypedDict):
   """Amount of legendary cards."""
 
 
-class ProfileInfoTerminalFusionFusionsTD(TypedDict):
+class ProfileTerminalFusionFusionsTD(TypedDict):
   commonCommon: int
   commonRare: int
   rareRare: int
@@ -232,23 +227,23 @@ class ProfileInfoTerminalFusionFusionsTD(TypedDict):
   score: int
 
 
-class ProfileInfoTerminalFusionNFBsTD(TypedDict):
+class ProfileTerminalFusionNFBsTD(TypedDict):
   common: int
   rare: int
   total: int
   score: int
 
 
-class ProfileInfoTerminalFusionTD(TypedDict):
+class ProfileTerminalFusionTD(TypedDict):
   tokensPerRescue: int
   tokensFromFusions: int
   nfbMultiplier: float | int
   """I think that's float? but it also returns int sometimes??"""
-  fusions: ProfileInfoTerminalFusionFusionsTD
-  nfbs: ProfileInfoTerminalFusionNFBsTD
+  fusions: ProfileTerminalFusionFusionsTD
+  nfbs: ProfileTerminalFusionNFBsTD
 
 
-class ProfileInfoTerminalTD(TypedDict):
+class ProfileTerminalTD(TypedDict):
   unlocked: bool
   """Whether or not the terminal is unlocked."""
   admin: bool
@@ -257,16 +252,16 @@ class ProfileInfoTerminalTD(TypedDict):
   """Amount of discovered discoverable terminal commands on this profile."""
   mechanicPoints: int
   """Murphy points, used in /mechanic. You should know this if you're that far into zoo to be reading a zoo API wrapper docs... 👀"""
-  fishy: ProfileInfoTerminalFishyTD
+  fishy: ProfileTerminalFishyTD
   """Stats from the terminal's `$ fishy` minigame."""
-  garden: ProfileInfoTerminalGardenTD
+  garden: ProfileTerminalGardenTD
   """Stats from the terminal's `$ garden`."""
-  cards: ProfileInfoTerminalCardsTD
+  cards: ProfileTerminalCardsTD
   """Stats from the terminal's cards"""
-  fusion: ProfileInfoTerminalFusionTD
+  fusion: ProfileTerminalFusionTD
 
 
-class ProfileInfoGoalTD(TypedDict):
+class ProfileGoalTD(TypedDict):
   name: str
   """The name of the goal. Ex: `'Zookeeper'`."""
   emoji: str
@@ -285,7 +280,7 @@ class ProfileInfoGoalTD(TypedDict):
   """Whether or not the goal is complete."""
 
 
-class ProfileInfoSettingsTD(TypedDict):
+class ProfileSettingsTD(TypedDict):
   altTimestamp: bool
   """Whether or not to display timestamps in an alternate format."""
   fastConfirmations: bool
@@ -304,7 +299,7 @@ class ProfileInfoSettingsTD(TypedDict):
   """Whether or not to hide cosmetics to other users."""
 
 
-class ProfileInfoSecretInfoShopTD(TypedDict):
+class ProfileSecretInfoShopTD(TypedDict):
   credits: int
   """Amount of shop credits for that profile."""
   nextCredit: int
@@ -315,7 +310,7 @@ class ProfileInfoSecretInfoShopTD(TypedDict):
   """Unix timestamp of when the last purchase was made. (I'm not sure what is it if you've never used the shop)"""
 
 
-class ProfileInfoSecretInfoCooldownsTD(TypedDict):
+class ProfileSecretInfoCooldownsTD(TypedDict):
   """Contains unix timestamps for when the cooldowns will be over."""
 
   rescue: int
@@ -328,7 +323,7 @@ class ProfileInfoSecretInfoCooldownsTD(TypedDict):
   sisyphus: int
 
 
-class ProfileInfoSecretInfoTerminalTD(TypedDict):
+class ProfileSecretInfoTerminalTD(TypedDict):
   directory: str
   """The current working directory in /terminal of that profile."""
   commands: list[str]
@@ -337,7 +332,7 @@ class ProfileInfoSecretInfoTerminalTD(TypedDict):
   """Amount of rescues needed for the next fusion"""
 
 
-class ProfileInfoSecretInfoGardenTD(TypedDict):
+class ProfileSecretInfoGardenTD(TypedDict):
   nextPlant: int
   """The unix timestamp of when the next use of `$ garden plant` will be available."""
   watered: bool
@@ -351,7 +346,7 @@ class ProfileInfoSecretInfoGardenTD(TypedDict):
   """
 
 
-class ProfileInfoSecretInfoTD(TypedDict):
+class ProfileSecretInfoTD(TypedDict):
   sort: int
   """Selected sorting. TODO: find out which values are which sortings."""
   color: int
@@ -366,17 +361,17 @@ class ProfileInfoSecretInfoTD(TypedDict):
   """Unix timestamp of when the curse ends. May be None if no curse is active."""
   mechanicEnd: int | None
   """Unix timestamp of when the mechanic upgrade ends. May be None if no mechanic upgrade is active."""
-  shop: ProfileInfoSecretInfoShopTD
+  shop: ProfileSecretInfoShopTD
   """/shop-related information about that profile."""
-  cooldowns: ProfileInfoSecretInfoCooldownsTD
+  cooldowns: ProfileSecretInfoCooldownsTD
   """Contains unix timestamps for when the cooldowns will be over."""
-  terminal: ProfileInfoSecretInfoTerminalTD
+  terminal: ProfileSecretInfoTerminalTD
   """/terminal-related information about that profile."""
-  garden: ProfileInfoSecretInfoGardenTD
+  garden: ProfileSecretInfoGardenTD
 
 
-class ProfileInfo(TypedDict):
-  """Not to be confused with Profile.
+class Profile(TypedDict):
+  """Not to be confused with ListedProfile.
 
   Represents information about profile received from /api/profile, singular (not to confuse with /api/profiles, plural)
   """
@@ -391,7 +386,7 @@ class ProfileInfo(TypedDict):
   """The profileID of the currently selected profile. Example: `fox`."""
   profiles: list[str]
   """List of all profiles of that user. Example: `['fox', 'dog', 'cat']`."""
-  user: ProfileInfoUserTD
+  user: ProfileUserTD
   """Currently contains just key 'avatar' with the value that is a URL to discord's cdn pointing to that user's avatar."""
   name: str
   """The user-selected name of that zoo. (Not the user's discord name, the name of the zoo itself, not the user)."""
@@ -409,9 +404,9 @@ class ProfileInfo(TypedDict):
   """The zoo score of that profile."""
   completion: float
   """The completion percentage of that profile."""
-  uniqueAnimals: ProfileInfoUniqueAnimalsTD
+  uniqueAnimals: ProfileUniqueAnimalsTD
   """That profile's unique animals: `common`, `rare`, `total`."""
-  totalAnimals: ProfileInfoTotalAnimalsTD
+  totalAnimals: ProfileTotalAnimalsTD
   """That profile's total animals: `common`, `rare`."""
   totalItems: int
   """That profile's total number of items."""
@@ -437,25 +432,25 @@ class ProfileInfo(TypedDict):
   """The amount of this profile's notifs"""
   autoRescues: int
   """The amount of this profile's auto rescues"""
-  animals: list[ProfileInfoAnimalTD]
+  animals: list[ProfileAnimalTD]
   """List of that profile's animals."""
-  items: list[ProfileInfoItemTD]
+  items: list[ProfileItemTD]
   """List of that profile's items."""
-  relics: list[ProfileInfoRelicTD]
+  relics: list[ProfileRelicTD]
   """List of that profile's relics."""
-  cosmetics: list[ProfileInfoCosmeticTD]
+  cosmetics: list[ProfileCosmeticTD]
   """List of that profile's cosmetics."""
-  quests: list[ProfileInfoQuestsTD]
+  quests: list[ProfileQuestsTD]
   """List of that profile's quests."""
-  quest: ProfileInfoQuestTD
+  quest: ProfileQuestTD
   """The currently pending quest."""
-  curse: None | ProfileInfoCurseTD
+  curse: None | ProfileCurseTD
   """The currently pending curse (may be None if no curse is present)."""
-  terminal: ProfileInfoTerminalTD
+  terminal: ProfileTerminalTD
   """Terminal-related information about the profile."""
   stats: list
   """TODO: this seems to always return an empty list?."""
-  goals: list[ProfileInfoGoalTD]
+  goals: list[ProfileGoalTD]
   """A full list of goals with details. For goal tier number see `goalTiers`."""
   goalTiers: int
   """The number of goal tiers completed. For a full list of goals with details see `goals`."""
@@ -466,28 +461,33 @@ class ProfileInfo(TypedDict):
   element idx=1 (required): str = The name of the badge. (Ex: 'Made the game')
   element idx=2 (optional): int = Some quantity of that badge, not included if not applicable. (Ex: 92; Context: if the previous values were associated with for example "pebbles")
   """
-  settings: ProfileInfoSettingsTD
+  settings: ProfileSettingsTD
   """This profile's current /settings."""
-  secretInfo: NotRequired[ProfileInfoSecretInfoTD]
+  secretInfo: NotRequired[ProfileSecretInfoTD]
   """This profile's so called secret info.
 
   This key is included if you have the [API Key](https://zoobot.wiki/index.php/API_Key) relic equipped.
   """
 
 
-class ProfileInfoError(TypedDict):
-  """Represents a an error returned from /api/profile.
+class ListedProfile(TypedDict):
+  """Not to be confused with Profile.
 
-  This does not cover network-related issues. It's purely for errors reported by Colon's servers.
+  Represents a dict of a single user profile received from /api/profiles, plural (not to confuse with /api/profile, singular)
   """
 
+  id: str
+  """Discord ID of that user along with the internal profile ID, example: `'507642999992352779_ox'`."""
   name: str
-  """For example: "Invalid Profile!"."""
-  msg: str
-  """The error message."""
-  invalid: bool
-  """TODO: idk what that does."""
-  error: str
-  """Type of the error. for example: "invalidProfile"."""
-  login: NotRequired[bool]
-  """TODO: find out what that does exactly. (guess: true if if you logged in then you'd be able to access this profile)"""
+  """Name of that user's zoo."""
+  color: int
+  """Color of that user's embed."""
+  private: bool
+  """Whether or not that zoo is private."""
+  viewable: bool
+  """Whether or not that zoo is viewable."""
+  current: bool
+  """Whether or not that user's zoo is the currently selected one."""
+  score: int
+  """Zoo score of that user's profile."""
+  icon: ProfileIconTD
