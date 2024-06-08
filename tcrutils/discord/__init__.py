@@ -9,6 +9,7 @@ from .tcrd_limits import DiscordLimits
 from .tcrd_permissions import PERMISSIONS_DICT, Permission, permissions
 from .tcrd_permissions import Permission as DiscordPermission
 from .tcrd_permissions import permissions as discord_permissions
+from .tcrd_shorts import confirm
 from .tcrd_snowflake import Snowflake, is_snowflake
 from .tcrd_string import IFYs, get_token
 

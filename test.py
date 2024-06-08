@@ -3,6 +3,7 @@
 #  __import__('os').system(r'"C:\Users\TheCreatorrrr\AppData\Local\Programs\Python\Python312\python.exe" test.py')
 #  exit()
 
+import random as rng
 import sys
 
 if '--syntax-only' in sys.argv:
@@ -21,6 +22,7 @@ if True:  # \/ # Imports
 
   import arc
   import hikari
+  import miru
   import rich
   from rich.traceback import install as _rich_traceback_install
 
@@ -41,13 +43,16 @@ c.log(f"Running on Python %s.%s" % sys.version_info[:2])
 
 BOT: hikari.GatewayBot | None = None
 ACL: arc.GatewayClient | None = None
+MCL: miru.Client | None = None
 def spin_up_bot(*, bot_kwargs: dict[str, Any] = {}, acl_kwargs: dict[str, Any] = {}) -> None:  # noqa: B006
   global BOT
   global ACL
+  global MCL
   if BOT is not None:
     return # Already spun up
   BOT = hikari.GatewayBot(token=tcr.get_token('TESTBOT_TOKEN.txt'), intents=hikari.Intents.ALL, **bot_kwargs)
   ACL = arc.GatewayClient(BOT, **acl_kwargs)
+  MCL = miru.Client(BOT)
 
 if True:  # \/ # Tests
 
@@ -1116,6 +1121,69 @@ ID: {server|id}
     with tcr.random_seed_lock(SEED) as rng:
       c(rng.randint(0, 1000000) for _ in range(TIMES))
 
+  async def test_bot_shorts():
+    spin_up_bot()
+
+    @BOT.listen(hikari.DMMessageCreateEvent)
+    async def on_dm(event: hikari.DMMessageCreateEvent):
+      if not event.is_human:
+        return
+
+      async def yes(btn: miru.Button, ctx: miru.ViewContext):
+        await ctx.respond('Yes clicked')
+
+      async def no(btn: miru.Button, ctx: miru.ViewContext):
+        await ctx.respond('No clicked')
+
+      class CustomButton(miru.Button):
+        async def callback(self, ctx: miru.ViewContext):
+          await ctx.respond('Custom clicked')
+
+      class CustomSelect(miru.TextSelect):
+        async def callback(self, ctx: miru.ViewContext):
+          await ctx.respond('Custom selected: ' + repr(self.values[0]))
+
+      # await tcr.discord.confirm(
+      #   responder=event.message.respond,
+      #   miru_client=MCL,
+      #   yes_callback=yes,
+      #   no_callback=no,
+      #   buttons=(True, True, True, True, False, CustomButton('Custom btn'), CustomSelect(options=[miru.SelectOption(label=x) for x in ['nya', 'uwu', 'owo']])),
+      #   disable_on_click=True,
+      # )
+
+      randoms = [bool(rng.randint(0, 1)) for _ in range(25)]
+
+      await tcr.discord.confirm(
+        responder=event.message.respond,
+        miru_client=MCL,
+        yes_callback=yes,
+        no_callback=no,
+        buttons=randoms,
+        disable_on_click=True,
+        view_kwargs={"timeout": 10},
+      )
+
+  def test_partial_class():
+    @tcr.partial_class
+    class Button:
+      def __init__(self, label: str):
+        self.label = label
+
+      def __repr__(self):
+        return f'Button(label={self.label!r})'
+
+    class YesButton(Button, label='Yes'): ...
+    class NoButton(Button, label='No'): ...
+
+    y = YesButton()
+    c(repr(y)) # -> Button(label='Yes')
+    n = NoButton()
+    c(repr(n)) # -> Button(label='No')
+    n2 = NoButton(label='Nuh uh') # Overridden
+    c(repr(n2)) # -> Button(label='Nuh uh')
+
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -1208,6 +1276,8 @@ if __name__ == '__main__':
   # test_ensure_deps()
   # test_dpy()
   # test_random_seed_lock()
+  # asyncio.run(test_bot_shorts())
+  # test_partial_class()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100

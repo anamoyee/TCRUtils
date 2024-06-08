@@ -19,6 +19,7 @@ Joke functions and other barely useful crap are not included in star imports.
 """
 
 from . import discord, src
+from . import discord as D
 from . import dr as dynamic_responses
 from . import dr as execute
 from ._version import __version__
@@ -31,7 +32,7 @@ from .src import tcr_ensure_deps as ensure_depencencies
 from .src import tcr_joke as joke
 from .src import tcr_types as types
 from .src.tcr_b64 import b64
-from .src.tcr_class import NoInit, Singleton
+from .src.tcr_class import NoInit, Singleton, partial_class
 from .src.tcr_classfuncs import get_classname, get_name_classname, get_qualname_classname
 from .src.tcr_compare import able, isdunder
 from .src.tcr_console import breakpoint, console, start_eval_session

@@ -1,5 +1,8 @@
 import collections.abc as _cabc
 import typing as _t
+from collections.abc import Awaitable as __Awaitable
+from collections.abc import Callable as __Callable
+from typing import Unpack as __Unpack
 
 import hikari as _hk
 
@@ -24,6 +27,8 @@ class HikariDictMessage(_t.TypedDict):
   user_mentions: _t.NotRequired[_hk.undefined.UndefinedOr[_hk.snowflakes.SnowflakeishSequence[_hk.users.PartialUser] | bool]]
   role_mentions: _t.NotRequired[_hk.undefined.UndefinedOr[_hk.snowflakes.SnowflakeishSequence[_hk.guilds.PartialRole] | bool]]
   flags: _t.NotRequired[_hk.undefined.UndefinedType | (int | _hk.MessageFlag)]
+
+HikariResponder = __Callable[[__Unpack[HikariDictMessage]], __Awaitable[_hk.Message]]
 
 
 hikari_dict_message_defaults = {
