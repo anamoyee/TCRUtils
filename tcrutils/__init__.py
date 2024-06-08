@@ -31,6 +31,7 @@ from .dr import placeholders as dr_placeholders
 from .src import tcr_ensure_deps as ensure_depencencies
 from .src import tcr_joke as joke
 from .src import tcr_types as types
+from .src import tcr_zoo as zoo
 from .src.tcr_b64 import b64
 from .src.tcr_class import NoInit, Singleton, partial_class
 from .src.tcr_classfuncs import get_classname, get_name_classname, get_qualname_classname
