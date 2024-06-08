@@ -285,15 +285,15 @@ class ProfileTerminalTD(TypedDict):
   """Whether or not the user is a terminal administrator on this profile."""
   commandsFound: int
   """Amount of discovered discoverable terminal commands on this profile."""
-  mechanicPoints: int
+  mechanicPoints: NotRequired[int]
   """Murphy points, used in /mechanic. You should know this if you're that far into zoo to be reading a zoo API wrapper docs... 👀"""
-  fishy: ProfileTerminalFishyTD
+  fishy: NotRequired[ProfileTerminalFishyTD]
   """Stats from the terminal's `$ fishy` minigame."""
-  garden: ProfileTerminalGardenTD
+  garden: NotRequired[ProfileTerminalGardenTD]
   """Stats from the terminal's `$ garden`."""
-  cards: ProfileTerminalCardsTD
+  cards: NotRequired[ProfileTerminalCardsTD]
   """Stats from the terminal's cards"""
-  fusion: ProfileTerminalFusionTD
+  fusion: NotRequired[ProfileTerminalFusionTD]
 
 
 class ProfileGoalTD(TypedDict):
