@@ -1211,11 +1211,8 @@ ID: {server|id}
 
     tzinfo = pytz.timezone('Europe/Warsaw')
 
-    tzinfo = dt.datetime.now(tz=tzinfo).tzinfo
 
     tstr = tcr.TStr(tzinfo=tzinfo, fix_timezone=True)
-
-    asshole(tstr.tzinfo, tzinfo)
 
     now1 = tstr.to_datetime('0').replace(microsecond=0)
     now2 = dt.datetime.now(tz=tzinfo).replace(microsecond=0)
@@ -1260,6 +1257,24 @@ ID: {server|id}
     console('28.!14::', tstr.to_datetime('28.!14::').strftime(STRFTIME_FORMAT_SPECIFIER))
     console(f'{now1.day}.!14::', tstr.to_datetime(f'{now1.day}.!14::').strftime(STRFTIME_FORMAT_SPECIFIER))
     console(f'wed!:', tstr.to_datetime(f'wed!:').strftime(STRFTIME_FORMAT_SPECIFIER))
+    print()
+    console(tstr.to_str(60))
+    console(tstr.to_str(100))
+    console(tstr.to_str(1000))
+    console(tstr.to_str(10000))
+    console(tstr.to_str(100000, round_to=0))
+    console(tstr.to_str(100000, round_to=1))
+    console(tstr.to_str(100000, round_to=2))
+    console(tstr.to_str(100000, round_to=5))
+    console(tstr.to_str(100000, round_to=6))
+    console(tstr.to_str(100000, round_to=8))
+    console(tstr.to_str(100000, round_to=100))
+    console(tstr.to_str2(100))
+    console(tstr.to_str2(1000))
+    console(tstr.to_str2(100, always_show_days=True))
+    console(tstr.to_str2(1000, always_show_days=True))
+    console(tstr.to_str2(10000))
+    console(tstr.to_str2(100000))
     print()
     rashole(tstr.to_int, '1')(ValueError)
     rashole(tstr.to_int, 'nya')(ValueError)

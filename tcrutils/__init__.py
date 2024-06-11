@@ -69,7 +69,7 @@ from .src.tcr_string import SlashableString, commafy, custom_zfill, join_urlstr,
 from .src.tcr_temp import temp_file
 from .src.tcr_terminal import terminal
 from .src.tcr_test import asshole, raises, rashole
-from .src.tcr_timestr import TStr, timestr
+from .src.tcr_timestr import TStr, t_day, t_hour, t_minute, t_week, t_year, timestr
 from .src.tcr_uptime import Uptime
 from .src.tcr_void import araiser, avoid, raiser, void
 

