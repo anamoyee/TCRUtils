@@ -184,4 +184,3 @@ class ShelveDB(dict):
   def iter_all(cls) -> Iterator[tuple[str, Self]]:
     for path in cls.directory.iterdir():
       yield path.name, cls(path.name)
-

@@ -185,8 +185,11 @@ def raises(func: Callable[[], None], *args, **kwargs) -> Callable[[BaseException
   return raises_inner
 
 
-def rashole(func: Callable[[], None], *args, **kwargs) -> Callable[[BaseException], None]:
-  def rashole_inner(__e: BaseException, /) -> None:
-    asshole(('Yes, raises', __e) if raises(func, *args, **kwargs)(__e) else ('No, does not raise', __e), expr="a[0].startswith('Yes')")
+class _Rashole:
+  def __call__(self, func: Callable[[], None], *args, **kwargs) -> Callable[[BaseException], None]:
+    def rashole_inner(__e: BaseException, /) -> None:
+      asshole(('Yes, raises', __e) if raises(func, *args, **kwargs)(__e) else ('No, does not raise', __e), expr="a[0].startswith('Yes')")
 
-  return rashole_inner
+    return rashole_inner
+
+rashole = _Rashole()

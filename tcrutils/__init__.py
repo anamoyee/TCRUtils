@@ -40,7 +40,7 @@ from .src.tcr_console import breakpoint, console, start_eval_session
 from .src.tcr_console import console as c
 from .src.tcr_constants import *
 from .src.tcr_context import random_seed_lock
-from .src.tcr_decorator import autorun, convert, copy_kwargs, instance, skip_first_call, skip_first_call_async, test, timeit
+from .src.tcr_decorator import autorun, convert, copy_kwargs, instance, skip_first_call, skip_first_call_async, test, timeit, with_overrides
 from .src.tcr_dev import generate_function_argument_typehints, generate_type_hinter
 from .src.tcr_dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zip, merge_dicts
 from .src.tcr_dir import dir2, dir3
@@ -69,7 +69,7 @@ from .src.tcr_string import SlashableString, commafy, custom_zfill, join_urlstr,
 from .src.tcr_temp import temp_file
 from .src.tcr_terminal import terminal
 from .src.tcr_test import asshole, raises, rashole
-from .src.tcr_timestr import timestr
+from .src.tcr_timestr import TStr, timestr
 from .src.tcr_uptime import Uptime
 from .src.tcr_void import araiser, avoid, raiser, void
 

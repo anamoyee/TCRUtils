@@ -260,3 +260,22 @@ if True:  # \/ # @skip_first_call
         return await func(*args, **kwargs)
 
     return wrapper
+
+
+if True:  # \/ # @with_overrides
+
+  def with_overrides(*overrides: str):
+    """For each of the passed in keyword argument names: if one was passed in by the user, use that one, else use `self.{name}`."""
+
+    def decorator(func: Callable):
+      def wrapper(self, *args, **kwargs):
+        kws = kwargs.copy()
+        for o in overrides:
+          if o not in kwargs:
+            kws[o] = getattr(self, o)
+
+        return func(self, *args, **kws)
+
+      return wrapper
+
+    return decorator

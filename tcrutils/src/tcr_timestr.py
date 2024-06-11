@@ -1,9 +1,14 @@
 import datetime
+import datetime as dt
 import re as regex
 from collections.abc import Iterable, Mapping
+from dataclasses import dataclass, field
 
+import pytz
+
+from .tcr_compare import able
 from .tcr_console import console
-from .tcr_decorator import autorun
+from .tcr_decorator import autorun, with_overrides
 from .tcr_error import ConfigurationError
 from .tcr_extract_error import extract_error
 
@@ -40,12 +45,12 @@ timestr_lookup = {
     'year':  t_year,
     'years': t_year,
 
-    'pul':   (t_pul := (11*t_hour + 30*t_minute)),
-    'pull':  t_pul,
-    'puls':  t_pul,
-    'pulls': t_pul,
-    'card':  t_pul,
-    'cards': t_pul,
+    'pul':   (t_pull := (11*t_hour + 30*t_minute)),
+    'pull':  t_pull,
+    'puls':  t_pull,
+    'pulls': t_pull,
+    'card':  t_pull,
+    'cards': t_pull,
 
     'res':     (t_rescue := 6*t_hour),
     'reses':   t_rescue,
@@ -53,23 +58,25 @@ timestr_lookup = {
     'rescue':  t_rescue,
     'rescues': t_rescue,
 
-    'decade':    10 * t_year,
-    'century':   100 * t_year,
-    'millenium': 1000 * t_year,
+    'decade':    (t_decade := 10 * t_year),
+    'century':   (t_century := 100 * t_year),
+    'millenium': (t_millenium := 1000 * t_year),
   }
 
 weekday_lookup = [
-  "po",     "wt",      "sr",        "cz",       "pi",     "so",       "ni",
-  "pn",     "wt",      "śr",        "cz",       "pt",     "so",       "nd",
-  "pon",    "wto",     "śro",       "czw",      "pią",    "sob",      "nie",
-  "pon",    "wto",     "sro",       "czw",      "pia",    "sob",      "nie",
-  "poniedzialek", "wtorek", "sroda", "czwartek", "piatek", "sobota", "niedziela",
-  "poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota", "niedziela",
-  'mo',     'tu',      'we',        'th',       'fr',     'sa',       'su',
-  'mon',    'tue',     'wed',       'thu',      'fri',    'sat',      'sun',
-  'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
+  "po",           "wt",      "sr",        "cz",       "pi",     "so",       "ni",
+  "pn",           "wt",      "śr",        "cz",       "pt",     "so",       "nd",
+  "pon",          "wto",     "śro",       "czw",      "pią",    "sob",      "nie",
+  "pon",          "wto",     "sro",       "czw",      "pia",    "sob",      "nie",
+  "poniedzialek", "wtorek",  "sroda",     "czwartek", "piatek", "sobota",   "niedziela",
+  "poniedziałek", "wtorek",  "środa",     "czwartek", "piątek", "sobota",   "niedziela",
+  'mo',           'tu',      'we',        'th',       'fr',     'sa',       'su',
+  'mon',          'tue',     'wed',       'thu',      'fri',    'sat',      'sun',
+  'monday',       'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
 ]
 # fmt: on
+
+assert len(weekday_lookup) % 7 == 0
 
 # console((weekday_lookup, len(weekday_lookup), len(weekday_lookup) % 7)); exit()
 
@@ -436,3 +443,177 @@ $
 timestr = Timestr()
 
 __all__ = ['timestr']
+
+
+# TODO: add back docstrings to here
+# TODO: add back docstrings to here
+# TODO: add back docstrings to here
+# TODO: add back docstrings to here
+# TODO: add back docstrings to here
+# TODO: add back docstrings to here
+
+@dataclass(kw_only=True)
+class _RoboStrSegment:
+  robostrs: list[tuple[int, str]]
+
+  def parse(self, tstr: 'TStr', current_offset: dt.datetime) -> dt.timedelta:
+    return dt.timedelta(seconds=int(sum(self.calculate_each(tstr))))
+
+  def calculate_each(self, tstr: 'TStr') -> list[float]:
+    out = []
+    for n, unit in self.robostrs:
+      if unit in tstr.units:
+        out.append(n*tstr.units[unit])
+      else:
+        raise ValueError(f'Invalid timestr (Invalid unit: {unit!r})')
+    return out
+
+@dataclass
+class _DateSegment:
+  date: dt.date
+
+@dataclass
+class _HourSegment:
+  time: dt.time
+
+@dataclass(kw_only=True)
+class _WeekdaySegment:
+  n: int # 0-6, 0 = Monday
+
+  def parse(self, tstr: 'TStr', current_datetime: dt.datetime) -> dt.timedelta:
+    current_weekday = current_datetime.weekday()
+    days_until = (self.n - current_weekday + 7) % 7
+    return dt.timedelta(days=(days_until or 7)) # If today's the day, return in a week (lazy bum)
+
+
+class _RegexPattern:
+  HOUR = r"^(0?\d|1[0-9]|2[0-4])?(?::(?:([0-5]?[0-9])?(?::([0-5]?[0-9])?)?)?)?$"
+  NO_DAY = r"^\.\d+$" # Used to not confuse days with robostr syntax. Will not match either and rather throw an error which is better
+  DAY = r"^(0?[1-9]|1\d|2\d|30|31)?(?:\.(?:(0?[1-9]|1[0-2])?(?:\.((?:\d{1,2})|(?:\d{4}))?)?)?)?$"
+  ROBOSTR_SINGLE = r"(-?\d*\.?\d+)([a-zA-Z]+)"
+  ROBOSTR_ALL = r"(?:(?:-?\d*\.?\d+)(?:[a-zA-Z]+))+"
+
+@dataclass(kw_only=True)
+class TStr:
+  """Convert between seconds and readable timestrs. Now with timezones!"""  # noqa: D400
+
+  fix_timezone: bool
+  units: dict[str, int | float] = field(default_factory=timestr_lookup.copy)
+  weekdays: list[str] = field(default_factory=weekday_lookup.copy)
+  tzinfo: datetime.tzinfo = pytz.UTC
+  splitter: str = '!'
+  """Set this to True to do the following on init:
+  ```py
+  tzinfo = dt.datetime.now(tz=tzinfo).tzinfo
+  ```
+
+  THIS IS DUMB BUUUT: it fixes the issue of inconsistent timezone screwing up shit. If you are 100% certain your timezone is fine (NOTE: pytz timezones are sometimes NOT fine and require this setting to be turned on.) then leave this parameter as False
+  """
+
+  def _identify_segment(self, s: str) -> _DateSegment | _HourSegment | _RoboStrSegment | _WeekdaySegment:
+    """Parse a segment of a timestr into a Segment object."""
+    s = s.strip()
+
+    if not s or (able(int, s) and int(s) == 0):
+      return _RoboStrSegment(robostrs=[])
+    elif s in self.weekdays:
+      return _WeekdaySegment(n=self.weekdays.index(s) % 7)
+    elif ':' in s and (match := regex.match(_RegexPattern.HOUR, s)):
+      ns = [x and int(x) for x in match.groups()]
+
+      ns = [(x if x is not None else 0) for x in ns]
+
+      return _HourSegment(dt.time(hour=ns[0], minute=ns[1], second=ns[2], microsecond=0, tzinfo=self.tzinfo))
+    elif '.' in s and not regex.match(_RegexPattern.NO_DAY, s) and (match := regex.match(_RegexPattern.DAY, s)):
+      ns = [x and int(x) for x in match.groups()]
+
+      if any(x is None for x in ns):
+        now = datetime.datetime.now(tz=self.tzinfo)
+
+        if ns[0] is None:
+          ns[0] = now.day
+        if ns[1] is None:
+          ns[1] = now.month
+          if ns[0] <= now.day:
+            ns[1] += 1
+        if ns[2] is None:
+          ns[2] = now.year
+        if ns[1] > 12:
+          ns[1] = 1
+          ns[2] += 1
+
+      if ns[2] in range(100):
+        ns[2] = 2000 + ns[2]
+
+      try:
+        date = dt.date(year=ns[2], month=ns[1], day=ns[0])
+      except ValueError as e:
+        raise ValueError(f'Invalid timestr (Invalid date: {s!r}, reason: {e!s})') from e
+
+      return _DateSegment(date)
+    elif regex.match(_RegexPattern.ROBOSTR_ALL, s) and (matches := regex.finditer(_RegexPattern.ROBOSTR_SINGLE, s)):
+      robostrs = [(float(match.group(1)), match.group(2).lower()) for match in matches]
+      return _RoboStrSegment(robostrs=robostrs)
+    else:
+      raise ValueError(f'Invalid segment: {s!r}')
+
+    raise RuntimeError('Unknown segment return value (this is a bug)')
+
+  def to_datetime(self, s: str, *, _return_with_now_used_for_parsing: bool = False) -> dt.datetime:
+    """Convert a full timestr into a timedelta."""
+
+    segments = s.split(self.splitter)
+
+    try:
+      identified_segments = [self._identify_segment(seg) for seg in segments]
+    except ValueError as e:
+      raise ValueError(f'Invalid timestr (unable to parse segment)') from e
+
+    date_segments = tuple(filter(lambda x: isinstance(x, _DateSegment), identified_segments))
+    n_date_segments = len(date_segments)
+    if n_date_segments > 1:
+      raise ValueError(f'Invalid timestr (too many date segments)')
+
+    hour_segments = tuple(filter(lambda x: isinstance(x, _HourSegment), identified_segments))
+    n_hour_segments = len(hour_segments)
+    if n_hour_segments > 1:
+      raise ValueError(f'Invalid timestr (too many hour segments)')
+
+    now = datetime.datetime.now(tz=self.tzinfo)
+
+    if n_date_segments:
+      out_date = date_segments[0].date
+      identified_segments.remove(date_segments[0])
+    else:
+      out_date = now.date()
+
+    if n_hour_segments:
+      out_hour = hour_segments[0].time
+      identified_segments.remove(hour_segments[0])
+    else:
+      out_hour = now.timetz()
+
+    n_weekday_segments = len(tuple(filter(lambda x: isinstance(x, _WeekdaySegment), identified_segments)))
+
+    if n_hour_segments and not n_weekday_segments and not n_date_segments and out_hour <= now.timetz():
+      out_date += dt.timedelta(days=1)
+
+    out_datetime = dt.datetime.combine(out_date, out_hour, tzinfo=self.tzinfo)
+
+    for segment in identified_segments:
+      out_datetime += segment.parse(self, out_datetime)
+
+    if _return_with_now_used_for_parsing:
+      return out_datetime, now
+    else:
+      return out_datetime
+
+  def to_timedelta(self, s: str) -> datetime.timedelta:
+    """Convert a full timestr into a timedelta."""
+    calculated = self.to_datetime(s, _return_with_now_used_for_parsing=True)
+    return calculated[0] - calculated[1]
+
+  def to_int(self, s: str) -> int:
+    """Convert a full timestr into an int."""
+    total_seconds = self.to_timedelta(s).total_seconds()
+    return round(total_seconds)

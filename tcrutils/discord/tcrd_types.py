@@ -28,6 +28,7 @@ class HikariDictMessage(_t.TypedDict):
   role_mentions: _t.NotRequired[_hk.undefined.UndefinedOr[_hk.snowflakes.SnowflakeishSequence[_hk.guilds.PartialRole] | bool]]
   flags: _t.NotRequired[_hk.undefined.UndefinedType | (int | _hk.MessageFlag)]
 
+
 HikariResponder = __Callable[[__Unpack[HikariDictMessage]], __Awaitable[_hk.Message]]
 
 

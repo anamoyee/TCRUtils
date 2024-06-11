@@ -23,6 +23,7 @@ class Dependency:
     else:
       return True
 
+
 class DependencyEnsurer:
   deps: tuple[Dependency]
   auto_install: bool
@@ -50,12 +51,11 @@ class DependencyEnsurer:
       except ImportError:
         missing_deps.append(dep)
 
-
     def errored():
-      c.error("The following dependencies are missing:")
+      c.error('The following dependencies are missing:')
       for dep in missing_deps:
-        c.error(f"{dep.import_name!r} (pip install {dep.pip_name})")
-      raise RuntimeError("Missing dependencies (see errors above for tips!!).")
+        c.error(f'{dep.import_name!r} (pip install {dep.pip_name})')
+      raise RuntimeError('Missing dependencies (see errors above for tips!!).')
 
     if missing_deps:
       if auto_install:

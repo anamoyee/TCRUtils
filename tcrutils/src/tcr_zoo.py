@@ -503,4 +503,3 @@ class Profile(TypedDict):
 
   This key is included if you have the [API Key](https://zoobot.wiki/index.php/API_Key) relic equipped.
   """
-

@@ -37,7 +37,7 @@ if True:  # \/ # Imports
 
 # _rich_traceback_install(width=tcr.terminal.width-1)
 
-c(sorted(a := [x for x in globals() if not x.startswith('_')]), len(a)); del a
+c(sorted(a := list(filter(lambda x: not x.startswith('_'), globals().copy()))), len(a)); del a
 c.log(f"Running on Python %s.%s" % sys.version_info[:2])
 
 
@@ -1183,6 +1183,87 @@ ID: {server|id}
     n2 = NoButton(label='Nuh uh') # Overridden
     c(repr(n2)) # -> Button(label='Nuh uh')
 
+  def test_with_overrides():
+    from dataclasses import dataclass
+
+    @dataclass(kw_only=True)
+    class A:
+      a: int
+      b: str
+
+      @tcr.with_overrides('a', 'b')
+      def get_a(self, *, a: int, b: str):
+        return a, b
+
+    a = A(a=1, b='b')
+
+    c(a.get_a())
+    c(a.get_a(a=2))
+    c(a.get_a(b='c'))
+    c(a.get_a(a=2, b='c'))
+
+  def test_tstr():
+    import datetime as dt
+
+    import pytz
+
+    STRFTIME_FORMAT_SPECIFIER = "%a, %Y-%m-%d %H:%M:%S"
+
+    tzinfo = pytz.timezone('Europe/Warsaw')
+
+    tzinfo = dt.datetime.now(tz=tzinfo).tzinfo
+
+    tstr = tcr.TStr(tzinfo=tzinfo, fix_timezone=True)
+
+    asshole(tstr.tzinfo, tzinfo)
+
+    now1 = tstr.to_datetime('0').replace(microsecond=0)
+    now2 = dt.datetime.now(tz=tzinfo).replace(microsecond=0)
+
+    console(now1.strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(now2.strftime(STRFTIME_FORMAT_SPECIFIER))
+    asshole(now1, now2)
+    asshole(now1 - now2, dt.timedelta(0))
+    asshole(now1.tzinfo, now2.tzinfo)
+
+    print(); asshole.total(); print()
+
+    asshole(tstr.to_int('0'), 0)
+    asshole(tstr.to_int('1s'), 1)
+    asshole(tstr.to_int('-1h'), -3600)
+    print()
+    console(tstr.to_datetime('wed').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(tstr.to_datetime('mon').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(tstr.to_datetime('::').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(tstr.to_datetime('::!1.1.0').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(tstr.to_datetime('::1').strftime(STRFTIME_FORMAT_SPECIFIER)) # localhost
+    print()
+    console(tstr.to_datetime('10:').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(tstr.to_datetime('23:59:59').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(tstr.to_datetime('1.').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(tstr.to_datetime('28.').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(tstr.to_datetime('1d!wed').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(tstr.to_datetime('wed!1d').strftime(STRFTIME_FORMAT_SPECIFIER))
+    print()
+    console(tstr.to_datetime('1rev').strftime(STRFTIME_FORMAT_SPECIFIER))
+    print()
+    console(tstr.to_datetime(':').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(tstr.to_datetime('0:').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(tstr.to_datetime('23:59:59').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console('1.', tstr.to_datetime('1.').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console('28.', tstr.to_datetime('28.').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(f'{now1.day}.', tstr.to_datetime(f'{now1.day}.').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console('1.!::', tstr.to_datetime('1.!::').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console('28.!::', tstr.to_datetime('28.!::').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(f'{now1.day}.!::', tstr.to_datetime(f'{now1.day}.!::').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console('1.!14::', tstr.to_datetime('1.!14::').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console('28.!14::', tstr.to_datetime('28.!14::').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(f'{now1.day}.!14::', tstr.to_datetime(f'{now1.day}.!14::').strftime(STRFTIME_FORMAT_SPECIFIER))
+    console(f'wed!:', tstr.to_datetime(f'wed!:').strftime(STRFTIME_FORMAT_SPECIFIER))
+    print()
+    rashole(tstr.to_int, '1')(ValueError)
+    rashole(tstr.to_int, 'nya')(ValueError)
+    print(); asshole.total()
 
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
@@ -1278,6 +1359,8 @@ if __name__ == '__main__':
   # test_random_seed_lock()
   # asyncio.run(test_bot_shorts())
   # test_partial_class()
+  # test_with_overrides()
+  test_tstr()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100

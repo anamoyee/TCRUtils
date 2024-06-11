@@ -1,4 +1,3 @@
-
 from collections.abc import Callable, Coroutine, Iterable
 from functools import partial
 from typing import Any
@@ -15,12 +14,13 @@ class UpdatableView(miru.View):
   async def update(self) -> None:
     await self.message.edit(components=self)
 
+
 class DisableableView(UpdatableView):
   async def on_timeout(self) -> None:
     await self.disable(edit=True, stop=False)
     return await super().on_timeout()
 
-  async def disable(self, *, edit: bool = True, stop: bool = True) -> None: # cripple_youth()
+  async def disable(self, *, edit: bool = True, stop: bool = True) -> None:  # cripple_youth()
     """Set `disabled` of all children to True. Optionally edit the message with new view and/or stop the view listener for interactions."""
     for ch in self.children:
       ch.disabled = True
@@ -30,6 +30,7 @@ class DisableableView(UpdatableView):
 
     if stop:
       self.stop()
+
 
 class CallbackedButton(miru.Button):
   def __init_subclass__(cls, **kwargs) -> None:
@@ -45,31 +46,31 @@ class CallbackedButton(miru.Button):
       await ctx.view.disable(edit=True, stop=True)
     await self.__callback(self, ctx)
 
-class YesButton(CallbackedButton, label='Yes', style=hikari.ButtonStyle.SUCCESS):
-  ...
 
-class NoButton(CallbackedButton, label='No', style=hikari.ButtonStyle.DANGER):
-  ...
+class YesButton(CallbackedButton, label='Yes', style=hikari.ButtonStyle.SUCCESS): ...
 
-class MaybeButton(CallbackedButton, label='Maybe', style=hikari.ButtonStyle.PRIMARY):
-  ...
+
+class NoButton(CallbackedButton, label='No', style=hikari.ButtonStyle.DANGER): ...
+
+
+class MaybeButton(CallbackedButton, label='Maybe', style=hikari.ButtonStyle.PRIMARY): ...
+
 
 async def confirm(
   responder: dtypes.HikariResponder,
   miru_client: miru.Client,
-  yes_callback: Callable[[miru.Button, miru.ViewContext], Coroutine[Any, Any, None]],
-  no_callback:  Callable[[miru.Button, miru.ViewContext], Coroutine[Any, Any, None]],
-  buttons: Iterable[miru.Button | bool] = (True, False),
   *,
+  yes_callback: Callable[[miru.Button, miru.ViewContext], Coroutine[Any, Any, None]],
+  no_callback: Callable[[miru.Button, miru.ViewContext], Coroutine[Any, Any, None]],
+  buttons: Iterable[miru.Button | bool] = (True, False),
   disable_on_click: bool = True,
-  responder_kwargs: dtypes.HikariDictMessage = {"content": "Please choose an option"}, # noqa: B006
-  view_kwargs: dict = {}, # noqa: B006
+  responder_kwargs: dtypes.HikariDictMessage = {'content': 'Please choose an option'},  # noqa: B006
+  view_kwargs: dict = {'timeout': 2 * 60},  # noqa: B006
 ) -> hikari.Message:
   """Send a rather simple confirmator for user to click yes/no."""
 
-
-  buttons = [YesButton(yes_callback, disable_on_click=disable_on_click) if x is True  else x for x in buttons]
-  buttons = [NoButton(no_callback, disable_on_click=disable_on_click)  if x is False else x for x in buttons]
+  buttons = [YesButton(yes_callback, disable_on_click=disable_on_click) if x is True else x for x in buttons]
+  buttons = [NoButton(no_callback, disable_on_click=disable_on_click) if x is False else x for x in buttons]
 
   view = DisableableView(**view_kwargs)
 

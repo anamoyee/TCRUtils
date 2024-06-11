@@ -37,6 +37,7 @@ class NoInit:
 
     raise RuntimeError(msg)
 
+
 def partial_class(_f=None, /, *, add_as_kwargs_to_init: bool = True) -> type:
   """### Simillarly to functools.partial allows subclasses of decorated class to hold a meta-like state to be later used in e.g. root's init or anywhere else.
 
@@ -63,6 +64,7 @@ def partial_class(_f=None, /, *, add_as_kwargs_to_init: bool = True) -> type:
   Args:
     add_as_kwargs_to_init: bool = True. If True, the state  will be passed as keyword arguments into `__init__`.
   """
+
   def decorator(cls: type) -> type:
     def new_init_subclass(new_cls, **kwargs) -> None:
       new_cls._partial_state = kwargs
@@ -71,9 +73,11 @@ def partial_class(_f=None, /, *, add_as_kwargs_to_init: bool = True) -> type:
         return
 
       original_init = new_cls.__init__
+
       def new_init(self, *args, **init_kwargs):
-        merged_kwargs = {**self._partial_state, **init_kwargs} # Merge both states such that caller can override it, like functools.partial
+        merged_kwargs = {**self._partial_state, **init_kwargs}  # Merge both states such that caller can override it, like functools.partial
         original_init(self, *args, **merged_kwargs)
+
       new_cls.__init__ = new_init
 
     cls.__init_subclass__ = classmethod(new_init_subclass)
