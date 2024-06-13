@@ -182,5 +182,25 @@ class ShelveDB(dict):
 
   @classmethod
   def iter_all(cls) -> Iterator[tuple[str, Self]]:
-    for path in cls.directory.iterdir():
+    for path in p.Path(cls.directory).iterdir():
       yield path.name, cls(path.name)
+
+  @classmethod
+  def iter_all_paths(cls) -> Iterator[p.Path]:
+    yield from p.Path(cls.directory).iterdir()
+
+  @classmethod
+  def iter_all_path_names(cls) -> Iterator[str]:
+    for path in p.Path(cls.directory).iterdir():
+      yield path.name
+
+  @classmethod
+  def iter_all_shelves(cls) -> Iterator[Self]:
+    for path in p.Path(cls.directory).iterdir():
+      yield cls(path.name)
+
+  @classmethod
+  def exists(cls, alnum_id: str | int) -> bool:
+    """Check if the given `alnum_id` is already in use (if a database directory exists and is a directory and is not empty)."""
+    folder = (p.Path(cls.directory) / str(alnum_id))
+    return folder.is_dir() and (len(list(folder.iterdir())) > 0) # Counting empty directories as non existent because theres no data

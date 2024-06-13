@@ -522,17 +522,20 @@ if True:  # \/ # Tests
 
   def test_sdb():
     class Database(tcr.ShelveDB):
-      directory = p.Path(__file__).parent / 'test_db'
+      directory = str((p.Path(__file__).parent / 'test_db').absolute())
 
       defaults = {
         "r": list,
       }
 
-    # db1 = Database("test1")
+    c(Database.exists('1'))
+    c(Database.exists('0'))
+
+    db1 = Database("test145345")
     # db2 = Database("test2")
     # db3 = Database("test3")
 
-    c(dict(Database.iter_all()))
+    c(db1)
 
     # db1.clear()
 
@@ -1209,8 +1212,11 @@ ID: {server|id}
 
     STRFTIME_FORMAT_SPECIFIER = "%a, %Y-%m-%d %H:%M:%S"
 
+    tcr.timeit.start('timezone')
+
     tzinfo = pytz.timezone('Europe/Warsaw')
 
+    tcr.timeit.stop('timezone')
 
     tstr = tcr.TStr(tzinfo=tzinfo, fix_timezone=True)
 
@@ -1224,6 +1230,7 @@ ID: {server|id}
     asshole(now1.tzinfo, now2.tzinfo)
 
     print(); asshole.total(); print()
+
 
     asshole(tstr.to_int('0'), 0)
     asshole(tstr.to_int('1s'), 1)
