@@ -14,4 +14,5 @@ try:
   from .tcrd_permissions import Permission as DiscordPermission
   from .tcrd_permissions import permissions as discord_permissions
   from .tcrd_shorts import confirm
-except ImportError: ...
+except ImportError:
+  raise
