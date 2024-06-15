@@ -21,15 +21,11 @@ Joke functions and other barely useful crap are not included in star imports.
 try:
   from .discord.tcrd_embeds import embed, modal
 except ImportError: ...
-from . import discord, imgui, src
-from . import discord as D
-from . import dr as dynamic_responses
+from . import discord, dr, imgui, src
 from . import dr as execute
 from ._version import __version__
 from .discord.tcrd_limits import DiscordLimits
 from .discord.tcrd_string import get_token
-from .dr import placeholder_set as dr_placeholder_sets
-from .dr import placeholders as dr_placeholders
 from .src import tcr_ensure_deps as ensure_depencencies
 from .src import tcr_joke as joke
 from .src import tcr_types as types

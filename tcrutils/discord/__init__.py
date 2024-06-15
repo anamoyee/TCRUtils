@@ -15,5 +15,3 @@ try:
   from .tcrd_permissions import permissions as discord_permissions
   from .tcrd_shorts import confirm
 except ImportError: ...
-
-__all__ = ['DiscordLimits', 'DiscordPermission', 'discord_permissions', 'tcrd_embeds', 'is_snowflake', 'Snowflake', 'embed', 'modal', 'get_token', 'get_guild_count']
