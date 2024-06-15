@@ -15,7 +15,7 @@ class Every:
 
   def __init__(self, every: int, *, start: int = 0):
     if every == 0:
-      raise ZeroDivisionError("every cannot be zero due to imminent division")
+      raise ZeroDivisionError('every cannot be zero due to imminent division')
     self.every = every
     self.count = start
 

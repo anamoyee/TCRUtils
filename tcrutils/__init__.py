@@ -20,8 +20,7 @@ Joke functions and other barely useful crap are not included in star imports.
 
 try:
   from .discord.tcrd_embeds import embed, modal
-except ImportError:
-  ...
+except ImportError: ...
 from . import discord, imgui, src
 from . import discord as D
 from . import dr as dynamic_responses

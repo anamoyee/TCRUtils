@@ -87,6 +87,7 @@ def partial_class(_f=None, /, *, add_as_kwargs_to_init: bool = True) -> type:
     return decorator(_f)
   return decorator
 
+
 def hasattribute(obj: object, name: str) -> bool:
   try:
     object.__getattribute__(obj, name)
@@ -108,6 +109,7 @@ class DefaultsGetSetItem(dict):
       else:
         raise
 
+
 class DefaultsGetItem(dict):
   def __getitem__(self, __key: Any) -> Any:
     try:
@@ -117,6 +119,7 @@ class DefaultsGetItem(dict):
         return defaults[__key]()
       else:
         raise
+
 
 class DefaultsGetSetAttr:
   def __getattr__(self, __name: str) -> Any:
@@ -128,7 +131,8 @@ class DefaultsGetSetAttr:
         self.__setattr__(__name, val)
         return val
       else:
-        raise AttributeError(f"{self.__class__.__name__!r} object has no attribute nor default value for {__name!r}") from e
+        raise AttributeError(f'{self.__class__.__name__!r} object has no attribute nor default value for {__name!r}') from e
+
 
 class DefaultsGetAttr:
   def __getattr__(self, __name: str) -> Any:
@@ -138,4 +142,4 @@ class DefaultsGetAttr:
       if hasattribute(self, 'defaults') and __name in (defaults := object.__getattribute__(self, 'defaults')):
         return defaults[__name]()
       else:
-        raise AttributeError(f"{self.__class__.__name__!r} object has no attribute nor default value for {__name!r}") from e
+        raise AttributeError(f'{self.__class__.__name__!r} object has no attribute nor default value for {__name!r}') from e

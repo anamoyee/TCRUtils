@@ -452,6 +452,7 @@ __all__ = ['timestr']
 # TODO: add back docstrings to here
 # TODO: add back docstrings to here
 
+
 @dataclass(kw_only=True)
 class _RoboStrSegment:
   robostrs: list[tuple[int, str]]
@@ -463,34 +464,39 @@ class _RoboStrSegment:
     out = []
     for n, unit in self.robostrs:
       if unit in tstr.units:
-        out.append(n*tstr.units[unit])
+        out.append(n * tstr.units[unit])
       else:
         raise ValueError(f'Invalid timestr (Invalid unit: {unit!r})')
     return out
+
 
 @dataclass
 class _DateSegment:
   date: dt.date
 
+
 @dataclass
 class _HourSegment:
   time: dt.time
 
+
 @dataclass(kw_only=True)
 class _WeekdaySegment:
-  n: int # 0-6, 0 = Monday
+  n: int  # 0-6, 0 = Monday
 
   def parse(self, tstr: 'TStr', current_datetime: dt.datetime) -> dt.timedelta:
     current_weekday = current_datetime.weekday()
     days_until = (self.n - current_weekday + 7) % 7
-    return dt.timedelta(days=(days_until or 7)) # If today's the day, return in a week (lazy bum)
+    return dt.timedelta(days=(days_until or 7))  # If today's the day, return in a week (lazy bum)
+
 
 class _RegexPattern:
-  HOUR = r"^(0?\d|1[0-9]|2[0-4])?(?::(?:([0-5]?[0-9])?(?::([0-5]?[0-9])?)?)?)?$"
-  NO_DAY = r"^\.\d+$" # Used to not confuse days with robostr syntax. Will not match either and rather throw an error which is better
-  DAY = r"^(0?[1-9]|1\d|2\d|30|31)?(?:\.(?:(0?[1-9]|1[0-2])?(?:\.((?:\d{1,2})|(?:\d{4}))?)?)?)?$"
-  ROBOSTR_SINGLE = r"(-?\d*\.?\d+)([a-zA-Z]+)"
-  ROBOSTR_ALL = r"(?:(?:-?\d*\.?\d+)(?:[a-zA-Z]+))+"
+  HOUR = r'^(0?\d|1[0-9]|2[0-4])?(?::(?:([0-5]?[0-9])?(?::([0-5]?[0-9])?)?)?)?$'
+  NO_DAY = r'^\.\d+$'  # Used to not confuse days with robostr syntax. Will not match either and rather throw an error which is better
+  DAY = r'^(0?[1-9]|1\d|2\d|30|31)?(?:\.(?:(0?[1-9]|1[0-2])?(?:\.((?:\d{1,2})|(?:\d{4}))?)?)?)?$'
+  ROBOSTR_SINGLE = r'(-?\d*\.?\d+)([a-zA-Z]+)'
+  ROBOSTR_ALL = r'(?:(?:-?\d*\.?\d+)(?:[a-zA-Z]+))+'
+
 
 @dataclass(kw_only=True)
 class TStr:

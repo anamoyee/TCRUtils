@@ -44,6 +44,7 @@ A = f"""
   {c(7)}directory {c(208)}= {c(46)}"/VALID/path/to/db/dir/" {c(8)}# Or pathlib.Path object{c}
 """[1:-1]
 
+
 class ShelveDB(dict):
   """### Wrapper for shelve module databases.
 
@@ -201,5 +202,5 @@ class ShelveDB(dict):
   @classmethod
   def exists(cls, alnum_id: str | int) -> bool:
     """Check if the given `alnum_id` is already in use (if a database directory exists and is a directory and is not empty)."""
-    folder = (p.Path(cls.directory) / str(alnum_id))
-    return folder.is_dir() and (len(list(folder.iterdir())) > 0) # Counting empty directories as non existent because theres no data
+    folder = p.Path(cls.directory) / str(alnum_id)
+    return folder.is_dir() and (len(list(folder.iterdir())) > 0)  # Counting empty directories as non existent because theres no data

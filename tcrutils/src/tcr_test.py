@@ -192,4 +192,5 @@ class _Rashole:
 
     return rashole_inner
 
+
 rashole = _Rashole()

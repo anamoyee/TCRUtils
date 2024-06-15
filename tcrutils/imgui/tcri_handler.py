@@ -11,11 +11,12 @@ try:
 except ModuleNotFoundError:
   pass
 else:
+
   def ctrlc_grace_exit() -> bool:
     print('^C', end='')
     return True  # Exit
 
-  P = ParamSpec("P")
+  P = ParamSpec('P')
 
   class ImGuiHandler:
     frame: Callable[P, None]
