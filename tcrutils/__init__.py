@@ -18,12 +18,15 @@ Update: neeevermind there's just so much stuff you better import directly. __all
 Joke functions and other barely useful crap are not included in star imports.
 """
 
-from . import discord, src
+try:
+  from .discord.tcrd_embeds import embed, modal
+except ImportError:
+  ...
+from . import discord, imgui, src
 from . import discord as D
 from . import dr as dynamic_responses
 from . import dr as execute
 from ._version import __version__
-from .discord.tcrd_embeds import embed, modal
 from .discord.tcrd_limits import DiscordLimits
 from .discord.tcrd_string import get_token
 from .dr import placeholder_set as dr_placeholder_sets
@@ -33,7 +36,7 @@ from .src import tcr_joke as joke
 from .src import tcr_types as types
 from .src import tcr_zoo as zoo
 from .src.tcr_b64 import b64
-from .src.tcr_class import NoInit, Singleton, partial_class
+from .src.tcr_class import DefaultsGetAttr, DefaultsGetItem, DefaultsGetSetAttr, DefaultsGetSetItem, NoInit, Singleton, partial_class
 from .src.tcr_classfuncs import get_classname, get_name_classname, get_qualname_classname
 from .src.tcr_compare import able, isdunder
 from .src.tcr_console import breakpoint, console, start_eval_session

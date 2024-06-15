@@ -44,7 +44,6 @@ A = f"""
   {c(7)}directory {c(208)}= {c(46)}"/VALID/path/to/db/dir/" {c(8)}# Or pathlib.Path object{c}
 """[1:-1]
 
-
 class ShelveDB(dict):
   """### Wrapper for shelve module databases.
 
@@ -56,8 +55,8 @@ class ShelveDB(dict):
     defaults = {"r": list}
   ```
   ### Defaults:
-  If key "r" is accessed but it's not found, return `list()` (`[]`, not the `list` type itself of course!) and set the value at that key to it, so the next time it's looked up a value will be present, unless deleted or overwritten in the meantime.
-  Values must be any zero-argument callables. (functions, classes, types, etc.).
+  If key "r" is accessed but it's not found, return `list()` (that'd be a `[]`, not the `list` type itself of course!) and set the value at that key to it, so the next time it's looked up a value will be present, unless deleted or overwritten in the meantime.
+  Values must be any zero-argument callables. (functions, classes/types, etc.).
   This is to avoid mutability problems, for each key a new instance is created.
 
   ## Raises:

@@ -893,7 +893,6 @@ if True:  # \/ # Tests
     tcr.generate_type_hinter(imgui, print=True, clipboard=False)
 
   def test_imgui_handler():
-    import glfw as gf
     import imgui
 
     from tcrutils.imgui import ImGuiHandler, ensure_dependencies, imtypes
@@ -902,11 +901,31 @@ if True:  # \/ # Tests
 
     ensure_dependencies()
 
-    def frame():
-      with imgui.begin("nya"):
-        imgui.text("nyaaaa")
+    class State:
+      time = 0.0
+      frames = 0
+      every = tcr.imgui.Every(30)
+      last_fps = 0
 
-    himgui = ImGuiHandler(frame, start_maximised=False)  # noqa: F841
+    @ImGuiHandler().set_title("nyaa")
+    def gui(state: State):
+      with imgui.begin("nya"):
+        current_time = imgui.get_time()
+        delta_time = current_time - state.time
+
+        state.time = current_time
+
+        if State.every():
+          fps = state.frames / delta_time / 30
+          state.frames = 0
+          state.last_fps = fps
+        else:
+          fps = state.last_fps
+        imgui.text("FPS: %.0f" % fps)
+
+      state.frames += 1
+
+    gui.run(State())
 
   def test_b64():
     def get_enc_len(text: str, I: int):
@@ -1287,6 +1306,65 @@ ID: {server|id}
     rashole(tstr.to_int, 'nya')(ValueError)
     print(); asshole.total()
 
+  def test_default():
+    class A(tcr.DefaultsGetSetAttr):
+      defaults = {
+        'nya': int,
+      }
+
+    a = A()
+
+    a.uwu = 'owo'
+    c(a.nya)
+    c(a.uwu)
+    c(tcr.dir3(a))
+
+
+    print()
+
+    class B(tcr.DefaultsGetAttr):
+      defaults = {
+        'nya': int,
+      }
+
+    b = B()
+
+    b.uwu = 'owo'
+    c(b.nya)
+    c(b.uwu)
+    c(tcr.dir3(b))
+
+
+    print()
+
+    class C(tcr.DefaultsGetSetItem):
+      defaults = {
+        "nya": int,
+      }
+
+    ce = C()
+
+    ce['owo'] = 1
+
+    c(ce['nya'])
+    c(ce['owo'])
+    c(ce.keys())
+
+    print()
+
+    class D(tcr.DefaultsGetItem):
+      defaults = {
+        'nya': int,
+      }
+
+    d = D()
+
+    d['owo'] = 1
+
+    c(d['nya'])
+    c(d['owo'])
+    c(d.keys())
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -1382,7 +1460,8 @@ if __name__ == '__main__':
   # asyncio.run(test_bot_shorts())
   # test_partial_class()
   # test_with_overrides()
-  test_tstr()
+  # test_tstr()
+  # test_default()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100
