@@ -44,10 +44,10 @@ pytz = "^2024.1"
 pyjsmath = ">=0.0.0"
 
 # imgui
-imgui = { version = ">=2.0.0", extras = ["glfw"] }
-glfw = { version = ">=2.7.0" }
-PyOpenGL = { version = ">=3.1.5" }
-numpy = { version = ">=1.26.4" }
+imgui = { version = ">=2.0.0", optional = true, extras = ["glfw"] }
+glfw = { version = ">=2.7.0", optional = true }
+PyOpenGL = { version = ">=3.1.5", optional = true }
+numpy = { version = ">=1.26.4", optional = true }
 
 # discord
 hikari = { version = ">=2.0.0.dev125", optional = true }
