@@ -4,6 +4,7 @@ from collections.abc import Callable
 from typing import Any, Literal, Self
 
 from ..src import tcr_cloud_imports as cloud_imports
+from .tcr_decorator import instance
 
 
 def fizzbuzz(n: int) -> str: ...
@@ -121,3 +122,32 @@ class Private:
   def __getattribute__(self, name):
     class_name = object.__getattribute__(self, '__class__').__name__
     raise AttributeError(f'{class_name!r} object has no attribute {name!r}')
+
+
+@instance
+class gmail:
+  def __init__(self) -> None:
+    self.tlds = []
+
+  def __getattr__(self, name):
+    self.tlds.append(f'{name}')
+    return self
+
+  def __rmatmul__(self, other):
+    class _Email:
+      def __init__(self, email: str) -> None:
+        self.email = email
+
+      def __str__(self) -> str:
+        return self.email
+
+      def __repr__(self) -> str:
+        return repr(self.__str__())
+
+      def send(self, title: str, body: str) -> None:
+        print('Sent email to ' + self.email + ' with title: ' + repr(title) + ', and body: ' + repr(body))
+
+    try:
+      return _Email(f'{other!s}@{self.__class__.__name__}.{".".join(self.tlds)}')
+    finally:
+      self.tlds.clear()

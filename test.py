@@ -3,7 +3,6 @@
 #  __import__('os').system(r'"C:\Users\TheCreatorrrr\AppData\Local\Programs\Python\Python312\python.exe" test.py')
 #  exit()
 
-import random as rng
 import sys
 
 if '--syntax-only' in sys.argv:
@@ -16,23 +15,23 @@ if True:  # \/ # Imports
   import os
   import pathlib as p
   import time
-  from functools import partial
   from typing import Any
   from typing import TypedDict as TD
 
   import arc
   import hikari
   import miru
-  import rich
-  from rich.traceback import install as _rich_traceback_install
 
   import tcrutils as tcr
-  from tcrutils import *
-  from tcrutils import asshole, raises, rashole
-  from tcrutils import console as c
-  from tcrutils.discord import Permission as Perm
-  from tcrutils.discord import get_token
-  from tcrutils.discord import permissions as perms
+  from tcrutils import asshole, c, console, rashole
+  from tcrutils.src.tcr_constants import *
+
+  # from tcrutils import *
+  # from tcrutils import asshole, raises, rashole
+  # from tcrutils import console as c
+  # from tcrutils.discord import Permission as Perm
+  # from tcrutils.discord import get_token
+  # from tcrutils.discord import permissions as perms
 
 
 # _rich_traceback_install(width=tcr.terminal.width-1)
@@ -57,11 +56,13 @@ def spin_up_bot(*, bot_kwargs: dict[str, Any] = {}, acl_kwargs: dict[str, Any] =
 if True:  # \/ # Tests
 
   def test_timestr():
+    from tcrutils import timestr
     console(a := timestr.to_int('1rev'))
     console(timestr.to_str(a))
     console(timestr.to_datestr(a))
 
   def test_dict_merge():
+    from tcrutils import merge_dicts
     master = {
       'a': 1,
       'b': {
@@ -92,6 +93,7 @@ if True:  # \/ # Tests
     console(result3)
 
   def test_dict_zip():
+    from tcrutils import dict_zip
     console(list(dict_zip({'a': 1}, {'a': 1})), recursive=False)
     console(1, 2, 3)
     console(
@@ -129,11 +131,17 @@ if True:  # \/ # Tests
   def test_getch():
     print(tcr.getch())
 
-  @trei(ZeroDivisionError, excepth=print)
   def test_trei():
-    1 / 0  # noqa: B018
+    from tcrutils import trei
+
+    @trei(ZeroDivisionError, excepth=print)
+    def inner():
+      1 / 0  # noqa: B018
+
+    inner()
 
   def test_asert():
+    from tcrutils import asert
     asert(lambda: 1 == 1)
     asert(lambda: 1 != 2)
 
@@ -192,7 +200,8 @@ if True:  # \/ # Tests
     console.debug(f'{a()!r}')
 
   #@tcr.timeit
-  def test_print_iterable(print_iterable=print_iterable, **kwargs):
+  def test_print_iterable(print_iterable=tcr.print_iterable, **kwargs):
+    from tcrutils import Null
     mappingproxy = (type.__dict__)
     print_iterable(mappingproxy, **kwargs)
     print_iterable("aasd", **kwargs)
@@ -365,6 +374,7 @@ if True:  # \/ # Tests
     }, **kwargs)
 
   def test_markdown():
+    from tcrutils import codeblock, uncodeblock
     console.debug(codeblock("asdf"))
     console.debug(codeblock("uwu", langcode='owo'))
     console.debug(codeblock(""))
@@ -373,6 +383,7 @@ if True:  # \/ # Tests
     console.debug(uncodeblock("```py\n:3```"))
 
   def test_extract_error():
+    from tcrutils import extract_error
     console(extract_error(ValueError('asdf')))
     console(extract_error(ValueError('uwu')))
     console(extract_error(ValueError()))
@@ -383,6 +394,7 @@ if True:  # \/ # Tests
     console({x+1: tcr.fizzbuzz(x+1) for x in range(n)})
 
   def test_constants():
+    from tcrutils.discord import DiscordLimits
     console(x for x in [
       BACKSLASH,
       NEWLINE,
@@ -395,21 +407,25 @@ if True:  # \/ # Tests
     ])
 
   def test_sort():
-    @autorun
     @tcr.timeit
-    def bogo_test():
+    def bogo_sort():
       console(tcr.bogo_sort(tcr.shuffled(list(range(5))*2)))
-    @autorun
+
     @tcr.timeit
     def stalin_sort():
       console(tcr.stalin_sort(tcr.shuffled(list(range(100))*2)))
 
+    bogo_sort()
+    stalin_sort()
+
   def test_print_block():
+    from tcrutils import print_block
     print_block('Test')
     print_block('OwO', '#', margin=1, border=10, padding=2)
     console(print_block('UwU', raw=True, padding_top=2), print_iterable_=False)
 
   def test_dir():
+    from tcrutils import dir2, dir3
     console(dir(console))
     console(dir2(console))
     console(dir3(console))
@@ -418,6 +434,7 @@ if True:  # \/ # Tests
     console({x: tcr.nth(x) for x in range(-24, 25)})
 
   def test_timestr_plsh_weekdays():
+    from tcrutils import timestr
     console(
       a := timestr.to_int("poniedzialek"),
     )
@@ -439,6 +456,9 @@ if True:  # \/ # Tests
     console(tcr.recursive_sum([1, 2, 3, 4, [99, 4, 5]]))
 
   def test_discord():
+    from tcrutils.discord import DiscordLimits
+    from tcrutils.discord import Permission as Perm
+    from tcrutils.discord import permissions as perms
     console(DiscordLimits)
     print()
 
@@ -497,6 +517,8 @@ if True:  # \/ # Tests
 
   def test_insist():
     from functools import partial
+
+    from tcrutils import insist
     number = int(insist(
       partial(input, "Input a number: "),
       partial(tcr.able, int)
@@ -570,6 +592,7 @@ if True:  # \/ # Tests
     # console(db)
 
   def test_fmt_iterable(*, printhook=print, **kwargs):
+    from tcrutils import Null
     printhook(tcr.fmt_iterable(10, **kwargs))
     printhook(tcr.fmt_iterable(10.3, **kwargs))
     printhook(tcr.fmt_iterable(10.4, 10, **kwargs))
@@ -605,6 +628,7 @@ if True:  # \/ # Tests
     print(test_getattr_queue())
 
   def test_language():
+    from tcrutils import apostrophe_s, make_plural
     console((a := "Michael"), make_plural(a))
     console((a := "Box"), make_plural(a))
     console((a := "Bench"), make_plural(a))
@@ -625,10 +649,12 @@ if True:  # \/ # Tests
     console((a := "mass"), apostrophe_s(a))
 
   def test_float2int():
+    from tcrutils import float2int
     console(float2int(10.2))
     console(float2int(10))
 
   def test_manyattrs():
+    from tcrutils import getmanyattrs, hasmanyattrs
     class Cld:
       attr1 = {}
 
@@ -690,6 +716,7 @@ if True:  # \/ # Tests
     a.f('')
 
   def test_raises():
+    from tcrutils import raises
     asshole(raises((lambda x: 1 / x), x=1)(ZeroDivisionError), False)
     asshole(raises((lambda x: 1 / x), x=0)(ZeroDivisionError), True)
 
@@ -718,6 +745,7 @@ if True:  # \/ # Tests
     asshole(tcr.discord.IFYs.timeify(1, 'F'), '<t:1:F>')
 
   def test_extract_error2():
+    from tcrutils import extract_error
     console(extract_error(BaseException))
     console(extract_error(Exception))
     console(extract_error(BaseException("Message")))
@@ -755,6 +783,7 @@ if True:  # \/ # Tests
     })
 
   def test_dotdicts():
+    from tcrutils import Undefined
     dd = tcr.DotDict({"a": 1, "b": 2})
     asshole(dd.a, 1)
     asshole(dd.b, 2)
@@ -778,6 +807,7 @@ if True:  # \/ # Tests
     del jsdd.asdfa # Nothing should happen because jsdict will suppress the invalid item - because javascript
 
   def test_null():
+    from tcrutils import Null, Undefined
     console(Null)
     console(Undefined)
     asshole(Null is Null.__class__())
@@ -863,6 +893,7 @@ if True:  # \/ # Tests
     c(--i.bit_length()) # noqa
 
   def test_generate_type_hinter():
+    import rich
     class Example:
       def __init__(self):
         self.name = "John"
@@ -1144,6 +1175,8 @@ ID: {server|id}
       c(rng.randint(0, 1000000) for _ in range(TIMES))
 
   async def test_bot_shorts():
+    import random as rng
+
     spin_up_bot()
 
     @BOT.listen(hikari.DMMessageCreateEvent)
@@ -1365,6 +1398,66 @@ ID: {server|id}
     c(d['owo'])
     c(d.keys())
 
+  def test_cached_instances_meta():
+    # class A(metaclass=tcr.CachedInstancesMeta, max_instances=2, max_time=2, restore_method="restore"):
+    #   def __init__(self, a, b, *, c):
+    #     self.a = a
+    #     self.b = b
+    #     self.c = c
+
+    #   def restore(self):
+    #     c('restoring', self)
+
+    # print(1)
+    # a1 = A(1, 2, c=1)
+    # print(2)
+    # a2 = A(1, 2, c=1)
+    # print(3)
+    # a3 = A(1, 2, c=1)
+    # print(4)
+
+    # c(a1 is a2 and a2 is a3)
+    # c(a1._cache)
+
+    class TestCIM_DB(tcr.ShelveDB, metaclass=tcr.CachedInstancesMeta, max_instances=2, max_time=2, restore_method="restore"):
+      directory = str((p.Path(__file__).parent / 'test_db').absolute())
+
+    db = TestCIM_DB("tedddst145345")
+
+    c(db.iter_all_path_names())
+
+    c(db)
+    db.close()
+    db['asdf'] = 1
+    c(db['asdf'])
+    c(db)
+    db.restore()
+    c(db)
+
+  def test_gmail():
+    from tcrutils.src.tcr_joke import gmail
+
+    my_email = "my_email"@gmail.com
+
+    my_email.send(title="Tytuł emaila", body="treść maila")
+
+    # print(my_email)
+    # print("my_email"@gmail.org)
+    # print("my_email"@gmail.co.uk)
+
+  def test_dir_recursive():
+    class A(dict):
+      def test(self):
+        return 'nya'
+
+      a = 1
+
+    a = A()
+
+    a.b = 'b'
+
+    c(tcr.vars2(a, vars=tcr.vars_recursive))
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -1462,6 +1555,9 @@ if __name__ == '__main__':
   # test_with_overrides()
   # test_tstr()
   # test_default()
+  # test_cached_instances_meta()
+  # test_gmail()
+  # test_dir_recursive()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100

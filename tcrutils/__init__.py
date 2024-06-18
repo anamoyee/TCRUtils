@@ -31,7 +31,7 @@ from .src import tcr_joke as joke
 from .src import tcr_types as types
 from .src import tcr_zoo as zoo
 from .src.tcr_b64 import b64
-from .src.tcr_class import DefaultsGetAttr, DefaultsGetItem, DefaultsGetSetAttr, DefaultsGetSetItem, NoInit, Singleton, partial_class
+from .src.tcr_class import CachedInstancesMeta, DefaultsGetAttr, DefaultsGetItem, DefaultsGetSetAttr, DefaultsGetSetItem, NoInit, Singleton, partial_class
 from .src.tcr_classfuncs import get_classname, get_name_classname, get_qualname_classname
 from .src.tcr_compare import able, isdunder
 from .src.tcr_console import breakpoint, console, start_eval_session
@@ -41,7 +41,7 @@ from .src.tcr_context import random_seed_lock
 from .src.tcr_decorator import autorun, convert, copy_kwargs, instance, skip_first_call, skip_first_call_async, test, timeit, with_overrides
 from .src.tcr_dev import generate_function_argument_typehints, generate_type_hinter
 from .src.tcr_dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zip, merge_dicts
-from .src.tcr_dir import dir2, dir3
+from .src.tcr_dir import dir2, dir3, dir_recursive, vars2, vars3, vars_recursive
 from .src.tcr_error import error  # 'tcrerror' in star imports, either in 'tcr.error'/'tcr.tcrerror'
 from .src.tcr_error import error as tcrerror
 from .src.tcr_extract_error import extract_error, extract_traceback

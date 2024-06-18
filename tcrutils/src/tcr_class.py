@@ -1,3 +1,5 @@
+import time
+from collections import OrderedDict
 from typing import Any, Self
 
 
@@ -143,3 +145,57 @@ class DefaultsGetAttr:
         return defaults[__name]()
       else:
         raise AttributeError(f'{self.__class__.__name__!r} object has no attribute nor default value for {__name!r}') from e
+
+
+class CachedInstancesMeta(type):
+  """Metaclass for caching instances based on init parameters with customizable max time and max instances."""
+
+  def __new__(
+    mcls,  # noqa: N804
+    name,
+    bases,
+    dct,
+    max_instances: int = 50,
+    max_time: int = 30 * 60,
+    restore_method: str | None = None,
+  ):
+    cls = super().__new__(mcls, name, bases, dct)
+    cls._cache = OrderedDict()
+    cls._max_instances = max_instances
+    cls._max_time = max_time
+    cls._restore_method = restore_method
+    return cls
+
+  def __call__(cls, *args, **kwargs):
+    key = (args, tuple(sorted(kwargs.items())))
+
+    cls._remove_old_instances()
+
+    if key in cls._cache:
+      instance, timestamp = cls._cache.pop(key)
+      cls._cache[key] = (instance, time.time())
+
+      if instance._restore_method is not None:
+        getattr(instance, instance._restore_method)()
+      return instance
+
+    instance = super().__call__(*args, **kwargs)
+
+    cls._cache[key] = (instance, time.time())
+
+    cls._enforce_max_cache_size()
+
+    return instance
+
+  def _remove_old_instances(cls):
+    current_time = time.time()
+    keys_to_remove = []
+    for key, (_, timestamp) in cls._cache.items():
+      if current_time - timestamp > cls._max_time:
+        keys_to_remove.append(key)
+    for key in keys_to_remove:
+      del cls._cache[key]
+
+  def _enforce_max_cache_size(cls):
+    while len(cls._cache) > cls._max_instances:
+      cls._cache.popitem(last=False)

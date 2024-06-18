@@ -127,7 +127,7 @@ class ShelveDB(dict):
   def __del__(self) -> None:
     try:
       self.s.close()
-    except AttributeError:
+    except:  # noqa: E722
       return
 
   @property

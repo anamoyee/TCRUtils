@@ -69,7 +69,7 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
       *,
       printhook=None,
       color=True,
-      pattern='\n%(c_White)s%(name)s%(c_Gold)s took %(c_White)s%(time)s%(c_Gold)s seconds to execute.%(c_reset)s\n',
+      pattern='%(c_White)s%(name)s%(c_Gold)s took %(c_White)s%(time)s%(c_Gold)s seconds to execute.%(c_reset)s',
     ):
       if func is None:
         return partial(timeit, printhook=printhook, pattern=pattern, color=color)
