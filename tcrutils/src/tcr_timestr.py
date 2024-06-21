@@ -795,8 +795,11 @@ class TStr:
       base_time_str = f'{days}d + {base_time_str}'
     return base_time_str
 
-  def to_strf(self, n: int, *, pattern='%a, %Y-%m-%d %H:%M:%S') -> str:
+  def to_strf(self, n: int | str, *, pattern='%a, %Y-%m-%d %H:%M:%S') -> str:
     """Return `datetime.strftime()` string of the time that will be present in `seconds` seconds."""
+    if isinstance(n, int):
+      n = f'{n}s'
+
     return self.to_datetime(n).strftime(pattern)
 
   def to_datetime_from_unix(self, unix: int | str) -> dt.datetime:
