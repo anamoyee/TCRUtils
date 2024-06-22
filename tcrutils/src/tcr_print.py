@@ -1,3 +1,4 @@
+import typing
 from functools import partial, wraps
 from types import GeneratorType, UnionType
 from typing import Any
@@ -495,7 +496,11 @@ if True:  # \/ # fmt & print iterable
       return FMT_BRACKETS[coroutine][syntax_highlighting] % (getattr_queue(it, name, '__name__'))
 
     comma = f'{FMTC.COMMA},' if syntax_highlighting else ','
-    if isinstance(it, Iterable):
+
+    is_of_prohibited_type = any(isinstance(it, x) for x in (typing._GenericAlias, typing._UnpackGenericAlias))
+    # took me half an hour of debugging to discover that typing._GenericAlias contains an infinite amount of nested copies of typing._UnpackGenericAlias but only if you first iter then index not if you just index and it's a mess.
+
+    if not is_of_prohibited_type and isinstance(it, Iterable):
       itl, overflow = limited_iterable(it, item_limit)
       if not able(len, it) or len(it) > 0:
         if isinstance(it, Mapping):

@@ -36,7 +36,7 @@ if True:  # \/ # Imports
 
 # _rich_traceback_install(width=tcr.terminal.width-1)
 
-c(sorted(a := list(filter(lambda x: not x.startswith('_'), globals().copy()))), len(a)); del a
+c(sorted(_ := list(filter(lambda x: not x.startswith('_'), globals().copy()))), len(_)); del _
 c.log(f"Running on Python %s.%s" % sys.version_info[:2])
 
 
@@ -591,38 +591,16 @@ if True:  # \/ # Tests
     # console(db.popitem())
     # console(db)
 
-  def test_fmt_iterable(*, printhook=print, **kwargs):
-    from tcrutils import Null
-    printhook(tcr.fmt_iterable(10, **kwargs))
-    printhook(tcr.fmt_iterable(10.3, **kwargs))
-    printhook(tcr.fmt_iterable(10.4, 10, **kwargs))
-    printhook(tcr.fmt_iterable(10.5, (10, 20), **kwargs))
-    printhook(tcr.fmt_iterable([
-      69,
-      6.9,
-      "UwU",
-      b"OwO",
-      True,
-      False,
-      None,
-      Null,
-      [],
-      (),
-      {},
-      set(),
-    ], **{**kwargs, "item_limit": 100}))
-    printhook(tcr.fmt_iterable({
-      "uwu": 1,
-      "owo": "^w^",
-    }, **kwargs))
+  def test_fmt_iterable(*, printhook=print, syntax_highlighting=True, **kwargs):
+    kwargs['syntax_highlighting'] = syntax_highlighting
+    from arc import GatewayContext
 
-    def generator():
-      while True:
-        yield 1
-    printhook(tcr.fmt_iterable(range(6), **kwargs))
-    printhook(tcr.fmt_iterable(generator(), **kwargs))
-    printhook(tcr.fmt_iterable({Null: Null, None: None, True: True, False: False}, **kwargs))
-    printhook(tcr.fmt_iterable(bytearray([0x10, 0x2A, 0x3D]), **kwargs))
+    printhook(tcr.fmt_iterable(GatewayContext, **kwargs))
+
+    a = []
+    a.append(a)
+
+    printhook(tcr.fmt_iterable(a, **kwargs))
 
   def test_getattr_queue():
     print(test_getattr_queue())
@@ -1564,11 +1542,12 @@ if __name__ == '__main__':
   # asyncio.run(test_bot_shorts())
   # test_partial_class()
   # test_with_overrides()
-  test_tstr()
+  # test_tstr()
   # test_default()
   # test_cached_instances_meta()
   # test_gmail()
   # test_dir_recursive()
+  test_fmt_iterable()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100
