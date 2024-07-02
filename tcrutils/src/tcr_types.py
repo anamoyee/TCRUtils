@@ -26,7 +26,12 @@ class UnixTimestampInt(int):
     super().__init__()
 
   def __tcr_fmt__(self, fmt_iterable, **kwargs):
-    lhs = fmt_iterable(dt.datetime.fromtimestamp(self, tz=self.tz), **kwargs)
+    fromtimestamp_value = int(self)
+
+    while fromtimestamp_value > 99_999_999_999: # Convert any milisecond or smaller values to seconds
+      fromtimestamp_value //= 1000
+
+    lhs = fmt_iterable(dt.datetime.fromtimestamp(fromtimestamp_value, tz=self.tz), **kwargs)
     rhs = fmt_iterable([int(self)], **kwargs)
 
     return f'{lhs} {rhs}'
