@@ -201,6 +201,8 @@ if True:  # \/ # Tests
 
   #@tcr.timeit
   def test_print_iterable(print_iterable=tcr.print_iterable, **kwargs):
+    import datetime as dt
+
     from tcrutils import Null
     mappingproxy = (type.__dict__)
     print_iterable(mappingproxy, **kwargs)
@@ -329,7 +331,6 @@ if True:  # \/ # Tests
 
     print_iterable(PrintableObj2, **kwargs)
     print_iterable(PrintableObj2(69), **kwargs)
-    print_iterable(tcr.discord.Snowflake(1234), **kwargs)
 
     class Client:
       test: str
@@ -372,6 +373,14 @@ if True:  # \/ # Tests
     print_iterable({
       "b": Null,
     }, **kwargs)
+
+    datetime = dt.datetime.now()
+    print_iterable(datetime, **kwargs)
+    print_iterable(datetime.date(), **kwargs)
+    print_iterable(datetime.time(), **kwargs)
+
+
+    print_iterable(tcr.types.UnixTimestampInt(1719947806), **kwargs, _raise_errors=True)
 
   def test_markdown():
     from tcrutils import codeblock, uncodeblock
@@ -1467,7 +1476,7 @@ if __name__ == '__main__':
   # test_path()
   # test_ifys()
   # test_print_iterable(
-  #   print_iterable=print_iterable,
+  #   print_iterable=tcr.print_iterable,
   #   syntax_highlighting=1,
   #   # let_no_indent=0,
   #   # force_no_indent=0,

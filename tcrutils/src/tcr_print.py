@@ -1,3 +1,4 @@
+import datetime as dt
 import typing
 from functools import partial, wraps
 from types import GeneratorType, UnionType
@@ -183,7 +184,17 @@ if True:  # \/ # fmt & print iterable
     @wraps(func)
     def wrapper(*args, append_syntax_reset: bool = True, **kwargs):
       if kwargs.get('syntax_highlighting') and append_syntax_reset:
-        return f'{FMTC._}{func(*args, **kwargs)}{FMTC._}'
+        s = f'{FMTC._}{func(*args, **kwargs)}{FMTC._}'
+
+        for v in vars(FMTC).values(): # Clear any duplicate, side-by-side color tags.
+          if not isinstance(v, str):
+            continue
+
+          _2v = 2*v
+          while _2v in s:
+            s = s.replace(_2v, v)
+
+        return s
       return func(*args, **kwargs)
 
     return wrapper
@@ -375,6 +386,25 @@ if True:  # \/ # fmt & print iterable
       return f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}' if syntax_highlighting else f'({it} more items...)'
     if PydanticBM is not None and isinstance(it, PydanticBM):
       return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, asterisks + this(it.model_dump()))
+    if isinstance(it, dt.datetime | dt.date | dt.time):
+      if isinstance(it, dt.datetime):
+        format_str = '%H:%M:%S %d-%m-%Y'
+      elif isinstance(it, dt.date):
+        format_str = '%d-%m-%Y'
+      else:
+        format_str = '%H:%M:%S'
+
+      if not syntax_highlighting:
+        return repr(it)
+      else:
+        main_color = FMTC.NUMBER
+        secondary_color = FMTC.DECIMAL
+        s = f'<{it:{format_str}}>'
+
+        for x in ('-', ':', '<', '>'):
+          s = s.replace(x, f'{secondary_color}{x}{main_color}')
+
+        return s
 
     if able(issubclass, it, BaseException) and issubclass(it, BaseException):
       exc_name = extract_error(it, raw=True)[0]
