@@ -4,7 +4,7 @@ from .tcrd_alias import get_guild_count
 from .tcrd_constants import DISCORD_EPOCH
 from .tcrd_dpy import escape_markdown, escape_mentions, remove_markdown
 from .tcrd_limits import DiscordLimits
-from .tcrd_snowflake import Snowflake, is_snowflake
+from .tcrd_snowflake import is_snowflake
 from .tcrd_string import IFYs, get_token
 
 try:

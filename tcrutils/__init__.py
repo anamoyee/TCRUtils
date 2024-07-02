@@ -11,13 +11,17 @@ It's also recommended to import stuff directly instead of the entire module
 ```
 
 ~~Star-importing is fine, ctrl-click whatever you're hovering on right now to see __all__ if you wish.~~
-Update: neeevermind there's just so much stuff you better import directly. __all__ is still maintained tho...
+Update: neeevermind there's just so much stuff you better import directly.
 ```py
 >>> from tcrutils import *
 ```
 Joke functions and other barely useful crap are not included in star imports.
 """
 
+try:
+  from .src import tcr_zoo2 as zoo2
+except ModuleNotFoundError:
+  ...
 try:
   from .discord.tcrd_embeds import embed, modal
 except ImportError: ...
@@ -42,9 +46,8 @@ from .src.tcr_decorator import autorun, convert, copy_kwargs, instance, skip_fir
 from .src.tcr_dev import generate_function_argument_typehints, generate_type_hinter
 from .src.tcr_dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zip, merge_dicts
 from .src.tcr_dir import dir2, dir3, dir_recursive, vars2, vars3, vars_recursive
-from .src.tcr_error import error  # 'tcrerror' in star imports, either in 'tcr.error'/'tcr.tcrerror'
-from .src.tcr_error import error as tcrerror
-from .src.tcr_extract_error import extract_error, extract_traceback
+from .src.tcr_error import error
+from .src.tcr_extract_error import extract_error, extract_traceback, module_error_map, modules_error_map
 from .src.tcr_F import F
 from .src.tcr_getch import getch
 from .src.tcr_inject import ErrorCatcher, WarningCatcher
@@ -79,8 +82,6 @@ __all__ = [
   "autorun", "convert",                 # decorator
 
   "dict_zip", "merge_dicts",            # dict
-
-  "tcrerror",                           # error
 
   "extract_error", "extract_traceback", # extract_error
 

@@ -18,6 +18,7 @@ archive
 test_db/*
 test_db
 update_version_hook.py
+test_zoo2_cache.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

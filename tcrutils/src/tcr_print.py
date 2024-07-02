@@ -28,6 +28,7 @@ from _collections_abc import (
   zip_iterator,
 )
 from colored import Back, Fore, Style
+from pydantic import BaseModel as PydanticBM
 
 from .tcr_compare import able
 from .tcr_constants import NEWLINE
@@ -314,7 +315,7 @@ if True:  # \/ # fmt & print iterable
     enter = '\n' if not force_no_indent else ''
     trailing_commas = trailing_commas if (trailing_commas == 2 or not force_no_indent) else False
 
-    if isinstance(it, Mapping):
+    if isinstance(it, Mapping | PydanticBM):
       asterisks = FMT_ASTERISK[syntax_highlighting] * 2
     elif isinstance(it, Iterable):
       asterisks = FMT_ASTERISK[syntax_highlighting] * 1
@@ -368,6 +369,9 @@ if True:  # \/ # fmt & print iterable
 
     if isinstance(it, _OverflowClass):
       return f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}' if syntax_highlighting else f'({it} more items...)'
+    if isinstance(it, PydanticBM):
+      return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, asterisks + this(it.model_dump()))
+
     if able(issubclass, it, BaseException) and issubclass(it, BaseException):
       exc_name = extract_error(it, raw=True)[0]
 

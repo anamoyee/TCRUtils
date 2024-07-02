@@ -1,5 +1,7 @@
 import contextlib
+import inspect
 import traceback
+from types import ModuleType
 
 from .tcr_compare import able
 from .tcr_iterable import getattr_queue
@@ -25,3 +27,10 @@ def extract_error(e: BaseException, pattern='%s: %s', *, raw=False) -> tuple[str
 def extract_traceback(e: BaseException) -> str:
   traceback_details = traceback.format_tb(e.__traceback__)
   return ''.join(traceback_details)
+
+def module_error_map(module: ModuleType) -> dict[str, BaseException]:
+  return {name: obj for name, obj in vars(module).items() if inspect.isclass(obj) and issubclass(obj, BaseException) and not issubclass(obj, Warning)}
+
+
+def modules_error_map(*modules: ModuleType) -> dict[str, BaseException]:
+  return {f'{module.__name__}.{name}'.removeprefix('builtins.'): exc for module in modules for name, exc in module_error_map(module).items()}

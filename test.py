@@ -35,9 +35,9 @@ if True:  # \/ # Imports
 
 
 # _rich_traceback_install(width=tcr.terminal.width-1)
-
-c(sorted(_ := list(filter(lambda x: not x.startswith('_'), globals().copy()))), len(_)); del _
-c.log(f"Running on Python %s.%s" % sys.version_info[:2])
+if sys.gettrace() is None:
+  c(sorted(_ := list(filter(lambda x: not x.startswith('_'), globals().copy()))), len(_)); del _
+  c.log(f"Running on Python %s.%s" % sys.version_info[:2])
 
 
 BOT: hikari.GatewayBot | None = None
@@ -1447,6 +1447,19 @@ ID: {server|id}
 
     c(tcr.vars2(a, vars=tcr.vars_recursive))
 
+  def test_zoo2():
+    import json
+    _f = p.Path(__file__).parent / 'test_zoo2_cache.json'
+
+    if _f.exists():
+      data: tcr.zoo.Profile = json.loads(_f.read_text())
+    else:
+      import requests
+      data: tcr.zoo.Profile = requests.get('https://gdcolon.com/zoo/api/profile/507642999992352779').json()
+      _f.write_text(json.dumps(data, indent=2))
+
+    c(tcr.zoo2.ExampleModel(a=1, b=2, c=3))
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -1547,7 +1560,8 @@ if __name__ == '__main__':
   # test_cached_instances_meta()
   # test_gmail()
   # test_dir_recursive()
-  test_fmt_iterable()
+  # test_fmt_iterable()
+  test_zoo2()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100
