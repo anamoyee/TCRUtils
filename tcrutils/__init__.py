@@ -19,10 +19,6 @@ Joke functions and other barely useful crap are not included in star imports.
 """
 
 try:
-  from .src import tcr_zoo2 as zoo2
-except ModuleNotFoundError:
-  ...
-try:
   from .discord.tcrd_embeds import embed, modal
 except ImportError: ...
 from . import discord, dr, imgui, src
@@ -30,10 +26,10 @@ from . import dr as execute
 from ._version import __version__
 from .discord.tcrd_limits import DiscordLimits
 from .discord.tcrd_string import get_token
+from .src import tcr_case as case
 from .src import tcr_ensure_deps as ensure_depencencies
 from .src import tcr_joke as joke
 from .src import tcr_types as types
-from .src import tcr_zoo as zoo
 from .src.tcr_b64 import b64
 from .src.tcr_class import CachedInstancesMeta, DefaultsGetAttr, DefaultsGetItem, DefaultsGetSetAttr, DefaultsGetSetItem, NoInit, Singleton, partial_class
 from .src.tcr_classfuncs import get_classname, get_name_classname, get_qualname_classname

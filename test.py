@@ -1449,16 +1449,30 @@ ID: {server|id}
 
   def test_zoo2():
     import json
-    _f = p.Path(__file__).parent / 'test_zoo2_cache.json'
+    profile_id = 'roboturt' # '507642999992352779'
+    profile_id = '507642999992352779'
+    # profile_id = '193936315757101067_seal' # Curse
+    _f = p.Path(__file__).parent / f'test_zoo2_cache_{profile_id}.json'
 
     if _f.exists():
       data: tcr.zoo.Profile = json.loads(_f.read_text())
     else:
       import requests
-      data: tcr.zoo.Profile = requests.get('https://gdcolon.com/zoo/api/profile/507642999992352779').json()
+      data: tcr.zoo.Profile = requests.get(f'https://gdcolon.com/zoo/api/profile/{profile_id}').json()
       _f.write_text(json.dumps(data, indent=2))
 
-    c(tcr.zoo2.ExampleModel(a=1, b=2, c=3))
+
+    # c(data["color"])
+    # tcr.breakpoint()
+
+    data['_apiKey'] = {
+      "apiInfo": "API Key obtained! Well done!",
+      "endpoint": "/api/zooKey"
+    }
+
+    prof = tcr.zoo2.Profile(**data)
+
+    c(prof)
 
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator

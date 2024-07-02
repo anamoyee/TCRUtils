@@ -28,6 +28,7 @@ def extract_traceback(e: BaseException) -> str:
   traceback_details = traceback.format_tb(e.__traceback__)
   return ''.join(traceback_details)
 
+
 def module_error_map(module: ModuleType) -> dict[str, BaseException]:
   return {name: obj for name, obj in vars(module).items() if inspect.isclass(obj) and issubclass(obj, BaseException) and not issubclass(obj, Warning)}
 
