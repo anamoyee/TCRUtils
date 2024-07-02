@@ -1447,33 +1447,6 @@ ID: {server|id}
 
     c(tcr.vars2(a, vars=tcr.vars_recursive))
 
-  def test_zoo2():
-    import json
-    profile_id = 'roboturt' # '507642999992352779'
-    profile_id = '507642999992352779'
-    # profile_id = '193936315757101067_seal' # Curse
-    _f = p.Path(__file__).parent / f'test_zoo2_cache_{profile_id}.json'
-
-    if _f.exists():
-      data: tcr.zoo.Profile = json.loads(_f.read_text())
-    else:
-      import requests
-      data: tcr.zoo.Profile = requests.get(f'https://gdcolon.com/zoo/api/profile/{profile_id}').json()
-      _f.write_text(json.dumps(data, indent=2))
-
-
-    # c(data["color"])
-    # tcr.breakpoint()
-
-    data['_apiKey'] = {
-      "apiInfo": "API Key obtained! Well done!",
-      "endpoint": "/api/zooKey"
-    }
-
-    prof = tcr.zoo2.Profile(**data)
-
-    c(prof)
-
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -1575,7 +1548,6 @@ if __name__ == '__main__':
   # test_gmail()
   # test_dir_recursive()
   # test_fmt_iterable()
-  test_zoo2()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100
