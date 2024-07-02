@@ -380,7 +380,10 @@ if True:  # \/ # Tests
     print_iterable(datetime.time(), **kwargs)
 
 
-    print_iterable(tcr.types.UnixTimestampInt(1719949074443), **kwargs, _raise_errors=True)
+    ts = tcr.types.UnixTimestampInt(1719949074443)
+
+    print_iterable(ts, **kwargs, _raise_errors=True)
+    print_iterable(ts.to_datetime(), **kwargs, _raise_errors=True)
 
   def test_markdown():
     from tcrutils import codeblock, uncodeblock

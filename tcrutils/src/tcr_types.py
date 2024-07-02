@@ -25,8 +25,17 @@ class UnixTimestampInt(int):
     self.tz = None
     super().__init__()
 
+  def _get_as_seconds_unix(self) -> int:
+    """Convert this unix timestamp from any type (seconds, miliseconds, microseconds) to the seconds type by dividing by 1000 each time if it's too large to be the seconds variant."""
+    i = int(self)
+
+    while i > 99_999_999_999: # Convert any milisecond or smaller values to seconds
+      i //= 1000
+
+    return i
+
   def __tcr_fmt__(self, fmt_iterable, **kwargs):
-    fromtimestamp_value = int(self)
+    fromtimestamp_value = self._get_as_seconds_unix()
 
     while fromtimestamp_value > 99_999_999_999: # Convert any milisecond or smaller values to seconds
       fromtimestamp_value //= 1000
@@ -35,3 +44,11 @@ class UnixTimestampInt(int):
     rhs = fmt_iterable([int(self)], **kwargs)
 
     return f'{lhs} {rhs}'
+
+  def to_datetime(self, tz: dt.tzinfo | None = None) -> dt.datetime:
+    """Evaluate this unix timestamp into a datetime.datetime object."""
+    return dt.datetime.fromtimestamp(self._get_as_seconds_unix(), tz=tz)
+
+  def to_int(self):
+    """Forget that this int is a unix timestamp - You may still use this object in place of an int."""
+    return int(self)
