@@ -199,3 +199,11 @@ class CachedInstancesMeta(type):
   def _enforce_max_cache_size(cls):
     while len(cls._cache) > cls._max_instances:
       cls._cache.popitem(last=False)
+
+
+class ErrDenoted:
+  """Defines an is_err() method to tell if an object is a valid result or an error."""
+
+  @classmethod
+  def is_err(cls) -> bool:
+    return Exception in cls.__mro__
