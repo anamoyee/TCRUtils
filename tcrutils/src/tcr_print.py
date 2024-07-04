@@ -127,13 +127,14 @@ if True:  # \/ # fmt & print iterable
     CLASS               = Fore.BLUE + Style.bold
 
   class FMT_LETTERS:
-    b  = f'{FMTC.BYTESTR_B}b'
-    i  = f'{FMTC.ITER_I}i{FMTC._}'
-    F  = f'{FMTC.SPECIAL}F'
-    K  = f'{FMTC.SPECIAL}K'
-    V  = f'{FMTC.SPECIAL}V'
-    I  = f'{FMTC.SPECIAL}I'
-    C  = f'{FMTC.COROUTINE}C'
+    b    = f'{FMTC.BYTESTR_B}b'
+    i    = f'{FMTC.ITER_I}i{FMTC._}'
+    F    = f'{FMTC.SPECIAL}F'
+    K    = f'{FMTC.SPECIAL}K'
+    V    = f'{FMTC.SPECIAL}V'
+    I    = f'{FMTC.SPECIAL}I'
+    C    = f'{FMTC.COROUTINE}C'
+    META = f'{FMTC.COROUTINE}Meta'
 
   # Format Brackets templates.
   # (FMT_BRACKETS[_t][syntax_highlighting: bool] % content) -> attaches brackets to the content with respect to syntax highlighting
@@ -374,10 +375,10 @@ if True:  # \/ # fmt & print iterable
         default=('<???>' if syntax_highlighting else '__unknown_object__'),
       )
 
-      return (FMT_LETTERS.C if syntax_highlighting and kwargs.get('_i_am_class') else '') + (
+      return (
         FMT_CLASS[syntax_highlighting]
         % (
-          queue_name + ('(...)' if not syntax_highlighting and not kwargs.get('_i_am_class') else ''),
+          (queue_name + ('(...)' if not syntax_highlighting and not kwargs.get('_i_am_class') else '') + (FMT_LETTERS.META if syntax_highlighting and kwargs.get('_i_am_class') else '')),
           asterisks + this(it),
         )
       )
