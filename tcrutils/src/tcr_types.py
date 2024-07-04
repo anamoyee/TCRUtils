@@ -1,4 +1,5 @@
 import datetime as dt
+from functools import partial
 
 from . import tcr_print as _m_print
 from .tcr_int import hex
@@ -9,14 +10,22 @@ class QuotelessString(str):
 
 
 class HexInt(int):
+  leading_zeroes: int
+
+  def __new__(cls, value, leading_zeroes=None, **kwargs):
+    return super().__new__(cls, value, **kwargs)
+
+  def __init__(self, value, *, leading_zeroes=6, **_):
+    self.leading_zeroes = leading_zeroes
+    super().__init__()
+
   def __tcr_fmt__(self, fmt_iterable, **kwargs):
-    return fmt_iterable(int(self), **{**kwargs, 'int_formatter': hex})
+    return fmt_iterable(int(self), **{**kwargs, 'int_formatter': partial(hex, leading_zeroes=self.leading_zeroes)})
 
 
 class UnreprableString(QuotelessString):
   def __repr__(self) -> str:
     return self
-
 
 
 class UnixTimestampInt(int):
