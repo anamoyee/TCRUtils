@@ -41,7 +41,7 @@ from .tcr_extract_error import extract_error
 from .tcr_int import hex as tcrhex
 from .tcr_iterable import Or, getattr_queue, limited_iterable
 from .tcr_null import Null, Undefined
-from .tcr_types import QuotelessString
+from .tcr_types import GayString, QuotelessString
 
 
 def print_block(
@@ -187,11 +187,11 @@ if True:  # \/ # fmt & print iterable
       if kwargs.get('syntax_highlighting') and append_syntax_reset:
         s = f'{FMTC._}{func(*args, **kwargs)}{FMTC._}'
 
-        for v in vars(FMTC).values(): # Clear any duplicate, side-by-side color tags.
+        for v in vars(FMTC).values():  # Clear any duplicate, side-by-side color tags.
           if not isinstance(v, str):
             continue
 
-          _2v = 2*v
+          _2v = 2 * v
           while _2v in s:
             s = s.replace(_2v, v)
 
@@ -375,12 +375,9 @@ if True:  # \/ # fmt & print iterable
         default=('<???>' if syntax_highlighting else '__unknown_object__'),
       )
 
-      return (
-        FMT_CLASS[syntax_highlighting]
-        % (
-          (queue_name + ('(...)' if not syntax_highlighting and not kwargs.get('_i_am_class') else '') + (FMT_LETTERS.META if syntax_highlighting and kwargs.get('_i_am_class') else '')),
-          asterisks + this(it),
-        )
+      return FMT_CLASS[syntax_highlighting] % (
+        (queue_name + ('(...)' if not syntax_highlighting and not kwargs.get('_i_am_class') else '') + (FMT_LETTERS.META if syntax_highlighting and kwargs.get('_i_am_class') else '')),
+        asterisks + this(it),
       )
 
     if isinstance(it, _OverflowClass):
@@ -445,6 +442,8 @@ if True:  # \/ # fmt & print iterable
 
     if not syntax_highlighting and isinstance(it, QuotelessString):
       return str(it)
+    if not syntax_highlighting and isinstance(it, GayString):
+      return str(it)
 
     if it is Null:
       return f'{FMTC.NULL}{it}{FMTC._}' if syntax_highlighting else str(it)
@@ -462,6 +461,8 @@ if True:  # \/ # fmt & print iterable
     if _t == QuotelessString:
       reprit = repr(it)
       return f'{FMTC.STRING}{reprit[1:-1]}' if syntax_highlighting else repr(it)
+    if _t == GayString:
+      return gay(it)
 
     if _t == type:
       return f'{FMTC.TYPE}{getattr_queue(it, "__name__", "__class__.__name__", default=it)}{FMTC._}' if syntax_highlighting else str(it)
@@ -648,3 +649,22 @@ def alert(s: str, *, printhook: Callable[[str], None] = print, raw=False) -> Non
     return text
 
   printhook(text)
+
+
+def gay(text: str, offset: int = 0) -> str:
+  """Turn a string gay. Happy pride :3"""  # noqa: D400
+  colors = [Fore.RED, Fore.orange_1, Fore.YELLOW, Fore.GREEN, Fore.MAGENTA, Fore.BLUE, Fore.purple_1b, Fore.purple_4b]
+
+  if text != 'tcrutils':
+    colors.pop()
+
+  colors = colors + colors[1:-1:-1]
+
+  result = ''
+
+  for i, char in enumerate(text):
+    color = colors[(i - offset) % len(colors)]
+    result += color + Style.bold + char
+
+  result += FMTC._
+  return result

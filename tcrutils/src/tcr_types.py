@@ -30,6 +30,7 @@ class UnreprableString(QuotelessString):
 
 class UnixTimestampInt(int):
   """Add timezone by assinging the tz attribute after instantiation."""
+
   def __init__(self, *_, **__) -> None:
     self.tz = None
     super().__init__()
@@ -38,7 +39,7 @@ class UnixTimestampInt(int):
     """Convert this unix timestamp from any type (seconds, miliseconds, microseconds) to the seconds type by dividing by 1000 each time if it's too large to be the seconds variant."""
     i = int(self)
 
-    while i > 99_999_999_999: # Convert any milisecond or smaller values to seconds
+    while i > 99_999_999_999:  # Convert any milisecond or smaller values to seconds
       i //= 1000
 
     return i
@@ -46,7 +47,7 @@ class UnixTimestampInt(int):
   def __tcr_fmt__(self, fmt_iterable, **kwargs):
     fromtimestamp_value = self._get_as_seconds_unix()
 
-    while fromtimestamp_value > 99_999_999_999: # Convert any milisecond or smaller values to seconds
+    while fromtimestamp_value > 99_999_999_999:  # Convert any milisecond or smaller values to seconds
       fromtimestamp_value //= 1000
 
     lhs = fmt_iterable(dt.datetime.fromtimestamp(fromtimestamp_value, tz=self.tz), **kwargs)
@@ -61,3 +62,7 @@ class UnixTimestampInt(int):
   def to_int(self):
     """Forget that this int is a unix timestamp - You may still use this object in place of an int."""
     return int(self)
+
+
+class GayString(str):
+  """Used in tcr.fmt_iterable() in order to format it as gay str. Happy pride :3"""  # noqa: D400

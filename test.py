@@ -389,6 +389,11 @@ if True:  # \/ # Tests
     print_iterable(tcr.types.HexInt(4, leading_zeroes=4), **kwargs)
     print_iterable(tcr.types.HexInt(5, leading_zeroes=5), **kwargs)
     print_iterable(tcr.types.HexInt(6), **kwargs)
+    print()
+    print_iterable(tcr, **kwargs)
+    print_iterable([tcr], **kwargs)
+    print_iterable((tcr,), **kwargs)
+    print()
 
   def test_markdown():
     from tcrutils import codeblock, uncodeblock
