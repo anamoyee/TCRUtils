@@ -44,6 +44,18 @@ from .tcr_null import Null, Undefined
 from .tcr_types import GayString, QuotelessString
 
 
+def double_quoted_repr(s: str, *, quote_char: str = '"'):
+  """Return a string that is the same as `s` but always uses `quote_char` instead of single or double quotes on string boundaries. Make sure to correctly escape every character if needed so there are no edge cases that might break the result."""
+  assert quote_char in ('"', "'")
+  result = quote_char
+  for char in s:
+    if char in '\\' + quote_char:
+      result += '\\' + char
+    else:
+      result += char
+  return result + quote_char
+
+
 def print_block(
   text: str,
   border_char: str = '#',
@@ -242,6 +254,7 @@ if True:  # \/ # fmt & print iterable
     force_complex_parenthesis: bool = False,
     force_union_parenthesis: bool = True,
     prefer_full_names: bool = False,
+    str_repr: Callable[[str], str] = double_quoted_repr,
     **kwargs,
   ) -> str:
     """### Return iterable as formatted string with optional syntax highlighting.
@@ -357,6 +370,7 @@ if True:  # \/ # fmt & print iterable
       'force_union_parenthesis': force_union_parenthesis,
       'prefer_full_names': prefer_full_names,
       'depth_limit': depth_limit,
+      'str_repr': str_repr,
       '__depth': kwargs.get('__depth', 2) + 1,
     }
     if a := kwargs.get('let_no_inder_max_iterables'):
@@ -459,8 +473,8 @@ if True:  # \/ # fmt & print iterable
     _t = kwargs.get('_force_next_type') or type(it)
 
     if _t == QuotelessString:
-      reprit = repr(it)
-      return f'{FMTC.STRING}{reprit[1:-1]}' if syntax_highlighting else repr(it)
+      reprit = str_repr(it)
+      return f'{FMTC.STRING}{reprit[1:-1]}' if syntax_highlighting else (str_repr(it)[1:-1])
     if _t == GayString:
       return gay(it)
 
@@ -487,8 +501,8 @@ if True:  # \/ # fmt & print iterable
     if _t == float:
       return f'{FMTC.NUMBER}{str(it).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC._}' if syntax_highlighting else str(it)
     if _t == str:
-      reprit = repr(it)
-      return f'{FMTC.QUOTES}{reprit[0]}{FMTC.STRING}{reprit[1:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}' if syntax_highlighting else repr(it)
+      reprit = str_repr(it)
+      return f'{FMTC.QUOTES}{reprit[0]}{FMTC.STRING}{reprit[1:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}' if syntax_highlighting else str_repr(it)
     if _t == bytes:
       reprit = repr(it)
       return f'{FMTC.BYTESTR_B}{reprit[0]}{FMTC.QUOTES}{reprit[1]}{FMTC.STRING}{reprit[2:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}' if syntax_highlighting else repr(it)

@@ -394,6 +394,9 @@ if True:  # \/ # Tests
     print_iterable([tcr], **kwargs)
     print_iterable((tcr,), **kwargs)
     print()
+    print_iterable('nya', **kwargs)
+    print_iterable('n"ya', **kwargs)
+    print_iterable('n\'ya', **kwargs)
 
   def test_markdown():
     from tcrutils import codeblock, uncodeblock
@@ -1516,6 +1519,7 @@ if __name__ == '__main__':
     # prefer_full_names=1,
     # force_union_parenthesis=1,
     # depth_limit=3,
+    # str_repr=repr,
   )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)

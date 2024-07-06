@@ -206,4 +206,11 @@ class ErrDenoted:
 
   @classmethod
   def is_err(cls) -> bool:
-    return Exception in cls.__mro__
+    """Return True if this object inherits from Exception, else return False."""
+    return BaseException in cls.__mro__
+
+  def unwrap(self) -> Self:
+    """If this object is_err, raise self, else return self."""
+    if self.is_err():
+      raise self
+    return self
