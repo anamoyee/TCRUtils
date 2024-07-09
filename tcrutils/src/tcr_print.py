@@ -1,5 +1,6 @@
 import datetime as dt
 import typing
+from enum import Enum
 from functools import partial, wraps
 from types import GeneratorType, UnionType
 from typing import Any
@@ -117,7 +118,7 @@ if True:  # \/ # fmt & print iterable
     DECIMAL             = Fore.WHITE + Style.bold
     BRACKET             = Fore.CYAN + Style.bold
     STRING              = Style.reset + Fore.YELLOW
-    QUOTES              = Fore.WHITE + Style.bold
+    QUOTES              = Fore.WHITE #+ Style.bold
     COLON               = Fore.orange_1 + Style.bold
     ASTERISK            = Fore.orange_1 + Style.bold
     COROUTINE           = Fore.orange_1 + Style.bold
@@ -167,20 +168,32 @@ if True:  # \/ # fmt & print iterable
     coroutine:     ('coroutine_%s',    f'{FMT_LETTERS.C}{FMTC.DECIMAL}\'{FMTC.FUNCTION}%s')
   }
 
-  # FMT_TOO_DEEP[syntax_highlighting: bool] -> attaches '[ ... ]' to the content with respect to syntax highlighting
   FMT_TOO_DEEP = ('[ ... ]', f'{FMTC.BRACKET}[ {FMTC.DECIMAL}... {FMTC.BRACKET}]{FMTC._}')
-  # FMT_UNION_SEPARATOR[syntax_highlighting: bool] -> attaches ' | ' to the content with respect to syntax highlighting
+  """FMT_TOO_DEEP[syntax_highlighting: bool] -> attaches '[ ... ]' to the content with respect to syntax highlighting"""
+
   FMT_UNION_SEPARATOR = ('|', f'{FMTC.PIPE} | {FMTC._}')
-  # (FMT_ITER[syntax_highlighting: bool] % content) -> attaches 'i' or 'iter()' to the content with respect to syntax highlighting
+  """FMT_UNION_SEPARATOR[syntax_highlighting: bool] -> attaches ' | ' to the content with respect to syntax highlighting"""
+
   FMT_ITER = ('iter(%s)', f'{FMT_LETTERS.i}%s')
-  # (FMT_UNKNOWN[syntax_highlighting: bool] % (name, content)) -> attaches name and content to an unknown object
+  """(FMT_ITER[syntax_highlighting: bool] % content) -> attaches 'i' or 'iter()' to the content with respect to syntax highlighting"""
+
   FMT_UNKNOWN = ('%s(%s)', f'{FMTC.UNKNOWN}%s({FMTC._}%s{FMTC.UNKNOWN}){FMTC._}')
-  # (FMT_EXCEPTION[syntax_highlighting: bool] % getattr_queue(obj, '__name__', '__class__.__name__') -> Self explainatory
+  """(FMT_UNKNOWN[syntax_highlighting: bool] % (name, content)) -> attaches name and content to an unknown object"""
+
   FMT_INTERNAL_EXCEPTION = ("An exception occured while trying to display this item (%s).", f"{FMTC.INTERNAL_EXCEPTION}An exception occured while trying to display this item ({FMTC.UNKNOWN}%s{FMTC.INTERNAL_EXCEPTION}).{FMTC._}")
-  # (FMT_CLASS[syntax_highlighting: bool]) % (getattr_queue(obj, '__name__', '__class__.__name__'), this(it))
+  """(FMT_EXCEPTION[syntax_highlighting: bool] % getattr_queue(obj, '__name__', '__class__.__name__') -> Self explainatory"""
+
   FMT_CLASS = ("%s(%s)", f"{FMTC.CLASS}%s{FMTC.BRACKET}({FMTC._}%s{FMTC.BRACKET}){FMTC._}")
+  """(FMT_CLASS[syntax_highlighting: bool]) % (getattr_queue(obj, '__name__', '__class__.__name__'), this(it))"""
+
+  FMT_ENUM = ('%s.%s=%s', f'{FMTC.CLASS}%s{FMTC.COMMA}.{FMTC._}{Fore.WHITE}%s{FMTC.COMMA}: {FMTC._}%s')
+  """(FMT_CLASS[syntax_highlighting: bool]) % (classname, valuename, this(value))"""
+
+  FMT_ENUM_NO_CLASS = ('%s=%s', f'{FMTC._}{Fore.WHITE}%s{FMTC.COMMA}: {FMTC._}%s')
+  """(FMT_CLASS[syntax_highlighting: bool]) % (valuename, this(value))"""
 
   FMT_ASTERISK = ('*', f'{FMTC.ASTERISK}*')
+  """FMT_ASTERISK[syntax_highlighting: bool]"""
 
   # fmt: on
 
@@ -287,6 +300,7 @@ if True:  # \/ # fmt & print iterable
         prefer_full_names: bool, whether or not to use the full names of objects if possible.
         let_no_inder_max_iterables: int = 1, (advanced) override the limit for iterables for the let_no_indent feature
         let_no_inder_max_non_iterables: int = 4, (advanced) override the limit for non-iterables for the let_no_indent feature
+        str_repr: Callable[[str], str] = double_quoted_repr, (advanced) override the default string repr callable
 
     If no formatting is set for an object, it can be defined using the __tcr_display__ method.
 
@@ -396,6 +410,13 @@ if True:  # \/ # fmt & print iterable
 
     if isinstance(it, _OverflowClass):
       return f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}' if syntax_highlighting else f'({it} more items...)'
+    if (_result := able(issubclass, it, Enum)) and (_result.result):
+      return FMT_CLASS[syntax_highlighting] % (it.__name__, (2*FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True))
+    if isinstance(it, Enum):
+      if kwargs.get('_enums_next_hide_class'):
+        return FMT_ENUM_NO_CLASS[syntax_highlighting] % (it.name, this(it.value, force_no_indent=True, force_complex_parenthesis=True))
+      else:
+        return FMT_ENUM[syntax_highlighting] % (it.__class__.__name__, it.name, this(it.value, force_no_indent=True, force_complex_parenthesis=True))
     if PydanticBM is not None and isinstance(it, PydanticBM):
       return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, asterisks + this(it.model_dump()))
     if isinstance(it, dt.datetime | dt.date | dt.time):
@@ -555,6 +576,10 @@ if True:  # \/ # fmt & print iterable
     # took me half an hour of debugging to discover that typing._GenericAlias contains an infinite amount of nested copies of typing._UnpackGenericAlias but only if you first iter then index not if you just index and it's a mess.
 
     if not is_of_prohibited_type and isinstance(it, Iterable):
+      if kwargs.get('_enums_next_hide_class'):
+        thisdict['_enums_next_hide_class'] = True
+        this = partial(this, _enums_next_hide_class=True)
+
       itl, overflow = limited_iterable(it, item_limit)
       if not able(len, it) or len(it) > 0:
         if isinstance(it, Mapping):
@@ -637,6 +662,7 @@ if True:  # \/ # fmt & print iterable
         force_no_spaces: bool, Force remove any extra spaces (not including the objects' values for example strings will still be displayed with spaces). It removes spaces for example after commas, colons, etc. This effectively enables `force_no_indent` thus making `indent` or `let_no_indent` irrelevant.
         force_complex_parenthesis: bool, Force parenthesis when displaying `complex` type for example `(3 + 1j)` instead of `3+1j`. This has no effect when syntax highlighting is turned off.
         prefer_full_names: bool, whether or not to use the full names of objects if possible.
+        str_repr: Callable[[str], str] = double_quoted_repr, (advanced) override the default string repr callable
         **kwargs: Anything from there is passed in into the fmt_iterable call
     """
     result = fmt_iterable(it, *its, **kwargs)
