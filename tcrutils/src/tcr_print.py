@@ -394,15 +394,38 @@ if True:  # \/ # fmt & print iterable
 
     this = partial(fmt_iterable, **thisdict)
 
-    if '_force_next_type' in kwargs and kwargs.get('_ran_from_tcr_display'):
-      queue_name = getattr_queue(
-        kwargs['_force_next_type'],
-        name,
-        '__name__',
-        '__class__.__name__',
-        default=('<???>' if syntax_highlighting else '__unknown_object__'),
-      )
+    queue_name = getattr_queue(
+      type(it),
+      name,
+      '__name__',
+      '__class__.__name__',
+      default=('<???>' if syntax_highlighting else '__unknown_object__'),
+    )
 
+    if hasattr(it, '__tcr_display__'):
+      try:
+        return it.__tcr_display__(**thisdict, _ran_from_tcr_display=True)
+      except NotImplementedError:
+        pass
+      except Exception as e:
+        if kwargs.get('_raise_errors'):
+          raise
+        return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
+
+    if hasattr(it, '__tcr_fmt__'):
+      try:
+        tcr_formatted = it.__tcr_fmt__(**thisdict, fmt_iterable=fmt_iterable, _ran_from_tcr_display=True)
+
+        if tcr_formatted is not None:
+          return tcr_formatted
+      except NotImplementedError:
+        pass
+      except Exception as e:
+        if kwargs.get('_raise_errors'):
+          raise
+        return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
+
+    if '_force_next_type' in kwargs and kwargs.get('_ran_from_tcr_display'):
       return FMT_CLASS[syntax_highlighting] % (
         (queue_name + ('(...)' if not syntax_highlighting and not kwargs.get('_i_am_class') else '') + (FMT_LETTERS.META if syntax_highlighting and kwargs.get('_i_am_class') else '')),
         asterisks + this(it),
@@ -446,34 +469,6 @@ if True:  # \/ # fmt & print iterable
         return exc_name
 
       return f'{FMTC.BUILT_IN_EXCEPTION}{exc_name}'
-
-    queue_name = getattr_queue(
-      type(it),
-      name,
-      '__name__',
-      '__class__.__name__',
-      default=('<???>' if syntax_highlighting else '__unknown_object__'),
-    )
-
-    if hasattr(it, '__tcr_display__'):
-      try:
-        return it.__tcr_display__(**thisdict, _ran_from_tcr_display=True)
-      except NotImplementedError:
-        pass
-      except Exception as e:
-        if kwargs.get('_raise_errors'):
-          raise
-        return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
-
-    if hasattr(it, '__tcr_fmt__'):
-      try:
-        return it.__tcr_fmt__(**thisdict, fmt_iterable=fmt_iterable, _ran_from_tcr_display=True)
-      except NotImplementedError:
-        pass
-      except Exception as e:
-        if kwargs.get('_raise_errors'):
-          raise
-        return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f'{queue_name}, {extract_error(e, raw=True)[0]}'
 
     if not syntax_highlighting and isinstance(it, QuotelessString):
       return str(it)

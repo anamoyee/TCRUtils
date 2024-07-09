@@ -202,7 +202,7 @@ if True:  # \/ # Tests
   #@tcr.timeit
   def test_print_iterable(print_iterable=tcr.print_iterable, **kwargs):
     import datetime as dt
-    from enum import Enum, IntEnum, ReprEnum, StrEnum
+    from enum import Enum, Flag, IntEnum, IntFlag, ReprEnum, StrEnum, auto
 
     from tcrutils import Null
     mappingproxy = (type.__dict__)
@@ -428,7 +428,61 @@ if True:  # \/ # Tests
     print_iterable(EAnimalInt.FOX, **kwargs)
     print_iterable(EAnimalComplex.FOX, **kwargs)
     print_iterable(EAnimalStr.FOX, **kwargs)
+    print()
+    class IntCTF(IntFlag):
+      A = 1 << 0
+      B = 1 << 1
+      C = 1 << 2
+      D = 1 << 2
 
+    class CTF(Flag):
+      CA = 1 << 0
+      CB = 1 << 1
+      CC = 1 << 2
+      CD = 1 << 3
+
+
+    print_iterable(IntCTF, **kwargs)
+    print_iterable(CTF, **kwargs)
+    print()
+    print_iterable(IntCTF.A, **kwargs)
+    print_iterable(CTF.CA, **kwargs)
+    print_iterable(CTF.CA | CTF.CB, **kwargs)
+    ab = IntCTF.A | IntCTF.B
+    print_iterable(ab, **kwargs)
+    print_iterable(ab | IntCTF.C, **kwargs)
+    print()
+
+    class AutoEnum(Enum):
+      A = auto()
+      B = auto()
+      C = auto()
+      D = auto()
+
+    print_iterable(AutoEnum, **kwargs)
+    print()
+    print_iterable(AutoEnum.A, **kwargs)
+
+    class TestTCRFmt:
+      value: str
+
+      def __init__(self, value: str = 'uwu') -> None:
+        self.value = value
+
+      def __tcr_fmt__(self=None, *, fmt_iterable, **kwargs) -> str | None:
+        if self is None:
+          return None
+
+        return fmt_iterable(self.value, **kwargs)
+
+    print()
+
+    instance1 = TestTCRFmt(value='nya')
+    instance2 = TestTCRFmt()
+
+    print_iterable(instance1, **kwargs)
+    print_iterable(instance2, **kwargs)
+    print_iterable(TestTCRFmt, **kwargs, _raise_errors=True)
 
   def test_markdown():
     from tcrutils import codeblock, uncodeblock
