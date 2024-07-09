@@ -1,6 +1,6 @@
 import datetime as dt
 import typing
-from enum import Enum
+from enum import Enum, EnumMeta
 from functools import partial, wraps
 from types import GeneratorType, UnionType
 from typing import Any
@@ -187,10 +187,16 @@ if True:  # \/ # fmt & print iterable
   """(FMT_CLASS[syntax_highlighting: bool]) % (getattr_queue(obj, '__name__', '__class__.__name__'), this(it))"""
 
   FMT_ENUM = ('%s.%s=%s', f'{FMTC.CLASS}%s{FMTC.COMMA}.{FMTC._}{Fore.WHITE}%s{FMTC.COMMA}: {FMTC._}%s')
-  """(FMT_CLASS[syntax_highlighting: bool]) % (classname, valuename, this(value))"""
+  """(FMT_ENUM[syntax_highlighting: bool]) % (classname, valuename, this(value))"""
 
   FMT_ENUM_NO_CLASS = ('%s=%s', f'{FMTC._}{Fore.WHITE}%s{FMTC.COMMA}: {FMTC._}%s')
-  """(FMT_CLASS[syntax_highlighting: bool]) % (valuename, this(value))"""
+  """(FMT_ENUM_NO_CLASS[syntax_highlighting: bool]) % (valuename, this(value))"""
+
+  FMT_ENUM_AUTO = ('%s.%s', f'{FMTC.CLASS}%s{FMTC.COMMA}.{FMTC._}{Fore.WHITE}%s')
+  """(FMT_ENUM_AUTO[syntax_highlighting: bool]) % (classname, valuename)"""
+
+  FMT_ENUM_AUTO_NO_CLASS = ('%s', f'{FMTC._}{Fore.WHITE}%s')
+  """(FMT_ENUM_AUTO_NO_CLASS[syntax_highlighting: bool]) % valuename"""
 
   FMT_ASTERISK = ('*', f'{FMTC.ASTERISK}*')
   """FMT_ASTERISK[syntax_highlighting: bool]"""
@@ -250,6 +256,28 @@ if True:  # \/ # fmt & print iterable
       return rep
 
     return rep[(len(obj.__class__.__name__) + 1) : -1]
+
+  def _is_enum_auto(enum_class: EnumMeta) -> bool:
+    """Whether enum seems to be made with all variants `= auto()`.
+
+    If the values are all ints and they are in either of the patterns:
+    - [1, 2, 3, ...] (each number is 1 more than the previous, starting at 1)
+    - [1, 2, 4, 8, 16, ...] (each number is a consecutive power of 2 (for example the idx=0 element must be 2**0 and idx=1 must be 2**1, etc.), starting at 1)
+
+    ...If any of those patterns match, the enum is considered being made with `auto()`
+    """
+
+    variants = list(enum_class)
+
+    values = [x.value for x in variants]
+
+    if all(x == (i+1) for i, x in enumerate(values)):
+      return True
+
+    if all(x == 2**i for i, x in enumerate(values)):
+      return True
+
+    return False
 
   def fmt_iterable(
     it: Iterable | Any,
@@ -434,11 +462,16 @@ if True:  # \/ # fmt & print iterable
     if isinstance(it, _OverflowClass):
       return f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}' if syntax_highlighting else f'({it} more items...)'
     if (_result := able(issubclass, it, Enum)) and (_result.result):
-      return FMT_CLASS[syntax_highlighting] % (it.__name__, (2*FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True))
+      return FMT_CLASS[syntax_highlighting] % (it.__name__ + FMT_LETTERS.META, ((1 if _is_enum_auto(it) else 2)*FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True))
     if isinstance(it, Enum):
       if kwargs.get('_enums_next_hide_class'):
-        return FMT_ENUM_NO_CLASS[syntax_highlighting] % (it.name, this(it.value, force_no_indent=True, force_complex_parenthesis=True))
+        if _is_enum_auto(it.__class__):
+          return FMT_ENUM_AUTO_NO_CLASS[syntax_highlighting] % it.name
+        else:
+          return FMT_ENUM_NO_CLASS[syntax_highlighting] % (it.name, this(it.value, force_no_indent=True, force_complex_parenthesis=True))
       else:
+        if _is_enum_auto(it.__class__):
+          return FMT_ENUM_AUTO[syntax_highlighting] % (it.__class__.__name__, it.name)
         return FMT_ENUM[syntax_highlighting] % (it.__class__.__name__, it.name, this(it.value, force_no_indent=True, force_complex_parenthesis=True))
     if PydanticBM is not None and isinstance(it, PydanticBM):
       return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, asterisks + this(it.model_dump()))
