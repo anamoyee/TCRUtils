@@ -66,3 +66,10 @@ class UnixTimestampInt(int):
 
 class GayString(str):
   """Used in tcr.fmt_iterable() in order to format it as gay str. Happy pride :3"""  # noqa: D400
+
+
+class AlwaysTruthyStr(str):
+  """A string that always passes an if check no matter the contents."""
+
+  def __bool__(self):
+    return True
