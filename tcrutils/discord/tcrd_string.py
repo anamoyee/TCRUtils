@@ -184,7 +184,7 @@ class IFYs:
     return f'<id:{option}>'
 
   @staticmethod
-  def slash_command_make_mention(ctx: arc.Context) -> str:
+  def ctx_commandify(ctx: arc.Context) -> str:
     _ify_snowflake_errorer(ctx.interaction.command_id)
 
     return f'<{ctx.command.display_name}:{ctx.interaction.command_id}>'
