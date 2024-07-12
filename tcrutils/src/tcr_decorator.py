@@ -234,6 +234,24 @@ if True:  # \/ # @copy_kwargs
 
     return wrapper
 
+  def copy_kwargs_sunder(func):
+    """Pack all of that func's kwargs into __kwargs and pass the kwarguments normally along with _kwargs kwarg which contains all the kwargs in a dict.
+
+    This will error if func receives a literal "__kwargs" kwarg.
+    ```py
+    >>> a(_kwargs=kwargs, **{"_kwargs": "some_value"})
+    ```
+    ```txt
+    TypeError: __main__.a() got multiple values for keyword argument '_kwargs'
+    ```
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+      return func(*args, _kwargs=kwargs, **kwargs)
+
+    return wrapper
+
 
 if True:  # \/ # @skip_first_call
 

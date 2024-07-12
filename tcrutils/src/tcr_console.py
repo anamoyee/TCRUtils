@@ -1,11 +1,12 @@
 import datetime
 import inspect
 from collections.abc import Callable
-from functools import reduce
+from functools import partial, reduce
 from sys import exit
 
 from colored import Back, Fore, Style
 
+from .tcr_decorator import copy_kwargs_sunder
 from .tcr_dict import clean_dunder_dict
 from .tcr_extract_error import extract_error, extract_traceback
 from .tcr_getch import getch
@@ -37,42 +38,51 @@ class Console:
   def _get_timestamp():
     return str(datetime.datetime.now())[:-3].replace('.', ',')
 
-  def log(self, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
+  @copy_kwargs_sunder
+  def _generate_out_and_print(self, *values, sep='\n', end='', withprefix=True, syntax_highlighting: bool = True, color: str, letter: str, _kwargs: dict, **kwargs) -> None:
     if not values:
-      values = ['']
-    out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
-    if withprefix:
-      out = (f'I {self._get_timestamp()} ') + out
-    out = f'{CC.LOG}{out}{CC._}'
-    if returnonly:
-      return out
-    print(out)
-    return None
+      values = ('',)
 
-  def warn(self, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
-    if not values:
-      values = ['']
-    out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
-    if withprefix:
-      out = (f'W {self._get_timestamp()} ') + out
-    out = f'{CC.WARN}{out}{CC._}'
-    if returnonly:
-      return out
-    print(out)
-    return None
+    if len(values) > 1:
+      for i, v in enumerate(values):
+        if i == 0:
+          char = 'V'
+        elif i == len(values) - 1:
+          char = 'Λ'
+        else:
+          char = '│'
 
-  def error(self, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
-    if not values:
-      values = ['']
-    values = [(extract_error(x) if isinstance(x, Exception) else x) for x in values]
+        print(char, end=' ')
+
+        self._generate_out_and_print(v, **_kwargs)
+      return
+
+    values = [
+      (x if isinstance(x, str) else fmt_iterable(x, syntax_highlighting=syntax_highlighting, **kwargs))
+      for x in values
+    ]
+
+    out = sep.join(values)
     out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
+
     if withprefix:
-      out = (f'E {self._get_timestamp()} ') + out
-    out = f'{CC.ERROR}{out}{CC._}'
-    if returnonly:
-      return out
+      out = f'{letter} {self._get_timestamp()} ' + out
+
+    out = f'{color if syntax_highlighting else ""}{out}{CC._ if syntax_highlighting else ""}'
+
     print(out)
-    return None
+
+  def log(self, *values, sep=' ', end='', withprefix=True) -> None | str:
+    self._generate_out_and_print(*values, sep=sep, end=end, withprefix=withprefix, color=CC.LOG, letter='I')
+
+  def warn(self, *values, sep=' ', end='', withprefix=True) -> None | str:
+    self._generate_out_and_print(*values, sep=sep, end=end, withprefix=withprefix, color=CC.WARN, letter='W')
+
+  def error(self, *values, sep=' ', end='', withprefix=True) -> None | str:
+    self._generate_out_and_print(*values, sep=sep, end=end, withprefix=withprefix, color=CC.ERROR, letter='E')
+
+  def critical(self, *values, sep=' ', end='', withprefix=True) -> None | str:
+    self._generate_out_and_print(*values, sep=sep, end=end, withprefix=withprefix, color=CC.CRITICAL, letter='C')
 
   def debug(
     self,
@@ -132,20 +142,9 @@ class Console:
     self._last_diff = out
     return None if not passthrough else value
 
-  def critical(self, *values, sep=' ', end='', returnonly=False, withprefix=True) -> None | str:
-    if not values:
-      values = ['']
-    out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
-    if withprefix:
-      out = (f'C {self._get_timestamp()} ') + out
-    out = f'{CC.CRITICAL}{out}{CC._}'
-    if returnonly:
-      return out
-    print(out)
-    return None
-
-  def hr(self, **kwargs):
-    self.debug(QuotelessString('=' * (terminal.width)), margin='\n', withprefix=False, **kwargs)
+  def hr(self, newlines_on_both_sides: bool = True, **kwargs):
+    newline = '\n' if newlines_on_both_sides else ''
+    self.debug(QuotelessString(newline + ('=' * terminal.width) + newline), withprefix=False, **kwargs)
 
   def __call__(self, *args, **kwargs) -> None | str:
     return console.debug(*args, **kwargs)
