@@ -4,6 +4,8 @@ import re as regex
 import string
 from typing import Any, Literal, NoReturn
 
+import arc
+
 from ..src.tcr_compare import able
 from ..src.tcr_constants import BACKTICKS
 from ..src.tcr_null import UniqueDefault as RaiseError
@@ -180,3 +182,9 @@ class IFYs:
       raise ValueError(f"Expected option in ('customize', 'browse', 'guide'), got {option} instead.")
 
     return f'<id:{option}>'
+
+  @staticmethod
+  def slash_command_make_mention(ctx: arc.Context) -> str:
+    _ify_snowflake_errorer(ctx.interaction.command_id)
+
+    return f'<{ctx.command.display_name}:{ctx.interaction.command_id}>'

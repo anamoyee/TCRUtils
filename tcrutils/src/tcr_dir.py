@@ -1,8 +1,16 @@
+from builtins import vars as _builtin_vars
 from collections.abc import Callable, Iterable
 from typing import Any
 
 from .tcr_dict import merge_dicts
 
+
+def vars(x: object, /) -> dict[str, Any]:
+  """Just like builtin vars() but also works on slotted instances (without `__dict__`)."""
+  try:
+    return _builtin_vars(x)
+  except TypeError:
+    return {k: getattr(x, k) for k in dir(x)}
 
 def dir2(x: object, /, dir: Callable[[object], Iterable[str]] = dir) -> list[str]:
   """Same as dir, but exclude the entries starting with '__' (double underscore)."""
