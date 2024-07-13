@@ -202,110 +202,115 @@ if True:  # \/ # Tests
   #@tcr.timeit
   def test_print_iterable(print_iterable=tcr.print_iterable, **kwargs):
     import datetime as dt
+    from dataclasses import dataclass, field
     from enum import Enum, Flag, IntEnum, IntFlag, ReprEnum, StrEnum, auto
+    from functools import partial
 
     from tcrutils import Null
+
+    print_iterable = partial(print_iterable, **kwargs)
+
     mappingproxy = (type.__dict__)
-    print_iterable(mappingproxy, **kwargs)
-    print_iterable("aasd", **kwargs)
-    print_iterable({"a": 1, "b": "2"}, **kwargs)
-    print_iterable({"a": range(3)}, **kwargs)
-    print_iterable(range(1 << 1000), **kwargs)
-    print_iterable((), **kwargs)
-    print_iterable([], **kwargs)
-    print_iterable({1, 2}, **kwargs)
-    print_iterable("asdf", **kwargs)
+    print_iterable(mappingproxy)
+    print_iterable("aasd")
+    print_iterable({"a": 1, "b": "2"})
+    print_iterable({"a": range(3)})
+    print_iterable(range(1 << 1000))
+    print_iterable(())
+    print_iterable([])
+    print_iterable({1, 2})
+    print_iterable("asdf")
     print_iterable([3, 4, 5, range(105)], item_limit=5, **{x: y for x, y in kwargs.items() if x != 'item_limit'})
     def a():
       while True:
         yield 1
     print_iterable(a(), item_limit=3, **{x: y for x, y in kwargs.items() if x != 'item_limit'})
-    print_iterable(b'100', **kwargs)
-    print_iterable(bytearray([10, 20, 30]), **kwargs)
-    print_iterable(b'uwu"\'', **kwargs)
-    print_iterable(bytearray([10, 20, 30]), b'abcd', 'abcd', r'\1', **kwargs)
-    print_iterable((Null, None, True, False), **kwargs)
-    print_iterable({Null: Null, None: None, True: True, False: False}, **kwargs)
-    print_iterable(1, **kwargs)
-    print_iterable(1.5, **kwargs)
-    print_iterable(True, **kwargs)
-    print_iterable(False, **kwargs)
-    print_iterable(None, **kwargs)
-    print_iterable(Null, **kwargs)
-    print_iterable(set(), **kwargs)
-    print_iterable({10, 20, 30}, **kwargs)
-    print_iterable(frozenset({"asdf", 1, 3.2j+1}), **kwargs)
-    print_iterable({10: 20, 30: 40}.keys(), **kwargs)
-    print_iterable({10: 20, 30: 40}.values(), **kwargs)
-    print_iterable({10: 20, 30: 40}.items(), **kwargs)
-    print_iterable("s p a c e (not uk)", **kwargs)
-    print_iterable((1,), **kwargs)
-    print_iterable([[[[]]]], **kwargs)
-    print_iterable([[[10, 20, [345234582346748673485678673, 40, "a", ()]]]], **kwargs)
+    print_iterable(b'100')
+    print_iterable(bytearray([10, 20, 30]))
+    print_iterable(b'uwu"\'')
+    print_iterable(bytearray([10, 20, 30]), b'abcd', 'abcd', r'\1')
+    print_iterable((Null, None, True, False))
+    print_iterable({Null: Null, None: None, True: True, False: False})
+    print_iterable(1)
+    print_iterable(1.5)
+    print_iterable(True)
+    print_iterable(False)
+    print_iterable(None)
+    print_iterable(Null)
+    print_iterable(set())
+    print_iterable({10, 20, 30})
+    print_iterable(frozenset({"asdf", 1, 3.2j+1}))
+    print_iterable({10: 20, 30: 40}.keys())
+    print_iterable({10: 20, 30: 40}.values())
+    print_iterable({10: 20, 30: 40}.items())
+    print_iterable("s p a c e (not uk)")
+    print_iterable((1,))
+    print_iterable([[[[]]]])
+    print_iterable([[[10, 20, [345234582346748673485678673, 40, "a", ()]]]])
 
     class UnknownThing:
       ...
 
     unknown_thing = UnknownThing()
-    print_iterable(unknown_thing, **kwargs)
-    print_iterable(UnknownThing, **kwargs)
+    print_iterable(unknown_thing)
+    print_iterable(UnknownThing)
 
     ### Copied from _collections_abc.py ###
     bytes_iterator = (iter(b'asdf'))
-    print_iterable(bytes_iterator, **kwargs)
+    print_iterable(bytes_iterator)
     bytearray_iterator = (iter(bytearray([0xFF, 0x10])))
-    print_iterable(bytearray_iterator, **kwargs)
+    print_iterable(bytearray_iterator)
     #callable_iterator = ???
     dict_keyiterator = (iter({"a": 1, "b": 10, "c": 100}.keys()))
     dict_valueiterator = (iter({"a": 1, "b": 10, "c": 100}.values()))
     dict_itemiterator = (iter({"a": 1, "b": 10, "c": 100}.items()))
-    print_iterable(dict_keyiterator, **kwargs)
-    print_iterable(dict_valueiterator, **kwargs)
-    print_iterable(dict_itemiterator, **kwargs)
+    print_iterable(dict_keyiterator)
+    print_iterable(dict_valueiterator)
+    print_iterable(dict_itemiterator)
     list_iterator = (iter([10, 20, 30]))
-    print_iterable(list_iterator, **kwargs)
+    print_iterable(list_iterator)
     list_reverseiterator = (iter(reversed([1, 2, 3])))
-    print_iterable(list_reverseiterator, **kwargs)
+    print_iterable(list_reverseiterator)
     range_iterator = (iter(range(3)))
     longrange_iterator = (iter(range(1 << 1000)))
-    print_iterable(range_iterator, **kwargs)
-    print_iterable(longrange_iterator, **kwargs)
+    print_iterable(range_iterator)
+    print_iterable(longrange_iterator)
     set_iterator = (iter({15, 25, 35}))
-    print_iterable(set_iterator, **kwargs)
+    print_iterable(set_iterator)
     str_iterator = (iter("str iterator"))
-    print_iterable(str_iterator, **kwargs)
+    print_iterable(str_iterator)
     tuple_iterator = (iter(((30, 40),)))
-    print_iterable(tuple_iterator, **kwargs)
+    print_iterable(tuple_iterator)
     zip_iterator = (iter(zip('abcdefg', range(3), range(4), strict=False)))
-    print_iterable(zip_iterator, **kwargs)
+    print_iterable(zip_iterator)
 
     ## misc ##
     generator = ((lambda: (yield))())
-    print_iterable(generator, **kwargs)
-    print_iterable(range(0), **kwargs)
+    print_iterable(generator)
+    print_iterable(range(0))
 
     ## coroutine ##
     async def _coro(): pass
     _coro = _coro()
     coroutine = (_coro)
-    print_iterable(coroutine, **kwargs)
+    print_iterable(coroutine)
     _coro.close()  # Prevent ResourceWarning
     del _coro
     ## asynchronous generator ##
     async def _ag(): yield
     _ag = _ag()
     async_generator = (_ag)
-    print_iterable(async_generator, **kwargs)
+    print_iterable(async_generator)
     del _ag
-    print_iterable(range(10), **kwargs)
-    print_iterable([['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'h', 'i'], ['j', 'k', 'l']], **kwargs)
+    print_iterable(range(10))
+    print_iterable([['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'h', 'i'], ['j', 'k', 'l']])
 
     class PrintableObj:
       def __tcr_display__(self=None, **_) -> str:
         return 'tcr.fmt-able object' + ('\'s instance' if self is not None else '')
 
-    print_iterable([PrintableObj], **kwargs)
-    print_iterable([PrintableObj()], **kwargs)
+    print_iterable([PrintableObj])
+    print_iterable([PrintableObj()])
 
     import hikari
 
@@ -314,7 +319,7 @@ if True:  # \/ # Tests
       hikari.Status.IDLE,
       hikari.Status.DO_NOT_DISTURB,
       hikari.Status.OFFLINE,
-    ), **kwargs)
+    ))
 
     class PrintableObj2:
       value: int = -1
@@ -330,8 +335,8 @@ if True:  # \/ # Tests
           **kwargs,
         )
 
-    print_iterable(PrintableObj2, **kwargs)
-    print_iterable(PrintableObj2(69), **kwargs)
+    print_iterable(PrintableObj2)
+    print_iterable(PrintableObj2(69))
 
     class Client:
       test: str
@@ -342,13 +347,13 @@ if True:  # \/ # Tests
       def __repr__(self) -> str:
         return f'{self.__class__.__name__}(test={self.test!r})'
 
-    print_iterable(Client('test'), **kwargs)
-    print_iterable(0x7FFFFFFF, **kwargs)
-    print_iterable(tcr.types.HexInt(0x7FFFFFFF), **kwargs)
-    print_iterable(float | int, **kwargs)
-    print_iterable(str, **kwargs)
-    print_iterable([[[[[[[[[[[[]]]]]]]]]]]], **{**kwargs, "let_no_indent": False})
-    print_iterable([tcr.types.QuotelessString("quoteless string")]*3, **kwargs)
+    print_iterable(Client('test'))
+    print_iterable(0x7FFFFFFF)
+    print_iterable(tcr.types.HexInt(0x7FFFFFFF))
+    print_iterable(float | int)
+    print_iterable(str)
+    print_iterable([[[[[[[[[[[[]]]]]]]]]]]], let_no_indent=False)
+    print_iterable([tcr.types.QuotelessString("quoteless string")]*3)
     print_iterable({
       "a": [
         'nya', 'owo', 'uwu', {
@@ -357,47 +362,47 @@ if True:  # \/ # Tests
         },
         [10, 20, 30],
       ]
-    }, **kwargs)
+    })
     print_iterable({
       "b": [],
-    }, **kwargs)
+    })
     print_iterable({
       "b": 2,
-    }, **kwargs)
+    })
     print_iterable({
       "b": 2,
       "d": 4,
-    }, **kwargs)
+    })
     print_iterable({
       "b": None,
-    }, **kwargs)
+    })
     print_iterable({
       "b": Null,
-    }, **kwargs)
+    })
 
     datetime = dt.datetime.now()
-    print_iterable(datetime, **kwargs)
-    print_iterable(datetime.date(), **kwargs)
-    print_iterable(datetime.time(), **kwargs)
+    print_iterable(datetime)
+    print_iterable(datetime.date())
+    print_iterable(datetime.time())
 
 
     ts = tcr.types.UnixTimestampInt(1719949074443)
 
-    print_iterable(ts, **kwargs, _raise_errors=True)
-    print_iterable(ts.to_datetime(), **kwargs, _raise_errors=True)
-    print_iterable(tcr.types.HexInt(2, leading_zeroes=2), **kwargs)
-    print_iterable(tcr.types.HexInt(3, leading_zeroes=3), **kwargs)
-    print_iterable(tcr.types.HexInt(4, leading_zeroes=4), **kwargs)
-    print_iterable(tcr.types.HexInt(5, leading_zeroes=5), **kwargs)
-    print_iterable(tcr.types.HexInt(6), **kwargs)
+    print_iterable(ts, _raise_errors=True)
+    print_iterable(ts.to_datetime(), _raise_errors=True)
+    print_iterable(tcr.types.HexInt(2, leading_zeroes=2))
+    print_iterable(tcr.types.HexInt(3, leading_zeroes=3))
+    print_iterable(tcr.types.HexInt(4, leading_zeroes=4))
+    print_iterable(tcr.types.HexInt(5, leading_zeroes=5))
+    print_iterable(tcr.types.HexInt(6))
     print()
-    print_iterable(tcr, **kwargs)
-    print_iterable([tcr], **kwargs)
-    print_iterable((tcr,), **kwargs)
+    print_iterable(tcr)
+    print_iterable([tcr])
+    print_iterable((tcr,))
     print()
-    print_iterable('nya', **kwargs)
-    print_iterable('n"ya', **kwargs)
-    print_iterable('n\'ya', **kwargs)
+    print_iterable('nya')
+    print_iterable('n"ya')
+    print_iterable('n\'ya')
     print()
 
     class EAnimal(Enum):
@@ -419,15 +424,15 @@ if True:  # \/ # Tests
       B = 'B'
       C = 'C'
 
-    print_iterable(EAnimal, **kwargs)
-    print_iterable(EAnimalInt, **kwargs)
-    print_iterable(EAnimalComplex, **kwargs)
-    print_iterable(EAnimalStr, **kwargs)
+    print_iterable(EAnimal)
+    print_iterable(EAnimalInt)
+    print_iterable(EAnimalComplex)
+    print_iterable(EAnimalStr)
     print()
-    print_iterable(EAnimal.FOX, **kwargs)
-    print_iterable(EAnimalInt.FOX, **kwargs)
-    print_iterable(EAnimalComplex.FOX, **kwargs)
-    print_iterable(EAnimalStr.FOX, **kwargs)
+    print_iterable(EAnimal.FOX)
+    print_iterable(EAnimalInt.FOX)
+    print_iterable(EAnimalComplex.FOX)
+    print_iterable(EAnimalStr.FOX)
     print()
     class IntCTF(IntFlag):
       A = 1 << 0
@@ -442,15 +447,15 @@ if True:  # \/ # Tests
       CD = 1 << 3
 
 
-    print_iterable(IntCTF, **kwargs)
-    print_iterable(CTF, **kwargs)
+    print_iterable(IntCTF)
+    print_iterable(CTF)
     print()
-    print_iterable(IntCTF.A, **kwargs)
-    print_iterable(CTF.CA, **kwargs)
-    print_iterable(CTF.CA | CTF.CB, **kwargs)
+    print_iterable(IntCTF.A)
+    print_iterable(CTF.CA)
+    print_iterable(CTF.CA | CTF.CB)
     ab = IntCTF.A | IntCTF.B
-    print_iterable(ab, **kwargs)
-    print_iterable(ab | IntCTF.C, **kwargs)
+    print_iterable(ab)
+    print_iterable(ab | IntCTF.C)
     print()
 
     class AutoEnum(Enum):
@@ -459,9 +464,9 @@ if True:  # \/ # Tests
       C = auto()
       D = auto()
 
-    print_iterable(AutoEnum, **kwargs)
+    print_iterable(AutoEnum)
     print()
-    print_iterable(AutoEnum.A, **kwargs)
+    print_iterable(AutoEnum.A)
 
     class TestTCRFmt:
       value: str
@@ -480,9 +485,27 @@ if True:  # \/ # Tests
     instance1 = TestTCRFmt(value='nya')
     instance2 = TestTCRFmt()
 
-    print_iterable(instance1, **kwargs)
-    print_iterable(instance2, **kwargs)
-    print_iterable(TestTCRFmt, **kwargs, _raise_errors=True)
+    print_iterable(instance1)
+    print_iterable(instance2)
+    print_iterable(TestTCRFmt)
+    print()
+
+
+    @dataclass
+    class TestDataclass:
+      value: str
+      value2: str = field(default='uwu')
+
+    print_iterable(hikari)
+    print_iterable(sys)
+    print_iterable(tcr)
+    print_iterable(TestDataclass)
+    print_iterable(TestDataclass(value='nya'))
+    print()
+    print_iterable(p.Path().absolute())
+    print_iterable(p.Path('uwu'))
+    print_iterable(p.PurePath('uwu'))
+    print_iterable(p.PurePath('/uwu'))
 
   def test_markdown():
     from tcrutils import codeblock, uncodeblock
@@ -1631,21 +1654,21 @@ if __name__ == '__main__':
   # test_iterable(batched_=True, cut_at_=False)
   # test_path()
   # test_ifys()
-  # test_print_iterable(
-  #   print_iterable=tcr.print_iterable,
-  #   syntax_highlighting=1,
-  #   # let_no_indent=0,
-  #   # force_no_indent=1,
-  #   # force_no_spaces=0,
-  #   # force_complex_parenthesis=1,
-  #   # item_limit=10,
-  #   # # let_no_inder_max_non_iterables=10,
-  #   # # let_no_inder_max_iterables=10,
-  #   # prefer_full_names=1,
-  #   # force_union_parenthesis=1,
-  #   # depth_limit=3,
-  #   # str_repr=repr,
-  # )
+  test_print_iterable(
+    print_iterable=tcr.print_iterable,
+    syntax_highlighting=1,
+    # let_no_indent=0,
+    # force_no_indent=1,
+    # force_no_spaces=0,
+    # force_complex_parenthesis=1,
+    # item_limit=10,
+    # # let_no_inder_max_non_iterables=10,
+    # # let_no_inder_max_iterables=10,
+    # prefer_full_names=1,
+    # force_union_parenthesis=1,
+    # depth_limit=3,
+    # str_repr=repr,
+  )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=False)

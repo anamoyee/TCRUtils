@@ -1,4 +1,6 @@
 import datetime as dt
+import pathlib
+import re as regex
 import typing
 from enum import Enum, EnumMeta
 from functools import partial, wraps
@@ -126,6 +128,7 @@ if True:  # \/ # fmt & print iterable
     COMPLEX             = Fore.orange_1 + Style.bold
     COMMA               = Fore.dark_gray + Style.bold
     PIPE                = Fore.dark_gray + Style.bold
+    SLASH               = Fore.dark_gray + Style.bold
     UNKNOWN             = Fore.dark_gray + Style.bold
     TRUE                = Fore.GREEN + Style.bold
     FALSE               = Fore.RED + Style.bold
@@ -137,7 +140,7 @@ if True:  # \/ # fmt & print iterable
     SPECIAL             = Fore.purple_1b + Style.bold
     INTERNAL_EXCEPTION  = Fore.red_3b + Style.bold
     BUILT_IN_EXCEPTION  = Fore.BLUE + Style.bold
-    CLASS               = Fore.BLUE + Style.bold
+    MODULE              = Fore.orange_1 + Style.bold
 
   class FMT_LETTERS:
     b    = f'{FMTC.BYTESTR_B}b'
@@ -147,7 +150,7 @@ if True:  # \/ # fmt & print iterable
     V    = f'{FMTC.SPECIAL}V'
     I    = f'{FMTC.SPECIAL}I'
     C    = f'{FMTC.COROUTINE}C'
-    META = f'{FMTC.COROUTINE}Meta'
+    META = f'{FMTC.SPECIAL}Meta'
 
   # Format Brackets templates.
   # (FMT_BRACKETS[_t][syntax_highlighting: bool] % content) -> attaches brackets to the content with respect to syntax highlighting
@@ -183,16 +186,16 @@ if True:  # \/ # fmt & print iterable
   FMT_INTERNAL_EXCEPTION = ("An exception occured while trying to display this item (%s).", f"{FMTC.INTERNAL_EXCEPTION}An exception occured while trying to display this item ({FMTC.UNKNOWN}%s{FMTC.INTERNAL_EXCEPTION}).{FMTC._}")
   """(FMT_EXCEPTION[syntax_highlighting: bool] % getattr_queue(obj, '__name__', '__class__.__name__') -> Self explainatory"""
 
-  FMT_CLASS = ("%s(%s)", f"{FMTC.CLASS}%s{FMTC.BRACKET}({FMTC._}%s{FMTC.BRACKET}){FMTC._}")
+  FMT_CLASS = ("%s(%s)", f"{FMTC.TYPE}%s{FMTC.BRACKET}({FMTC._}%s{FMTC.BRACKET}){FMTC._}")
   """(FMT_CLASS[syntax_highlighting: bool]) % (getattr_queue(obj, '__name__', '__class__.__name__'), this(it))"""
 
-  FMT_ENUM = ('%s.%s=%s', f'{FMTC.CLASS}%s{FMTC.COMMA}.{FMTC._}{Fore.WHITE}%s{FMTC.COMMA}: {FMTC._}%s')
+  FMT_ENUM = ('%s.%s=%s', f'{FMTC.TYPE}%s{FMTC.COMMA}.{FMTC._}{Fore.WHITE}%s{FMTC.COMMA}: {FMTC._}%s')
   """(FMT_ENUM[syntax_highlighting: bool]) % (classname, valuename, this(value))"""
 
   FMT_ENUM_NO_CLASS = ('%s=%s', f'{FMTC._}{Fore.WHITE}%s{FMTC.COMMA}: {FMTC._}%s')
   """(FMT_ENUM_NO_CLASS[syntax_highlighting: bool]) % (valuename, this(value))"""
 
-  FMT_ENUM_AUTO = ('%s.%s', f'{FMTC.CLASS}%s{FMTC.COMMA}.{FMTC._}{Fore.WHITE}%s')
+  FMT_ENUM_AUTO = ('%s.%s', f'{FMTC.TYPE}%s{FMTC.COMMA}.{FMTC._}{Fore.WHITE}%s')
   """(FMT_ENUM_AUTO[syntax_highlighting: bool]) % (classname, valuename)"""
 
   FMT_ENUM_AUTO_NO_CLASS = ('%s', f'{FMTC._}{Fore.WHITE}%s')
@@ -278,6 +281,38 @@ if True:  # \/ # fmt & print iterable
       return True
 
     return False
+
+  def _fmt_module_highlighted(name: str, path: str | None, namespace: str | None) -> str:
+    s = f'{FMTC.MODULE}{name}'
+    if namespace:
+      s += FMT_BRACKETS[tuple][True] % f'{FMTC.MODULE}{namespace}'
+    if path:
+      path = path.replace('\\\\', '\\')
+      if '/' not in path:
+        path = path.replace('\\', '/')
+      path = fmt_iterable(path, syntax_highlighting=True)
+      s += f'{FMTC.DECIMAL}@{path}'
+    return s
+
+  def _fmt_unknown_highlighted(it: object, /, queue_name: str) -> str:
+    if (match := regex.match(r"<module '(?P<module_name>[^']+)'(?: from '(?P<path>[^']+)')?(?: \((?P<namespace>[^)]+)\))?>", repr(it))):
+      d = match.groupdict()
+
+      name = d['module_name']
+      path = d['path']
+      namespace = d['namespace']
+
+      return _fmt_module_highlighted(name, path, namespace)
+
+    elif (match := regex.match(r'^([^\d\W](?:(?:\w)|(?:\.<locals>\.)|(?:\.<globals>\.))*)\((.*)\)$', repr(it))):
+      name, body = match.groups()
+
+      return FMT_UNKNOWN[True] % (name, body)
+    else:
+      return FMT_UNKNOWN[True] % (
+        queue_name,
+        _non_double_repr(it),
+      )
 
   def fmt_iterable(
     it: Iterable | Any,
@@ -462,7 +497,7 @@ if True:  # \/ # fmt & print iterable
     if isinstance(it, _OverflowClass):
       return f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}' if syntax_highlighting else f'({it} more items...)'
     if (_result := able(issubclass, it, Enum)) and (_result.result):
-      return FMT_CLASS[syntax_highlighting] % (it.__name__ + FMT_LETTERS.META, ((1 if _is_enum_auto(it) else 2)*FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True))
+      return FMT_CLASS[syntax_highlighting] % (it.__name__ + (FMT_LETTERS.META if syntax_highlighting else ''), ((1 if _is_enum_auto(it) else 2)*FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True))
     if isinstance(it, Enum):
       if kwargs.get('_enums_next_hide_class'):
         if _is_enum_auto(it.__class__):
@@ -494,6 +529,24 @@ if True:  # \/ # fmt & print iterable
           s = s.replace(x, f'{secondary_color}{x}{main_color}')
 
         return s
+    if isinstance(it, pathlib.PurePath):
+      if isinstance(it, pathlib.Path):
+        it = it.absolute()
+
+      if not syntax_highlighting:
+        return repr(it)
+
+      drive, parts = it.drive, list(it.parts)
+
+      if it.is_absolute() or parts[0] == '' or parts[0] == '\\':
+        parts.pop(0)
+
+      if drive:
+        drive = f'{FMTC.DECIMAL}{drive}'.replace(':', f'{FMTC.COLON}:{FMTC.DECIMAL}')
+
+      s = f'{FMTC.SLASH}/'.join(([drive] if it.is_absolute() else ([''] if it.parts[0] == '\\' else [])) + [f'{FMTC.DECIMAL}{part}' for part in parts])
+
+      return FMT_CLASS[True] % (it.__class__.__name__, s)
 
     if able(issubclass, it, BaseException) and issubclass(it, BaseException):
       exc_name = extract_error(it, raw=True)[0]
@@ -634,10 +687,11 @@ if True:  # \/ # fmt & print iterable
           return 'set()'
         return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % (comma if _t == set else '')  # fmt: skip
 
-    return FMT_UNKNOWN[syntax_highlighting] % (
-      queue_name,
-      _non_double_repr(it),
-    )  # If no hardcoded patterns match, return a repred version of whatever it is
+    if not syntax_highlighting:
+      return repr(it)
+
+    return _fmt_unknown_highlighted(it, queue_name)
+    # If no hardcoded patterns match, return a repred version of whatever it is
 
   globals()['fmt_iterable'] = _reset_return_wrapper(fmt_iterable)
   # Done this way to trick the IDE code snippets since the deco forwards the *args, **kwargs to the decorated func anyway...
