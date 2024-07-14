@@ -95,7 +95,7 @@ class Console:
     syntax_highlighting=True,
     margin: str = '',
     padding: str = ' ',
-    quoteless: bool = False,
+    quoteless: bool = True,
     diff: bool = False,
     fmt_iterable: Callable[..., str] = fmt_iterable,
     **kwargs,
