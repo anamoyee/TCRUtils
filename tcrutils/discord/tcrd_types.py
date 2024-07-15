@@ -2,9 +2,12 @@ import collections.abc as _cabc
 import typing as _t
 from collections.abc import Awaitable as __Awaitable
 from collections.abc import Callable as __Callable
+from collections.abc import Generator as _Generator
 from typing import Unpack as __Unpack
 
 import hikari as _hk
+
+from .tcrd_string import IFYs as __IFYs
 
 
 class HikariDictMessage(_t.TypedDict):
@@ -50,3 +53,12 @@ hikari_dict_message_defaults = {
   'role_mentions': _hk.UNDEFINED,
   'flags': _hk.UNDEFINED,
 }
+
+class CommandIDsDict(dict):
+  """Mapping of command_name -> command_id for slash commands in Discord."""
+
+  def mentions(self) -> _Generator[tuple[int, str], None, None]:
+    """Iterate over `tuple[command_id, command_mention]` of commands in this dict where command mention is `f'</{command_name}:{command_id}>'`."""
+
+    for command_name, command_id in self.items():
+      yield command_id, __IFYs.commandify(command_name, command_id)
