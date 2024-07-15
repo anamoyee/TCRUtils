@@ -22,7 +22,7 @@ def _get_pair_for_command(cmd: arc.SlashCommand | arc.SlashSubCommand | arc.Slas
 
   return _get_pair_for_command(cmd.parent, *previous_names, cmd.name)
 
-def get_slash_command_ids(ACL: arc.Client):
+def get_slash_command_ids(ACL: arc.GatewayClient):
   commands = list(ACL.walk_commands(hikari.CommandType.SLASH, callable_only=True))
 
   pairs = [_get_pair_for_command(cmd) for cmd in commands]

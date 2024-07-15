@@ -4,6 +4,7 @@
 try:
   from . import tcrd_types as types
   from .tcrd_alias import get_guild_count
+  from .tcrd_commands import get_slash_command_ids
   from .tcrd_constants import DISCORD_EPOCH
   from .tcrd_dpy import escape_markdown, escape_mentions, remove_markdown
   from .tcrd_embeds import embed, modal
