@@ -446,7 +446,6 @@ if True:  # \/ # Tests
       CC = 1 << 2
       CD = 1 << 3
 
-
     print_iterable(IntCTF)
     print_iterable(CTF)
     print()
@@ -506,6 +505,10 @@ if True:  # \/ # Tests
     print_iterable(p.Path('uwu'))
     print_iterable(p.PurePath('uwu'))
     print_iterable(p.PurePath('/uwu'))
+    print()
+    print_iterable(hikari.Status)
+    print_iterable(hikari.ActivityType)
+    print_iterable(hikari.ActivityType.CUSTOM)
 
   def test_markdown():
     from tcrutils import codeblock, uncodeblock
