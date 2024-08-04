@@ -21,7 +21,7 @@ Joke functions and other barely useful crap are not included in star imports.
 try:
   from .discord.tcrd_embeds import embed, modal
 except ImportError: ...
-from . import discord, dr, imgui, src
+from . import discord, dr, src
 from . import dr as execute
 from ._version import __version__
 from .discord.tcrd_limits import DiscordLimits
