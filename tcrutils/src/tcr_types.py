@@ -5,6 +5,18 @@ from . import tcr_print as _m_print
 from .tcr_int import hex
 
 
+class BrainfuckCode(str):
+  """Used in tcr.fmt_iterable() in order to format it as Brainfuck code.
+
+  This will filter out all non-brainfuck characters: `>.<[+-],`.
+
+  This can be used outside of fmt_iterable() to filter characters if needed.
+  """
+
+  def __new__(cls, value):
+    return super().__new__(cls, ''.join(filter(lambda x: x in '>.<[+-],', value)))
+
+
 class QuotelessString(str):
   """Used in tcr.fmt_iterable() in order to format it as a plain text, rather than as `"normal str"`."""
 

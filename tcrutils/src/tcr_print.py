@@ -49,7 +49,7 @@ from .tcr_extract_error import extract_error
 from .tcr_int import hex as tcrhex
 from .tcr_iterable import Or, getattr_queue, limited_iterable
 from .tcr_null import Null, Undefined
-from .tcr_types import GayString, QuotelessString
+from .tcr_types import BrainfuckCode, GayString, QuotelessString
 
 
 def double_quoted_repr(s: str, *, quote_char: str = '"'):
@@ -322,6 +322,23 @@ if True:  # \/ # fmt & print iterable
         _non_double_repr(it),
       )
 
+  def _fmt_brainfuck(text: BrainfuckCode) -> str:
+    """Format a string as brainfuck.
+
+    Assuming syntax_highlighting==True && isinstance(text, BrainfuckCode)
+    """
+    return str(text.replace('[', '#')\
+      .replace('<', f'{FMTC.ASTERISK}<')\
+      .replace('>', f'{FMTC.ASTERISK}>')\
+      .replace('.', f'{FMTC.DECIMAL}.')\
+      .replace(',', f'{FMTC.COMMA},')\
+      .replace('+', f'{FMTC.TRUE}+')\
+      .replace('-', f'{FMTC.FALSE}-')\
+      .replace(']', f'{FMTC.BRACKET}]')\
+      .replace('#', f'{FMTC.BRACKET}[')\
+    )
+
+
   def fmt_iterable(
     it: Iterable | Any,
     /,
@@ -570,6 +587,8 @@ if True:  # \/ # fmt & print iterable
       return str(it)
     if not syntax_highlighting and isinstance(it, GayString):
       return str(it)
+    if not syntax_highlighting and isinstance(it, BrainfuckCode):
+      return str(it)
 
     if it is Null:
       return f'{FMTC.NULL}{it}{FMTC._}' if syntax_highlighting else str(it)
@@ -589,6 +608,8 @@ if True:  # \/ # fmt & print iterable
       return f'{FMTC.STRING}{reprit[1:-1]}' if syntax_highlighting else (str_repr(it)[1:-1])
     if _t == GayString:
       return gay(it)
+    if _t == BrainfuckCode:
+      return _fmt_brainfuck(it)
 
     if _t == type:
       return f'{FMTC.TYPE}{getattr_queue(it, "__name__", "__class__.__name__", default=it)}{FMTC._}' if syntax_highlighting else str(it)
@@ -775,7 +796,7 @@ if True:  # \/ # fmt & print iterable
 
 
 def alert(s: str, *, printhook: Callable[[str], None] = print, raw=False) -> None:
-  text = ''.join([f'{(Fore.BLACK + Back.RED + Style.bold) if i % 2 == 0 else Fore.WHITE + Back.YELLOW}{x}' for i, x in enumerate(s)]) + Style.reset
+  text = ''.join([f'{(Fore.BLACK + Back.RED + Style.bold) if i % 2 == 0 else Fore.BLACK + Back.YELLOW}{x}' for i, x in enumerate(s)]) + Style.reset
 
   if raw:
     return text
@@ -800,3 +821,4 @@ def gay(text: str, offset: int = 0) -> str:
 
   result += FMTC._
   return result
+
