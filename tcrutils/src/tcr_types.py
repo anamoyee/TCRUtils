@@ -24,15 +24,16 @@ class QuotelessString(str):
 class HexInt(int):
   leading_zeroes: int
 
-  def __new__(cls, value, leading_zeroes=None, **kwargs):
+  def __new__(cls, value, leading_zeroes=None, prefix=None, **kwargs):
     return super().__new__(cls, value, **kwargs)
 
-  def __init__(self, value, *, leading_zeroes=6, **_):
+  def __init__(self, value, *, leading_zeroes=6, prefix='0x', **_):
     self.leading_zeroes = leading_zeroes
+    self.prefix = prefix
     super().__init__()
 
   def __tcr_fmt__(self, fmt_iterable, **kwargs):
-    return fmt_iterable(int(self), **{**kwargs, 'int_formatter': partial(hex, leading_zeroes=self.leading_zeroes)})
+    return fmt_iterable(int(self), **{**kwargs, 'int_formatter': partial(hex, leading_zeroes=self.leading_zeroes, prefix=self.prefix)})
 
 
 class UnreprableString(QuotelessString):

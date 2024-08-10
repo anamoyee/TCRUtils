@@ -521,6 +521,10 @@ if True:  # \/ # fmt & print iterable
 
     if isinstance(it, _OverflowClass):
       return f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}' if syntax_highlighting else f'({it} more items...)'
+    if isinstance(it, ....__class__): # cursed syntax lol
+      if not syntax_highlighting:
+        return '...'
+      return f'{FMTC.DECIMAL}...'
     if (_result := able(issubclass, it, Enum)) and (_result.result):
       return FMT_CLASS[syntax_highlighting] % (it.__name__ + (FMT_LETTERS.META if syntax_highlighting else ''), ((1 if _is_enum_auto(it) else 2)*FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True))
     if _HikariEnum is not None and (_result := able(issubclass, it, _HikariEnum)) and (_result.result):

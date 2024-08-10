@@ -86,11 +86,11 @@ class Console:
 
   def debug(
     self,
-    value: object,
+    value: object = ...,
     /,
     *values: object,
     withprefix: bool = True,
-    passthrough: bool = True,
+    passthrough: bool = False,
     printhook: Callable[[str], None] = print,
     syntax_highlighting=True,
     margin: str = '',
@@ -150,10 +150,10 @@ class Console:
     return console.debug(*args, **kwargs)
 
   def __or__(self, other):
-    return self.debug(other)
+    return self.debug(other, passthrough=True)
 
   def __ror__(self, other):
-    return self.debug(other)
+    return self.debug(other, passthrough=True)
 
 
 console = Console()

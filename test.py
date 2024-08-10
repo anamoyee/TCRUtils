@@ -510,8 +510,10 @@ if True:  # \/ # Tests
     print_iterable(hikari.ActivityType)
     print_iterable(hikari.ActivityType.CUSTOM)
     print()
-    bf_code = tcr.types.BrainfuckCode('asdf>>++[uwu]nya')
+    bf_code = tcr.types.BrainfuckCode(',asdf>.<++[uwu-]nya')
     print_iterable(bf_code)
+    print()
+    print_iterable(...)
 
   def test_markdown():
     from tcrutils import codeblock, uncodeblock
