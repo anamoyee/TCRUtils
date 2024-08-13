@@ -46,6 +46,7 @@ from .src.tcr_error import error
 from .src.tcr_extract_error import extract_error, extract_traceback, module_error_map, modules_error_map
 from .src.tcr_F import F
 from .src.tcr_getch import getch
+from .src.tcr_import import load_package_dynamically
 from .src.tcr_inject import ErrorCatcher, WarningCatcher
 from .src.tcr_input import insist
 from .src.tcr_inspect import get_file_colon_lineno, get_lineno
