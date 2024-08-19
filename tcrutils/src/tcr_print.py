@@ -300,7 +300,7 @@ if True:  # \/ # fmt & print iterable
       path = path.replace('\\\\', '\\')
       if '/' not in path:
         path = path.replace('\\', '/')
-      path = fmt_iterable(path, syntax_highlighting=True)
+      path = fmt_iterable(path if ' ' in path else QuotelessString(path), syntax_highlighting=True)
       s += f'{FMTC.DECIMAL}@{path}'
     return s
 
