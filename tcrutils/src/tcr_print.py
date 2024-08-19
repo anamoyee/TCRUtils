@@ -9,6 +9,8 @@ from typing import Any
 from typing import get_args as unpack_union
 from warnings import warn
 
+from .tcr_path import path as tcr_path_utils
+
 try:
   from hikari.internal.enums import Enum as _HikariEnum
 except ModuleNotFoundError:
@@ -308,6 +310,8 @@ if True:  # \/ # fmt & print iterable
 
       name = d['module_name']
       path = d['path']
+      if path is not None:
+        path = tcr_path_utils.convert_to_relative_pathstr(path)
       namespace = d['namespace']
 
       return _fmt_module_highlighted(name, path, namespace)

@@ -4,8 +4,6 @@ import pathlib as p
 import re
 from collections.abc import Callable
 
-from .tcr_console import console
-
 
 class path:
   """Provides path-related utilities."""
