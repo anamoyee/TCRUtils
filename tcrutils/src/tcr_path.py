@@ -11,6 +11,36 @@ class path:
   """Provides path-related utilities."""
 
   @staticmethod
+  def convert_to_relative_path(absolute_path: str | p.Path, relative_to: str | p.Path | None = None, *, walk_up: bool = False) -> p.Path:
+    """Convert absolute path into a relative path."""
+    relative_to = relative_to if relative_to is not None else p.Path.cwd()
+
+    absolute_path = p.Path(absolute_path)
+
+    try:
+        relative_path = absolute_path.relative_to(relative_to, walk_up=walk_up)
+    except ValueError:
+        return str(absolute_path)
+
+    return p.Path() / relative_path
+
+  @staticmethod
+  def convert_to_relative_pathstr(*args, **kwargs) -> str:
+    """Convert absolute path into a relative path string."""
+    converted = path.convert_to_relative_path(*args, **kwargs)
+    converted = str(converted)
+
+    if os.name == 'nt':
+      converted = converted.replace('\\', '/')
+
+    if any(converted.startswith(x) for x in ('\\', '/')):
+      return converted
+    if os.name == 'nt' and ':' in converted:
+      return converted
+
+    return f'./{converted}'
+
+  @staticmethod
   def center(path: str | p.Path) -> p.Path:
     """### Change directory to the location of the passed in __file__ (or any string path or pathlib Path). This will NOT detect if the passed in location is a directory, it will go to parent of it instead. Return previous path as a pathlib.Path object.
 
