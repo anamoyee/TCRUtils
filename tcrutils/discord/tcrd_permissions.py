@@ -26,8 +26,8 @@ class _Permissions:
   _devs: tuple | None = None
 
   @property
-  def devlist(self) -> tuple:
-    return list(self._devs)
+  def devlist(self) -> list:
+    return list(self._devs) # type: ignore
 
   @devlist.setter
   def devlist(self, x: Iterable[int]) -> None:
@@ -98,10 +98,10 @@ class _Permissions:
       else:
         raise ValueError("You can't use allow_dev=True without setting up devs first with `perms.devlist = [1337, 1234] # A list of ints (discord user ids)`")
 
-    if allow_owner and event.author.id == event.get_guild().owner_id:
+    if allow_owner and event.author.id == event.get_guild().owner_id: # type: ignore
       return True
 
-    roles = event.message.member.get_roles()
+    roles = event.message.member.get_roles() # type: ignore
 
     if allow_administrator and any(role.permissions & hikari.Permissions.ADMINISTRATOR for role in roles):  # fmt: skip
       return True

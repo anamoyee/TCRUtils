@@ -561,9 +561,6 @@ if True:  # \/ # fmt & print iterable
 
         return s
     if isinstance(it, pathlib.PurePath):
-      if isinstance(it, pathlib.Path):
-        it = it.absolute()
-
       if not syntax_highlighting:
         return repr(it)
 

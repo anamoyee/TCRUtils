@@ -1,10 +1,8 @@
 import asyncio as aio
-from collections.abc import Callable
-from collections.abc import Coroutine as Korwine
-from typing import Any
+from collections.abc import Callable, Coroutine
+from typing import Any, TypeAlias
 
-
-class RunSACAble(Callable, Korwine): ...
+RunSACAble: TypeAlias = Callable | Coroutine
 
 
 async def run_sac(func_or_coro: RunSACAble, *args, **kwargs) -> Any:

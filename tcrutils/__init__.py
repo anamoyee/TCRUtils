@@ -20,12 +20,12 @@ Joke functions and other barely useful crap are not included in star imports.
 
 try:
   from .discord.tcrd_embeds import embed, modal
+  from .discord.tcrd_limits import DiscordLimits
+  from .discord.tcrd_string import get_token
 except ImportError: ...
 from . import discord, dr, src
 from . import dr as execute
 from ._version import __version__
-from .discord.tcrd_limits import DiscordLimits
-from .discord.tcrd_string import get_token
 from .src import tcr_case as case
 from .src import tcr_ensure_deps as ensure_depencencies
 from .src import tcr_joke as joke

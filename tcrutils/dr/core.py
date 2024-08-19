@@ -74,7 +74,7 @@ class _DRParser:
     parens: tuple[str, str],
   ) -> None:
     self.contexts = {**contexts, '__splitter': splitter, '__parens': parens, '__vars': {}}
-    self.placeholders = placeholders
+    self.placeholders = placeholders # type: ignore
     self.tokens = list(tokens)
     self.error_on_missing_placeholder = error_on_missing_placeholder
     self.error_on_invalid_placeholder_return = error_on_invalid_placeholder_return
@@ -97,7 +97,7 @@ class _DRParser:
       raise DynamicResponseSyntaxError(f'Mismatched parenthesis (Open section left unclosed.)')
 
   async def process_single_placeholder(self, tokens: list[_Token]) -> list[_Token]:
-    text: str = ''.join(x.value for x in tokens)
+    text: str = ''.join(x.value for x in tokens) # type: ignore
 
     args = text.split(self.contexts['__splitter'])
 
@@ -107,7 +107,7 @@ class _DRParser:
       raise DynamicResponseMissingPlaceholderError(f'Placeholder {args[0]!r} not found.')
     if args[0] not in self.placeholders:
       return [_Token(_TT.TEXT, f'{self.contexts["__parens"][0]}{text}{self.contexts["__parens"][1]}')]
-    ret = await run_sac(self.placeholders[args[0]], *args, **self.contexts)
+    ret = await run_sac(self.placeholders[args[0]], *args, **self.contexts) # type: ignore
     if ret is None:
       ret = ''
 
@@ -168,11 +168,11 @@ class _DRParser:
 
     return await self.process_placeholders(tokens)
 
-  async def __call__(self) -> tuple[str, dict]:
+  async def __call__(self) -> tuple[str, Mapping]:
     self.check_integrity()
 
     processed = await self.process_placeholders(self.tokens[:])
-    return ''.join(x.value for x in processed), self.contexts
+    return ''.join(x.value for x in processed), self.contexts # type: ignore
 
 
 ### Dynamic Response Builder
@@ -204,7 +204,7 @@ class DynamicResponseResult(str):
 
   @property
   def resp(self) -> HikariDictMessage:
-    return merge_dicts({'content': self}, {x: y for x, y in self.contexts.items() if x in RESP_CONTEXTS})
+    return merge_dicts({'content': self}, {x: y for x, y in self.contexts.items() if x in RESP_CONTEXTS}) # type: ignore
 
 
 class DynamicResponseBuilder:
@@ -225,9 +225,9 @@ class DynamicResponseBuilder:
   ) -> None:
     if not all(isinstance(x, dict) for x in placeholders):
       raise TypeError('placeholders must be a dict or list of dicts')
-    placeholders = merge_dicts(*placeholders)
+    placeholders = merge_dicts(*placeholders) # type: ignore
 
-    self.placeholders = placeholders
+    self.placeholders = placeholders # type: ignore
     self.parens = parens
     self.splitter = splitter
     self.error_on_missing_placeholder = error_on_missing_placeholder
@@ -237,11 +237,11 @@ class DynamicResponseBuilder:
 
   async def __call__(self, text: str, **contexts: Any) -> DynamicResponseResult:
     tokens = _DRLexer(text, parens=self.parens)()
-    parsed, contexts = await _DRParser(
+    parsed, contexts = await _DRParser( # type: ignore
       contexts={**self.instance_contexts, **{x: y() for x, y in self.context_constructors.items()}, **contexts},
       placeholders=self.placeholders,
       splitter=self.splitter,
-      tokens=tokens,
+      tokens=tokens, # type: ignore
       error_on_missing_placeholder=self.error_on_missing_placeholder,
       error_on_invalid_placeholder_return=self.error_on_invalid_placeholder_return,
       parens=self.parens,

@@ -1,3 +1,4 @@
+import datetime
 from collections.abc import Callable, Coroutine
 from typing import Any, NotRequired, TypedDict, Unpack
 
@@ -59,7 +60,7 @@ def embed(
 class ModalKwargs(TypedDict):
   title: str
   custom_id: NotRequired[str | None]
-  timeout: NotRequired[str | None]
+  timeout: NotRequired[float | int | datetime.timedelta | None]
 
 
 async def modal(
@@ -67,12 +68,12 @@ async def modal(
   callback: Callable[[miru.Modal, miru.ModalContext, list[str]], Coroutine[Any, Any, None]],
   *fields: miru.TextInput,
   **modal_kwargs: Unpack[ModalKwargs],
-) -> dict[str, str]:
-  """Create modal with passed fields, respond with it with passed responder (ctx.respond_with_modal), then return dict[field: str, user_input: str]."""
+):
+  """Create modal with passed fields, respond with it with passed responder (ctx.respond_with_modal)."""
 
   class Modal(miru.Modal):
     async def callback(self, ctx: miru.ModalContext) -> None:
-      await callback(self, ctx, list(self.values.values()))
+      await callback(self, ctx, list(self.values.values())) # type: ignore
 
   modal = Modal(**modal_kwargs)
 

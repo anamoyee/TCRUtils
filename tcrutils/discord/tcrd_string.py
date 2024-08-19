@@ -46,6 +46,7 @@ def get_token(filename: str = 'TOKEN.txt', depth=2, *, dont_strip=False, default
 
 def _ify_snowflake_errorer(id: Any) -> None:
   if not is_snowflake(id, allow_string=True):
+    err: Exception
     if isinstance(id, int | str):
       err = ValueError('id is not a valid snowflake, use tcr.discord.is_snowflake() to validate if needed.')
     else:

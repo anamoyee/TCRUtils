@@ -33,17 +33,20 @@ class DisableableView(UpdatableView):
 
 
 class CallbackedButton(miru.Button):
+  __init_kwargs: dict
+  __callback: Callable[['CallbackedButton', miru.ViewContext], Coroutine[Any, Any, None]]
+
   def __init_subclass__(cls, **kwargs) -> None:
     cls.__init_kwargs = kwargs
 
-  def __init__(self, callback: Coroutine[Any, Any, None], /, *, disable_on_click: bool = True, **kwargs) -> None:
+  def __init__(self, callback: Callable[['CallbackedButton', miru.ViewContext], Coroutine[Any, Any, None]], /, *, disable_on_click: bool = True, **kwargs) -> None:
     self.__callback = callback
     self.__disable_on_click = disable_on_click
     super().__init__(**{**self.__init_kwargs, **kwargs})
 
   async def callback(self, ctx: miru.ViewContext) -> None:
     if self.__disable_on_click:
-      await ctx.view.disable(edit=True, stop=True)
+      await ctx.view.disable(edit=True, stop=True) # type: ignore
     await self.__callback(self, ctx)
 
 
@@ -75,9 +78,9 @@ async def confirm(
   view = DisableableView(**view_kwargs)
 
   for btn in buttons:
-    view = view.add_item(btn)
+    view = view.add_item(btn) # type: ignore
 
-  m = await responder(components=view, **responder_kwargs)
+  m = await responder(components=view, **responder_kwargs) # type: ignore
   miru_client.start_view(view, bind_to=m)
 
   return m
