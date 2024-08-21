@@ -18,12 +18,34 @@ Update: neeevermind there's just so much stuff you better import directly.
 Joke functions and other barely useful crap are not included in star imports.
 """
 
-try:
-  from .discord.tcrd_embeds import embed, modal
-  from .discord.tcrd_limits import DiscordLimits
-  from .discord.tcrd_string import get_token
-except ImportError: ...
-from . import discord, dr, src
+from types import ModuleType as __ModuleType
+
+
+def __getattr__(name: str) -> __ModuleType:
+  """Map `tcr.discord` to tcrdiscord (separate pip-installable module). This does not install the module via pip, only prompts you to do so if it cant be imported.
+
+  This is done for backwards-compatibility, for fresh projects use tcrdiscord or equivalent, not tcr.discord.
+  """
+  # Triggers only when an attr can't be found already, so this is not called when you use like, tcr.console becasuse console is defined
+  pair = {
+    'discord': ('tcrdiscord', 'tcrdiscord'),
+  }.get(name)
+
+  if pair is None:
+    raise AttributeError(f'AttributeError: module {__name__!r} has no attribute {name!r}')
+
+  import_name, pip_name = pair
+
+
+  import warnings
+  warnings.warn(f"Accessing subpackages of tcrutils as tcr.<name> (tcr.{name}) is deprecated. Do this instead:\n\n$ pip install {pip_name}\n\n>>> import {import_name}\n", DeprecationWarning, stacklevel=2)
+
+  try:
+    return __import__(import_name)
+  except ImportError as e:
+    raise ImportError(f'Unable to locate pip-installable tcrutils submodule: {import_name!r}, please install it with by running the following command:\n\n$ pip install {pip_name}') from e
+
+from . import dr, src
 from . import dr as execute
 from ._version import __version__
 from .src import tcr_case as case
@@ -119,8 +141,6 @@ __all__ = [
   "insist",                             # input
 
   "able",                               # compare
-
-  "DiscordLimits",                      # Discord
 
   "ShelveDB",                           # sdb
 

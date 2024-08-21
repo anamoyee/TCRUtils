@@ -1,6 +1,5 @@
 from collections.abc import Callable
 
-from ..discord.tcrd_limits import DiscordLimits
 from ..src.tcr_extract_error import extract_error, extract_traceback
 from .tcr_constants import BACKTICKS, NEWLINE
 from .tcr_iterable import cut_at
@@ -10,7 +9,7 @@ def codeblock(
   text: str,
   *,
   langcode: str = '',
-  max_length: int = DiscordLimits.Message.LENGTH_SAFE,
+  max_length: int = 1984,
   cut_at_func: Callable[[str, int], str] = cut_at,
   smart_empty: bool = True,
 ) -> str:
@@ -49,7 +48,7 @@ def codeblocks(
   text1: str,
   *texts: str,
   langcodes: tuple[str] | None = None,
-  max_length: int = DiscordLimits.Message.LENGTH_SAFE,
+  max_length: int = 1984,
   cut_at_func: Callable[[str, int], str] = cut_at,
   smart_empty: bool = True,
 ):
@@ -78,6 +77,6 @@ def discord_error(e: BaseException) -> str:
       'txt',
       'py',
     ),
-    max_length=DiscordLimits.Message.LENGTH_SAFEST,
+    max_length=1800,
     smart_empty=True,
   )
