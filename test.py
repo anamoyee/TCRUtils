@@ -210,6 +210,10 @@ if True:  # \/ # Tests
 
     print_iterable = partial(print_iterable, **kwargs)
 
+    print_iterable(sys.version_info)
+
+    exit()
+
     mappingproxy = (type.__dict__)
     print_iterable(mappingproxy)
     print_iterable("aasd")
@@ -514,6 +518,8 @@ if True:  # \/ # Tests
     print_iterable(bf_code)
     print()
     print_iterable(...)
+    print()
+    print_iterable(sys.version_info)
 
   def test_markdown():
     from tcrutils import codeblock, uncodeblock

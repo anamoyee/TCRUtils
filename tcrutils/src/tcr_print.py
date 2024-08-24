@@ -1,6 +1,7 @@
 import datetime as dt
 import pathlib
 import re as regex
+import sys
 import typing
 from enum import Enum, EnumMeta
 from functools import partial, wraps
@@ -210,6 +211,9 @@ if True:  # \/ # fmt & print iterable
 
   FMT_ASTERISK = ('*', f'{FMTC.ASTERISK}*')
   """FMT_ASTERISK[syntax_highlighting: bool]"""
+
+  FMT_SYS_VERSION_INFO = f'{FMTC.COLON}Python {FMTC.DECIMAL}%s{FMTC.COMMA}.{FMTC.DECIMAL}%s{FMTC.COMMA}.{FMTC.DECIMAL}%s'
+  """FMT_SYS_VERSION_INFO % sys.version_info[:3]"""
 
   # fmt: on
 
@@ -632,6 +636,8 @@ if True:  # \/ # fmt & print iterable
           if item in FMT_BRACKETS:
             _t = item
             break
+    if it.__class__ == sys.version_info.__class__ and syntax_highlighting:
+      return FMT_BRACKETS[range][1] % FMT_SYS_VERSION_INFO % it[:3]
     if _t == int:
       if int_formatter:
         it = int_formatter(it)
