@@ -542,6 +542,9 @@ if True:  # \/ # fmt & print iterable
       if isinstance(it, type) and hasattr(it, '__pydantic_core_schema__') and (it.__pydantic_core_schema__['type'].startswith('model')):
         it_name = it.__pydantic_core_schema__.get('schema', {}).get('model_name', "<UnknownPydanticModelName>")
         return ((FMTC.TYPE if syntax_highlighting else '') + it_name)
+      if isinstance(it, type) and hasattr(it, '__pydantic_core_schema__') and (it.__pydantic_core_schema__['type'].startswith('definitions')): # Buh??
+        it_name = it.__pydantic_core_schema__.get('definitions', [{"schema": {"model_name": "<UnknownPydanticModelName>"}}])[0].get('schema', {}).get('model_name', "<UnknownPydanticModelName>")
+        return ((FMTC.TYPE if syntax_highlighting else '') + it_name)
     except Exception as e: # Works only on linux
       if str(e).split('\n')[0] == 'Pydantic models should inherit from BaseModel, BaseModel cannot be instantiated directly':
         return ((FMTC.TYPE if syntax_highlighting else '') + 'BaseModel')
