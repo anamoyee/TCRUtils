@@ -346,7 +346,6 @@ if True:  # \/ # fmt & print iterable
       .replace('#', f'{FMTC.BRACKET}[')\
     )
 
-
   def fmt_iterable(
     it: Iterable | Any,
     /,
@@ -481,6 +480,7 @@ if True:  # \/ # fmt & print iterable
       'prefer_full_names': prefer_full_names,
       'depth_limit': depth_limit,
       'str_repr': str_repr,
+      'no_try': kwargs.get('no_try'),
       '__depth': kwargs.get('__depth', 2) + 1,
     }
     if a := kwargs.get('let_no_inder_max_iterables'):
@@ -535,6 +535,17 @@ if True:  # \/ # fmt & print iterable
       return f'{FMTC.DECIMAL}...'
     if (_result := able(issubclass, it, Enum)) and (_result.result):
       return FMT_CLASS[syntax_highlighting] % (it.__name__ + (FMT_LETTERS.META if syntax_highlighting else ''), ((1 if _is_enum_auto(it) else 2)*FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True))
+
+    try:
+      if repr(it) == "<class 'pydantic.main.BaseModel'>": # Kurwa pierdole tego kurwa pydantica chujowego
+        return ((FMTC.TYPE if syntax_highlighting else '') + 'BaseModel')
+      if isinstance(it, type) and hasattr(it, '__pydantic_core_schema__') and (it.__pydantic_core_schema__['type'].startswith('model')):
+        it_name = it.__pydantic_core_schema__.get('schema', {}).get('model_name', "<UnknownPydanticModelName>")
+        return ((FMTC.TYPE if syntax_highlighting else '') + it_name)
+    except Exception as e: # Works only on linux
+      if str(e).split('\n')[0] == 'Pydantic models should inherit from BaseModel, BaseModel cannot be instantiated directly':
+        return ((FMTC.TYPE if syntax_highlighting else '') + 'BaseModel')
+      raise
     if _HikariEnum is not None and (_result := able(issubclass, it, _HikariEnum)) and (_result.result):
       return FMT_CLASS[syntax_highlighting] % (it.__name__ + (FMT_LETTERS.META if syntax_highlighting else ''), ((1 if _is_enum_auto(it) else 2)*FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True))
     if isinstance(it, Enum) or (_HikariEnum is not None and isinstance(it, _HikariEnum)):

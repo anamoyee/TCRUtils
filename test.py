@@ -200,7 +200,7 @@ if True:  # \/ # Tests
     console.debug(f'{a()!r}')
 
   #@tcr.timeit
-  def test_print_iterable(print_iterable=tcr.print_iterable, **kwargs):
+  def test_print_iterable(pi=tcr.print_iterable, **kwargs):
     import datetime as dt
     from dataclasses import dataclass, field
     from enum import Enum, Flag, IntEnum, IntFlag, ReprEnum, StrEnum, auto
@@ -208,117 +208,113 @@ if True:  # \/ # Tests
 
     from tcrutils import Null
 
-    print_iterable = partial(print_iterable, **kwargs)
-
-    print_iterable(sys.version_info)
-
-    exit()
+    pi = partial(pi, **kwargs) # π
 
     mappingproxy = (type.__dict__)
-    print_iterable(mappingproxy)
-    print_iterable("aasd")
-    print_iterable({"a": 1, "b": "2"})
-    print_iterable({"a": range(3)})
-    print_iterable(range(1 << 1000))
-    print_iterable(())
-    print_iterable([])
-    print_iterable({1, 2})
-    print_iterable("asdf")
-    print_iterable([3, 4, 5, range(105)], item_limit=5, **{x: y for x, y in kwargs.items() if x != 'item_limit'})
+    pi(mappingproxy)
+    pi("aasd")
+    pi({"a": 1, "b": "2"})
+    pi({"a": range(3)})
+    pi(range(1 << 1000))
+    pi(())
+    pi([])
+    pi({1, 2})
+    pi("asdf")
+    pi([3, 4, 5, range(105)], item_limit=5, **{x: y for x, y in kwargs.items() if x != 'item_limit'})
     def a():
       while True:
         yield 1
-    print_iterable(a(), item_limit=3, **{x: y for x, y in kwargs.items() if x != 'item_limit'})
-    print_iterable(b'100')
-    print_iterable(bytearray([10, 20, 30]))
-    print_iterable(b'uwu"\'')
-    print_iterable(bytearray([10, 20, 30]), b'abcd', 'abcd', r'\1')
-    print_iterable((Null, None, True, False))
-    print_iterable({Null: Null, None: None, True: True, False: False})
-    print_iterable(1)
-    print_iterable(1.5)
-    print_iterable(True)
-    print_iterable(False)
-    print_iterable(None)
-    print_iterable(Null)
-    print_iterable(set())
-    print_iterable({10, 20, 30})
-    print_iterable(frozenset({"asdf", 1, 3.2j+1}))
-    print_iterable({10: 20, 30: 40}.keys())
-    print_iterable({10: 20, 30: 40}.values())
-    print_iterable({10: 20, 30: 40}.items())
-    print_iterable("s p a c e (not uk)")
-    print_iterable((1,))
-    print_iterable([[[[]]]])
-    print_iterable([[[10, 20, [345234582346748673485678673, 40, "a", ()]]]])
+    pi(a(), item_limit=3, **{x: y for x, y in kwargs.items() if x != 'item_limit'})
+    pi(b'100')
+    pi(bytearray([10, 20, 30]))
+    pi(b'uwu"\'')
+    pi(bytearray([10, 20, 30]), b'abcd', 'abcd', r'\1')
+    pi((Null, None, True, False))
+    pi({Null: Null, None: None, True: True, False: False})
+    pi(1)
+    pi(1.5)
+    pi(True)
+    pi(False)
+    pi(None)
+    pi(Null)
+    pi(set())
+    pi({10, 20, 30})
+    pi(frozenset({"asdf", 1, 3.2j+1}))
+    pi({10: 20, 30: 40}.keys())
+    pi({10: 20, 30: 40}.values())
+    pi({10: 20, 30: 40}.items())
+    pi("s p a c e (not uk)")
+    pi((1,))
+    pi([[[[]]]])
+    pi([[[10, 20, [345234582346748673485678673, 40, "a", ()]]]])
 
     class UnknownThing:
       ...
 
     unknown_thing = UnknownThing()
-    print_iterable(unknown_thing)
-    print_iterable(UnknownThing)
+    pi(unknown_thing)
+    pi(UnknownThing)
 
     ### Copied from _collections_abc.py ###
     bytes_iterator = (iter(b'asdf'))
-    print_iterable(bytes_iterator)
+    pi(bytes_iterator)
     bytearray_iterator = (iter(bytearray([0xFF, 0x10])))
-    print_iterable(bytearray_iterator)
+    pi(bytearray_iterator)
     #callable_iterator = ???
     dict_keyiterator = (iter({"a": 1, "b": 10, "c": 100}.keys()))
     dict_valueiterator = (iter({"a": 1, "b": 10, "c": 100}.values()))
     dict_itemiterator = (iter({"a": 1, "b": 10, "c": 100}.items()))
-    print_iterable(dict_keyiterator)
-    print_iterable(dict_valueiterator)
-    print_iterable(dict_itemiterator)
+    pi(dict_keyiterator)
+    pi(dict_valueiterator)
+    pi(dict_itemiterator)
     list_iterator = (iter([10, 20, 30]))
-    print_iterable(list_iterator)
+    pi(list_iterator)
     list_reverseiterator = (iter(reversed([1, 2, 3])))
-    print_iterable(list_reverseiterator)
+    pi(list_reverseiterator)
     range_iterator = (iter(range(3)))
     longrange_iterator = (iter(range(1 << 1000)))
-    print_iterable(range_iterator)
-    print_iterable(longrange_iterator)
+    pi(range_iterator)
+    pi(longrange_iterator)
     set_iterator = (iter({15, 25, 35}))
-    print_iterable(set_iterator)
+    pi(set_iterator)
     str_iterator = (iter("str iterator"))
-    print_iterable(str_iterator)
+    pi(str_iterator)
     tuple_iterator = (iter(((30, 40),)))
-    print_iterable(tuple_iterator)
+    pi(tuple_iterator)
     zip_iterator = (iter(zip('abcdefg', range(3), range(4), strict=False)))
-    print_iterable(zip_iterator)
+    pi(zip_iterator)
 
     ## misc ##
     generator = ((lambda: (yield))())
-    print_iterable(generator)
-    print_iterable(range(0))
+    pi(generator)
+    pi(range(0))
 
     ## coroutine ##
     async def _coro(): pass
     _coro = _coro()
     coroutine = (_coro)
-    print_iterable(coroutine)
+    pi(coroutine)
     _coro.close()  # Prevent ResourceWarning
     del _coro
     ## asynchronous generator ##
     async def _ag(): yield
     _ag = _ag()
     async_generator = (_ag)
-    print_iterable(async_generator)
+    pi(async_generator)
     del _ag
-    print_iterable(range(10))
-    print_iterable([['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'h', 'i'], ['j', 'k', 'l']])
+    pi(range(10))
+    pi([['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'h', 'i'], ['j', 'k', 'l']])
 
     class PrintableObj:
       def __tcr_display__(self=None, **_) -> str:
         return 'tcr.fmt-able object' + ('\'s instance' if self is not None else '')
 
-    print_iterable([PrintableObj])
-    print_iterable([PrintableObj()])
+    pi([PrintableObj])
+    pi([PrintableObj()])
 
     import hikari
 
-    print_iterable((
+    pi((
       hikari.Status.ONLINE,
       hikari.Status.IDLE,
       hikari.Status.DO_NOT_DISTURB,
@@ -339,8 +335,8 @@ if True:  # \/ # Tests
           **kwargs,
         )
 
-    print_iterable(PrintableObj2)
-    print_iterable(PrintableObj2(69))
+    pi(PrintableObj2)
+    pi(PrintableObj2(69))
 
     class Client:
       test: str
@@ -351,14 +347,14 @@ if True:  # \/ # Tests
       def __repr__(self) -> str:
         return f'{self.__class__.__name__}(test={self.test!r})'
 
-    print_iterable(Client('test'))
-    print_iterable(0x7FFFFFFF)
-    print_iterable(tcr.types.HexInt(0x7FFFFFFF))
-    print_iterable(float | int)
-    print_iterable(str)
-    print_iterable([[[[[[[[[[[[]]]]]]]]]]]], let_no_indent=False)
-    print_iterable([tcr.types.QuotelessString("quoteless string")]*3)
-    print_iterable({
+    pi(Client('test'))
+    pi(0x7FFFFFFF)
+    pi(tcr.types.HexInt(0x7FFFFFFF))
+    pi(float | int)
+    pi(str)
+    pi([[[[[[[[[[[[]]]]]]]]]]]], let_no_indent=False)
+    pi([tcr.types.QuotelessString("quoteless string")]*3)
+    pi({
       "a": [
         'nya', 'owo', 'uwu', {
           "12": 34,
@@ -367,46 +363,46 @@ if True:  # \/ # Tests
         [10, 20, 30],
       ]
     })
-    print_iterable({
+    pi({
       "b": [],
     })
-    print_iterable({
+    pi({
       "b": 2,
     })
-    print_iterable({
+    pi({
       "b": 2,
       "d": 4,
     })
-    print_iterable({
+    pi({
       "b": None,
     })
-    print_iterable({
+    pi({
       "b": Null,
     })
 
     datetime = dt.datetime.now()
-    print_iterable(datetime)
-    print_iterable(datetime.date())
-    print_iterable(datetime.time())
+    pi(datetime)
+    pi(datetime.date())
+    pi(datetime.time())
 
 
     ts = tcr.types.UnixTimestampInt(1719949074443)
 
-    print_iterable(ts, _raise_errors=True)
-    print_iterable(ts.to_datetime(), _raise_errors=True)
-    print_iterable(tcr.types.HexInt(2, leading_zeroes=2))
-    print_iterable(tcr.types.HexInt(3, leading_zeroes=3))
-    print_iterable(tcr.types.HexInt(4, leading_zeroes=4))
-    print_iterable(tcr.types.HexInt(5, leading_zeroes=5))
-    print_iterable(tcr.types.HexInt(6))
+    pi(ts, _raise_errors=True)
+    pi(ts.to_datetime(), _raise_errors=True)
+    pi(tcr.types.HexInt(2, leading_zeroes=2))
+    pi(tcr.types.HexInt(3, leading_zeroes=3))
+    pi(tcr.types.HexInt(4, leading_zeroes=4))
+    pi(tcr.types.HexInt(5, leading_zeroes=5))
+    pi(tcr.types.HexInt(6))
     print()
-    print_iterable(tcr)
-    print_iterable([tcr])
-    print_iterable((tcr,))
+    pi(tcr)
+    pi([tcr])
+    pi((tcr,))
     print()
-    print_iterable('nya')
-    print_iterable('n"ya')
-    print_iterable('n\'ya')
+    pi('nya')
+    pi('n"ya')
+    pi('n\'ya')
     print()
 
     class EAnimal(Enum):
@@ -428,15 +424,15 @@ if True:  # \/ # Tests
       B = 'B'
       C = 'C'
 
-    print_iterable(EAnimal)
-    print_iterable(EAnimalInt)
-    print_iterable(EAnimalComplex)
-    print_iterable(EAnimalStr)
+    pi(EAnimal)
+    pi(EAnimalInt)
+    pi(EAnimalComplex)
+    pi(EAnimalStr)
     print()
-    print_iterable(EAnimal.FOX)
-    print_iterable(EAnimalInt.FOX)
-    print_iterable(EAnimalComplex.FOX)
-    print_iterable(EAnimalStr.FOX)
+    pi(EAnimal.FOX)
+    pi(EAnimalInt.FOX)
+    pi(EAnimalComplex.FOX)
+    pi(EAnimalStr.FOX)
     print()
     class IntCTF(IntFlag):
       A = 1 << 0
@@ -450,15 +446,15 @@ if True:  # \/ # Tests
       CC = 1 << 2
       CD = 1 << 3
 
-    print_iterable(IntCTF)
-    print_iterable(CTF)
+    pi(IntCTF)
+    pi(CTF)
     print()
-    print_iterable(IntCTF.A)
-    print_iterable(CTF.CA)
-    print_iterable(CTF.CA | CTF.CB)
+    pi(IntCTF.A)
+    pi(CTF.CA)
+    pi(CTF.CA | CTF.CB)
     ab = IntCTF.A | IntCTF.B
-    print_iterable(ab)
-    print_iterable(ab | IntCTF.C)
+    pi(ab)
+    pi(ab | IntCTF.C)
     print()
 
     class AutoEnum(Enum):
@@ -467,9 +463,9 @@ if True:  # \/ # Tests
       C = auto()
       D = auto()
 
-    print_iterable(AutoEnum)
+    pi(AutoEnum)
     print()
-    print_iterable(AutoEnum.A)
+    pi(AutoEnum.A)
 
     class TestTCRFmt:
       value: str
@@ -488,9 +484,9 @@ if True:  # \/ # Tests
     instance1 = TestTCRFmt(value='nya')
     instance2 = TestTCRFmt()
 
-    print_iterable(instance1)
-    print_iterable(instance2)
-    print_iterable(TestTCRFmt)
+    pi(instance1)
+    pi(instance2)
+    pi(TestTCRFmt)
     print()
 
 
@@ -499,27 +495,41 @@ if True:  # \/ # Tests
       value: str
       value2: str = field(default='uwu')
 
-    print_iterable(hikari)
-    print_iterable(sys)
-    print_iterable(tcr)
-    print_iterable(TestDataclass)
-    print_iterable(TestDataclass(value='nya'))
+    pi(hikari)
+    pi(sys)
+    pi(tcr)
+    pi(TestDataclass)
+    pi(TestDataclass(value='nya'))
     print()
-    print_iterable(p.Path().absolute())
-    print_iterable(p.Path('uwu'))
-    print_iterable(p.PurePath('uwu'))
-    print_iterable(p.PurePath('/uwu'))
+    pi(p.Path().absolute())
+    pi(p.Path('uwu'))
+    pi(p.PurePath('uwu'))
+    pi(p.PurePath('/uwu'))
     print()
-    print_iterable(hikari.Status)
-    print_iterable(hikari.ActivityType)
-    print_iterable(hikari.ActivityType.CUSTOM)
+    pi(hikari.Status)
+    pi(hikari.ActivityType)
+    pi(hikari.ActivityType.CUSTOM)
     print()
     bf_code = tcr.types.BrainfuckCode(',asdf>.<++[uwu-]nya')
-    print_iterable(bf_code)
+    pi(bf_code)
     print()
-    print_iterable(...)
+    pi(...)
     print()
-    print_iterable(sys.version_info)
+    pi(sys.version_info)
+
+    print()
+    import pydantic
+
+    class A(pydantic.BaseModel):
+      a: int
+      b: int
+      c: int
+
+    a = A(a=1, b=2, c=3)
+
+    pi(a)
+    pi(A)
+    pi(pydantic.BaseModel)
 
   def test_markdown():
     from tcrutils import codeblock, uncodeblock
@@ -1669,7 +1679,7 @@ if __name__ == '__main__':
   # test_path()
   # test_ifys()
   test_print_iterable(
-    print_iterable=tcr.print_iterable,
+    pi=tcr.print_iterable,
     syntax_highlighting=1,
     # let_no_indent=0,
     # force_no_indent=1,
