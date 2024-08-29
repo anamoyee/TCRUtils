@@ -651,7 +651,7 @@ if True:  # \/ # fmt & print iterable
             _t = item
             break
     if it.__class__ == sys.version_info.__class__ and syntax_highlighting:
-      return FMT_BRACKETS[range][1] % FMT_SYS_VERSION_INFO % it[:3]
+      return FMT_BRACKETS[list][1] % FMT_SYS_VERSION_INFO % it[:3]
     if _t == int:
       if int_formatter:
         it = int_formatter(it)

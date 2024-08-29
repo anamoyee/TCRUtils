@@ -2,7 +2,7 @@ import datetime
 import inspect
 from collections.abc import Callable
 from functools import partial, reduce
-from sys import exit
+from sys import argv, exit
 
 from colored import Back, Fore, Style
 
@@ -10,6 +10,7 @@ from .tcr_decorator import copy_kwargs_sunder
 from .tcr_dict import clean_dunder_dict
 from .tcr_extract_error import extract_error, extract_traceback
 from .tcr_getch import getch
+from .tcr_inspect import get_file_colon_lineno
 from .tcr_iterable import cut_at
 from .tcr_print import FMTC, fmt_iterable
 from .tcr_terminal import terminal
@@ -33,10 +34,16 @@ class Console:
   """
 
   _last_diff: str | None = None
+  include_callsite: bool = None
 
   @staticmethod
   def _get_timestamp():
     return str(datetime.datetime.now())[:-3].replace('.', ',')
+
+  def _get_callsite_text_if_enabled(self) -> str:
+    if self.include_callsite or (self.include_callsite is None and '--tcr-c-callsite' in argv):
+      return get_file_colon_lineno()
+    return ''
 
   @copy_kwargs_sunder
   def _generate_out_and_print(self, *values, sep='\n', end='', withprefix=True, syntax_highlighting: bool = True, color: str, letter: str, _kwargs: dict, **kwargs) -> None:
@@ -66,7 +73,7 @@ class Console:
     out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
 
     if withprefix:
-      out = f'{letter} {self._get_timestamp()} ' + out
+      out = f'{letter} {(self._get_callsite_text_if_enabled()+" ").lstrip()}{self._get_timestamp()} ' + out
 
     out = f'{color if syntax_highlighting else ""}{out}{CC._ if syntax_highlighting else ""}'
 
@@ -100,14 +107,14 @@ class Console:
     fmt_iterable: Callable[..., str] = fmt_iterable,
     **kwargs,
   ) -> None | object:
-    out = fmt_iterable(*[(x if ((not quoteless) or (not isinstance(x, str))) else QuotelessString(x)) for x in (value, *values)], syntax_highlighting=syntax_highlighting, **kwargs)
+    out = fmt_iterable(*[(x if ((not quoteless) or (x.__class__ != str)) else QuotelessString(x)) for x in (value, *values)], syntax_highlighting=syntax_highlighting, **kwargs)
 
     if padding == ' ' and not withprefix:
       padding = ''
 
     prefix = ''
     if withprefix:
-      prefix = f'D {self._get_timestamp()}'
+      prefix = f'D {(self._get_callsite_text_if_enabled()+" ").lstrip()}{self._get_timestamp()}'
 
     c_debug = ''
     c_reset = ''

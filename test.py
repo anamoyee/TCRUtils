@@ -1679,7 +1679,7 @@ if __name__ == '__main__':
   # test_path()
   # test_ifys()
   test_print_iterable(
-    pi=tcr.print_iterable,
+    pi=tcr.c,
     syntax_highlighting=1,
     # let_no_indent=0,
     # force_no_indent=1,

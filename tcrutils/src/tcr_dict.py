@@ -10,7 +10,7 @@ def _check_strict(master: Mapping, slave: Mapping, *, recursive: bool) -> bool:
   for k, v in master.items():
     if k not in slave:
       return [k]
-    if recursive and isinstance(v, Mapping) and isinstance(slave[k], Mapping):  # noqa: SIM102
+    if recursive and isinstance(v, Mapping) and isinstance(slave[k], Mapping):
       if (a := _check_strict(v, slave[k], recursive=recursive)) is not True:
         return [k, *a]
   return True
