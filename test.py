@@ -1659,6 +1659,20 @@ ID: {server|id}
     c.critical(s)
     c.critical(obj, s, s, s)
 
+  def test_console_callsite():
+    c.include_callsite = True
+    c(1)
+    c.log(1)
+    c.warn(1)
+    c.error(1)
+    c.critical(1)
+    c('nya')
+    c.log('nya')
+    c.warn('nya')
+    c.error('nya')
+    c.critical('nya')
+    c.include_callsite = None
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -1679,7 +1693,7 @@ if __name__ == '__main__':
   # test_path()
   # test_ifys()
   test_print_iterable(
-    pi=tcr.c,
+    pi=tcr.print_iterable,
     syntax_highlighting=1,
     # let_no_indent=0,
     # force_no_indent=1,
@@ -1764,6 +1778,7 @@ if __name__ == '__main__':
   # test_err_denoted()
   # test_is_snowflake()
   # test_console_fmt()
+  # test_console_callsite()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100

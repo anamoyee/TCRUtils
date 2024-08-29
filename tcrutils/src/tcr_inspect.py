@@ -35,7 +35,7 @@ def get_file_colon_lineno(default: T | None = None, backtrack_frames: int = 1, a
       raise RuntimeError('Invalid frame.')
     frame = frame.f_back
 
-  return f'{frame.f_code.co_filename}:{get_lineno(default=default, backtrack_frames=backtrack_frames+1)+additional_offset}'
+  return f'{frame.f_code.co_filename}:{frame.f_lineno+additional_offset}'
 
 
 def get_pyversion_str(precision=2) -> str:
