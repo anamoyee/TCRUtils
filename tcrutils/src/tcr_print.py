@@ -559,7 +559,11 @@ if True:  # \/ # fmt & print iterable
           return FMT_ENUM_AUTO[syntax_highlighting] % (it.__class__.__name__, it.name)
         return FMT_ENUM[syntax_highlighting] % (it.__class__.__name__, it.name, this(it.value, force_no_indent=True, force_complex_parenthesis=True))
     if PydanticBM is not None and isinstance(it, PydanticBM):
-      return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, asterisks + this(it.model_dump(warnings='none')))
+      dumped = it.model_dump(warnings='none')
+      if dumped:
+        return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, asterisks + this(dumped))
+      else:
+        return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, '')
     if isinstance(it, dt.datetime | dt.date | dt.time):
       if isinstance(it, dt.datetime):
         format_str = '%H:%M:%S %d-%m-%Y'

@@ -525,11 +525,16 @@ if True:  # \/ # Tests
       b: int
       c: int
 
+    class B(pydantic.BaseModel):
+      ...
+
     a = A(a=1, b=2, c=3)
 
     pi(a)
     pi(A)
     pi(pydantic.BaseModel)
+    pi(B)
+    pi(B())
 
   def test_markdown():
     from tcrutils import codeblock, uncodeblock
