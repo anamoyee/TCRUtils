@@ -26,3 +26,8 @@ async def araiser(e: Exception) -> Callable[..., NoReturn]:
     raise e
 
   return inner_raiser
+
+
+async def alambda(func: Callable) -> Callable:
+  """Asyncify any synchronous function, mostly lambdas when needed."""
+  return func()
