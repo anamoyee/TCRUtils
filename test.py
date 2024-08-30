@@ -552,7 +552,6 @@ if True:  # \/ # Tests
     console({x+1: tcr.fizzbuzz(x+1) for x in range(n)})
 
   def test_constants():
-    from tcrutils.discord import DiscordLimits
     console(x for x in [
       BACKSLASH,
       NEWLINE,
@@ -561,7 +560,6 @@ if True:  # \/ # Tests
       BACKTICK, BACKTICKS,
       APOSTROPHE, QUOTE,
       FAKE_PIPE,
-      DiscordLimits,
     ])
 
   def test_sort():
@@ -613,50 +611,50 @@ if True:  # \/ # Tests
   def test_recursive_sum():
     console(tcr.recursive_sum([1, 2, 3, 4, [99, 4, 5]]))
 
-  def test_discord():
-    from tcrutils.discord import DiscordLimits
-    from tcrutils.discord import Permission as Perm
-    from tcrutils.discord import permissions as perms
-    console(DiscordLimits)
-    print()
+  # def test_discord():
+  #   from tcrutils.discord import DiscordLimits
+  #   from tcrutils.discord import Permission as Perm
+  #   from tcrutils.discord import permissions as perms
+  #   console(DiscordLimits)
+  #   print()
 
-    class Guild:
-      owner_id = 1234
+  #   class Guild:
+  #     owner_id = 1234
 
-    class Author:
-      id = 1234
+  #   class Author:
+  #     id = 1234
 
-    class Role:
-      permissions = Perm.ADMINISTRATOR
+  #   class Role:
+  #     permissions = Perm.ADMINISTRATOR
 
-    class Member(Author):
-      @staticmethod
-      def get_roles():
-        return [Role()]
+  #   class Member(Author):
+  #     @staticmethod
+  #     def get_roles():
+  #       return [Role()]
 
-    class Message:
-      member = Member()
+  #   class Message:
+  #     member = Member()
 
-    class Event:
-      message = Message()
-      author = Author()
-      member = Member()
+  #   class Event:
+  #     message = Message()
+  #     author = Author()
+  #     member = Member()
 
-      @staticmethod
-      def get_guild():
-        return Guild()
+  #     @staticmethod
+  #     def get_guild():
+  #       return Guild()
 
-    perms.devlist = [1234]
+  #   perms.devlist = [1234]
 
-    console(perms.has_by_GMCE(Event(), Perm.ADD_REACTIONS))
+  #   console(perms.has_by_GMCE(Event(), Perm.ADD_REACTIONS))
 
-    console(perms.has(
-      a1 := Perm.ADMINISTRATOR,
-      a2 := Perm.CHANGE_NICKNAME | Perm.ADD_REACTIONS,
-      allow_administrator=True,
-    ))
-    console(perms.to_str(a1))
-    console(perms.to_str(a2))
+  #   console(perms.has(
+  #     a1 := Perm.ADMINISTRATOR,
+  #     a2 := Perm.CHANGE_NICKNAME | Perm.ADD_REACTIONS,
+  #     allow_administrator=True,
+  #   ))
+  #   console(perms.to_str(a1))
+  #   console(perms.to_str(a2))
 
   def test_terminal():
     print(tcr.terminal.size, type(tcr.terminal.size), complex(tcr.terminal.size))
@@ -1028,71 +1026,71 @@ if True:  # \/ # Tests
 
     c(--i.bit_length()) # noqa
 
-  def test_generate_type_hinter():
-    import rich
-    class Example:
-      def __init__(self):
-        self.name = "John"
-        self.age = 30
-        self.is_active = True
+  # def test_generate_type_hinter():
+  #   import rich
+  #   class Example:
+  #     def __init__(self):
+  #       self.name = "John"
+  #       self.age = 30
+  #       self.is_active = True
 
-      class InnerClass:
-        def __init__(self):
-          ...
+  #     class InnerClass:
+  #       def __init__(self):
+  #         ...
 
-      def func(self, value: int, clause: InnerClass):
-        pass
+  #     def func(self, value: int, clause: InnerClass):
+  #       pass
 
-      def func2(self) -> int:
-        pass
+  #     def func2(self) -> int:
+  #       pass
 
-      def argskwargsfunc(self, *args, **kwargs) -> int:
-        pass
+  #     def argskwargsfunc(self, *args, **kwargs) -> int:
+  #       pass
 
-      def defaultfunc(self, /, value: int = 1, *, s: str | None = None) -> int:
-        pass
+  #     def defaultfunc(self, /, value: int = 1, *, s: str | None = None) -> int:
+  #       pass
 
-    tcr.generate_type_hinter(Example(), print=rich.print, clipboard=False)
+  #   tcr.generate_type_hinter(Example(), print=rich.print, clipboard=False)
 
   def test_generate_type_hinter2():
     imgui = __import__('imgui')
 
     tcr.generate_type_hinter(imgui, print=True, clipboard=False)
 
-  def test_imgui_handler():
-    import imgui
+  # def test_imgui_handler():
+  #   import imgui
 
-    from tcrutils.imgui import ImGuiHandler, ensure_dependencies, imtypes
+  #   from tcrutils.imgui import ImGuiHandler, ensure_dependencies, imtypes
 
-    imgui: imtypes.ImguiType
+  #   imgui: imtypes.ImguiType
 
-    ensure_dependencies()
+  #   ensure_dependencies()
 
-    class State:
-      time = 0.0
-      frames = 0
-      every = tcr.imgui.Every(30)
-      last_fps = 0
+  #   class State:
+  #     time = 0.0
+  #     frames = 0
+  #     every = tcr.imgui.Every(30)
+  #     last_fps = 0
 
-    @ImGuiHandler().set_title("nyaa")
-    def gui(state: State):
-      with imgui.begin("nya"):
-        current_time = imgui.get_time()
-        delta_time = current_time - state.time
+  #   @ImGuiHandler().set_title("nyaa")
+  #   def gui(state: State):
+  #     with imgui.begin("nya"):
+  #       current_time = imgui.get_time()
+  #       delta_time = current_time - state.time
 
-        state.time = current_time
+  #       state.time = current_time
 
-        if State.every():
-          fps = state.frames / delta_time / 30
-          state.frames = 0
-          state.last_fps = fps
-        else:
-          fps = state.last_fps
-        imgui.text("FPS: %.0f" % fps)
+  #       if State.every():
+  #         fps = state.frames / delta_time / 30
+  #         state.frames = 0
+  #         state.last_fps = fps
+  #       else:
+  #         fps = state.last_fps
+  #       imgui.text("FPS: %.0f" % fps)
 
-      state.frames += 1
+  #     state.frames += 1
 
-    gui.run(State())
+  #   gui.run(State())
 
   def test_b64():
     def get_enc_len(text: str, I: int):

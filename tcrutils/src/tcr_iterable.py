@@ -222,3 +222,28 @@ def Or(arg: T, *args: Ts, none: Any = None) -> T | Ts:
       return a
 
   return args[-1]
+
+
+def slice_between(lst: Iterable, /, left=None, right=None, *, flip_on_left_right_mismatch: bool = True) -> Iterable:
+  if lst:
+    if left is None:
+      left = lst[0]
+    if right is None:
+      right = lst[-1]
+  else:
+    raise KeyError(f'Unable to infer the list boundaries: the list is empty.')
+
+  if left not in lst:
+    raise KeyError(f"Left boundary {left!r} not found in the list.")
+  if right not in lst:
+    raise KeyError(f"Right boundary {right!r} not found in the list.")
+
+  left_index = lst.index(left)
+  right_index = lst.index(right)
+  if left_index > right_index:
+    if flip_on_left_right_mismatch:
+      left_index, right_index = right_index, left_index
+    else:
+      raise ValueError("Left boundary cannot be to the right of the right boundary and flip_on_left_right_mismatch=False.")
+
+  return lst[left_index:right_index + 1]
