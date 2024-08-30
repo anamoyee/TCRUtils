@@ -28,6 +28,9 @@ async def araiser(e: Exception) -> Callable[..., NoReturn]:
   return inner_raiser
 
 
-async def alambda(func: Callable) -> Callable:
+def alambda(func: Callable) -> Callable:
   """Asyncify any synchronous function, mostly lambdas when needed."""
-  return func()
+  async def wrapper(*args, **kwargs):
+    return func(*args, **kwargs)
+
+  return wrapper
