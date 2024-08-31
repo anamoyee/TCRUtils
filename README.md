@@ -5,6 +5,7 @@ Useful stuff for tcr projects.
 TODO: Add here an index of best features
 
 ## Todo
+  - [ ] Make the fucking pydantic custom traversing because model_dump is absolutely useless if it just errors...
   - [ ] ensure deps: apply f_back magic to automatically set global vars (instruct user)
   - [ ] finish imgui
     - [ ] add docstrings

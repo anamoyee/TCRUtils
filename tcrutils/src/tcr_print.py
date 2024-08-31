@@ -44,7 +44,7 @@ from colored import Back, Fore, Style
 try:
   from pydantic import BaseModel as PydanticBM
 except ModuleNotFoundError:
-  PydanticBM = None
+  exec('PydanticBM = None')
 
 from .tcr_compare import able
 from .tcr_constants import NEWLINE
@@ -159,6 +159,7 @@ if True:  # \/ # fmt & print iterable
     I    = f'{FMTC.SPECIAL}I'
     C    = f'{FMTC.COROUTINE}C'
     META = f'{FMTC.SPECIAL}Meta'
+    EXCLAMATION = f'{FMTC.INTERNAL_EXCEPTION}!'
 
   # Format Brackets templates.
   # (FMT_BRACKETS[_t][syntax_highlighting: bool] % content) -> attaches brackets to the content with respect to syntax highlighting
@@ -346,6 +347,9 @@ if True:  # \/ # fmt & print iterable
       .replace('#', f'{FMTC.BRACKET}[')\
     )
 
+  def _pydantic_hopefully_non_erroring_dumper(obj: PydanticBM) -> dict:
+    return {k: getattr(obj, k) for k in obj.model_fields_set}
+
   def fmt_iterable(
     it: Iterable | Any,
     /,
@@ -363,6 +367,7 @@ if True:  # \/ # fmt & print iterable
     force_union_parenthesis: bool = True,
     prefer_full_names: bool = False,
     str_repr: Callable[[str], str] = double_quoted_repr,
+    prefer_pydantic_better_dump: bool = False,
     **kwargs,
   ) -> str:
     """### Return iterable as formatted string with optional syntax highlighting.
@@ -396,6 +401,7 @@ if True:  # \/ # fmt & print iterable
         let_no_inder_max_iterables: int = 1, (advanced) override the limit for iterables for the let_no_indent feature
         let_no_inder_max_non_iterables: int = 4, (advanced) override the limit for non-iterables for the let_no_indent feature
         str_repr: Callable[[str], str] = double_quoted_repr, (advanced) override the default string repr callable
+        prefer_pydantic_better_dump: bool = False, Will use the pydantic's custom dumper which prints the model name in more places, instead of leaving it only for the moment when pydantic SHITS ITS PANTS (raises random shitass errors). i have nothing more to say about this.
 
     If no formatting is set for an object, it can be defined using the __tcr_display__ method.
 
@@ -479,6 +485,7 @@ if True:  # \/ # fmt & print iterable
       'force_union_parenthesis': force_union_parenthesis,
       'prefer_full_names': prefer_full_names,
       'depth_limit': depth_limit,
+      'prefer_pydantic_better_dump': prefer_pydantic_better_dump,
       'str_repr': str_repr,
       'no_try': kwargs.get('no_try'),
       '__depth': kwargs.get('__depth', 2) + 1,
@@ -559,11 +566,23 @@ if True:  # \/ # fmt & print iterable
           return FMT_ENUM_AUTO[syntax_highlighting] % (it.__class__.__name__, it.name)
         return FMT_ENUM[syntax_highlighting] % (it.__class__.__name__, it.name, this(it.value, force_no_indent=True, force_complex_parenthesis=True))
     if PydanticBM is not None and isinstance(it, PydanticBM):
-      dumped = it.model_dump(warnings='none')
-      if dumped:
-        return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, asterisks + this(dumped))
+      errored_during_shitty_pydantic_dump = False
+      if prefer_pydantic_better_dump:
+        dumped = _pydantic_hopefully_non_erroring_dumper(it)
       else:
-        return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, '')
+        try:
+          dumped = it.model_dump(warnings='none')
+        except Exception:
+          # Pydantic doesn't feel like supporting sets nicely so it just errors when dumping. This just falls back to the other method and adds an exclamation mark to mark that it has errored and successfully recovered.
+          errored_during_shitty_pydantic_dump = True
+          dumped = _pydantic_hopefully_non_erroring_dumper(it)
+
+      prefix = '' if (not syntax_highlighting or not errored_during_shitty_pydantic_dump) else FMT_LETTERS.EXCLAMATION
+
+      if dumped:
+        return prefix + FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, asterisks + this(dumped))
+      else:
+        return prefix + FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, '')
     if isinstance(it, dt.datetime | dt.date | dt.time):
       if isinstance(it, dt.datetime):
         format_str = '%H:%M:%S %d-%m-%Y'

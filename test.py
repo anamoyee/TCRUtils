@@ -1676,6 +1676,25 @@ ID: {server|id}
     c.critical('nya')
     c.include_callsite = None
 
+  def test_fucking_pydantic_model_dump_my_ass():
+    from pydantic import BaseModel
+
+    from tcrutils import c
+
+
+    class I(BaseModel):
+      i: int
+
+      def __hash__(self):
+        return self.i
+
+    class Container(BaseModel):
+      s: set[I]
+
+    co = Container(s={I(i=1), I(i=2), I(i=3)})
+
+    c(co)
+
 if True:  # \/ # Test setup
   for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
     if k.startswith('test_'):
@@ -1782,6 +1801,7 @@ if __name__ == '__main__':
   # test_is_snowflake()
   # test_console_fmt()
   # test_console_callsite()
+  test_fucking_pydantic_model_dump_my_ass()
 
   asshole.total(prefix='\n')
   pass  # noqa: PIE790, RUF100
