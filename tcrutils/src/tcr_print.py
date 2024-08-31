@@ -159,7 +159,6 @@ if True:  # \/ # fmt & print iterable
     I    = f'{FMTC.SPECIAL}I'
     C    = f'{FMTC.COROUTINE}C'
     META = f'{FMTC.SPECIAL}Meta'
-    EXCLAMATION = f'{FMTC.INTERNAL_EXCEPTION}!'
 
   # Format Brackets templates.
   # (FMT_BRACKETS[_t][syntax_highlighting: bool] % content) -> attaches brackets to the content with respect to syntax highlighting
@@ -566,7 +565,6 @@ if True:  # \/ # fmt & print iterable
           return FMT_ENUM_AUTO[syntax_highlighting] % (it.__class__.__name__, it.name)
         return FMT_ENUM[syntax_highlighting] % (it.__class__.__name__, it.name, this(it.value, force_no_indent=True, force_complex_parenthesis=True))
     if PydanticBM is not None and isinstance(it, PydanticBM):
-      errored_during_shitty_pydantic_dump = False
       if prefer_pydantic_better_dump:
         dumped = _pydantic_hopefully_non_erroring_dumper(it)
       else:
@@ -574,15 +572,12 @@ if True:  # \/ # fmt & print iterable
           dumped = it.model_dump(warnings='none')
         except Exception:
           # Pydantic doesn't feel like supporting sets nicely so it just errors when dumping. This just falls back to the other method and adds an exclamation mark to mark that it has errored and successfully recovered.
-          errored_during_shitty_pydantic_dump = True
           dumped = _pydantic_hopefully_non_erroring_dumper(it)
 
-      prefix = '' if (not syntax_highlighting or not errored_during_shitty_pydantic_dump) else FMT_LETTERS.EXCLAMATION
-
       if dumped:
-        return prefix + FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, asterisks + this(dumped))
+        return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, asterisks + this(dumped))
       else:
-        return prefix + FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, '')
+        return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, '')
     if isinstance(it, dt.datetime | dt.date | dt.time):
       if isinstance(it, dt.datetime):
         format_str = '%H:%M:%S %d-%m-%Y'
