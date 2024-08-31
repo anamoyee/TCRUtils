@@ -56,7 +56,7 @@ def merge_dicts(master: Mapping = None, slave: Mapping = None, *dicts: Mapping, 
   if strict:
     a = _check_strict(master, slave, recursive=recursive)
     if a is not True:
-      msg = f'Strict check failed: there exists a key ({".".join(a)}) that is in master dictionary but not in slave dictionary'
+      msg = f'Strict check failed: there exists a key ({".".join(repr(x) for x in a)}) that is in master dictionary but not in slave dictionary'
       raise ValueError(msg)
 
   for key in master:
