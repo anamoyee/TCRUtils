@@ -1742,21 +1742,21 @@ if __name__ == '__main__':
   # test_iterable(batched_=True, cut_at_=False)
   # test_path()
   # test_ifys()
-  # test_print_iterable(
-  #   pi=tcr.print_iterable,
-  #   syntax_highlighting=1,
-  #   # let_no_indent=0,
-  #   # force_no_indent=1,
-  #   # force_no_spaces=0,
-  #   # force_complex_parenthesis=1,
-  #   # item_limit=10,
-  #   # # let_no_inder_max_non_iterables=10,
-  #   # # let_no_inder_max_iterables=10,
-  #   # prefer_full_names=1,
-  #   # force_union_parenthesis=1,
-  #   # depth_limit=3,
-  #   # str_repr=repr,
-  # )
+  test_print_iterable(
+    pi=tcr.print_iterable,
+    syntax_highlighting=1,
+    # let_no_indent=0,
+    # force_no_indent=1,
+    # force_no_spaces=0,
+    # force_complex_parenthesis=1,
+    # item_limit=10,
+    # # let_no_inder_max_non_iterables=10,
+    # # let_no_inder_max_iterables=10,
+    # prefer_full_names=1,
+    # force_union_parenthesis=1,
+    # depth_limit=3,
+    # str_repr=repr,
+  )
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=1)
   # test_print_iterable(print_iterable=lambda *args, **kwargs: print(tcr.fmt_iterable(*args, **kwargs)), syntax_highlighting=True)
   # test_print_iterable(print_iterable=print_iterable, syntax_highlighting=False)
@@ -1834,7 +1834,7 @@ if __name__ == '__main__':
 
   asshole.total(prefix='\n')
   print()
-  c('Tests ran: ', __TESTS_RAN_GLOBAL)
+  c('=', __TESTS_RAN_GLOBAL)
   pass  # noqa: PIE790, RUF100
 
 if BOT:
