@@ -10,8 +10,8 @@ from .tcr_print import print_block
 
 if True:  # \/ # @test
 
-  def test(func: Callable) -> Callable:
-    """A decorator for adding test label."""
+  def test(func: Callable):
+    """Print a "test label" with this function's name, in title case before it runs, so it is clear where one test starts (and other ends, if any)."""
 
     @wraps(func)
     def wrapper(*args, **kwargs):

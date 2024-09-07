@@ -288,7 +288,7 @@ if True:  # \/ # fmt & print iterable
     if all(x == i for i, x in enumerate(values)):
       return True
 
-    if all(x == (i+1) for i, x in enumerate(values)):
+    if all(x == (i + 1) for i, x in enumerate(values)):
       return True
 
     if all(x == 2**i for i, x in enumerate(values)):
@@ -309,7 +309,7 @@ if True:  # \/ # fmt & print iterable
     return s
 
   def _fmt_unknown_highlighted(it: object, /, queue_name: str) -> str:
-    if (match := regex.match(r"<module '(?P<module_name>[^']+)'(?: from '(?P<path>[^']+)')?(?: \((?P<namespace>[^)]+)\))?>", repr(it))):
+    if match := regex.match(r"<module '(?P<module_name>[^']+)'(?: from '(?P<path>[^']+)')?(?: \((?P<namespace>[^)]+)\))?>", repr(it)):
       d = match.groupdict()
 
       name = d['module_name']
@@ -320,7 +320,7 @@ if True:  # \/ # fmt & print iterable
 
       return _fmt_module_highlighted(name, path, namespace)
 
-    elif (match := regex.match(r'^([^\d\W](?:(?:\w)|(?:\.<locals>\.)|(?:\.<globals>\.))*)\((.*)\)$', repr(it))):
+    elif match := regex.match(r'^([^\d\W](?:(?:\w)|(?:\.<locals>\.)|(?:\.<globals>\.))*)\((.*)\)$', repr(it)):
       name, body = match.groups()
 
       return FMT_UNKNOWN[True] % (name, body)
@@ -335,15 +335,16 @@ if True:  # \/ # fmt & print iterable
 
     Assuming syntax_highlighting==True && isinstance(text, BrainfuckCode)
     """
-    return str(text.replace('[', '#')\
-      .replace('<', f'{FMTC.ASTERISK}<')\
-      .replace('>', f'{FMTC.ASTERISK}>')\
-      .replace('.', f'{FMTC.DECIMAL}.')\
-      .replace(',', f'{FMTC.COMMA},')\
-      .replace('+', f'{FMTC.TRUE}+')\
-      .replace('-', f'{FMTC.FALSE}-')\
-      .replace(']', f'{FMTC.BRACKET}]')\
-      .replace('#', f'{FMTC.BRACKET}[')\
+    return str(
+      text.replace('[', '#')
+      .replace('<', f'{FMTC.ASTERISK}<')
+      .replace('>', f'{FMTC.ASTERISK}>')
+      .replace('.', f'{FMTC.DECIMAL}.')
+      .replace(',', f'{FMTC.COMMA},')
+      .replace('+', f'{FMTC.TRUE}+')
+      .replace('-', f'{FMTC.FALSE}-')
+      .replace(']', f'{FMTC.BRACKET}]')
+      .replace('#', f'{FMTC.BRACKET}[')
     )
 
   def _pydantic_hopefully_non_erroring_dumper(obj: PydanticBM) -> dict:
@@ -442,7 +443,8 @@ if True:  # \/ # fmt & print iterable
     ):
       if isinstance(it, Mapping):
         if len(it) == 1 and ((type(next(iter(it.values()))) in (int, float, complex, bool)) or next(iter(it.values())) in (None, Null, '', [], (), {}, set())):
-          force_no_indent = -1
+          pass # This broke some stuff so now no mappings can be folded in
+          # force_no_indent = -1
       else:
         # Case 1: If the iterable in question contains iterables
         # If there is at most 1 iterable in the outer iterable of iterables
@@ -535,25 +537,31 @@ if True:  # \/ # fmt & print iterable
 
     if isinstance(it, _OverflowClass):
       return f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}' if syntax_highlighting else f'({it} more items...)'
-    if isinstance(it, ....__class__): # cursed syntax lol
+    if isinstance(it, ....__class__):  # cursed syntax lol
       if not syntax_highlighting:
         return '...'
       return f'{FMTC.DECIMAL}...'
     if (_result := able(issubclass, it, Enum)) and (_result.result):
-      return FMT_CLASS[syntax_highlighting] % (it.__name__ + (FMT_LETTERS.META if syntax_highlighting else ''), ((1 if _is_enum_auto(it) else 2)*FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True))
+      return FMT_CLASS[syntax_highlighting] % (
+        it.__name__ + (FMT_LETTERS.META if syntax_highlighting else ''),
+        ((1 if _is_enum_auto(it) else 2) * FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True),
+      )
 
-    if repr(it) == "<class 'pydantic.main.BaseModel'>": # Kurwa pierdole tego kurwa pydantica chujowego
-      return ((FMTC.TYPE if syntax_highlighting else '') + 'BaseModel')
+    if repr(it) == "<class 'pydantic.main.BaseModel'>":  # Kurwa pierdole tego kurwa pydantica chujowego
+      return (FMTC.TYPE if syntax_highlighting else '') + 'BaseModel'
     if isinstance(it, type) and hasattr(it, '__pydantic_core_schema__'):
       it_name = it.__pydantic_core_schema__
 
       while 'schema' in it_name:
         it_name = it_name['schema']
 
-      it_name = it_name.get('model_name', "<UnknownPydanticType>")
-      return ((FMTC.TYPE if syntax_highlighting else '') + it_name)
+      it_name = it_name.get('model_name', '<UnknownPydanticType>')
+      return (FMTC.TYPE if syntax_highlighting else '') + it_name
     if _HikariEnum is not None and (_result := able(issubclass, it, _HikariEnum)) and (_result.result):
-      return FMT_CLASS[syntax_highlighting] % (it.__name__ + (FMT_LETTERS.META if syntax_highlighting else ''), ((1 if _is_enum_auto(it) else 2)*FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True))
+      return FMT_CLASS[syntax_highlighting] % (
+        it.__name__ + (FMT_LETTERS.META if syntax_highlighting else ''),
+        ((1 if _is_enum_auto(it) else 2) * FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True),
+      )
     if isinstance(it, Enum) or (_HikariEnum is not None and isinstance(it, _HikariEnum)):
       if kwargs.get('_enums_next_hide_class'):
         if _is_enum_auto(it.__class__):
@@ -861,4 +869,3 @@ def gay(text: str, offset: int = 0) -> str:
 
   result += FMTC._
   return result
-

@@ -16,9 +16,9 @@ class path:
     absolute_path = p.Path(absolute_path)
 
     try:
-        relative_path = absolute_path.relative_to(relative_to, walk_up=walk_up)
+      relative_path = absolute_path.relative_to(relative_to, walk_up=walk_up)
     except ValueError:
-        return str(absolute_path)
+      return str(absolute_path)
 
     return p.Path() / relative_path
 

@@ -64,10 +64,7 @@ class Console:
         self._generate_out_and_print(v, **_kwargs)
       return
 
-    values = [
-      (x if isinstance(x, str) else fmt_iterable(x, syntax_highlighting=syntax_highlighting, **kwargs))
-      for x in values
-    ]
+    values = [(x if isinstance(x, str) else fmt_iterable(x, syntax_highlighting=syntax_highlighting, **kwargs)) for x in values]
 
     out = sep.join(values)
     out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end

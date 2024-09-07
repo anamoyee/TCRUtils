@@ -36,14 +36,17 @@ def __getattr__(name: str) -> __ModuleType:
 
   import_name, pip_name = pair
 
-
   import warnings
-  warnings.warn(f"Accessing subpackages of tcrutils as tcr.<name> (tcr.{name}) is deprecated. Do this instead:\n\n$ pip install {pip_name}\n\n>>> import {import_name}\n", DeprecationWarning, stacklevel=2)
+
+  warnings.warn(
+    f'Accessing subpackages of tcrutils as tcr.<name> (tcr.{name}) is deprecated. Do this instead:\n\n$ pip install {pip_name}\n\n>>> import {import_name}\n', DeprecationWarning, stacklevel=2
+  )
 
   try:
     return __import__(import_name)
   except ImportError as e:
     raise ImportError(f'Unable to locate pip-installable tcrutils submodule: {import_name!r}, please install it with by running the following command:\n\n$ pip install {pip_name}') from e
+
 
 from . import dr, src
 from . import dr as execute

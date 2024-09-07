@@ -30,6 +30,7 @@ async def araiser(e: Exception) -> Callable[..., NoReturn]:
 
 def alambda(func: Callable) -> Callable:
   """Asyncify any synchronous function, mostly lambdas when needed."""
+
   async def wrapper(*args, **kwargs):
     return func(*args, **kwargs)
 

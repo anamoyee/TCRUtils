@@ -1,10 +1,12 @@
 """Contains joke functions or the ones that will never be used in a serious situations/prod (This entire package sucks so much it should never be used in prod but uhhhhh.....)."""
 
 from collections.abc import Callable
-from typing import Any, Literal, Self
+from typing import Literal, Self
 
 from ..src import tcr_cloud_imports as cloud_imports
 from .tcr_decorator import instance
+from .tcr_print import FMT_BRACKETS
+from .tcr_types import HexInt
 
 
 def fizzbuzz(n: int) -> str: ...
@@ -151,3 +153,38 @@ class gmail:
       return _Email(f'{other!s}@{self.__class__.__name__}.{".".join(self.tlds)}')
     finally:
       self.tlds.clear()
+
+
+class Pointer:
+  def __init__(self, value) -> None:
+    self.__value = value
+
+  def __iter__(self):
+    yield self.__value
+
+  def __next__(self):
+    return self.__value
+
+  def __repr__(self):
+    value_type = type(self.__value).__name__
+
+    address = hex(id(self.__value))
+
+    return f'{self.__class__.__name__}<{value_type}>({address})'
+
+  def __tcr_fmt__(self=None, *, fmt_iterable=None, no_addr=False, **kwargs):
+    if self is None:
+      raise NotImplementedError
+
+    SH = kwargs.get('syntax_highlighting')
+
+    this = lambda x, **kw: fmt_iterable(x, _raise_errors=True, **kwargs, **kw)
+
+    addr = (FMT_BRACKETS[tuple][SH] % this(HexInt(id(self.__value)))) if not no_addr else ''
+
+    if isinstance(self.__value, Pointer):
+      type_ = self.__value.__tcr_fmt__(fmt_iterable=fmt_iterable, no_addr=True, **kwargs)
+    else:
+      type_ = this(self.__value.__class__)
+
+    return f'{this(self.__class__)}{FMT_BRACKETS[range][SH] % type_}{addr}'

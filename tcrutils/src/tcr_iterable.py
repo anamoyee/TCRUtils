@@ -234,9 +234,9 @@ def slice_between(lst: Iterable, /, left=None, right=None, *, flip_on_left_right
     raise KeyError(f'Unable to infer the list boundaries: the list is empty.')
 
   if left not in lst:
-    raise KeyError(f"Left boundary {left!r} not found in the list.")
+    raise KeyError(f'Left boundary {left!r} not found in the list.')
   if right not in lst:
-    raise KeyError(f"Right boundary {right!r} not found in the list.")
+    raise KeyError(f'Right boundary {right!r} not found in the list.')
 
   left_index = lst.index(left)
   right_index = lst.index(right)
@@ -244,6 +244,6 @@ def slice_between(lst: Iterable, /, left=None, right=None, *, flip_on_left_right
     if flip_on_left_right_mismatch:
       left_index, right_index = right_index, left_index
     else:
-      raise ValueError("Left boundary cannot be to the right of the right boundary and flip_on_left_right_mismatch=False.")
+      raise ValueError('Left boundary cannot be to the right of the right boundary and flip_on_left_right_mismatch=False.')
 
-  return lst[left_index:right_index + 1]
+  return lst[left_index : right_index + 1]

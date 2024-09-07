@@ -12,6 +12,7 @@ def vars(x: object, /) -> dict[str, Any]:
   except TypeError:
     return {k: getattr(x, k) for k in dir(x)}
 
+
 def dir2(x: object, /, dir: Callable[[object], Iterable[str]] = dir) -> list[str]:
   """Same as dir, but exclude the entries starting with '__' (double underscore)."""
   return [y for y in dir(x) if not y.startswith('__')]
