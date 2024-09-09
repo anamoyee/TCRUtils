@@ -31,4 +31,4 @@ def float2int(n: float) -> float | int:
 
 
 def clamp(min: Number, n: Number, max: Number) -> Number:
-  return min if n < min else max if n > max else n
+  return min if n < min else max if n > max else n  # noqa: FURB136

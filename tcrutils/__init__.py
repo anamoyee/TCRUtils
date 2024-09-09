@@ -48,8 +48,7 @@ def __getattr__(name: str) -> __ModuleType:
     raise ImportError(f'Unable to locate pip-installable tcrutils submodule: {import_name!r}, please install it with by running the following command:\n\n$ pip install {pip_name}') from e
 
 
-from . import dr, src
-from . import dr as execute
+from . import src
 from ._version import __version__
 from .src import tcr_case as case
 from .src import tcr_ensure_deps as ensure_depencencies
