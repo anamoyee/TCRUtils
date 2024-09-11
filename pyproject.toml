@@ -1,5 +1,6 @@
 [tool.ruff]
 extend = "C:/CUSTOM_ASSETS/pyproject.toml"
+indent-width = 4
 [tool.ruff.format]
 quote-style = "single"
 indent-style = "space"

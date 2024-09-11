@@ -4,5 +4,5 @@ import random
 
 @contextlib.contextmanager
 def random_seed_lock(seed):
-  rng = random.Random(seed)
-  yield rng
+    rng = random.Random(seed)
+    yield rng
