@@ -292,7 +292,7 @@ if True:  # \/ # fmt & print iterable
     if all(x == (i + 1) for i, x in enumerate(values)):
       return True
 
-    return bool(all(x == 2 ** i for i, x in enumerate(values)))
+    return bool(all(x == 2**i for i, x in enumerate(values)))
 
   def _fmt_module_highlighted(name: str, path: str | None, namespace: str | None) -> str:
     s = f'{FMTC.MODULE}{name}'
@@ -441,7 +441,7 @@ if True:  # \/ # fmt & print iterable
     ):
       if isinstance(it, Mapping):
         if len(it) == 1 and ((type(next(iter(it.values()))) in (int, float, complex, bool)) or next(iter(it.values())) in (None, Null, '', [], (), {}, set())):
-          pass # This broke some stuff so now no mappings can be folded in
+          pass  # This broke some stuff so now no mappings can be folded in
           # force_no_indent = -1
       else:
         # Case 1: If the iterable in question contains iterables
@@ -688,7 +688,7 @@ if True:  # \/ # fmt & print iterable
     if _t == complex:  # noqa: E721
       brackets = ('', '') if (not force_complex_parenthesis) else (f'{FMTC.BRACKET}(', f'{FMTC.BRACKET})')
       return (
-        f"""{brackets[0]}{FMTC.NUMBER}{int(it.real) if int(it.real) == it.real else str(it.real).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC._}{space}{FMTC.COMPLEX}+{space}{FMTC.NUMBER}{int(it.imag) if int(it.imag) == it.imag else str(it.imag).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC.COMPLEX}j{brackets[1]}{FMTC._}"""
+        f"""{brackets[0]}{FMTC.NUMBER}{int(it.real) if int(it.real) == it.real else str(it.real).replace('.', f'{FMTC.DECIMAL}.{FMTC.NUMBER}')}{FMTC._}{space}{FMTC.COMPLEX}+{space}{FMTC.NUMBER}{int(it.imag) if int(it.imag) == it.imag else str(it.imag).replace('.', f'{FMTC.DECIMAL}.{FMTC.NUMBER}')}{FMTC.COMPLEX}j{brackets[1]}{FMTC._}"""
         if syntax_highlighting
         else repr(it)
       )
@@ -741,22 +741,18 @@ if True:  # \/ # fmt & print iterable
       itl, overflow = limited_iterable(it, item_limit)
       if not able(len, it) or len(it) > 0:
         if isinstance(it, Mapping):
-          inner = f'{comma}{enter or space}'.join(
-            [
-              indent + (f'{k}{FMTC.COLON}:{FMTC._}{space}{v}' if syntax_highlighting else f'{k}:{space}{v}').replace('\n', f'{enter}{indent}')
-              for k, v in {this(key): this(value) for key, value in it.items()}.items()
-            ]
-          ) + (comma if trailing_commas else '')
+          inner = f'{comma}{enter or space}'.join([
+            indent + (f'{k}{FMTC.COLON}:{FMTC._}{space}{v}' if syntax_highlighting else f'{k}:{space}{v}').replace('\n', f'{enter}{indent}')
+            for k, v in {this(key): this(value) for key, value in it.items()}.items()
+          ]) + (comma if trailing_commas else '')
 
           return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[dict])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
         else:
-          inner = f'{comma}{enter or space}'.join(
-            [
-              indent + x.replace('\n', f'\n{indent}')
-              for x in [this(element) for element in itl]
-              + ([] if not (overflow if not kwargs.get('_ov') else kwargs.get('_ov')) else [this(_OverflowClass(overflow if not kwargs.get('_ov') else kwargs.get('_ov')))])
-            ]
-          ) + (comma if (trailing_commas or (_t == tuple and len(it) == 1)) else '')  # noqa: E721
+          inner = f'{comma}{enter or space}'.join([
+            indent + x.replace('\n', f'\n{indent}')
+            for x in [this(element) for element in itl]
+            + ([] if not (overflow if not kwargs.get('_ov') else kwargs.get('_ov')) else [this(_OverflowClass(overflow if not kwargs.get('_ov') else kwargs.get('_ov')))])
+          ]) + (comma if (trailing_commas or (_t == tuple and len(it) == 1)) else '')  # noqa: E721
 
           return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
       else:

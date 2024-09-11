@@ -1,4 +1,5 @@
 """TCRUtils-specific errors."""
+
 from types import TracebackType
 from typing import Any
 

@@ -39,7 +39,7 @@ def default_err_or_warning_printhook(s: str, warning: Warning | Exception, filen
     lines = lines[max(0, lineno - (AROUND + 1)) : lineno + AROUND]
     while all(x.startswith(' ') for x in lines):
       lines = [x[1:] for x in lines]
-    lines = [f'{C_NUMBER}{lineno-AROUND+i}{color} {">" if i == AROUND else "|"}{FMTC._} {cut_at(x, CUTOFF)}' for i, x in enumerate(lines)]
+    lines = [f'{C_NUMBER}{lineno - AROUND + i}{color} {">" if i == AROUND else "|"}{FMTC._} {cut_at(x, CUTOFF)}' for i, x in enumerate(lines)]
     lines = '\n'.join(lines)
     lines = f'\n{lines}'
 

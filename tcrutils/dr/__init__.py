@@ -9,4 +9,5 @@ try:
     DynamicResponseRecursionError,
     DynamicResponseSyntaxError,
   )
-except ImportError: ...
+except ImportError:
+  ...

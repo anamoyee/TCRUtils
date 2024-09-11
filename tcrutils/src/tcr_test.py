@@ -179,7 +179,8 @@ def raises(func: Callable[[], None], *args, **kwargs) -> Callable[[BaseException
       func(*args, **kwargs)
     except __e:
       return True
-    except Exception: ...
+    except Exception:
+      ...
     return False
 
   return raises_inner

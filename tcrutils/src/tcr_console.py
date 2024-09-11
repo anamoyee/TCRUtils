@@ -70,7 +70,7 @@ class Console:
     out = reduce(lambda x, y: str(x) + sep + str(y), [*values, '']) + end
 
     if withprefix:
-      out = f'{letter} {(self._get_callsite_text_if_enabled(5)+" ").lstrip()}{self._get_timestamp()} ' + out
+      out = f'{letter} {(self._get_callsite_text_if_enabled(5) + " ").lstrip()}{self._get_timestamp()} ' + out
 
     out = f'{color if syntax_highlighting else ""}{out}{CC._ if syntax_highlighting else ""}'
 
@@ -104,31 +104,19 @@ class Console:
     fmt_iterable: Callable[..., str] = fmt_iterable,
     **kwargs,
   ) -> None | object:
-
-
     all_values = (value, *values)
 
     if len(all_values) >= 2 and all_values[0].__class__ == str and all_values[0]:  # noqa: E721
       first_string: str = all_values[0]
       after_first_string = ''
 
-      if first_string.endswith('='):
-        first_string = first_string.removesuffix('=')
-        after_first_string = '='
-
-      if first_string.rstrip().endswith('->'):
-        first_string = first_string.rstrip().removesuffix('->').rstrip()
-        if first_string:
-          after_first_string = ' -> '
-        else:
-          after_first_string = '-> '
-
-      if first_string.rstrip().endswith('=>'):
-        first_string = first_string.rstrip().removesuffix('=>').rstrip()
-        if first_string:
-          after_first_string = ' => '
-        else:
-          after_first_string = '=> '
+      for symbol in ('=', '->', '=>'):
+        if first_string.rstrip().endswith(symbol):
+          first_string = first_string.rstrip().removesuffix(symbol)
+          if first_string and first_string[-1] == ' ':
+            after_first_string = f'{symbol} '
+          else:
+            after_first_string = symbol
 
       padding += fmt_iterable(QuotelessString(first_string), syntax_highlighting=syntax_highlighting, **kwargs)
       padding += after_first_string
@@ -142,7 +130,7 @@ class Console:
 
     prefix = ''
     if withprefix:
-      prefix = f'D {(self._get_callsite_text_if_enabled(4)+" ").lstrip()}{self._get_timestamp()}'
+      prefix = f'D {(self._get_callsite_text_if_enabled(4) + " ").lstrip()}{self._get_timestamp()}'
 
     c_debug = ''
     c_reset = ''
@@ -230,7 +218,7 @@ def start_eval_session(f_backs: int = 2) -> None:
             lines = lines[max(0, lineno - (AROUND + 1)) : lineno + AROUND]
             while all(x.startswith(' ') for x in lines):
               lines = [x[1:] for x in lines]
-            lines = [f'{FMTC.NUMBER}{lineno-AROUND+i}{Fore.yellow + Style.bold} {">" if i == AROUND else "|"}{FMTC._} {cut_at(x, CUTOFF)}' for i, x in enumerate(lines)]
+            lines = [f'{FMTC.NUMBER}{lineno - AROUND + i}{Fore.yellow + Style.bold} {">" if i == AROUND else "|"}{FMTC._} {cut_at(x, CUTOFF)}' for i, x in enumerate(lines)]
             lines = ''.join(lines)
 
             print(lines)

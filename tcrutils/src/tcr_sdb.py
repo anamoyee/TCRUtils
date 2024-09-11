@@ -40,7 +40,7 @@ def c(a):
 
 
 A = f"""
-{c("208")}class {c("39")}DB{c("7")}({c}{c(39)}tcr.ShelveDB{c("7")}){c}{c(231)}:
+{c('208')}class {c('39')}DB{c('7')}({c}{c(39)}tcr.ShelveDB{c('7')}){c}{c(231)}:
   {c(7)}directory {c(208)}= {c(46)}"/VALID/path/to/db/dir/" {c(8)}# Or pathlib.Path object{c}
 """[1:-1]
 
