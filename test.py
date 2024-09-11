@@ -1834,7 +1834,7 @@ if __name__ == '__main__':
 
   asshole.total(prefix='\n')
   print()
-  c('=', __TESTS_RAN_GLOBAL)
+  c('tests#=', __TESTS_RAN_GLOBAL)
   pass  # noqa: PIE790, RUF100
 
 if BOT:

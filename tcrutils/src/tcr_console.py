@@ -108,7 +108,7 @@ class Console:
 
     all_values = (value, *values)
 
-    if len(all_values) >= 2 and all_values[0].__class__ == str and all_values[0]:
+    if len(all_values) >= 2 and all_values[0].__class__ == str and all_values[0]:  # noqa: E721
       first_string: str = all_values[0]
       after_first_string = ''
 
@@ -116,12 +116,26 @@ class Console:
         first_string = first_string.removesuffix('=')
         after_first_string = '='
 
+      if first_string.rstrip().endswith('->'):
+        first_string = first_string.rstrip().removesuffix('->').rstrip()
+        if first_string:
+          after_first_string = ' -> '
+        else:
+          after_first_string = '-> '
+
+      if first_string.rstrip().endswith('=>'):
+        first_string = first_string.rstrip().removesuffix('=>').rstrip()
+        if first_string:
+          after_first_string = ' => '
+        else:
+          after_first_string = '=> '
+
       padding += fmt_iterable(QuotelessString(first_string), syntax_highlighting=syntax_highlighting, **kwargs)
       padding += after_first_string
 
       all_values = all_values[1:]
 
-    out = fmt_iterable(*[(x if ((not quoteless) or (x.__class__ != str) or x == '') else QuotelessString(x)) for x in all_values], syntax_highlighting=syntax_highlighting, **kwargs)
+    out = fmt_iterable(*[(x if ((not quoteless) or (x.__class__ != str) or x == '') else QuotelessString(x)) for x in all_values], syntax_highlighting=syntax_highlighting, **kwargs)  # noqa: E721
 
     if padding == ' ' and not withprefix:
       padding = ''
