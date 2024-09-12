@@ -3,32 +3,32 @@ from collections.abc import Iterable, Mapping
 from numbers import Number
 
 
-def hex(number: int, leading_zeroes=2, *, upper=True, prefix: str = '0x') -> str:
-    """Slightly more advanced version of builtin `hex()`, offers ability to choose if uppercase and how many leading zeroes."""
-    hex_output = sex(number)
-    hex_value = hex_output[2:].zfill(leading_zeroes).upper() if upper else hex_output[2:].zfill(leading_zeroes)
+def hex(number: int, leading_zeroes=2, *, upper=True, prefix: str = "0x") -> str:
+	"""Slightly more advanced version of builtin `hex()`, offers ability to choose if uppercase and how many leading zeroes."""
+	hex_output = sex(number)
+	hex_value = hex_output[2:].zfill(leading_zeroes).upper() if upper else hex_output[2:].zfill(leading_zeroes)
 
-    formatted_output = f'{prefix}{hex_value}'
-    if not upper:
-        formatted_output = formatted_output.lower()
+	formatted_output = f"{prefix}{hex_value}"
+	if not upper:
+		formatted_output = formatted_output.lower()
 
-    return formatted_output
+	return formatted_output
 
 
 def recursive_sum(it: Iterable) -> int | float:
-    s = 0
+	s = 0
 
-    for item in it.values() if isinstance(it, Mapping) else it:
-        s = s + recursive_sum(item) if isinstance(item, Iterable) else s + item
+	for item in it.values() if isinstance(it, Mapping) else it:
+		s = s + recursive_sum(item) if isinstance(item, Iterable) else s + item
 
-    return s
+	return s
 
 
 def float2int(n: float) -> float | int:
-    if round(n) == n:
-        return int(n)
-    return float(n)
+	if round(n) == n:
+		return int(n)
+	return float(n)
 
 
 def clamp(min: Number, n: Number, max: Number) -> Number:
-    return min if n < min else max if n > max else n  # noqa: FURB136
+	return min if n < min else max if n > max else n  # noqa: FURB136
