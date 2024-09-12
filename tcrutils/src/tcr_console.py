@@ -6,11 +6,10 @@ from sys import argv, exit
 
 from colored import Back, Fore, Style
 
-from .tcr_decorator import copy_kwargs_sunder
 from .tcr_dict import clean_dunder_dict
 from .tcr_extract_error import extract_error, extract_traceback
 from .tcr_getch import getch
-from .tcr_inspect import get_file_colon_lineno
+from .tcr_inspect import eval_fback, get_file_colon_lineno
 from .tcr_iterable import cut_at
 from .tcr_print import FMTC, fmt_iterable
 from .tcr_terminal import terminal
@@ -33,8 +32,16 @@ class Console:
 	`console(...)` == `console.debug(...)`
 	"""
 
+	header_exprs: list[tuple[str, bool]]
+	header_joiner: str
+	header_end: str
 	_last_diff: str | None = None
 	include_callsite: bool = None
+
+	def __init__(self, *, header_exprs: list[tuple[str, bool]] = None, header_joiner: str = '.', header_end: str = ': ') -> None:
+		self.header_exprs = header_exprs or []
+		self.header_joiner = header_joiner
+		self.header_end = header_end
 
 	@staticmethod
 	def _get_timestamp():
@@ -45,8 +52,19 @@ class Console:
 			return get_file_colon_lineno(backtrack_frames=backtrack_frames)
 		return ""
 
-	@copy_kwargs_sunder
-	def _generate_out_and_print(self, *values, sep="\n", end="", withprefix=True, syntax_highlighting: bool = True, color: str, letter: str, _kwargs: dict, **kwargs) -> None:
+	def evaluate_header(self, fback_count: int = 5) -> str:
+		result_list = [(expr if is_literal else eval_fback(expr, fback_count=fback_count)) for expr, is_literal in self.header_exprs]
+		result_str = self.header_joiner.join(str(x) for x in result_list if x is not None)
+		if result_str:
+			result_str += self.header_end
+
+		return result_str
+
+
+	def _generate_out_and_print(self, *values, sep="\n", end="", withprefix=True, syntax_highlighting: bool = True, color: str, letter: str, _this_iteration_header: str | None = None, **kwargs) -> None:
+		if _this_iteration_header is None:
+			_this_iteration_header = self.evaluate_header()
+
 		if not values:
 			values = ("",)
 
@@ -61,10 +79,10 @@ class Console:
 
 				print(char, end=" ")
 
-				self._generate_out_and_print(v, **_kwargs)
+				self._generate_out_and_print(v, sep=sep, end=end, withprefix=withprefix, syntax_highlighting=syntax_highlighting, color=color, letter=letter, _this_iteration_header=_this_iteration_header, **kwargs)
 			return
 
-		values = [(x if isinstance(x, str) else fmt_iterable(x, syntax_highlighting=syntax_highlighting, **kwargs)) for x in values]
+		values = [(f'{_this_iteration_header or ""}{x}' if isinstance(x, str) else fmt_iterable(x, syntax_highlighting=syntax_highlighting, **kwargs)) for x in values]
 
 		out = sep.join(values)
 		out = reduce(lambda x, y: str(x) + sep + str(y), [*values, ""]) + end
@@ -105,6 +123,11 @@ class Console:
 		**kwargs,
 	) -> None | object:
 		all_values = (value, *values)
+
+		eval_header = self.evaluate_header(6)
+
+		if eval_header:
+			padding += fmt_iterable(QuotelessString(eval_header), syntax_highlighting=syntax_highlighting, **kwargs)
 
 		if len(all_values) >= 2 and all_values[0].__class__ == str and all_values[0]:  # noqa: E721
 			first_string: str = all_values[0]
@@ -169,8 +192,25 @@ class Console:
 		newline = "\n" if newlines_on_both_sides else ""
 		self.debug(QuotelessString(newline + ("=" * terminal.width) + newline), withprefix=False, **kwargs)
 
-	def __call__(self, *args, **kwargs) -> None | str:
-		return console.debug(*args, **kwargs)
+	def with_expr_header(self, header_expr: str, literal: bool = False, joiner: str | None = None, end: str | None = None) -> "Console":
+		if not isinstance(header_expr, str):
+			raise TypeError("header_expr must be a string")
+
+		if joiner is not None:
+			if not isinstance(joiner, str):
+				raise TypeError("overwrite_header_joiner must be a string")
+
+		if end is not None:
+			if not isinstance(end, str):
+				raise TypeError("overwrite_header_end must be a string")
+
+		return Console(
+			header_exprs=self.header_exprs + [(header_expr, literal)],
+			header_joiner=joiner if joiner is not None else self.header_joiner,
+			header_end=end if end is not None else self.header_end,
+		)
+
+	__call__ = debug
 
 	def __or__(self, other):
 		return self.debug(other, passthrough=True)
