@@ -32,9 +32,9 @@ def oddeven(n: int | str) -> Literal['odd', 'even']:
 def christmas_tree(*, height=10, symbol='*'):
     """Generate a christmas tree for printing in a console.
 
-  Height is the number of lines the tree will have.\\
-  Symbol is any 1-2 long string for example 'C#' or '*'.
-  """
+    Height is the number of lines the tree will have.\\
+    Symbol is any 1-2 long string for example 'C#' or '*'.
+    """
     if len(symbol) == 1:
         symbol = 2 * symbol
 

@@ -40,3 +40,29 @@ def get_file_colon_lineno(default: T | None = None, backtrack_frames: int = 1, a
 
 def get_pyversion_str(precision=2) -> str:
     return '.'.join([str(x) for x in sys.version_info[:precision]])
+
+class EvalFBackNotFoundError(Exception):
+    """There aren't enough frames in the stack to evaluate the expression in."""
+
+def eval_fback(expr: str, fback_count: int = 2, *, ignore_errors: bool = False, ignore_errors_on_error=None):
+    """Evaluate given expression in the target backframe's globals and locals.
+
+    if ignore_errors is True, will return ignore_errors_on_error instead if there was an error.
+
+    Raise EvalFBackNotEnoughFramesError if there aren't enough frames in the stack to evaluate the expression in.
+    """
+    try:
+        frame = inspect.currentframe()
+        for _ in range(fback_count):
+            if frame is None:
+                raise EvalFBackNotFoundError("Frame doesn't exist that far back")
+            frame = frame.f_back
+
+        if frame is None:
+            raise EvalFBackNotFoundError("Frame not found")
+
+        return eval(expr, frame.f_globals, frame.f_locals)
+    except Exception:
+        if ignore_errors:
+            return ignore_errors_on_error
+        raise
