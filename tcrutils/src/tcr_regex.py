@@ -4,22 +4,22 @@ from re import Match
 
 
 def _escaper(groups: Iterable[int], match: Match):
-	s = ""
-	for groupint in groups:
-		group = match.group(abs(groupint))
-		if groupint < 0:
-			group = (type(group), repr(group))
-		s += group
+    s = ""
+    for groupint in groups:
+        group = match.group(abs(groupint))
+        if groupint < 0:
+            group = (type(group), repr(group))
+        s += group
 
 
 handler = partial(_escaper, [1, -2, 3, 4])
 
 
 class RegexPreset:
-	"""Provies documented preset regex patterns."""
+    """Provies documented preset regex patterns."""
 
-	URL = r"((https?):\/\/((?:\S+\.)?([^\/\s]+)?\.([^\/\s]+))\/?(\S+)?)"
-	"""Matches any http/https URL
+    URL = r"((https?):\/\/((?:\S+\.)?([^\/\s]+)?\.([^\/\s]+))\/?(\S+)?)"
+    """Matches any http/https URL
 
   use `URL.replace('https?', 'your_protocol')` to assert different protocol.
 
@@ -34,8 +34,8 @@ class RegexPreset:
   https://regex101.com/r/46LZtS/1
   """
 
-	MARKDOWN_HEADING = (r"(^|\n)#{1,3}\s(.|\n|\Z)(.*)", partial(_escaper, [1, -2, 3, 4]))
-	"""Used when wanting to remove discord heading markdown from a string. re.sub(*MARKDOWN_HEADING, to_replace)"""
+    MARKDOWN_HEADING = (r"(^|\n)#{1,3}\s(.|\n|\Z)(.*)", partial(_escaper, [1, -2, 3, 4]))
+    """Used when wanting to remove discord heading markdown from a string. re.sub(*MARKDOWN_HEADING, to_replace)"""
 
 
 __all__ = ["RegexPreset"]
