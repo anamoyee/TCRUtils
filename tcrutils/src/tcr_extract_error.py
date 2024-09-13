@@ -31,7 +31,7 @@ def extract_traceback(e: BaseException) -> str:
 
 
 def print_exception_with_traceback(e: BaseException, *, printhook: Callable[[str], None] = print) -> None:
-	printhook('Traceback (most recent call last):')
+	printhook("Traceback (most recent call last):")
 	printhook(extract_traceback(e))
 	printhook(extract_error(e))
 

@@ -3,10 +3,14 @@ import time
 from asyncio import iscoroutinefunction
 from collections.abc import Callable
 from functools import partial, wraps
+from typing import TypeVar, overload
 
 from colored import Back, Fore, Style
 
 from .tcr_print import print_block
+
+F = TypeVar("F", bound=Callable[..., None])
+
 
 if True:  # \/ # @test
 
@@ -89,11 +93,26 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 
 	timeit = Timeit()
 
+
 if True:  # \/ # @autorun, @instance
 
-	def autorun(func):
-		func()
-		return func
+	@overload
+	def autorun(func: F) -> F: ...
+
+	@overload
+	def autorun(*args, **kwargs) -> Callable[[F], F]: ...
+
+	def autorun(*args, **kwargs):
+		if len(args) == 1 and callable(args[0]):
+			func = args[0]
+			func()
+			return func
+		else:
+			def decorator(func: F, args=args, kwargs=kwargs) -> F:
+				func(*args, **kwargs)
+				return func
+
+			return decorator
 
 	def instance(func):
 		return func()

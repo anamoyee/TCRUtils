@@ -38,7 +38,7 @@ class Console:
 	_last_diff: str | None = None
 	include_callsite: bool = None
 
-	def __init__(self, *, header_exprs: list[tuple[str, bool]] = None, header_joiner: str = '.', header_end: str = ': ') -> None:
+	def __init__(self, *, header_exprs: list[tuple[str, bool]] = None, header_joiner: str = ".", header_end: str = ": ") -> None:
 		self.header_exprs = header_exprs or []
 		self.header_joiner = header_joiner
 		self.header_end = header_end
@@ -60,8 +60,9 @@ class Console:
 
 		return result_str
 
-
-	def _generate_out_and_print(self, *values, sep="\n", end="", withprefix=True, syntax_highlighting: bool = True, color: str, letter: str, _this_iteration_header: str | None = None, **kwargs) -> None:
+	def _generate_out_and_print(
+		self, *values, sep="\n", end="", withprefix=True, syntax_highlighting: bool = True, color: str, letter: str, _this_iteration_header: str | None = None, **kwargs
+	) -> None:
 		if _this_iteration_header is None:
 			_this_iteration_header = self.evaluate_header()
 
@@ -79,7 +80,9 @@ class Console:
 
 				print(char, end=" ")
 
-				self._generate_out_and_print(v, sep=sep, end=end, withprefix=withprefix, syntax_highlighting=syntax_highlighting, color=color, letter=letter, _this_iteration_header=_this_iteration_header, **kwargs)
+				self._generate_out_and_print(
+					v, sep=sep, end=end, withprefix=withprefix, syntax_highlighting=syntax_highlighting, color=color, letter=letter, _this_iteration_header=_this_iteration_header, **kwargs
+				)
 			return
 
 		values = [(f'{_this_iteration_header or ""}{x}' if isinstance(x, str) else fmt_iterable(x, syntax_highlighting=syntax_highlighting, **kwargs)) for x in values]
