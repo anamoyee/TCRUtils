@@ -127,7 +127,7 @@ class Console:
 		eval_header = self.evaluate_header(6)
 
 		if eval_header:
-			padding += fmt_iterable(QuotelessString(eval_header), syntax_highlighting=syntax_highlighting, **kwargs)
+			padding += eval_header
 
 		if len(all_values) >= 2 and all_values[0].__class__ == str and all_values[0]:  # noqa: E721
 			first_string: str = all_values[0]
