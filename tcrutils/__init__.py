@@ -67,7 +67,7 @@ from .src.tcr_dev import generate_function_argument_typehints, generate_type_hin
 from .src.tcr_dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zip, merge_dicts
 from .src.tcr_dir import dir2, dir3, dir_recursive, vars2, vars3, vars_recursive
 from .src.tcr_error import error
-from .src.tcr_extract_error import extract_error, extract_traceback, module_error_map, modules_error_map
+from .src.tcr_extract_error import extract_error, extract_traceback, module_error_map, modules_error_map, print_exception_with_traceback
 from .src.tcr_F import F
 from .src.tcr_getch import getch
 from .src.tcr_import import load_package_dynamically

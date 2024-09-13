@@ -1675,7 +1675,6 @@ ID: {server|id}
 		hc.log("Nyaaa", 'uwu')
 		hc.error('owo')
 
-
 if True:  # \/ # Test setup
 	__TESTS_RAN_GLOBAL = 0
 

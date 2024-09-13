@@ -29,9 +29,17 @@ def extract_traceback(e: BaseException) -> str:
 	return "".join(traceback_details)
 
 
+def print_exception_with_traceback(e: BaseException, *, printhook=print) -> None:
+	printhook('Traceback (most recent call last):')
+	printhook(extract_traceback(e))
+	printhook(extract_error(e))
+
+
 def module_error_map(module: ModuleType) -> dict[str, BaseException]:
+	"""Get all exception classes in a module."""
 	return {name: obj for name, obj in vars(module).items() if inspect.isclass(obj) and issubclass(obj, BaseException) and not issubclass(obj, Warning)}
 
 
 def modules_error_map(*modules: ModuleType) -> dict[str, BaseException]:
+	"""Get all exception classes in a list of modules."""
 	return {f"{module.__name__}.{name}".removeprefix("builtins."): exc for module in modules for name, exc in module_error_map(module).items()}
