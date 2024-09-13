@@ -1,6 +1,7 @@
 import contextlib
 import inspect
 import traceback
+from collections.abc import Callable
 from types import ModuleType
 
 from .tcr_compare import able
@@ -29,7 +30,7 @@ def extract_traceback(e: BaseException) -> str:
 	return "".join(traceback_details)
 
 
-def print_exception_with_traceback(e: BaseException, *, printhook=print) -> None:
+def print_exception_with_traceback(e: BaseException, *, printhook: Callable[[str], None] = print) -> None:
 	printhook('Traceback (most recent call last):')
 	printhook(extract_traceback(e))
 	printhook(extract_error(e))
