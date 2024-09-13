@@ -1616,7 +1616,7 @@ ID: {server|id}
 		c.critical(s)
 		c.critical(obj, s, s, s)
 
-	def test_console_callsite():
+	def test_console_callsite(c=c):
 		c.include_callsite = True
 		c(1)
 		c.log(1)
@@ -1793,11 +1793,12 @@ if __name__ == "__main__":
 	# test_err_denoted()
 	# test_is_snowflake()
 	# test_console_fmt()
-	# test_console_callsite()
+	test_console_callsite()
+	test_console_callsite(c.with_expr_header(__name__, literal=True))
 	# test_fucking_pydantic_model_dump_my_ass()
 	# test_joke_pointer()
 	# test_eval_fback()
-	test_console_with_header()
+	# test_console_with_header()
 
 	asshole.total(prefix="\n")
 	print()

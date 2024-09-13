@@ -88,7 +88,7 @@ class Console:
 		out = reduce(lambda x, y: str(x) + sep + str(y), [*values, ""]) + end
 
 		if withprefix:
-			out = f'{letter} {(self._get_callsite_text_if_enabled(5) + " ").lstrip()}{self._get_timestamp()} ' + out
+			out = f'{letter} {(self._get_callsite_text_if_enabled(4) + " ").lstrip()}{self._get_timestamp()} ' + out
 
 		out = f'{color if syntax_highlighting else ""}{out}{CC._ if syntax_highlighting else ""}'
 
@@ -153,7 +153,7 @@ class Console:
 
 		prefix = ""
 		if withprefix:
-			prefix = f'D {(self._get_callsite_text_if_enabled(4) + " ").lstrip()}{self._get_timestamp()}'
+			prefix = f'D {(self._get_callsite_text_if_enabled(3) + " ").lstrip()}{self._get_timestamp()}'
 
 		c_debug = ""
 		c_reset = ""
