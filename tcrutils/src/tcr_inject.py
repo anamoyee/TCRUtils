@@ -94,7 +94,7 @@ class WarningCatcher:
         ```
 
         Args:
-            - printhook: Callable[[str, Warning, str, int], None], Defines a printer function, for more info see this module's default_showwarning_printhook function and https://docs.python.org/3/library/warnings.html#warnings.showwarning.
+                - printhook: Callable[[str, Warning, str, int], None], Defines a printer function, for more info see this module's default_showwarning_printhook function and https://docs.python.org/3/library/warnings.html#warnings.showwarning.
         """
         _WarningCatcher.install(
             printhook=printhook,

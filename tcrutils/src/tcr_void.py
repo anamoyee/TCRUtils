@@ -3,37 +3,39 @@ from typing import Any, NoReturn, ParamSpec, TypeVar
 
 
 def void(*args: Any, **kwargs: Any) -> None:
-	"""Synchronous voider: take any arguments and do nothing, useful in functions that require a callback when nothing is needed to be done."""
+    """Synchronous voider: take any arguments and do nothing, useful in functions that require a callback when nothing is needed to be done."""
 
 
 async def avoid(*args: Any, **kwargs: Any) -> None:
-	"""Asynchronous voider: take any arguments and do nothing, useful in functions that require a callback when nothing is needed to be done."""
+    """Asynchronous voider: take any arguments and do nothing, useful in functions that require a callback when nothing is needed to be done."""
 
 
 def raiser(e: Exception) -> Callable[..., NoReturn]:
-	"""With decorator-like structure return a synchronous callable which raises specified exception on call, no matter what (with *args, **kwargs which are ignored)."""
+    """With decorator-like structure return a synchronous callable which raises specified exception on call, no matter what (with *args, **kwargs which are ignored)."""
 
-	def inner_raiser(*args, **kwargs):
-		raise e
+    def inner_raiser(*args, **kwargs):
+        raise e
 
-	return inner_raiser
+    return inner_raiser
 
 
 async def araiser(e: Exception) -> Callable[..., NoReturn]:
-	"""With decorator-like structure return an asynchronous callable which raises specified exception on call, no matter what (with *args, **kwargs which are ignored)."""
+    """With decorator-like structure return an asynchronous callable which raises specified exception on call, no matter what (with *args, **kwargs which are ignored)."""
 
-	async def inner_raiser(*args, **kwargs):
-		raise e
+    async def inner_raiser(*args, **kwargs):
+        raise e
 
-	return inner_raiser
+    return inner_raiser
 
-T = TypeVar('T')
-P = ParamSpec('P')
+
+T = TypeVar("T")
+P = ParamSpec("P")
+
 
 def alambda(func: Callable[P, T]) -> Callable[P, Awaitable[T]]:
-	"""Asyncify any synchronous function, mostly lambdas when needed."""
+    """Asyncify any synchronous function, mostly lambdas when needed."""
 
-	async def wrapper(*args, **kwargs):
-		return func(*args, **kwargs)
+    async def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
 
-	return wrapper
+    return wrapper
