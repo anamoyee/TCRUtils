@@ -39,204 +39,204 @@ from .tcr_error import NoMatchingOverloadError
 
 
 def _type_hint_matches(obj, hint):
-    # only works with concrete types, not things like Optional
-    return hint is inspect.Parameter.empty or isinstance(obj, hint)
+	# only works with concrete types, not things like Optional
+	return hint is inspect.Parameter.empty or isinstance(obj, hint)
 
 
 def _signature_matches(sig: inspect.Signature, bound_args: inspect.BoundArguments):
-    # doesn't handle type hints on *args or **kwargs
-    for name, arg in bound_args.arguments.items():
-        param = sig.parameters[name]
-        hint = param.annotation
-        if not _type_hint_matches(arg, hint):
-            return False
-    return True
+	# doesn't handle type hints on *args or **kwargs
+	for name, arg in bound_args.arguments.items():
+		param = sig.parameters[name]
+		hint = param.annotation
+		if not _type_hint_matches(arg, hint):
+			return False
+	return True
 
 
 def overload(func):
-    """Decorator used to mark function as overload. Used in conjunction with tcr.OverloadMeta."""
-    func.__overload__ = True
-    return func
+	"""Decorator used to mark function as overload. Used in conjunction with tcr.OverloadMeta."""
+	func.__overload__ = True
+	return func
 
 
 class OverloadList(list):
-    pass
+	pass
 
 
 class _Overload:
-    def __set_name__(self, owner, name):
-        self.owner = owner
-        self.name = name
+	def __set_name__(self, owner, name):
+		self.owner = owner
+		self.name = name
 
-    def __init__(self, overload_list):
-        if not isinstance(overload_list, OverloadList):
-            raise TypeError("must use OverloadList")
-        if not overload_list:
-            raise ValueError("empty overload list")
-        self.overload_list = overload_list
-        self.signatures = [inspect.signature(f) for f in overload_list]
+	def __init__(self, overload_list):
+		if not isinstance(overload_list, OverloadList):
+			raise TypeError("must use OverloadList")
+		if not overload_list:
+			raise ValueError("empty overload list")
+		self.overload_list = overload_list
+		self.signatures = [inspect.signature(f) for f in overload_list]
 
-    def __repr__(self):
-        return f"{self.__class__.__qualname__}({self.overload_list!r})"
+	def __repr__(self):
+		return f"{self.__class__.__qualname__}({self.overload_list!r})"
 
-    def __get__(self, instance, _owner=None):
-        if instance is None:
-            return self
-        # don't use owner == type(instance)
-        # we want self.owner, which is the class from which get is being called
-        return BoundOverloadDispatcher(instance, self.owner, self.name, self.overload_list, self.signatures)
+	def __get__(self, instance, _owner=None):
+		if instance is None:
+			return self
+		# don't use owner == type(instance)
+		# we want self.owner, which is the class from which get is being called
+		return BoundOverloadDispatcher(instance, self.owner, self.name, self.overload_list, self.signatures)
 
-    def extend(self, other):
-        if not isinstance(other, _Overload):
-            raise TypeError
-        self.overload_list.extend(other.overload_list)
-        self.signatures.extend(other.signatures)
+	def extend(self, other):
+		if not isinstance(other, _Overload):
+			raise TypeError
+		self.overload_list.extend(other.overload_list)
+		self.signatures.extend(other.signatures)
 
 
 class BoundOverloadDispatcher:
-    def __init__(self, instance, owner_cls, name, overload_list, signatures):
-        self.instance = instance
-        self.owner_cls = owner_cls
-        self.name = name
-        self.overload_list = overload_list
-        self.signatures = signatures
+	def __init__(self, instance, owner_cls, name, overload_list, signatures):
+		self.instance = instance
+		self.owner_cls = owner_cls
+		self.name = name
+		self.overload_list = overload_list
+		self.signatures = signatures
 
-    def best_match(self, *args, **kwargs):
-        for f, sig in zip(self.overload_list, self.signatures):  # noqa: B905
-            try:
-                bound_args = sig.bind(self.instance, *args, **kwargs)
-            except TypeError:
-                pass  # missing/extra/unexpected args or kwargs
-            else:
-                bound_args.apply_defaults()
-                # just for demonstration, use the first one that matches
-                if _signature_matches(sig, bound_args):
-                    return f
+	def best_match(self, *args, **kwargs):
+		for f, sig in zip(self.overload_list, self.signatures):  # noqa: B905
+			try:
+				bound_args = sig.bind(self.instance, *args, **kwargs)
+			except TypeError:
+				pass  # missing/extra/unexpected args or kwargs
+			else:
+				bound_args.apply_defaults()
+				# just for demonstration, use the first one that matches
+				if _signature_matches(sig, bound_args):
+					return f
 
-        raise NoMatchingOverloadError()
+		raise NoMatchingOverloadError()
 
-    def __call__(self, *args, **kwargs):
-        try:
-            f = self.best_match(*args, **kwargs)
-        except NoMatchingOverloadError:
-            pass
-        else:
-            return f(self.instance, *args, **kwargs)
+	def __call__(self, *args, **kwargs):
+		try:
+			f = self.best_match(*args, **kwargs)
+		except NoMatchingOverloadError:
+			pass
+		else:
+			return f(self.instance, *args, **kwargs)
 
-        # no matching overload in owner class, check next in line
-        super_instance = super(self.owner_cls, self.instance)
-        super_call = getattr(super_instance, self.name, _MISSING)
-        if super_call is not _MISSING:
-            return super_call(*args, **kwargs)
-        else:
-            raise NoMatchingOverloadError()
+		# no matching overload in owner class, check next in line
+		super_instance = super(self.owner_cls, self.instance)
+		super_call = getattr(super_instance, self.name, _MISSING)
+		if super_call is not _MISSING:
+			return super_call(*args, **kwargs)
+		else:
+			raise NoMatchingOverloadError()
 
 
 _MISSING = object()
 
 
 class OverloadDict(dict):
-    def __setitem__(self, key, value):
-        assert isinstance(key, str), "keys must be str"
+	def __setitem__(self, key, value):
+		assert isinstance(key, str), "keys must be str"
 
-        prior_val = self.get(key, _MISSING)
-        overloaded = getattr(value, "__overload__", False)
+		prior_val = self.get(key, _MISSING)
+		overloaded = getattr(value, "__overload__", False)
 
-        if prior_val is _MISSING:
-            insert_val = OverloadList([value]) if overloaded else value
-            super().__setitem__(key, insert_val)
-        elif isinstance(prior_val, OverloadList):
-            if not overloaded:
-                raise ValueError(self._errmsg(key))
-            prior_val.append(value)
-        else:
-            if overloaded:
-                raise ValueError(self._errmsg(key))
-            super().__setitem__(key, value)
+		if prior_val is _MISSING:
+			insert_val = OverloadList([value]) if overloaded else value
+			super().__setitem__(key, insert_val)
+		elif isinstance(prior_val, OverloadList):
+			if not overloaded:
+				raise ValueError(self._errmsg(key))
+			prior_val.append(value)
+		else:
+			if overloaded:
+				raise ValueError(self._errmsg(key))
+			super().__setitem__(key, value)
 
-    @staticmethod
-    def _errmsg(key):
-        return f"must mark all overloads with @overload: {key}"
+	@staticmethod
+	def _errmsg(key):
+		return f"must mark all overloads with @overload: {key}"
 
 
 class OverloadMeta(type):
-    """Overload Metaclass. Used in conjunction with @tcr.overload decorator.
+	"""Overload Metaclass. Used in conjunction with @tcr.overload decorator.
 
-    ```py
-    class A(metaclass=OverloadMeta):
-        @overload
-        def f(self, x: int):
-            print('A.f int overload', self, x)
+	```py
+	class A(metaclass=OverloadMeta):
+	    @overload
+	    def f(self, x: int):
+	        print('A.f int overload', self, x)
 
-        @overload
-        def f(self, x: str):
-            print('A.f str overload', self, x)
+	    @overload
+	    def f(self, x: str):
+	        print('A.f str overload', self, x)
 
-        @overload
-        def f(self, x, y):
-            print('A.f two arg overload', self, x, y)
-
-
-    class B(A):
-        def normal_method(self):
-            print('B.f normal method')
-
-        @overload
-        def f(self, x, y, z):
-            print('B.f three arg overload', self, x, y, z)
-
-        # works with inheritance too!
+	    @overload
+	    def f(self, x, y):
+	        print('A.f two arg overload', self, x, y)
 
 
-    class C(B):
-        @overload
-        def f(self, x, y, z, t):
-            print('C.f four arg overload', self, x, y, z, t)
-    """
+	class B(A):
+	    def normal_method(self):
+	        print('B.f normal method')
 
-    @classmethod
-    def __prepare__(mcls, name, bases):  # noqa: N804
-        return OverloadDict()
+	    @overload
+	    def f(self, x, y, z):
+	        print('B.f three arg overload', self, x, y, z)
 
-    def __new__(mcls, name, bases, namespace, **kwargs):  # noqa: N804
-        overload_namespace = {key: _Overload(val) if isinstance(val, OverloadList) else val for key, val in namespace.items()}
-        return super().__new__(mcls, name, bases, overload_namespace, **kwargs)
+	    # works with inheritance too!
+
+
+	class C(B):
+	    @overload
+	    def f(self, x, y, z, t):
+	        print('C.f four arg overload', self, x, y, z, t)
+	"""
+
+	@classmethod
+	def __prepare__(mcls, name, bases):  # noqa: N804
+		return OverloadDict()
+
+	def __new__(mcls, name, bases, namespace, **kwargs):  # noqa: N804
+		overload_namespace = {key: _Overload(val) if isinstance(val, OverloadList) else val for key, val in namespace.items()}
+		return super().__new__(mcls, name, bases, overload_namespace, **kwargs)
 
 
 class Overload(metaclass=OverloadMeta):
-    """Overload Class. Used in conjunction with @tcr.overload decorator.
+	"""Overload Class. Used in conjunction with @tcr.overload decorator.
 
-    ```py
-    class A(Overload):
-        @overload
-        def f(self, x: int):
-            print('A.f int overload', self, x)
+	```py
+	class A(Overload):
+	    @overload
+	    def f(self, x: int):
+	        print('A.f int overload', self, x)
 
-        @overload
-        def f(self, x: str):
-            print('A.f str overload', self, x)
+	    @overload
+	    def f(self, x: str):
+	        print('A.f str overload', self, x)
 
-        @overload
-        def f(self, x, y):
-            print('A.f two arg overload', self, x, y)
-
-
-    class B(A):
-        def normal_method(self):
-            print('B.f normal method')
-
-        @overload
-        def f(self, x, y, z):
-            print('B.f three arg overload', self, x, y, z)
-
-        # works with inheritance too!
+	    @overload
+	    def f(self, x, y):
+	        print('A.f two arg overload', self, x, y)
 
 
-    class C(B):
-        @overload
-        def f(self, x, y, z, t):
-            print('C.f four arg overload', self, x, y, z, t)
-    """
+	class B(A):
+	    def normal_method(self):
+	        print('B.f normal method')
+
+	    @overload
+	    def f(self, x, y, z):
+	        print('B.f three arg overload', self, x, y, z)
+
+	    # works with inheritance too!
+
+
+	class C(B):
+	    @overload
+	    def f(self, x, y, z, t):
+	        print('C.f four arg overload', self, x, y, z, t)
+	"""
 
 
 __all__ = ["overload", "Overload", "OverloadMeta", "NoMatchingOverloadError"]

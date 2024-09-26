@@ -85,10 +85,10 @@ def print_block(
 	"""Print or return a string of a "comment-like" block with text. Colors may optionally be set to `''` (empty string) to skip coloring of that part. Ends with a color reset unless none of the colors are enabled (both set to `''`).
 
 	Params:
-		- `margin`: The amount of spaces between the text and the inner walls (left-right only)
-		- `border`: The width of walls (number of border_char characters, left-right only)
-		- `padding`: The number of extra spaces added to the left of each line (left side only)
-		- `padding_top` & `padding_bottom`: How many '\\n' characters to add at the beginning and the end of the string (top-bottom only)
+			- `margin`: The amount of spaces between the text and the inner walls (left-right only)
+			- `border`: The width of walls (number of border_char characters, left-right only)
+			- `padding`: The number of extra spaces added to the left of each line (left side only)
+			- `padding_top` & `padding_bottom`: How many '\\n' characters to add at the beginning and the end of the string (top-bottom only)
 	"""
 
 	text = str(text)

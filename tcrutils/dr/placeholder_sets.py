@@ -103,8 +103,8 @@ Ctrl+click whatever you're hovering on to see aliases for all the math placehold
 """
 
 ALL = merge_dicts(
-    *[y for x, y in vars().items() if x.upper() == x and x.lower() != x],
-    # {x: y for x, y in vars(__).items() if not x.startswith('_') and not x.startswith('p_')},
+	*[y for x, y in vars().items() if x.upper() == x and x.lower() != x],
+	# {x: y for x, y in vars(__).items() if not x.startswith('_') and not x.startswith('p_')},
 )
 ALL_NON_DISCORD = {x: y for x, y in ALL.items() if x not in ALL_DISCORD}
 ALL_NON_UNSAFEMATH = {x: y for x, y in ALL.items() if x not in UNSAFE_MATH}
