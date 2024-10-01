@@ -41,4 +41,4 @@ from tcrutils import timestr
 ### Miscellaneous
 - **`insist`**: Prompts user input with a customizable insistence until a valid answer is provided, for example you can keep input()ing the user if they provided invalid value for an integer field.
 
-This package includes many other useful utilities, from path handling to type hinting. Explore the package to discover more!
+This package includes many other useful utilities, go look for yourself if you want...
