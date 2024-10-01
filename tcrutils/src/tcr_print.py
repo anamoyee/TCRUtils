@@ -543,21 +543,19 @@ if True:  # \/ # fmt & print iterable
 			return f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}' if syntax_highlighting else f"({it} more items...)"
 		if isinstance(it, slice):
 			if not syntax_highlighting:
-				return f'slice({it.start!r}, {it.stop}, {it.step})'
-
+				return f"slice({it.start!r}, {it.stop}, {it.step})"
 
 			if it.step is None:
 				slice_params = (it.start, it.stop)
 			else:
 				slice_params = (it.start, it.stop, it.step)
 
-			text = f'{FMTC.DECIMAL}:'.join((f'{FMTC.NUMBER}{x!r}' if x is not None else '') for x in slice_params)
+			text = f"{FMTC.DECIMAL}:".join((f"{FMTC.NUMBER}{x!r}" if x is not None else "") for x in slice_params)
 
 			if force_slice_parenthesis:
 				text = FMT_BRACKETS[tuple][syntax_highlighting] % text
 
 			return text
-
 
 		if isinstance(it, ....__class__):  # cursed syntax lol
 			if not syntax_highlighting:
