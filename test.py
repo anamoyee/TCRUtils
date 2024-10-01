@@ -20,11 +20,11 @@ if True:  # \/ # Imports
 	import miru
 
 	import tcrutils as tcr
-	from tcrutils import asshole, c, console, rashole
+	from tcrutils import ass, c, console, rass
 	from tcrutils.src.tcr_constants import *
 
 	# from tcrutils import *
-	# from tcrutils import asshole, raises, rashole
+	# from tcrutils import ass, raises, rass
 	# from tcrutils import console as c
 	# from tcrutils.discord import Permission as Perm
 	# from tcrutils.discord import get_token
@@ -214,7 +214,7 @@ if True:  # \/ # Tests
 		console.debug(f"{a()!r}")
 
 	# @tcr.timeit
-	def test_print_iterable(pi=tcr.print_iterable, **kwargs):
+	def test_print_iterable(π=tcr.print_iterable, **kwargs):
 		import datetime as dt
 		from dataclasses import dataclass, field
 		from enum import Enum, Flag, IntEnum, IntFlag, ReprEnum, StrEnum, auto
@@ -222,87 +222,87 @@ if True:  # \/ # Tests
 
 		from tcrutils import Null
 
-		pi = partial(pi, **kwargs)  # π
+		π = partial(π, **kwargs)
 
 		mappingproxy = type.__dict__
-		pi(mappingproxy)
-		pi("aasd")
-		pi({"a": 1, "b": "2"})
-		pi({"a": range(3)})
-		pi(range(1 << 1000))
-		pi(())
-		pi([])
-		pi({1, 2})
-		pi("asdf")
-		pi([3, 4, 5, range(105)], item_limit=5, **{x: y for x, y in kwargs.items() if x != "item_limit"})
+		π(mappingproxy)
+		π("aasd")
+		π({"a": 1, "b": "2"})
+		π({"a": range(3)})
+		π(range(1 << 1000))
+		π(())
+		π([])
+		π({1, 2})
+		π("asdf")
+		π([3, 4, 5, range(105)], item_limit=5, **{x: y for x, y in kwargs.items() if x != "item_limit"})
 
 		def a():
 			while True:
 				yield 1
 
-		pi(a(), item_limit=3, **{x: y for x, y in kwargs.items() if x != "item_limit"})
-		pi(b"100")
-		pi(bytearray([10, 20, 30]))
-		pi(b"uwu\"'")
-		pi(bytearray([10, 20, 30]), b"abcd", "abcd", r"\1")
-		pi((Null, None, True, False))
-		pi({Null: Null, None: None, True: True, False: False})
-		pi(1)
-		pi(1.5)
-		pi(True)
-		pi(False)
-		pi(None)
-		pi(Null)
-		pi(set())
-		pi({10, 20, 30})
-		pi(frozenset({"asdf", 1, 3.2j + 1}))
-		pi({10: 20, 30: 40}.keys())
-		pi({10: 20, 30: 40}.values())
-		pi({10: 20, 30: 40}.items())
-		pi("s p a c e (not uk)")
-		pi((1,))
-		pi([[[[]]]])
-		pi([[[10, 20, [345234582346748673485678673, 40, "a", ()]]]])
+		π(a(), item_limit=3, **{x: y for x, y in kwargs.items() if x != "item_limit"})
+		π(b"100")
+		π(bytearray([10, 20, 30]))
+		π(b"uwu\"'")
+		π(bytearray([10, 20, 30]), b"abcd", "abcd", r"\1")
+		π((Null, None, True, False))
+		π({Null: Null, None: None, True: True, False: False})
+		π(1)
+		π(1.5)
+		π(True)
+		π(False)
+		π(None)
+		π(Null)
+		π(set())
+		π({10, 20, 30})
+		π(frozenset({"asdf", 1, 3.2j + 1}))
+		π({10: 20, 30: 40}.keys())
+		π({10: 20, 30: 40}.values())
+		π({10: 20, 30: 40}.items())
+		π("s p a c e (not uk)")
+		π((1,))
+		π([[[[]]]])
+		π([[[10, 20, [345234582346748673485678673, 40, "a", ()]]]])
 
 		class UnknownThing: ...
 
 		unknown_thing = UnknownThing()
-		pi(unknown_thing)
-		pi(UnknownThing)
+		π(unknown_thing)
+		π(UnknownThing)
 
 		### Copied from _collections_abc.py ###
 		bytes_iterator = iter(b"asdf")
-		pi(bytes_iterator)
+		π(bytes_iterator)
 		bytearray_iterator = iter(bytearray([0xFF, 0x10]))
-		pi(bytearray_iterator)
+		π(bytearray_iterator)
 		# callable_iterator = ???
 		dict_keyiterator = iter({"a": 1, "b": 10, "c": 100}.keys())
 		dict_valueiterator = iter({"a": 1, "b": 10, "c": 100}.values())
 		dict_itemiterator = iter({"a": 1, "b": 10, "c": 100}.items())
-		pi(dict_keyiterator)
-		pi(dict_valueiterator)
-		pi(dict_itemiterator)
+		π(dict_keyiterator)
+		π(dict_valueiterator)
+		π(dict_itemiterator)
 		list_iterator = iter([10, 20, 30])
-		pi(list_iterator)
+		π(list_iterator)
 		list_reverseiterator = iter(reversed([1, 2, 3]))
-		pi(list_reverseiterator)
+		π(list_reverseiterator)
 		range_iterator = iter(range(3))
 		longrange_iterator = iter(range(1 << 1000))
-		pi(range_iterator)
-		pi(longrange_iterator)
+		π(range_iterator)
+		π(longrange_iterator)
 		set_iterator = iter({15, 25, 35})
-		pi(set_iterator)
+		π(set_iterator)
 		str_iterator = iter("str iterator")
-		pi(str_iterator)
+		π(str_iterator)
 		tuple_iterator = iter(((30, 40),))
-		pi(tuple_iterator)
+		π(tuple_iterator)
 		zip_iterator = iter(zip("abcdefg", range(3), range(4), strict=False))
-		pi(zip_iterator)
+		π(zip_iterator)
 
 		## misc ##
 		generator = (lambda: (yield))()
-		pi(generator)
-		pi(range(0))
+		π(generator)
+		π(range(0))
 
 		## coroutine ##
 		async def _coro():
@@ -310,7 +310,7 @@ if True:  # \/ # Tests
 
 		_coro = _coro()
 		coroutine = _coro
-		pi(coroutine)
+		π(coroutine)
 		_coro.close()  # Prevent ResourceWarning
 		del _coro
 
@@ -320,21 +320,21 @@ if True:  # \/ # Tests
 
 		_ag = _ag()
 		async_generator = _ag
-		pi(async_generator)
+		π(async_generator)
 		del _ag
-		pi(range(10))
-		pi([["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"], ["j", "k", "l"]])
+		π(range(10))
+		π([["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"], ["j", "k", "l"]])
 
 		class PrintableObj:
 			def __tcr_display__(self=None, **_) -> str:
 				return "tcr.fmt-able object" + ("'s instance" if self is not None else "")
 
-		pi([PrintableObj])
-		pi([PrintableObj()])
+		π([PrintableObj])
+		π([PrintableObj()])
 
 		import hikari
 
-		pi((
+		π((
 			hikari.Status.ONLINE,
 			hikari.Status.IDLE,
 			hikari.Status.DO_NOT_DISTURB,
@@ -355,8 +355,8 @@ if True:  # \/ # Tests
 					**kwargs,
 				)
 
-		pi(PrintableObj2)
-		pi(PrintableObj2(69))
+		π(PrintableObj2)
+		π(PrintableObj2(69))
 
 		class Client:
 			test: str
@@ -367,14 +367,14 @@ if True:  # \/ # Tests
 			def __repr__(self) -> str:
 				return f"{self.__class__.__name__}(test={self.test!r})"
 
-		pi(Client("test"))
-		pi(0x7FFFFFFF)
-		pi(tcr.types.HexInt(0x7FFFFFFF))
-		pi(float | int)
-		pi(str)
-		pi([[[[[[[[[[[[]]]]]]]]]]]], let_no_indent=False)
-		pi([tcr.types.QuotelessString("quoteless string")] * 3)
-		pi({
+		π(Client("test"))
+		π(0x7FFFFFFF)
+		π(tcr.types.HexInt(0x7FFFFFFF))
+		π(float | int)
+		π(str)
+		π([[[[[[[[[[[[]]]]]]]]]]]], let_no_indent=False)
+		π([tcr.types.QuotelessString("quoteless string")] * 3)
+		π({
 			"a": [
 				"nya",
 				"owo",
@@ -386,45 +386,45 @@ if True:  # \/ # Tests
 				[10, 20, 30],
 			]
 		})
-		pi({
+		π({
 			"b": [],
 		})
-		pi({
+		π({
 			"b": 2,
 		})
-		pi({
+		π({
 			"b": 2,
 			"d": 4,
 		})
-		pi({
+		π({
 			"b": None,
 		})
-		pi({
+		π({
 			"b": Null,
 		})
 
 		datetime = dt.datetime.now()
-		pi(datetime)
-		pi(datetime.date())
-		pi(datetime.time())
+		π(datetime)
+		π(datetime.date())
+		π(datetime.time())
 
 		ts = tcr.types.UnixTimestampInt(1719949074443)
 
-		pi(ts, _raise_errors=True)
-		pi(ts.to_datetime(), _raise_errors=True)
-		pi(tcr.types.HexInt(2, leading_zeroes=2))
-		pi(tcr.types.HexInt(3, leading_zeroes=3))
-		pi(tcr.types.HexInt(4, leading_zeroes=4))
-		pi(tcr.types.HexInt(5, leading_zeroes=5))
-		pi(tcr.types.HexInt(6))
+		π(ts, _raise_errors=True)
+		π(ts.to_datetime(), _raise_errors=True)
+		π(tcr.types.HexInt(2, leading_zeroes=2))
+		π(tcr.types.HexInt(3, leading_zeroes=3))
+		π(tcr.types.HexInt(4, leading_zeroes=4))
+		π(tcr.types.HexInt(5, leading_zeroes=5))
+		π(tcr.types.HexInt(6))
 		print()
-		pi(tcr)
-		pi([tcr])
-		pi((tcr,))
+		π(tcr)
+		π([tcr])
+		π((tcr,))
 		print()
-		pi("nya")
-		pi('n"ya')
-		pi("n'ya")
+		π("nya")
+		π('n"ya')
+		π("n'ya")
 		print()
 
 		class EAnimal(Enum):
@@ -446,15 +446,15 @@ if True:  # \/ # Tests
 			B = "B"
 			C = "C"
 
-		pi(EAnimal)
-		pi(EAnimalInt)
-		pi(EAnimalComplex)
-		pi(EAnimalStr)
+		π(EAnimal)
+		π(EAnimalInt)
+		π(EAnimalComplex)
+		π(EAnimalStr)
 		print()
-		pi(EAnimal.FOX)
-		pi(EAnimalInt.FOX)
-		pi(EAnimalComplex.FOX)
-		pi(EAnimalStr.FOX)
+		π(EAnimal.FOX)
+		π(EAnimalInt.FOX)
+		π(EAnimalComplex.FOX)
+		π(EAnimalStr.FOX)
 		print()
 
 		class IntCTF(IntFlag):
@@ -469,15 +469,15 @@ if True:  # \/ # Tests
 			CC = 1 << 2
 			CD = 1 << 3
 
-		pi(IntCTF)
-		pi(CTF)
+		π(IntCTF)
+		π(CTF)
 		print()
-		pi(IntCTF.A)
-		pi(CTF.CA)
-		pi(CTF.CA | CTF.CB)
+		π(IntCTF.A)
+		π(CTF.CA)
+		π(CTF.CA | CTF.CB)
 		ab = IntCTF.A | IntCTF.B
-		pi(ab)
-		pi(ab | IntCTF.C)
+		π(ab)
+		π(ab | IntCTF.C)
 		print()
 
 		class AutoEnum(Enum):
@@ -486,9 +486,9 @@ if True:  # \/ # Tests
 			C = auto()
 			D = auto()
 
-		pi(AutoEnum)
+		π(AutoEnum)
 		print()
-		pi(AutoEnum.A)
+		π(AutoEnum.A)
 
 		class TestTCRFmt:
 			value: str
@@ -507,9 +507,9 @@ if True:  # \/ # Tests
 		instance1 = TestTCRFmt(value="nya")
 		instance2 = TestTCRFmt()
 
-		pi(instance1)
-		pi(instance2)
-		pi(TestTCRFmt)
+		π(instance1)
+		π(instance2)
+		π(TestTCRFmt)
 		print()
 
 		@dataclass
@@ -517,27 +517,27 @@ if True:  # \/ # Tests
 			value: str
 			value2: str = field(default="uwu")
 
-		pi(hikari)
-		pi(sys)
-		pi(tcr)
-		pi(TestDataclass)
-		pi(TestDataclass(value="nya"))
+		π(hikari)
+		π(sys)
+		π(tcr)
+		π(TestDataclass)
+		π(TestDataclass(value="nya"))
 		print()
-		pi(p.Path().absolute())
-		pi(p.Path("uwu"))
-		pi(p.PurePath("uwu"))
-		pi(p.PurePath("/uwu"))
+		π(p.Path().absolute())
+		π(p.Path("uwu"))
+		π(p.PurePath("uwu"))
+		π(p.PurePath("/uwu"))
 		print()
-		pi(hikari.Status)
-		pi(hikari.ActivityType)
-		pi(hikari.ActivityType.CUSTOM)
+		π(hikari.Status)
+		π(hikari.ActivityType)
+		π(hikari.ActivityType.CUSTOM)
 		print()
 		bf_code = tcr.types.BrainfuckCode(",asdf>.<++[uwu-]nya")
-		pi(bf_code)
+		π(bf_code)
 		print()
-		pi(...)
+		π(...)
 		print()
-		pi(sys.version_info)
+		π(sys.version_info)
 
 		print()
 		import pydantic
@@ -551,11 +551,15 @@ if True:  # \/ # Tests
 
 		a = A(a=1, b=2, c=3)
 
-		pi(a)
-		pi(A)
-		pi(pydantic.BaseModel)
-		pi(B)
-		pi(B())
+		π(a)
+		π(A)
+		π(pydantic.BaseModel)
+		π(B)
+		π(B())
+
+		print()
+		π(tcr.joke.echo[:])
+		π(tcr.joke.echo[::-1])
 
 	def test_markdown():
 		from tcrutils import codeblock, uncodeblock
@@ -649,7 +653,7 @@ if True:  # \/ # Tests
 		print(tcr.terminal.size, type(tcr.terminal.size), complex(tcr.terminal.size))
 
 	def test_get_token():
-		rashole(tcr.get_token)(FileNotFoundError)
+		rass(tcr.get_token)(FileNotFoundError)
 
 	def test_thisdir():
 		console(os.getcwd())
@@ -657,8 +661,8 @@ if True:  # \/ # Tests
 		console(os.getcwd())
 
 	def test_able():
-		asshole(tcr.able(int, "ff8000", base=16), (True, 16744448), expr="tuple(a) == b")
-		asshole(tcr.able(int, "ff8000"), expr="not a")
+		ass(tcr.able(int, "ff8000", base=16), (True, 16744448), expr="tuple(a) == b")
+		ass(tcr.able(int, "ff8000"), expr="not a")
 
 	def test_insist():
 		from functools import partial
@@ -846,32 +850,32 @@ if True:  # \/ # Tests
 	def test_raises():
 		from tcrutils import raises
 
-		asshole(raises((lambda x: 1 / x), x=1)(ZeroDivisionError), False)
-		asshole(raises((lambda x: 1 / x), x=0)(ZeroDivisionError), True)
+		ass(raises((lambda x: 1 / x), x=1)(ZeroDivisionError), False)
+		ass(raises((lambda x: 1 / x), x=0)(ZeroDivisionError), True)
 
-	def test_asshole():
-		asshole("Expected pass", "Expected pass")
-		asshole(2137, 69, suppress=True)
-		asshole(1, 2, expr="a < b")
-		asshole("1", expr=int)
-		asshole([1], expr=bool)
-		asshole([], expr=bool, suppress=True)
-		asshole([], expr=list, suppress=True)
+	def test_ass():
+		ass("Expected pass", "Expected pass")
+		ass(2137, 69, suppress=True)
+		ass(1, 2, expr="a < b")
+		ass("1", expr=int)
+		ass([1], expr=bool)
+		ass([], expr=bool, suppress=True)
+		ass([], expr=list, suppress=True)
 
 	def test_discord_ifys():
-		rashole(tcr.discord.IFYs.userify, -1)(ValueError)
-		asshole(tcr.discord.IFYs.userify(1 << 63), f"<@{1 << 63}>")
-		rashole(tcr.discord.IFYs.userify, 1 << 63 + 1)(ValueError)
-		asshole(tcr.discord.IFYs.userify(1234), "<@1234>")
-		asshole(tcr.discord.IFYs.userbangify(1234), "<@!1234>")
-		asshole(tcr.discord.IFYs.channelify(1234), "<#1234>")
-		asshole(tcr.discord.IFYs.commandify("cmd", 1234), "</cmd:1234>")
-		asshole(tcr.discord.IFYs.emojify("emo", 1234), "<:emo:1234>")
-		asshole(tcr.discord.IFYs.emojify("uwu", 69, animated=True), "<a:uwu:69>")
-		asshole(tcr.discord.IFYs.timeify(1), "<t:1>")
-		asshole(tcr.discord.IFYs.timeify(1, "F"), "<t:1:F>")
-		rashole(tcr.discord.IFYs.timeify, 1, "r")(ValueError)
-		asshole(tcr.discord.IFYs.timeify(1, "F"), "<t:1:F>")
+		rass(tcr.discord.IFYs.userify, -1)(ValueError)
+		ass(tcr.discord.IFYs.userify(1 << 63), f"<@{1 << 63}>")
+		rass(tcr.discord.IFYs.userify, 1 << 63 + 1)(ValueError)
+		ass(tcr.discord.IFYs.userify(1234), "<@1234>")
+		ass(tcr.discord.IFYs.userbangify(1234), "<@!1234>")
+		ass(tcr.discord.IFYs.channelify(1234), "<#1234>")
+		ass(tcr.discord.IFYs.commandify("cmd", 1234), "</cmd:1234>")
+		ass(tcr.discord.IFYs.emojify("emo", 1234), "<:emo:1234>")
+		ass(tcr.discord.IFYs.emojify("uwu", 69, animated=True), "<a:uwu:69>")
+		ass(tcr.discord.IFYs.timeify(1), "<t:1>")
+		ass(tcr.discord.IFYs.timeify(1, "F"), "<t:1:F>")
+		rass(tcr.discord.IFYs.timeify, 1, "r")(ValueError)
+		ass(tcr.discord.IFYs.timeify(1, "F"), "<t:1:F>")
 
 	def test_extract_error2():
 		from tcrutils import extract_error
@@ -917,24 +921,24 @@ if True:  # \/ # Tests
 		from tcrutils import Undefined
 
 		dd = tcr.DotDict({"a": 1, "b": 2})
-		asshole(dd.a, 1)
-		asshole(dd.b, 2)
-		rashole(lambda: dd.c)(KeyError)
+		ass(dd.a, 1)
+		ass(dd.b, 2)
+		rass(lambda: dd.c)(KeyError)
 		del dd.a
-		asshole(dd, {"b": 2})
+		ass(dd, {"b": 2})
 
 		dd = tcr.DotDict({"a": 1, "b": {"c": 3}})
-		asshole(dd.b.c, 3)
+		ass(dd.b.c, 3)
 
 		jsd = tcr.JSDict({"a": 1, "b": 2})
-		asshole(jsd["a"], 1)
-		asshole(jsd["b"], 2)
-		asshole(jsd["c"], Undefined)
+		ass(jsd["a"], 1)
+		ass(jsd["b"], 2)
+		ass(jsd["c"], Undefined)
 
 		jsdd = tcr.JSDotDict({"a": 1, "b": 2})
-		asshole(jsdd.a, 1)
-		asshole(jsdd.b, 2)
-		asshole(jsdd.c | 3, 3)
+		ass(jsdd.a, 1)
+		ass(jsdd.b, 2)
+		ass(jsdd.c | 3, 3)
 		del jsdd.asdfa  # Nothing should happen because jsdict will suppress the invalid item - because javascript
 
 	def test_null():
@@ -942,23 +946,23 @@ if True:  # \/ # Tests
 
 		console(Null)
 		console(Undefined)
-		asshole(Null is Null.__class__())
-		asshole(Undefined is Undefined.__class__())
-		asshole(Undefined is not Null)
+		ass(Null is Null.__class__())
+		ass(Undefined is Undefined.__class__())
+		ass(Undefined is not Null)
 		console(type(Null))
 		console(type(Undefined))
 		console(str(Null))
 		console(repr(Null))
 		console(str(Undefined))
 		console(repr(Undefined))
-		asshole(Null | 0, 0)
-		asshole(Null | 1, 1)
-		asshole(0 | Null, 0)
-		asshole(1 | Null, 1)
-		asshole(Undefined | 0, 0)
-		asshole(Undefined | 1, 1)
-		asshole(0 | Undefined, 0)
-		asshole(1 | Undefined, 1)
+		ass(Null | 0, 0)
+		ass(Null | 1, 1)
+		ass(0 | Null, 0)
+		ass(1 | Null, 1)
+		ass(Undefined | 0, 0)
+		ass(Undefined | 1, 1)
+		ass(0 | Undefined, 0)
+		ass(1 | Undefined, 1)
 		console(Null | Undefined)
 		console(Undefined | Null)
 		console(Undefined | Undefined)
@@ -1058,95 +1062,95 @@ if True:  # \/ # Tests
 			error_on_missing_placeholder=False,
 		)
 
-		asshole.error_func = lambda *_, **__: ...
+		ass.error_func = lambda *_, **__: ...
 
-		asshole(await EXECUTE("owo {add|1|{add|2|2}} asdfasdfgsdfg {uwu} {nyaaa}"), expr="bool(a) == b")
+		ass(await EXECUTE("owo {add|1|{add|2|2}} asdfasdfgsdfg {uwu} {nyaaa}"), expr="bool(a) == b")
 		# This shall forever stay executed to signify a potential fuckup in the nested placeholder capabilities
 
 		if __TEXT := True:
 			print()
 			c("COMMENT", quoteless=True)
-			asshole(await EXECUTE("cu{comment|comment}ment"), "cument")
-			asshole(await EXECUTE("#cu{#|comment}ment"), "#cument")
-			asshole(await EXECUTE("//cu{//|comment}ment"), "//cument")
+			ass(await EXECUTE("cu{comment|comment}ment"), "cument")
+			ass(await EXECUTE("#cu{#|comment}ment"), "#cument")
+			ass(await EXECUTE("//cu{//|comment}ment"), "//cument")
 			print()
 			c("VAR", quoteless=True)
-			asshole(await EXECUTE("{var|var1|nya}{var1} {var|var1}"), "nya nya")
+			ass(await EXECUTE("{var|var1|nya}{var1} {var|var1}"), "nya nya")
 			print()
 			c("TEST", quoteless=True)
-			asshole(await EXECUTE("{test|a|a|T|F}F2"), "TF2")
-			asshole(await EXECUTE("T{test|a|ż|F|F}2"), "TF2")
-			asshole(await EXECUTE("{test|a|a}"), "true")
-			asshole(await EXECUTE("{test|a|ż}"), "false")
-			asshole(await EXECUTE("{test|a}"), "{test|a}")
-			asshole.total(prefix="\n")
+			ass(await EXECUTE("{test|a|a|T|F}F2"), "TF2")
+			ass(await EXECUTE("T{test|a|ż|F|F}2"), "TF2")
+			ass(await EXECUTE("{test|a|a}"), "true")
+			ass(await EXECUTE("{test|a|ż}"), "false")
+			ass(await EXECUTE("{test|a}"), "{test|a}")
+			ass.total(prefix="\n")
 
 		if __MATH := True:
 			c.hr()
 			print()
 			c("ADD", quoteless=True)
-			asshole(await EXECUTE("{add}"), "0")
-			asshole(await EXECUTE("{add|4}"), "4")
-			asshole(await EXECUTE("{add|1|1}"), "2")
-			asshole(await EXECUTE("{add|1|1|2.4}"), "4.4")
+			ass(await EXECUTE("{add}"), "0")
+			ass(await EXECUTE("{add|4}"), "4")
+			ass(await EXECUTE("{add|1|1}"), "2")
+			ass(await EXECUTE("{add|1|1|2.4}"), "4.4")
 			print()
 			c("SUBTRACT", quoteless=True)
-			asshole(await EXECUTE("{sub}"), "0")
-			asshole(await EXECUTE("{sub|5}"), "5")
-			asshole(await EXECUTE("{sub|1|2}"), "-1")
-			asshole(await EXECUTE("{sub|1|2|3}"), "-4")
+			ass(await EXECUTE("{sub}"), "0")
+			ass(await EXECUTE("{sub|5}"), "5")
+			ass(await EXECUTE("{sub|1|2}"), "-1")
+			ass(await EXECUTE("{sub|1|2|3}"), "-4")
 			print()
 			c("MULTIPLY", quoteless=True)
-			asshole(await EXECUTE("{mul}"), "1")
-			asshole(await EXECUTE("{mul|3|3}"), "9")
-			asshole(await EXECUTE("{mul|3|3|4}"), "36")
-			asshole(await EXECUTE("{mul|2|3.4}"), "6.8")
+			ass(await EXECUTE("{mul}"), "1")
+			ass(await EXECUTE("{mul|3|3}"), "9")
+			ass(await EXECUTE("{mul|3|3|4}"), "36")
+			ass(await EXECUTE("{mul|2|3.4}"), "6.8")
 			print()
 			c("DIVIDE", quoteless=True)
-			asshole(await EXECUTE("{div}"), "1")
-			asshole(await EXECUTE("{div|3}"), "3")
-			asshole(await EXECUTE("{div|1|2}"), "0.5")
-			asshole(await EXECUTE("{div|15|3|5}"), "1")
+			ass(await EXECUTE("{div}"), "1")
+			ass(await EXECUTE("{div|3}"), "3")
+			ass(await EXECUTE("{div|1|2}"), "0.5")
+			ass(await EXECUTE("{div|15|3|5}"), "1")
 			print()
 			c("FLOOR DIVIDE", quoteless=True)
-			asshole(await EXECUTE("{floordiv}"), "1")
-			asshole(await EXECUTE("{fdiv|3}"), "3")
-			asshole(await EXECUTE("{fdiv|1|2}"), "0")
-			asshole(await EXECUTE("{fdiv|34|3}"), "11")
+			ass(await EXECUTE("{floordiv}"), "1")
+			ass(await EXECUTE("{fdiv|3}"), "3")
+			ass(await EXECUTE("{fdiv|1|2}"), "0")
+			ass(await EXECUTE("{fdiv|34|3}"), "11")
 			print()
 			c("POWER", quoteless=True)
-			asshole(await EXECUTE("{pow}"), "{pow}")
-			asshole(await EXECUTE("{pow|3}"), "9")
-			asshole(await EXECUTE("{pow|2|3}"), "8")
-			asshole(await EXECUTE("{pow|2|2|2|2}"), "256")
+			ass(await EXECUTE("{pow}"), "{pow}")
+			ass(await EXECUTE("{pow|3}"), "9")
+			ass(await EXECUTE("{pow|2|3}"), "8")
+			ass(await EXECUTE("{pow|2|2|2|2}"), "256")
 			print()
 			c("MOD", quoteless=True)
-			asshole(await EXECUTE("{mod}"), "{mod}")
-			asshole(await EXECUTE("{mod|5}"), "5")
-			asshole(await EXECUTE("{mod|15|3}"), "0")
-			asshole(await EXECUTE("{mod|15|2|3}"), "1")
+			ass(await EXECUTE("{mod}"), "{mod}")
+			ass(await EXECUTE("{mod|5}"), "5")
+			ass(await EXECUTE("{mod|15|3}"), "0")
+			ass(await EXECUTE("{mod|15|2|3}"), "1")
 			print()
 			c("ROUND", quoteless=True)
-			asshole(await EXECUTE("{round}"), "{round}")
-			asshole(await EXECUTE("{round|1.3}"), "1")
-			asshole(await EXECUTE("{round|1.7}"), "2")
-			asshole(await EXECUTE("{round|1.5}"), "2")
+			ass(await EXECUTE("{round}"), "{round}")
+			ass(await EXECUTE("{round|1.3}"), "1")
+			ass(await EXECUTE("{round|1.7}"), "2")
+			ass(await EXECUTE("{round|1.5}"), "2")
 			print()
 			c("FLOOR", quoteless=True)
-			asshole(await EXECUTE("{floor}"), "{floor}")
-			asshole(await EXECUTE("{floor|6.1}"), "6")
-			asshole(await EXECUTE("{floor|6.9}"), "6")
+			ass(await EXECUTE("{floor}"), "{floor}")
+			ass(await EXECUTE("{floor|6.1}"), "6")
+			ass(await EXECUTE("{floor|6.9}"), "6")
 			print()
 			c("CEIL", quoteless=True)
-			asshole(await EXECUTE("{ceil}"), "{ceil}")
-			asshole(await EXECUTE("{ceil|9.1}"), "10")
-			asshole(await EXECUTE("{ceil|9.9}"), "10")
-			asshole.total(prefix="\n")
+			ass(await EXECUTE("{ceil}"), "{ceil}")
+			ass(await EXECUTE("{ceil|9.1}"), "10")
+			ass(await EXECUTE("{ceil|9.9}"), "10")
+			ass.total(prefix="\n")
 
 		if __DEBUG := True:
 			c.hr()
 			c("DEBUG", quoteless=True)
-			asshole.total(prefix="\n", ignore_empty=False)
+			ass.total(prefix="\n", ignore_empty=False)
 
 	async def test_dynamic_responses_bot():
 		spin_up_bot()
@@ -1377,17 +1381,17 @@ ID: {server|id}
 
 		console(now1.strftime(STRFTIME_FORMAT_SPECIFIER))
 		console(now2.strftime(STRFTIME_FORMAT_SPECIFIER))
-		asshole(now1, now2)
-		asshole(now1 - now2, dt.timedelta(0))
-		asshole(now1.tzinfo, now2.tzinfo)
+		ass(now1, now2)
+		ass(now1 - now2, dt.timedelta(0))
+		ass(now1.tzinfo, now2.tzinfo)
 
 		print()
-		asshole.total()
+		ass.total()
 		print()
 
-		asshole(tstr.to_int("0"), 0)
-		asshole(tstr.to_int("1s"), 1)
-		asshole(tstr.to_int("-1h"), -3600)
+		ass(tstr.to_int("0"), 0)
+		ass(tstr.to_int("1s"), 1)
+		ass(tstr.to_int("-1h"), -3600)
 		print()
 		console(tstr.to_datetime("wed").strftime(STRFTIME_FORMAT_SPECIFIER))
 		console(tstr.to_datetime("mon").strftime(STRFTIME_FORMAT_SPECIFIER))
@@ -1447,10 +1451,10 @@ ID: {server|id}
 		console(tstr.to_strf(100000000))
 		console(tstr.to_strf(1000000000))
 		print()
-		rashole(tstr.to_int, "1")(ValueError)
-		rashole(tstr.to_int, "nya")(ValueError)
+		rass(tstr.to_int, "1")(ValueError)
+		rass(tstr.to_int, "nya")(ValueError)
 		print()
-		asshole.total()
+		ass.total()
 
 	def test_default():
 		class A(tcr.DefaultsGetSetAttr):
@@ -1582,11 +1586,11 @@ ID: {server|id}
 		c(b, b.is_err())
 
 	def test_is_snowflake():
-		asshole(tcr.discord.is_snowflake(0b1111111111111111111111111111111111111111111111111111111111111111))
-		asshole(tcr.discord.is_snowflake(0b1111111111111111111111111111111111111111111111111111111111111110))
-		asshole(tcr.discord.is_snowflake(0b1111111111111111111111111111111111111111111111111111111111111111 + 1), False)
-		asshole(tcr.discord.is_snowflake(0))
-		asshole(tcr.discord.is_snowflake(-1), False)
+		ass(tcr.discord.is_snowflake(0b1111111111111111111111111111111111111111111111111111111111111111))
+		ass(tcr.discord.is_snowflake(0b1111111111111111111111111111111111111111111111111111111111111110))
+		ass(tcr.discord.is_snowflake(0b1111111111111111111111111111111111111111111111111111111111111111 + 1), False)
+		ass(tcr.discord.is_snowflake(0))
+		ass(tcr.discord.is_snowflake(-1), False)
 
 	def test_console_fmt():
 		obj = [69, True, None, tcr.Null]
@@ -1679,6 +1683,13 @@ ID: {server|id}
 		hc.log("Nyaaa", "uwu")
 		hc.error("owo")
 
+	def test_echo():
+		e = tcr.joke.echo
+
+		ass(e.nya, "nya")
+		ass(e[::], slice(None, None, None))
+		ass(e ^ 3, 3)
+
 
 if True:  # \/ # Test setup
 	__TESTS_RAN_GLOBAL = 0
@@ -1697,21 +1708,21 @@ if True:  # \/ # Test setup
 			globals()[k] = tcr.test(_count_tests_decorator(v))
 
 if __name__ == "__main__":
-	# test_print_iterable(
-	# 	pi=tcr.print_iterable,
-	# 	syntax_highlighting=1,
-	# 	# let_no_indent=0,
-	# 	# force_no_indent=1,
-	# 	# force_no_spaces=0,
-	# 	# force_complex_parenthesis=1,
-	# 	# item_limit=10,
-	# 	# # let_no_inder_max_non_iterables=10,
-	# 	# # let_no_inder_max_iterables=10,
-	# 	# prefer_full_names=1,
-	# 	# force_union_parenthesis=1,
-	# 	# depth_limit=3,
-	# 	# str_repr=repr,
-	# )
+	test_print_iterable(
+		π=tcr.print_iterable,
+		syntax_highlighting=1,
+		# let_no_indent=0,
+		# force_no_indent=1,
+		# force_no_spaces=0,
+		# force_complex_parenthesis=1,
+		# item_limit=10,
+		# # let_no_inder_max_non_iterables=10,
+		# # let_no_inder_max_iterables=10,
+		# prefer_full_names=1,
+		# force_union_parenthesis=1,
+		# depth_limit=3,
+		# str_repr=repr,
+	)
 
 	# test_timestr()
 	# test_dict_merge()
@@ -1760,7 +1771,7 @@ if __name__ == "__main__":
 	# test_class()
 	# test_overload()
 	# test_discord_ifys()
-	# test_asshole()
+	# test_ass()
 	# test_raises()
 	# test_extract_error2()
 	# test_warning_catcher()
@@ -1803,8 +1814,9 @@ if __name__ == "__main__":
 	# test_joke_pointer()
 	# test_eval_fback()
 	# test_console_with_header()
+	# test_echo()
 
-	asshole.total(prefix="\n")
+	ass.total(prefix="\n")
 	print()
 	c("test# =", __TESTS_RAN_GLOBAL)
 	pass  # noqa: PIE790, RUF100

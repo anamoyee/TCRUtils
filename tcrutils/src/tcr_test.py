@@ -44,7 +44,7 @@ class _TestResult:
 	result: bool
 
 
-class _Asshole:
+class _Ass:
 	_totals: list[_TestResult]
 	error_func: Callable[[Exception, str], None]
 
@@ -66,11 +66,11 @@ class _Asshole:
 		fmt_iterable_kwrags: dict[str, Any] | None = None,
 		**printhook_kwargs: Any,
 	) -> None:
-		"""### assert + tcr.console (yes i couldn't find a better name for this one).
+		"""### assert with tcr.console.
 
 		# WARNING: this is meant for testing only and uses eval().
 		# Do not use in any serious code.
-		Also.. imagine showing someone some code and it says 'asshole' in it so don't use it for that reason too...
+		Also.. imagine showing someone some code and it says 'ass' in it so don't use it for that reason too...
 
 		This uses the assert keyword so it will be optimized out when using optimization flags.
 
@@ -157,7 +157,7 @@ class _Asshole:
 			exit_func(1)
 
 
-asshole = _Asshole()
+ass = _Ass()
 
 
 def raises(func: Callable[[], None], *args, **kwargs) -> Callable[[BaseException], bool]:
@@ -186,12 +186,12 @@ def raises(func: Callable[[], None], *args, **kwargs) -> Callable[[BaseException
 	return raises_inner
 
 
-class _Rashole:
+class _RAss:
 	def __call__(self, func: Callable[[], None], *args, **kwargs) -> Callable[[BaseException], None]:
-		def rashole_inner(__e: BaseException, /) -> None:
-			asshole(("Yes, raises", __e) if raises(func, *args, **kwargs)(__e) else ("No, does not raise", __e), expr="a[0].startswith('Yes')")
+		def rass_inner(__e: BaseException, /) -> None:
+			ass(("Yes, raises", __e) if raises(func, *args, **kwargs)(__e) else ("No, does not raise", __e), expr="a[0].startswith('Yes')")
 
-		return rashole_inner
+		return rass_inner
 
 
-rashole = _Rashole()
+rass = _RAss()

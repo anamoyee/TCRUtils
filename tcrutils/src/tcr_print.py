@@ -362,6 +362,7 @@ if True:  # \/ # fmt & print iterable
 		force_no_indent: bool = False,
 		force_no_spaces: bool = False,
 		force_complex_parenthesis: bool = False,
+		force_slice_parenthesis: bool = False,
 		force_union_parenthesis: bool = True,
 		prefer_full_names: bool = False,
 		str_repr: Callable[[str], str] = double_quoted_repr,
@@ -395,13 +396,15 @@ if True:  # \/ # fmt & print iterable
 			force_no_indent: bool, Force the condition above (let_no_spaces), skip any conditions listed there, never add extra enters or indents even if it may make the result unreadable. This effectively makes `indent` or `let_no_indent` irrelevant. This also sets `trailing_commas` to False.
 			force_no_spaces: bool, Force remove any extra spaces (not including the objects' values for example strings will still be displayed with spaces). It removes spaces for example after commas, colons, etc. This effectively enables `force_no_indent` thus making `indent` or `let_no_indent` irrelevant.
 			force_complex_parenthesis: bool, Force parenthesis when displaying `complex` type for example `(3 + 1j)` instead of `3+1j`. This has no effect when syntax highlighting is turned off.
+			force_slice_parenthesis: bool, Force parenthesis when displaying `slice` type for example `(::-1)` instead of `::-1`. This has no effect when syntax highlighting is turned off.
+			force_union_parenthesis: bool, Force parenthesis when displaying `union` type.` This has no effect when syntax highlighting is turned off.
 			prefer_full_names: bool, whether or not to use the full names of objects if possible.
 			let_no_inder_max_iterables: int = 1, (advanced) override the limit for iterables for the let_no_indent feature
 			let_no_inder_max_non_iterables: int = 4, (advanced) override the limit for non-iterables for the let_no_indent feature
 			str_repr: Callable[[str], str] = double_quoted_repr, (advanced) override the default string repr callable
 			prefer_pydantic_better_dump: bool = False, Will use the pydantic's custom dumper which prints the model name in more places, instead of leaving it only for the moment when pydantic SHITS ITS PANTS (raises random shitass errors). i have nothing more to say about this.
 
-		If no formatting is set for an object, it can be defined using the __tcr_display__ method.
+		If no formatting is set for an object, it can be defined using the __tcr_display__(self, **kwargs) or __tcr_fmt__(self, *, fmt_iterable, **kwargs) methods.
 
 		```py
 		class PrintableObj:
@@ -483,6 +486,7 @@ if True:  # \/ # fmt & print iterable
 			"force_no_indent": force_no_indent,
 			"force_no_spaces": force_no_spaces,
 			"force_complex_parenthesis": force_complex_parenthesis,
+			"force_slice_parenthesis": force_slice_parenthesis,
 			"force_union_parenthesis": force_union_parenthesis,
 			"prefer_full_names": prefer_full_names,
 			"depth_limit": depth_limit,
@@ -537,6 +541,24 @@ if True:  # \/ # fmt & print iterable
 
 		if isinstance(it, _OverflowClass):
 			return f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}' if syntax_highlighting else f"({it} more items...)"
+		if isinstance(it, slice):
+			if not syntax_highlighting:
+				return f'slice({it.start!r}, {it.stop}, {it.step})'
+
+
+			if it.step is None:
+				slice_params = (it.start, it.stop)
+			else:
+				slice_params = (it.start, it.stop, it.step)
+
+			text = f'{FMTC.DECIMAL}:'.join((f'{FMTC.NUMBER}{x!r}' if x is not None else '') for x in slice_params)
+
+			if force_slice_parenthesis:
+				text = FMT_BRACKETS[tuple][syntax_highlighting] % text
+
+			return text
+
+
 		if isinstance(it, ....__class__):  # cursed syntax lol
 			if not syntax_highlighting:
 				return "..."
@@ -804,23 +826,26 @@ if True:  # \/ # fmt & print iterable
 		```
 
 		Args:
-			it: Iterable, The iterable to print
+			it: Iterable, The iterable to format
 			*its: Iterable, The same as above, if provided, it = (it, *its), can be omitted.
 			indentation: int, How many spaces between where the list bracket is placed and the list items.
-			raw: DEPRECATED, don't use. If you need raw output use fmt_iterable()
-			recursive: DEPRECATED, this does not have any effect but is left for backwards-compatibility.
-			printhook: Callable[[str], None], replacement for print function if provided else the built in print function
 			item_limit: int, How many items in a list can be displayed before it's cut off. Any values < 1 will be set back to 1
 			syntax_highlighting: bool, Whether or not terminal color codes should be added to make the code/iterables perttier. This also slightly changes the syntax. For example `'{,}'` with syntax highlighting and `'set()'` without. If you wish to copy & paste the iterable from terminal back to code set this to False although it may work with it set to true as well. The extra syntax safety does not support generators and `"(X more items...)"` messages that come from `item_limit`.
-			trailing_commas: bool, whether or not to add trailing commas to lists (`'[\\n  10,\\n  20,\\n]'` vs `'[\\n  10,\\n  20\\n]'`)
-			int_formatter: Callable[[int], str]: A function that formats integers to a string. For example tcr.hex will format all integers as hex values. The tcr.hex formatter is automatically used unless other one was supplied
+			trailing_commas: bool, whether or not to add trailing commas to lists (`'[\\n  10,\\n  20,\\n]'` vs `'[\\n  10,\\n  20\\n]'`). Psst: this can be set to 2 to force trailing commas although it's not recommended to use this as a feature.
+			int_formatter: Callable[[int], str], A function that formats integers to a string. For example tcr.hex will format all integers as hex values. The tcr.hex formatter is automatically used unless other one was supplied
 			let_no_indent: bool, Let the function automatically determine good spots to remove excessive enter-indent-syntax (for example "[\\n  10,\\n  20\\n]" - The list has only two, non iterable items or when the list has only one iterable or non iterable item)
 			force_no_indent: bool, Force the condition above (let_no_spaces), skip any conditions listed there, never add extra enters or indents even if it may make the result unreadable. This effectively makes `indent` or `let_no_indent` irrelevant. This also sets `trailing_commas` to False.
 			force_no_spaces: bool, Force remove any extra spaces (not including the objects' values for example strings will still be displayed with spaces). It removes spaces for example after commas, colons, etc. This effectively enables `force_no_indent` thus making `indent` or `let_no_indent` irrelevant.
 			force_complex_parenthesis: bool, Force parenthesis when displaying `complex` type for example `(3 + 1j)` instead of `3+1j`. This has no effect when syntax highlighting is turned off.
+			force_slice_parenthesis: bool, Force parenthesis when displaying `slice` type for example `(::-1)` instead of `::-1`. This has no effect when syntax highlighting is turned off.
+			force_union_parenthesis: bool, Force parenthesis when displaying `union` type.` This has no effect when syntax highlighting is turned off.
 			prefer_full_names: bool, whether or not to use the full names of objects if possible.
+			let_no_inder_max_iterables: int = 1, (advanced) override the limit for iterables for the let_no_indent feature
+			let_no_inder_max_non_iterables: int = 4, (advanced) override the limit for non-iterables for the let_no_indent feature
 			str_repr: Callable[[str], str] = double_quoted_repr, (advanced) override the default string repr callable
-			**kwargs: Anything from there is passed in into the fmt_iterable call
+			prefer_pydantic_better_dump: bool = False, Will use the pydantic's custom dumper which prints the model name in more places, instead of leaving it only for the moment when pydantic SHITS ITS PANTS (raises random shitass errors). i have nothing more to say about this.
+
+		If no formatting is set for an object, it can be defined using the __tcr_display__(self, **kwargs) or __tcr_fmt__(self, *, fmt_iterable, **kwargs) methods.
 		"""
 		result = fmt_iterable(it, *its, **kwargs)
 		if recursive is not None:

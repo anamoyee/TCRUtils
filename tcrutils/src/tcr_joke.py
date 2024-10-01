@@ -1,7 +1,7 @@
 """Contains joke functions or the ones that will never be used in a serious situations/prod (This entire package sucks so much it should never be used in prod but uhhhhh.....)."""
 
 from collections.abc import Callable
-from typing import Literal, Self
+from typing import Any, Literal, Self, TypeVar
 
 from ..src import tcr_cloud_imports as cloud_imports
 from .tcr_decorator import instance
@@ -32,9 +32,9 @@ def oddeven(n: int | str) -> Literal["odd", "even"]:
 def christmas_tree(*, height=10, symbol="*"):
 	"""Generate a christmas tree for printing in a console.
 
-    Height is the number of lines the tree will have.\\
-    Symbol is any 1-2 long string for example 'C#' or '*'.
-    """
+	Height is the number of lines the tree will have.\\
+	Symbol is any 1-2 long string for example 'C#' or '*'.
+	"""
 	if len(symbol) == 1:
 		symbol = 2 * symbol
 
@@ -188,3 +188,113 @@ class Pointer:
 			type_ = this(self.__value.__class__)
 
 		return f"{this(self.__class__)}{FMT_BRACKETS[range][SH] % type_}{addr}"
+
+
+T = TypeVar("T")
+
+
+class __EchoType:
+	"""Echo the first argument of any interaction, like calling, gettingitem, gettingattr, etc.."""
+
+	def __call__(self, x: T, /) -> T:
+		return x
+
+	def __getitem__(self, x: T, /) -> T:
+		return x
+
+	def __getattr__(self, x: T, /) -> T:
+		return x
+
+	def __getattribute__(self, x: T, /) -> T:
+		return x
+
+	def __add__(self, x: T, /) -> T:
+		return x
+
+	def __radd__(self, x: T, /) -> T:
+		return x
+
+	def __sub__(self, x: T, /) -> T:
+		return x
+
+	def __rsub__(self, x: T, /) -> T:
+		return x
+
+	def __mul__(self, x: T, /) -> T:
+		return x
+
+	def __rmul__(self, x: T, /) -> T:
+		return x
+
+	def __truediv__(self, x: T, /) -> T:
+		return x
+
+	def __rtruediv__(self, x: T, /) -> T:
+		return x
+
+	def __floordiv__(self, x: T, /) -> T:
+		return x
+
+	def __rfloordiv__(self, x: T, /) -> T:
+		return x
+
+	def __mod__(self, x: T, /) -> T:
+		return x
+
+	def __rmod__(self, x: T, /) -> T:
+		return x
+
+	def __matmul__(self, x: T, /) -> T:
+		return x
+
+	def __rmatmul__(self, x: T, /) -> T:
+		return x
+
+	def __divmod__(self, x: T, /) -> T:
+		return x
+
+	def __rdivmod__(self, x: T, /) -> T:
+		return x
+
+	def __pow__(self, x: T, /) -> T:
+		return x
+
+	def __rpow__(self, x: T, /) -> T:
+		return x
+
+	def __lshift__(self, x: T, /) -> T:
+		return x
+
+	def __rlshift__(self, x: T, /) -> T:
+		return x
+
+	def __rshift__(self, x: T, /) -> T:
+		return x
+
+	def __rrshift__(self, x: T, /) -> T:
+		return x
+
+	def __and__(self, x: T, /) -> T:
+		return x
+
+	def __rand__(self, x: T, /) -> T:
+		return x
+
+	def __xor__(self, x: T, /) -> T:
+		return x
+
+	def __rxor__(self, x: T, /) -> T:
+		return x
+
+	def __or__(self, x: T, /) -> T:
+		return x
+
+	def __ror__(self, x: T, /) -> T:
+		return x
+
+	def __get__(self, x, _owner=None):
+		return x
+
+
+echo = __EchoType()
+del __EchoType
