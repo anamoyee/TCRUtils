@@ -213,6 +213,10 @@ class Console:
 			header_end=end if end is not None else self.header_end,
 		)
 
+	def with_header(self, header: str):
+		"""Add a simple header, alias for `with_expr_header(header, literal=True)`."""
+		return self.with_expr_header(header, literal=True)
+
 	__call__ = debug
 
 	def __or__(self, other):
