@@ -39,7 +39,6 @@ from _collections_abc import (
 	tuple_iterator,
 	zip_iterator,
 )
-
 from colored import Back, Fore, Style
 
 try:
@@ -352,7 +351,7 @@ if True:  # \/ # fmt & print iterable
 		it: Iterable | Any,
 		/,
 		*its: Iterable | Any,
-		indentation: int = 2,
+		indentation: int = 4,
 		item_limit: int = 100,
 		depth_limit: int = 100,
 		syntax_highlighting: bool = False,
@@ -677,7 +676,7 @@ if True:  # \/ # fmt & print iterable
 		if _t == BrainfuckCode:
 			return _fmt_brainfuck(it)
 
-		if _t == type:  # noqa: E721
+		if _t == type:
 			return f'{FMTC.TYPE}{getattr_queue(it, "__name__", "__class__.__name__", default=it)}{FMTC._}' if syntax_highlighting else str(it)
 
 		if not kwargs.get("_force_next_type"):
@@ -695,19 +694,19 @@ if True:  # \/ # fmt & print iterable
 						break
 		if it.__class__ == sys.version_info.__class__ and syntax_highlighting:
 			return FMT_BRACKETS[tuple][1] % FMT_SYS_VERSION_INFO % it[:3]
-		if _t == int:  # noqa: E721
+		if _t == int:
 			if int_formatter:
 				it = int_formatter(it)
 			return f"{FMTC.NUMBER}{it}{FMTC._}" if syntax_highlighting else str(it)
-		if _t == float:  # noqa: E721
+		if _t == float:
 			return f'{FMTC.NUMBER}{str(it).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC._}' if syntax_highlighting else str(it)
-		if _t == str:  # noqa: E721
+		if _t == str:
 			reprit = str_repr(it)
 			return f"{FMTC.QUOTES}{reprit[0]}{FMTC.STRING}{reprit[1:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}" if syntax_highlighting else str_repr(it)
-		if _t == bytes:  # noqa: E721
+		if _t == bytes:
 			reprit = repr(it)
 			return f"{FMTC.BYTESTR_B}{reprit[0]}{FMTC.QUOTES}{reprit[1]}{FMTC.STRING}{reprit[2:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}" if syntax_highlighting else repr(it)
-		if _t == complex:  # noqa: E721
+		if _t == complex:
 			brackets = ("", "") if (not force_complex_parenthesis) else (f"{FMTC.BRACKET}(", f"{FMTC.BRACKET})")
 			return (
 				f"""{brackets[0]}{FMTC.NUMBER}{int(it.real) if int(it.real) == it.real else str(it.real).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC._}{space}{FMTC.COMPLEX}+{space}{FMTC.NUMBER}{int(it.imag) if int(it.imag) == it.imag else str(it.imag).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC.COMPLEX}j{brackets[1]}{FMTC._}"""
@@ -774,13 +773,13 @@ if True:  # \/ # fmt & print iterable
 						indent + x.replace("\n", f"\n{indent}")
 						for x in [this(element) for element in itl]
 						+ ([] if not (overflow if not kwargs.get("_ov") else kwargs.get("_ov")) else [this(_OverflowClass(overflow if not kwargs.get("_ov") else kwargs.get("_ov")))])
-					]) + (comma if (trailing_commas or (_t == tuple and len(it) == 1)) else "")  # noqa: E721
+					]) + (comma if (trailing_commas or (_t == tuple and len(it) == 1)) else "")
 
 					return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
 			else:
-				if _t == set and not syntax_highlighting:  # noqa: E721
+				if _t == set and not syntax_highlighting:
 					return "set()"
-				return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % (comma if _t == set else '')  # fmt: skip  # noqa: E721
+				return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % (comma if _t == set else '')  # fmt: skip
 
 		if not syntax_highlighting:
 			return repr(it)
