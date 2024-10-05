@@ -237,7 +237,7 @@ def _clean_built_in_methods(d: dict) -> dict:
 	return {k: v for k, v in d.items() if not isinstance(v, type(abs))}
 
 
-def start_eval_session(f_backs: int = 2) -> None:
+def start_eval_session(f_backs: int = 1) -> None:
 	"""Starts an interactive shell. For debugging purposes."""
 	try:
 		current_frame = inspect.currentframe()
