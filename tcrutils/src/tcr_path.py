@@ -9,14 +9,14 @@ class path:
 	"""Provides path-related utilities."""
 
 	@staticmethod
-	def convert_to_relative_path(absolute_path: str | p.Path, relative_to: str | p.Path | None = None, *, walk_up: bool = False) -> p.Path:
+	def convert_to_relative_path(absolute_path: str | p.Path, relative_to: str | p.Path | None = None) -> p.Path:
 		"""Convert absolute path into a relative path."""
 		relative_to = relative_to if relative_to is not None else p.Path.cwd()
 
 		absolute_path = p.Path(absolute_path)
 
 		try:
-			relative_path = absolute_path.relative_to(relative_to, walk_up=walk_up)
+			relative_path = absolute_path.relative_to(relative_to)
 		except ValueError:
 			return str(absolute_path)
 

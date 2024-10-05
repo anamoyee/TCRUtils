@@ -132,7 +132,7 @@ class Console:
 		if eval_header:
 			padding += eval_header
 
-		if len(all_values) >= 2 and all_values[0].__class__ == str and all_values[0]:  # noqa: E721
+		if len(all_values) >= 2 and all_values[0].__class__ == str and all_values[0]:
 			first_string: str = all_values[0]
 			after_first_string = ""
 
@@ -149,7 +149,7 @@ class Console:
 
 			all_values = all_values[1:]
 
-		out = fmt_iterable(*[(x if ((not quoteless) or (x.__class__ != str) or x == "") else QuotelessString(x)) for x in all_values], syntax_highlighting=syntax_highlighting, **kwargs)  # noqa: E721
+		out = fmt_iterable(*[(x if ((not quoteless) or (x.__class__ != str) or x == "") else QuotelessString(x)) for x in all_values], syntax_highlighting=syntax_highlighting, **kwargs)
 
 		if padding == " " and not withprefix:
 			padding = ""
