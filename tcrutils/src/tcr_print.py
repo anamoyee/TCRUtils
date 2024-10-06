@@ -1,3 +1,4 @@
+import ast
 import datetime as dt
 import pathlib
 import re as regex
@@ -347,6 +348,59 @@ if True:  # \/ # fmt & print iterable
 	def _pydantic_hopefully_non_erroring_dumper(obj: PydanticBM) -> dict:
 		return {k: getattr(obj, k) for k in obj.model_fields_set}
 
+	def parse_repr_literal(repr_str: str) -> tuple[str, tuple[Any], dict[str, Any]]:
+		"""Parse a repr in the form of Class('args', 'args', ..., kwargs='kwargs', kwargs2=2) and return ParsedRepr(name='Class', args=('args', 'args', ...), kwargs={'kwargs': 'kwargs', 'kwargs2': 2}). Fail with ValueError on non-literal parsing.
+
+		Raises:
+			ValueError: Parsing failed
+			TypeError: repr_str is not a str
+		"""
+		try:
+			if not isinstance(repr_str, str):
+				raise TypeError("repr_str must be a str.")
+
+			node = ast.parse(repr_str, mode='eval')
+
+			if not isinstance(node.body, ast.Call):
+				raise ValueError("Not a valid function call format.")  # noqa: TRY004
+
+			if isinstance(node.body.func, ast.Name):
+				name = node.body.func.id  # Something(...)
+			elif isinstance(node.body.func, ast.Attribute):
+				# Build full qualified name inline
+				name_parts = []
+				current_node = node.body.func
+				while isinstance(current_node, ast.Attribute):
+					name_parts.append(current_node.attr)
+					current_node = current_node.value
+				if isinstance(current_node, ast.Name):
+					name_parts.append(current_node.id)
+				else:
+					raise ValueError("Invalid callable.")  # noqa: TRY004
+				name = ".".join(reversed(name_parts))
+			else:
+				raise ValueError("Invalid callable.")  # noqa: TRY004
+
+			args = []
+			for arg in node.body.args:
+				try:
+					args.append(ast.literal_eval(arg))  # Ensure it's a literal
+				except ValueError:
+					raise ValueError(f"Invalid literal in positional args: {ast.dump(arg)}")  # noqa: B904, TRY200
+
+			kwargs = {}
+			for kwarg in node.body.keywords:
+				if not isinstance(kwarg.value, (ast.Constant, ast.List, ast.Tuple, ast.Dict, ast.Set)):  # noqa: UP038
+					raise ValueError(f"Invalid literal in keyword args: {kwarg.arg}")  # noqa: TRY004
+				kwargs[kwarg.arg] = ast.literal_eval(kwarg.value)
+
+			return (name, tuple(args), kwargs)
+
+		except ValueError:
+			raise
+		except Exception as e:
+			raise ValueError(e)  # noqa: TRY200, B904
+
 	def fmt_iterable(
 		it: Iterable | Any,
 		/,
@@ -428,12 +482,15 @@ if True:  # \/ # fmt & print iterable
 		if item_limit < 0:
 			item_limit = 1
 
+		is_iterable = able(isinstance, it, Iterable) and isinstance(it, Iterable)
+		is_mapping = able(isinstance, it, Mapping) and isinstance(it, Mapping)
+
 		if (
 			# if this feature is turned on:
 			let_no_indent
 			and not force_no_spaces
 			# for all Iterables...
-			and isinstance(it, Iterable)
+			and is_iterable
 			# ...that don't have already hardcoded displays
 			and not isinstance(it, str | bytes)
 			# If their length can be checked (e.g. not generators)
@@ -441,7 +498,7 @@ if True:  # \/ # fmt & print iterable
 			# And they have any length:
 			and len(it) > 0
 		):
-			if isinstance(it, Mapping):
+			if is_mapping:
 				if len(it) == 1 and ((type(next(iter(it.values()))) in (int, float, complex, bool)) or next(iter(it.values())) in (None, Null, "", [], (), {}, set())):
 					pass  # This broke some stuff so now no mappings can be folded in
 					# force_no_indent = -1
@@ -462,9 +519,9 @@ if True:  # \/ # fmt & print iterable
 		enter = "\n" if not force_no_indent else ""
 		trailing_commas = trailing_commas if (trailing_commas == 2 or not force_no_indent) else False
 
-		if isinstance(it, Mapping) or (PydanticBM is not None and isinstance(it, PydanticBM)):
+		if is_mapping or (PydanticBM is not None and (able(isinstance, it, PydanticBM) and isinstance(it, PydanticBM))):
 			asterisks = FMT_ASTERISK[syntax_highlighting] * 2
-		elif isinstance(it, Iterable):
+		elif is_iterable:
 			asterisks = FMT_ASTERISK[syntax_highlighting] * 1
 		else:
 			asterisks = ""
@@ -509,7 +566,7 @@ if True:  # \/ # fmt & print iterable
 			default=("<???>" if syntax_highlighting else "__unknown_object__"),
 		)
 
-		if hasattr(it, "__tcr_display__"):
+		if hasattr(it, "__tcr_display__") and callable(it.__tcr_display__):
 			try:
 				return it.__tcr_display__(**thisdict, _ran_from_tcr_display=True)
 			except NotImplementedError:
@@ -519,7 +576,7 @@ if True:  # \/ # fmt & print iterable
 					raise
 				return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f"{queue_name}, {extract_error(e, raw=True)[0]}"
 
-		if hasattr(it, "__tcr_fmt__"):
+		if hasattr(it, "__tcr_fmt__") and callable(it.__tcr_fmt__):
 			try:
 				tcr_formatted = it.__tcr_fmt__(**thisdict, fmt_iterable=fmt_iterable, _ran_from_tcr_display=True)
 
@@ -591,7 +648,7 @@ if True:  # \/ # fmt & print iterable
 				if _is_enum_auto(it.__class__):
 					return FMT_ENUM_AUTO[syntax_highlighting] % (it.__class__.__name__, it.name)
 				return FMT_ENUM[syntax_highlighting] % (it.__class__.__name__, it.name, this(it.value, force_no_indent=True, force_complex_parenthesis=True))
-		if PydanticBM is not None and isinstance(it, PydanticBM):
+		if (PydanticBM is not None and (able(isinstance, it, PydanticBM) and isinstance(it, PydanticBM))):
 			if prefer_pydantic_better_dump:
 				dumped = _pydantic_hopefully_non_erroring_dumper(it)
 			else:
@@ -679,19 +736,23 @@ if True:  # \/ # fmt & print iterable
 		if _t == type:
 			return f'{FMTC.TYPE}{getattr_queue(it, "__name__", "__class__.__name__", default=it)}{FMTC._}' if syntax_highlighting else str(it)
 
-		if not kwargs.get("_force_next_type"):
-			itsmro = getattr_queue(it, "__mro__", "__class__.__mro__", default=())
-			# It's-a me mro
+		try:
+			if not kwargs.get("_force_next_type"):
+				itsmro = getattr_queue(it, "__mro__", "__class__.__mro__", default=())
+				# It's-a me mro
 
-			if str in itsmro:
-				_t = str  # Things displayed as ['a', 'b', 'c', 'd'] if they inherited from str
-			elif bytes in itsmro:
-				_t = bytes
-			else:
-				for item in itsmro:
-					if item in FMT_BRACKETS:
-						_t = item
-						break
+				if str in itsmro:
+					_t = str  # Things displayed as ['a', 'b', 'c', 'd'] if they inherited from str
+				elif bytes in itsmro:
+					_t = bytes
+				else:
+					for item in itsmro:
+						if item in FMT_BRACKETS:
+							_t = item
+							break
+		except TypeError:
+			pass
+
 		if it.__class__ == sys.version_info.__class__ and syntax_highlighting:
 			return FMT_BRACKETS[tuple][1] % FMT_SYS_VERSION_INFO % it[:3]
 		if _t == int:
@@ -754,14 +815,14 @@ if True:  # \/ # fmt & print iterable
 		is_of_prohibited_type = any(isinstance(it, x) for x in (typing._GenericAlias, typing._UnpackGenericAlias))
 		# took me half an hour of debugging to discover that typing._GenericAlias contains an infinite amount of nested copies of typing._UnpackGenericAlias but only if you first iter then index not if you just index and it's a mess.
 
-		if not is_of_prohibited_type and isinstance(it, Iterable):
+		if not is_of_prohibited_type and is_iterable:
 			if kwargs.get("_enums_next_hide_class"):
 				thisdict["_enums_next_hide_class"] = True
 				this = partial(this, _enums_next_hide_class=True)
 
 			itl, overflow = limited_iterable(it, item_limit)
 			if not able(len, it) or len(it) > 0:
-				if isinstance(it, Mapping):
+				if is_mapping:
 					inner = f"{comma}{enter or space}".join([
 						indent + (f"{k}{FMTC.COLON}:{FMTC._}{space}{v}" if syntax_highlighting else f"{k}:{space}{v}").replace("\n", f"{enter}{indent}")
 						for k, v in {this(key): this(value) for key, value in it.items()}.items()
@@ -784,8 +845,37 @@ if True:  # \/ # fmt & print iterable
 		if not syntax_highlighting:
 			return repr(it)
 
-		return _fmt_unknown_highlighted(it, queue_name)
-		# If no hardcoded patterns match, return a repred version of whatever it is
+		try:
+			parse_repr_name, parse_repr_args, parse_repr_kwargs = parse_repr_literal(repr(it))
+
+			if not parse_repr_args and not parse_repr_kwargs:
+				return FMT_UNKNOWN[syntax_highlighting] % (
+					parse_repr_name,
+					'',
+				)
+			elif parse_repr_args and not parse_repr_kwargs:
+				return FMT_UNKNOWN[syntax_highlighting] % (
+					parse_repr_name,
+					FMT_ASTERISK[syntax_highlighting] + this(parse_repr_args),
+				)
+			elif not parse_repr_args and parse_repr_kwargs:
+				return FMT_UNKNOWN[syntax_highlighting] % (
+					parse_repr_name,
+					(FMT_ASTERISK[syntax_highlighting]*2) + this(parse_repr_kwargs),
+				)
+			else:
+				return FMT_UNKNOWN[syntax_highlighting] % (
+					parse_repr_name,
+					FMT_ASTERISK[syntax_highlighting] + this(parse_repr_args) + comma + ' ' + (FMT_ASTERISK[syntax_highlighting]*2) + this(parse_repr_kwargs),
+				)
+
+			# If the repr looks like a instantiation Name(args, kw=args), etc. then parse it into a str(*tuple, **dict) nice looking, indentend thing.
+		except (ValueError, TypeError): # parse repr failed or __repr__ returned a non-str value
+			return _fmt_unknown_highlighted(it, queue_name)
+			# If no hardcoded patterns match, return a str-repred version of whatever it is
+		else:
+			return this()
+
 
 	globals()["fmt_iterable"] = _reset_return_wrapper(fmt_iterable)
 	# Done this way to trick the IDE code snippets since the deco forwards the *args, **kwargs to the decorated func anyway...

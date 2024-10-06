@@ -561,6 +561,38 @@ if True:  # \/ # Tests
 		π(tcr.joke.echo[:])
 		π(tcr.joke.echo[::-1])
 
+		class Reprer:
+			def __init__(self, *args, **kwargs) -> None:
+				self.args = args
+				self.kwargs = kwargs
+
+			def __repr__(self) -> str:
+				if not self.args and not self.kwargs:
+					return f'{self.__class__.__name__}()'
+				elif self.args and self.kwargs:
+					args_str = ', '.join(map(repr, self.args))
+					kwargs_str = ', '.join(f'{k}={v!r}' for k, v in self.kwargs.items())
+
+					return f'{self.__class__.__name__}({args_str}, {kwargs_str})'
+				elif self.args:
+					args_str = ', '.join(map(repr, self.args))
+
+					return f'{self.__class__.__name__}({args_str})'
+				elif self.kwargs:
+					kwargs_str = ', '.join(f'{k}={v!r}' for k, v in self.kwargs.items())
+
+					return f'{self.__class__.__name__}({kwargs_str})'
+				else:
+					raise ValueError('What?')
+
+		print()
+		π(tcr.joke.echo)
+		π(Reprer)
+		π(Reprer())
+		π(Reprer('nya', 'uwu', 'owo', 'hihi', 'mrrraaaw :3'))
+		π(Reprer('nya', 'uwu', 'owo', 'hihi', 'mrrraaaw :3', x='nyaaaa', y='uwu'))
+		π(Reprer(x='nya', y='uwu'))
+
 	def test_markdown():
 		from tcrutils import codeblock, uncodeblock
 
@@ -1710,6 +1742,7 @@ if True:  # \/ # Test setup
 if __name__ == "__main__":
 	test_print_iterable(
 		π=tcr.print_iterable,
+		_raise_errors=True,
 		syntax_highlighting=1,
 		# let_no_indent=0,
 		# force_no_indent=1,
