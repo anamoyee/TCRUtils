@@ -589,6 +589,8 @@ if True:  # \/ # Tests
 		π(tcr.joke.echo)
 		π(Reprer)
 		π(Reprer())
+		π(Reprer("nya"))
+		π(Reprer("nya", "uwu"))
 		π(Reprer("nya", "uwu", "owo", "hihi", "mrrraaaw :3"))
 		π(Reprer("nya", "uwu", "owo", "hihi", "mrrraaaw :3", x="nyaaaa", y="uwu"))
 		π(Reprer(x="nya", y="uwu"))

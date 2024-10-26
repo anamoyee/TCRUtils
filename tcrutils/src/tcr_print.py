@@ -302,7 +302,7 @@ if True:  # \/ # fmt & print iterable
 		if not syntax_highlighting:
 			return name
 
-		return f'{FMTC.ENUM_VARIANT_NAME}{name.replace("|", f"{FMTC.COMMA}|{FMTC.ENUM_VARIANT_NAME}")}'
+		return f"{FMTC.ENUM_VARIANT_NAME}{name.replace('|', f'{FMTC.COMMA}|{FMTC.ENUM_VARIANT_NAME}')}"
 
 	def _fmt_module_highlighted(name: str, path: str | None, namespace: str | None) -> str:
 		s = f"{FMTC.MODULE}{name}"
@@ -653,11 +653,18 @@ if True:  # \/ # fmt & print iterable
 				if _is_enum_auto(it.__class__):
 					return FMT_ENUM_VARIANT_AUTO_NO_CLASS[syntax_highlighting] % _fmt_enum_variant_name(it.name, syntax_highlighting)
 				else:
-					return FMT_ENUM_VARIANT_NO_CLASS[syntax_highlighting] % (_fmt_enum_variant_name(it.name, syntax_highlighting), this(it.value, force_no_indent=True, force_complex_parenthesis=True))
+					return FMT_ENUM_VARIANT_NO_CLASS[syntax_highlighting] % (
+						_fmt_enum_variant_name(it.name, syntax_highlighting),
+						this(it.value, force_no_indent=True, force_complex_parenthesis=True),
+					)
 			else:
 				if _is_enum_auto(it.__class__):
 					return FMT_ENUM_VARIANT_AUTO[syntax_highlighting] % (it.__class__.__name__, _fmt_enum_variant_name(it.name, syntax_highlighting))
-				return FMT_ENUM_VARIANT[syntax_highlighting] % (it.__class__.__name__, _fmt_enum_variant_name(it.name, syntax_highlighting), this(it.value, force_no_indent=True, force_complex_parenthesis=True))
+				return FMT_ENUM_VARIANT[syntax_highlighting] % (
+					it.__class__.__name__,
+					_fmt_enum_variant_name(it.name, syntax_highlighting),
+					this(it.value, force_no_indent=True, force_complex_parenthesis=True),
+				)
 		if PydanticBM is not None and (able(isinstance, it, PydanticBM) and isinstance(it, PydanticBM)):
 			if prefer_pydantic_better_dump:
 				dumped = _pydantic_hopefully_non_erroring_dumper(it)
@@ -844,7 +851,7 @@ if True:  # \/ # fmt & print iterable
 						indent + x.replace("\n", f"\n{indent}")
 						for x in [this(element) for element in itl]
 						+ ([] if not (overflow if not kwargs.get("_ov") else kwargs.get("_ov")) else [this(_OverflowClass(overflow if not kwargs.get("_ov") else kwargs.get("_ov")))])
-					]) + (comma if (trailing_commas or (_t is tuple and len(it) == 1)) else "")
+					]) + (comma if (trailing_commas or ((not kwargs.get("_force_tuple_no_trailing_comma_on_single_element")) and _t is tuple and len(it) == 1)) else "")
 
 					return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
 			else:
@@ -866,7 +873,7 @@ if True:  # \/ # fmt & print iterable
 			elif parse_repr_args and not parse_repr_kwargs:
 				return FMT_UNKNOWN_NO_PARENS[syntax_highlighting] % (
 					parse_repr_name,
-					this(parse_repr_args),
+					this(parse_repr_args, _force_tuple_no_trailing_comma_on_single_element=True),
 				)
 			elif not parse_repr_args and parse_repr_kwargs:
 				return FMT_UNKNOWN_NO_PARENS[syntax_highlighting] % (
