@@ -23,13 +23,6 @@ if True:  # \/ # Imports
 	from tcrutils import ass, c, console, rass
 	from tcrutils.src.tcr_constants import *
 
-	# from tcrutils import *
-	# from tcrutils import ass, raises, rass
-	# from tcrutils import console as c
-	# from tcrutils.discord import Permission as Perm
-	# from tcrutils.discord import get_token
-	# from tcrutils.discord import permissions as perms
-
 
 # _rich_traceback_install(width=tcr.terminal.width-1)
 if sys.gettrace() is None:
