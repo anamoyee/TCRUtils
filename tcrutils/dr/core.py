@@ -106,7 +106,7 @@ class _DRParser:
 		if self.error_on_missing_placeholder and args[0] not in self.placeholders:
 			raise DynamicResponseMissingPlaceholderError(f"Placeholder {args[0]!r} not found.")
 		if args[0] not in self.placeholders:
-			return [_Token(_TT.TEXT, f'{self.contexts["__parens"][0]}{text}{self.contexts["__parens"][1]}')]
+			return [_Token(_TT.TEXT, f"{self.contexts['__parens'][0]}{text}{self.contexts['__parens'][1]}")]
 		ret = await run_sac(self.placeholders[args[0]], *args, **self.contexts)  # type: ignore
 		if ret is None:
 			ret = ""

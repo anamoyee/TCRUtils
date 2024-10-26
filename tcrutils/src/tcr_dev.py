@@ -96,7 +96,7 @@ def generate_type_hinter(
 
 	# hint types (imports)
 
-	result = f'class {get_name_classname(obj).split(".")[-1]}:\n' + "\n".join(f"  {x}" for x in hints)
+	result = f"class {get_name_classname(obj).split('.')[-1]}:\n" + "\n".join(f"  {x}" for x in hints)
 
 	if print:
 		if callable(print):

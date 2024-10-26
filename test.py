@@ -568,30 +568,30 @@ if True:  # \/ # Tests
 
 			def __repr__(self) -> str:
 				if not self.args and not self.kwargs:
-					return f'{self.__class__.__name__}()'
+					return f"{self.__class__.__name__}()"
 				elif self.args and self.kwargs:
-					args_str = ', '.join(map(repr, self.args))
-					kwargs_str = ', '.join(f'{k}={v!r}' for k, v in self.kwargs.items())
+					args_str = ", ".join(map(repr, self.args))
+					kwargs_str = ", ".join(f"{k}={v!r}" for k, v in self.kwargs.items())
 
-					return f'{self.__class__.__name__}({args_str}, {kwargs_str})'
+					return f"{self.__class__.__name__}({args_str}, {kwargs_str})"
 				elif self.args:
-					args_str = ', '.join(map(repr, self.args))
+					args_str = ", ".join(map(repr, self.args))
 
-					return f'{self.__class__.__name__}({args_str})'
+					return f"{self.__class__.__name__}({args_str})"
 				elif self.kwargs:
-					kwargs_str = ', '.join(f'{k}={v!r}' for k, v in self.kwargs.items())
+					kwargs_str = ", ".join(f"{k}={v!r}" for k, v in self.kwargs.items())
 
-					return f'{self.__class__.__name__}({kwargs_str})'
+					return f"{self.__class__.__name__}({kwargs_str})"
 				else:
-					raise ValueError('What?')
+					raise ValueError("What?")
 
 		print()
 		π(tcr.joke.echo)
 		π(Reprer)
 		π(Reprer())
-		π(Reprer('nya', 'uwu', 'owo', 'hihi', 'mrrraaaw :3'))
-		π(Reprer('nya', 'uwu', 'owo', 'hihi', 'mrrraaaw :3', x='nyaaaa', y='uwu'))
-		π(Reprer(x='nya', y='uwu'))
+		π(Reprer("nya", "uwu", "owo", "hihi", "mrrraaaw :3"))
+		π(Reprer("nya", "uwu", "owo", "hihi", "mrrraaaw :3", x="nyaaaa", y="uwu"))
+		π(Reprer(x="nya", y="uwu"))
 
 	def test_markdown():
 		from tcrutils import codeblock, uncodeblock
@@ -1722,6 +1722,14 @@ ID: {server|id}
 		ass(e[::], slice(None, None, None))
 		ass(e ^ 3, 3)
 
+	def test_console_with_eval():
+		var = "wahr"  # noqa: F841
+
+		c("1+1=", eval=True)
+		c("var=", eval=True)
+		c("c=", eval=True)
+		c("nya=", ("c", "uwu"))
+
 
 if True:  # \/ # Test setup
 	__TESTS_RAN_GLOBAL = 0
@@ -1848,6 +1856,7 @@ if __name__ == "__main__":
 	# test_eval_fback()
 	# test_console_with_header()
 	# test_echo()
+	# test_console_with_eval()
 
 	ass.total(prefix="\n")
 	print()

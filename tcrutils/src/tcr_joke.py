@@ -12,7 +12,7 @@ from .tcr_types import HexInt
 def fizzbuzz(n: int) -> str: ...
 
 
-fizzbuzz: Callable[[int], str] = lambda n: 'Fizz' * (n % 3 == 0) + 'Buzz' * (n % 5 == 0) or str(n)  # fmt: skip  # noqa: F811
+fizzbuzz: Callable[[int], str] = lambda n: "Fizz" * (n % 3 == 0) + "Buzz" * (n % 5 == 0) or str(n)  # fmt: skip  # noqa: F811
 
 
 def oddeven(n: int | str) -> Literal["odd", "even"]:
@@ -150,7 +150,7 @@ class gmail:
 				print("Sent email to " + self.email + " with title: " + repr(title) + ", and body: " + repr(body))
 
 		try:
-			return _Email(f'{other!s}@{self.__class__.__name__}.{".".join(self.tlds)}')
+			return _Email(f"{other!s}@{self.__class__.__name__}.{'.'.join(self.tlds)}")
 		finally:
 			self.tlds.clear()
 

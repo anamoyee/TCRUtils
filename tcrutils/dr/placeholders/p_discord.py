@@ -361,7 +361,7 @@ if True:  # Author
 		attachments.append(url)
 
 	@__.SWITCH("nohash")
-	@__.REQUIRE_MEMBER_AUTHOR(lambda *_, nohash, **__: f'{"" if nohash else "#"}000000')
+	@__.REQUIRE_MEMBER_AUTHOR(lambda *_, nohash, **__: f"{'' if nohash else '#'}000000")
 	def color(
 		*args,
 		member: __.hikari.Member,
@@ -389,7 +389,7 @@ if True:  # Author
 				top_color = int(role.color)
 				break
 
-		return f'{__.tcrhex(top_color, leading_zeroes=6, prefix=("" if nohash else "#"))}'
+		return f"{__.tcrhex(top_color, leading_zeroes=6, prefix=('' if nohash else '#'))}"
 
 
 if True:  # Server

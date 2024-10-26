@@ -80,7 +80,7 @@ class ShelveDB(dict):
 			raise RuntimeError("Set up the db as follows:\n" + A)  # noqa: TRY004
 
 		if self.__directory.is_file():
-			raise NotADirectoryError("Provide a path to a directory or a nonexistent path " "(a directory will be created if it doesn't exist).")
+			raise NotADirectoryError("Provide a path to a directory or a nonexistent path (a directory will be created if it doesn't exist).")
 
 		self.__directory.mkdir(exist_ok=True, parents=True)
 
@@ -94,7 +94,7 @@ class ShelveDB(dict):
 			raise ValueError(f"alnum_id must be any of those characters: {ALLOWED_CHARACTERS}")
 
 		if str(alnum_id) in DISALLOWED_SEQUENCES:
-			raise ValueError(f'alnum_id must not be any of theese: {", ".join(DISALLOWED_SEQUENCES)}')
+			raise ValueError(f"alnum_id must not be any of theese: {', '.join(DISALLOWED_SEQUENCES)}")
 
 		self.alnum_id = str(alnum_id)
 		alnum_dirpath = self.__directory / self.alnum_id

@@ -40,6 +40,7 @@ from _collections_abc import (
 	tuple_iterator,
 	zip_iterator,
 )
+
 from colored import Back, Fore, Style
 
 try:
@@ -85,10 +86,10 @@ def print_block(
 	"""Print or return a string of a "comment-like" block with text. Colors may optionally be set to `''` (empty string) to skip coloring of that part. Ends with a color reset unless none of the colors are enabled (both set to `''`).
 
 	Params:
-			- `margin`: The amount of spaces between the text and the inner walls (left-right only)
-			- `border`: The width of walls (number of border_char characters, left-right only)
-			- `padding`: The number of extra spaces added to the left of each line (left side only)
-			- `padding_top` & `padding_bottom`: How many '\\n' characters to add at the beginning and the end of the string (top-bottom only)
+	                - `margin`: The amount of spaces between the text and the inner walls (left-right only)
+	                - `border`: The width of walls (number of border_char characters, left-right only)
+	                - `padding`: The number of extra spaces added to the left of each line (left side only)
+	                - `padding_top` & `padding_bottom`: How many '\\n' characters to add at the beginning and the end of the string (top-bottom only)
 	"""
 
 	text = str(text)
@@ -128,8 +129,9 @@ if True:  # \/ # fmt & print iterable
 		TYPE                = Fore.BLUE + Style.bold
 		DECIMAL             = Fore.WHITE + Style.bold
 		BRACKET             = Fore.CYAN + Style.bold
-		STRING              = Style.reset + Fore.YELLOW
-		QUOTES              = Fore.WHITE #+ Style.bold
+		ENUM_VARIANT_NAME   = _ + Fore.WHITE # Reset to ensure no bold
+		QUOTES              = _ + Fore.WHITE # Reset to ensure no bold
+		STRING              = _ + Fore.YELLOW # Reset to ensure no bold
 		COLON               = Fore.orange_1 + Style.bold
 		ASTERISK            = Fore.orange_1 + Style.bold
 		COROUTINE           = Fore.orange_1 + Style.bold
@@ -191,6 +193,8 @@ if True:  # \/ # fmt & print iterable
 
 	FMT_UNKNOWN = ('%s(%s)', f'{FMTC.UNKNOWN}%s({FMTC._}%s{FMTC.UNKNOWN}){FMTC._}')
 	"""(FMT_UNKNOWN[syntax_highlighting: bool] % (name, content)) -> attaches name and content to an unknown object"""
+	FMT_UNKNOWN_NO_PARENS = ('%s%s', f'{FMTC.UNKNOWN}%s{FMTC._}%s{FMTC._}')
+	"""(FMT_UNKNOWN_NO_PARENS[syntax_highlighting: bool] % (name, content_with_parens)) -> attaches name and content to an unknown object"""
 
 	FMT_INTERNAL_EXCEPTION = ("An exception occured while trying to display this item (%s).", f"{FMTC.INTERNAL_EXCEPTION}An exception occured while trying to display this item ({FMTC.UNKNOWN}%s{FMTC.INTERNAL_EXCEPTION}).{FMTC._}")
 	"""(FMT_EXCEPTION[syntax_highlighting: bool] % getattr_queue(obj, '__name__', '__class__.__name__') -> Self explainatory"""
@@ -198,22 +202,22 @@ if True:  # \/ # fmt & print iterable
 	FMT_CLASS = ("%s(%s)", f"{FMTC.TYPE}%s{FMTC.BRACKET}({FMTC._}%s{FMTC.BRACKET}){FMTC._}")
 	"""(FMT_CLASS[syntax_highlighting: bool]) % (getattr_queue(obj, '__name__', '__class__.__name__'), this(it))"""
 
-	FMT_ENUM = ('%s.%s=%s', f'{FMTC.TYPE}%s{FMTC.COMMA}.{FMTC._}{Fore.WHITE}%s{FMTC.COMMA}: {FMTC._}%s')
+	FMT_ENUM_VARIANT = ('%s.%s=%s', f'{FMTC.TYPE}%s{FMTC.COMMA}.{FMTC._}%s{FMTC.COMMA}: {FMTC._}%s')
 	"""(FMT_ENUM[syntax_highlighting: bool]) % (classname, valuename, this(value))"""
 
-	FMT_ENUM_NO_CLASS = ('%s=%s', f'{FMTC._}{Fore.WHITE}%s{FMTC.COMMA}: {FMTC._}%s')
+	FMT_ENUM_VARIANT_NO_CLASS = ('%s=%s', f'{FMTC._}%s{FMTC.COMMA}: {FMTC._}%s')
 	"""(FMT_ENUM_NO_CLASS[syntax_highlighting: bool]) % (valuename, this(value))"""
 
-	FMT_ENUM_AUTO = ('%s.%s', f'{FMTC.TYPE}%s{FMTC.COMMA}.{FMTC._}{Fore.WHITE}%s')
+	FMT_ENUM_VARIANT_AUTO = ('%s.%s', f'{FMTC.TYPE}%s{FMTC.COMMA}.{FMTC._}%s')
 	"""(FMT_ENUM_AUTO[syntax_highlighting: bool]) % (classname, valuename)"""
 
-	FMT_ENUM_AUTO_NO_CLASS = ('%s', f'{FMTC._}{Fore.WHITE}%s')
+	FMT_ENUM_VARIANT_AUTO_NO_CLASS = ('%s', f'{FMTC._}%s')
 	"""(FMT_ENUM_AUTO_NO_CLASS[syntax_highlighting: bool]) % valuename"""
 
 	FMT_ASTERISK = ('*', f'{FMTC.ASTERISK}*')
 	"""FMT_ASTERISK[syntax_highlighting: bool]"""
 
-	FMT_SYS_VERSION_INFO = f'{FMTC.COLON}Python {FMTC.COMMA}v{FMTC.DECIMAL}%s{FMTC.COMMA}.{FMTC.DECIMAL}%s{FMTC.COMMA}.{FMTC.DECIMAL}%s'
+	FMT_SYS_VERSION_INFO = f'{FMTC.COLON}Python {FMTC.DECIMAL}%s{FMTC.COMMA}.{FMTC.DECIMAL}%s{FMTC.COMMA}.{FMTC.DECIMAL}%s'
 	"""FMT_SYS_VERSION_INFO % sys.version_info[:3] # :3"""
 
 	# fmt: on
@@ -294,6 +298,12 @@ if True:  # \/ # fmt & print iterable
 
 		return bool(all(x == 2**i for i, x in enumerate(values)))
 
+	def _fmt_enum_variant_name(name: str, syntax_highlighting: bool) -> str:
+		if not syntax_highlighting:
+			return name
+
+		return f'{FMTC.ENUM_VARIANT_NAME}{name.replace("|", f"{FMTC.COMMA}|{FMTC.ENUM_VARIANT_NAME}")}'
+
 	def _fmt_module_highlighted(name: str, path: str | None, namespace: str | None) -> str:
 		s = f"{FMTC.MODULE}{name}"
 		if namespace:
@@ -352,14 +362,14 @@ if True:  # \/ # fmt & print iterable
 		"""Parse a repr in the form of Class('args', 'args', ..., kwargs='kwargs', kwargs2=2) and return ParsedRepr(name='Class', args=('args', 'args', ...), kwargs={'kwargs': 'kwargs', 'kwargs2': 2}). Fail with ValueError on non-literal parsing.
 
 		Raises:
-			ValueError: Parsing failed
-			TypeError: repr_str is not a str
+		        ValueError: Parsing failed
+		        TypeError: repr_str is not a str
 		"""
 		try:
 			if not isinstance(repr_str, str):
 				raise TypeError("repr_str must be a str.")
 
-			node = ast.parse(repr_str, mode='eval')
+			node = ast.parse(repr_str, mode="eval")
 
 			if not isinstance(node.body, ast.Call):
 				raise ValueError("Not a valid function call format.")  # noqa: TRY004
@@ -386,7 +396,7 @@ if True:  # \/ # fmt & print iterable
 				try:
 					args.append(ast.literal_eval(arg))  # Ensure it's a literal
 				except ValueError:
-					raise ValueError(f"Invalid literal in positional args: {ast.dump(arg)}")  # noqa: B904, TRY200
+					raise ValueError(f"Invalid literal in positional args: {ast.dump(arg)}")  # noqa: B904
 
 			kwargs = {}
 			for kwarg in node.body.keywords:
@@ -399,7 +409,7 @@ if True:  # \/ # fmt & print iterable
 		except ValueError:
 			raise
 		except Exception as e:
-			raise ValueError(e)  # noqa: TRY200, B904
+			raise ValueError(e)  # noqa: B904
 
 	def fmt_iterable(
 		it: Iterable | Any,
@@ -596,7 +606,7 @@ if True:  # \/ # fmt & print iterable
 			)
 
 		if isinstance(it, _OverflowClass):
-			return f'{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{"s" if it.amount != 1 else ""}...){FMTC._}' if syntax_highlighting else f"({it} more items...)"
+			return f"{FMTC.SPECIAL}({FMTC.NUMBER}{it}{FMTC.SPECIAL} more item{'s' if it.amount != 1 else ''}...){FMTC._}" if syntax_highlighting else f"({it} more items...)"
 		if isinstance(it, slice):
 			if not syntax_highlighting:
 				return f"slice({it.start!r}, {it.stop}, {it.step})"
@@ -641,14 +651,14 @@ if True:  # \/ # fmt & print iterable
 		if isinstance(it, Enum) or (_HikariEnum is not None and isinstance(it, _HikariEnum)):
 			if kwargs.get("_enums_next_hide_class"):
 				if _is_enum_auto(it.__class__):
-					return FMT_ENUM_AUTO_NO_CLASS[syntax_highlighting] % it.name
+					return FMT_ENUM_VARIANT_AUTO_NO_CLASS[syntax_highlighting] % _fmt_enum_variant_name(it.name, syntax_highlighting)
 				else:
-					return FMT_ENUM_NO_CLASS[syntax_highlighting] % (it.name, this(it.value, force_no_indent=True, force_complex_parenthesis=True))
+					return FMT_ENUM_VARIANT_NO_CLASS[syntax_highlighting] % (_fmt_enum_variant_name(it.name, syntax_highlighting), this(it.value, force_no_indent=True, force_complex_parenthesis=True))
 			else:
 				if _is_enum_auto(it.__class__):
-					return FMT_ENUM_AUTO[syntax_highlighting] % (it.__class__.__name__, it.name)
-				return FMT_ENUM[syntax_highlighting] % (it.__class__.__name__, it.name, this(it.value, force_no_indent=True, force_complex_parenthesis=True))
-		if (PydanticBM is not None and (able(isinstance, it, PydanticBM) and isinstance(it, PydanticBM))):
+					return FMT_ENUM_VARIANT_AUTO[syntax_highlighting] % (it.__class__.__name__, _fmt_enum_variant_name(it.name, syntax_highlighting))
+				return FMT_ENUM_VARIANT[syntax_highlighting] % (it.__class__.__name__, _fmt_enum_variant_name(it.name, syntax_highlighting), this(it.value, force_no_indent=True, force_complex_parenthesis=True))
+		if PydanticBM is not None and (able(isinstance, it, PydanticBM) and isinstance(it, PydanticBM)):
 			if prefer_pydantic_better_dump:
 				dumped = _pydantic_hopefully_non_erroring_dumper(it)
 			else:
@@ -725,16 +735,16 @@ if True:  # \/ # fmt & print iterable
 
 		_t = kwargs.get("_force_next_type") or type(it)
 
-		if _t == QuotelessString:
+		if _t is QuotelessString:
 			reprit = str_repr(it)
 			return f"{FMTC.STRING}{reprit[1:-1]}" if syntax_highlighting else (str_repr(it)[1:-1])
-		if _t == GayString:
+		if _t is GayString:
 			return gay(it)
-		if _t == BrainfuckCode:
+		if _t is BrainfuckCode:
 			return _fmt_brainfuck(it)
 
-		if _t == type:
-			return f'{FMTC.TYPE}{getattr_queue(it, "__name__", "__class__.__name__", default=it)}{FMTC._}' if syntax_highlighting else str(it)
+		if _t is type:
+			return f"{FMTC.TYPE}{getattr_queue(it, '__name__', '__class__.__name__', default=it)}{FMTC._}" if syntax_highlighting else str(it)
 
 		try:
 			if not kwargs.get("_force_next_type"):
@@ -755,44 +765,44 @@ if True:  # \/ # fmt & print iterable
 
 		if it.__class__ == sys.version_info.__class__ and syntax_highlighting:
 			return FMT_BRACKETS[tuple][1] % FMT_SYS_VERSION_INFO % it[:3]
-		if _t == int:
+		if _t is int:
 			if int_formatter:
 				it = int_formatter(it)
 			return f"{FMTC.NUMBER}{it}{FMTC._}" if syntax_highlighting else str(it)
-		if _t == float:
-			return f'{FMTC.NUMBER}{str(it).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC._}' if syntax_highlighting else str(it)
-		if _t == str:
+		if _t is float:
+			return f"{FMTC.NUMBER}{str(it).replace('.', f'{FMTC.DECIMAL}.{FMTC.NUMBER}')}{FMTC._}" if syntax_highlighting else str(it)
+		if _t is str:
 			reprit = str_repr(it)
 			return f"{FMTC.QUOTES}{reprit[0]}{FMTC.STRING}{reprit[1:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}" if syntax_highlighting else str_repr(it)
-		if _t == bytes:
+		if _t is bytes:
 			reprit = repr(it)
 			return f"{FMTC.BYTESTR_B}{reprit[0]}{FMTC.QUOTES}{reprit[1]}{FMTC.STRING}{reprit[2:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}" if syntax_highlighting else repr(it)
-		if _t == complex:
+		if _t is complex:
 			brackets = ("", "") if (not force_complex_parenthesis) else (f"{FMTC.BRACKET}(", f"{FMTC.BRACKET})")
 			return (
 				f"""{brackets[0]}{FMTC.NUMBER}{int(it.real) if int(it.real) == it.real else str(it.real).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC._}{space}{FMTC.COMPLEX}+{space}{FMTC.NUMBER}{int(it.imag) if int(it.imag) == it.imag else str(it.imag).replace(".", f"{FMTC.DECIMAL}.{FMTC.NUMBER}")}{FMTC.COMPLEX}j{brackets[1]}{FMTC._}"""
 				if syntax_highlighting
 				else repr(it)
 			)
-		if _t == UnionType:
+		if _t is UnionType:
 			if force_union_parenthesis:
 				return FMT_BRACKETS[tuple][syntax_highlighting] % (FMT_UNION_SEPARATOR[syntax_highlighting].join(this(x) for x in unpack_union(it)))
 			else:
 				return FMT_UNION_SEPARATOR[syntax_highlighting].join(this(x) for x in unpack_union(it))
 
-		if _t == bytes_iterator:
+		if _t is bytes_iterator:
 			return FMT_ITER[syntax_highlighting] % this(bytes(it))
-		if _t == str_iterator:
+		if _t is str_iterator:
 			return FMT_ITER[syntax_highlighting] % this("".join(it))
-		if _t == bytearray_iterator:
+		if _t is bytearray_iterator:
 			return FMT_ITER[syntax_highlighting] % this(bytearray(it))
-		if _t == dict_keyiterator:
+		if _t is dict_keyiterator:
 			listit, ov = limited_iterable(it, item_limit)
 			return FMT_ITER[syntax_highlighting] % this(listit, _force_next_type=dict_keys, _ov=ov)
-		if _t == dict_valueiterator:
+		if _t is dict_valueiterator:
 			listit, ov = limited_iterable(it, item_limit)
 			return FMT_ITER[syntax_highlighting] % this(listit, _force_next_type=dict_values, _ov=ov)
-		if _t == dict_itemiterator:
+		if _t is dict_itemiterator:
 			listit, ov = limited_iterable(it, item_limit)
 			return FMT_ITER[syntax_highlighting] % this(listit, _force_next_type=dict_items, _ov=ov)
 		if _t in (list_iterator, list_reverseiterator, zip_iterator):
@@ -801,13 +811,13 @@ if True:  # \/ # fmt & print iterable
 		if _t in (range_iterator, longrange_iterator):
 			listit, ov = limited_iterable(it, item_limit)
 			return FMT_ITER[syntax_highlighting] % this(listit, _force_next_type=range, _ov=ov)
-		if _t == set_iterator:
+		if _t is set_iterator:
 			listit, ov = limited_iterable(it, item_limit)
 			return FMT_ITER[syntax_highlighting] % this(listit, _force_next_type=set, _ov=ov)
-		if _t == tuple_iterator:
+		if _t is tuple_iterator:
 			listit, ov = limited_iterable(it, item_limit)
 			return FMT_ITER[syntax_highlighting] % this(listit, _force_next_type=tuple, _ov=ov)
-		if _t == coroutine:
+		if _t is coroutine:
 			return FMT_BRACKETS[coroutine][syntax_highlighting] % (getattr_queue(it, name, "__name__"))
 
 		comma = f"{FMTC.COMMA}," if syntax_highlighting else ","
@@ -834,13 +844,13 @@ if True:  # \/ # fmt & print iterable
 						indent + x.replace("\n", f"\n{indent}")
 						for x in [this(element) for element in itl]
 						+ ([] if not (overflow if not kwargs.get("_ov") else kwargs.get("_ov")) else [this(_OverflowClass(overflow if not kwargs.get("_ov") else kwargs.get("_ov")))])
-					]) + (comma if (trailing_commas or (_t == tuple and len(it) == 1)) else "")
+					]) + (comma if (trailing_commas or (_t is tuple and len(it) == 1)) else "")
 
 					return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
 			else:
-				if _t == set and not syntax_highlighting:
+				if _t is set and not syntax_highlighting:
 					return "set()"
-				return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % (comma if _t == set else '')  # fmt: skip
+				return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % (comma if _t is set else '')  # fmt: skip
 
 		if not syntax_highlighting:
 			return repr(it)
@@ -849,33 +859,33 @@ if True:  # \/ # fmt & print iterable
 			parse_repr_name, parse_repr_args, parse_repr_kwargs = parse_repr_literal(repr(it))
 
 			if not parse_repr_args and not parse_repr_kwargs:
-				return FMT_UNKNOWN[syntax_highlighting] % (
+				return FMT_UNKNOWN_NO_PARENS[syntax_highlighting] % (
 					parse_repr_name,
-					'',
+					FMT_BRACKETS[tuple][syntax_highlighting] % "",
 				)
 			elif parse_repr_args and not parse_repr_kwargs:
-				return FMT_UNKNOWN[syntax_highlighting] % (
+				return FMT_UNKNOWN_NO_PARENS[syntax_highlighting] % (
 					parse_repr_name,
-					FMT_ASTERISK[syntax_highlighting] + this(parse_repr_args),
+					this(parse_repr_args),
 				)
 			elif not parse_repr_args and parse_repr_kwargs:
-				return FMT_UNKNOWN[syntax_highlighting] % (
+				return FMT_UNKNOWN_NO_PARENS[syntax_highlighting] % (
 					parse_repr_name,
-					(FMT_ASTERISK[syntax_highlighting]*2) + this(parse_repr_kwargs),
+					FMT_BRACKETS[tuple][syntax_highlighting] % ((FMT_ASTERISK[syntax_highlighting] * 2) + this(parse_repr_kwargs)),
 				)
 			else:
-				return FMT_UNKNOWN[syntax_highlighting] % (
+				return FMT_UNKNOWN_NO_PARENS[syntax_highlighting] % (
 					parse_repr_name,
-					FMT_ASTERISK[syntax_highlighting] + this(parse_repr_args) + comma + ' ' + (FMT_ASTERISK[syntax_highlighting]*2) + this(parse_repr_kwargs),
+					FMT_BRACKETS[tuple][syntax_highlighting]
+					% (FMT_ASTERISK[syntax_highlighting] + this(parse_repr_args) + comma + " " + (FMT_ASTERISK[syntax_highlighting] * 2) + this(parse_repr_kwargs)),
 				)
 
 			# If the repr looks like a instantiation Name(args, kw=args), etc. then parse it into a str(*tuple, **dict) nice looking, indentend thing.
-		except (ValueError, TypeError): # parse repr failed or __repr__ returned a non-str value
+		except (ValueError, TypeError):  # parse repr failed or __repr__ returned a non-str value
 			return _fmt_unknown_highlighted(it, queue_name)
 			# If no hardcoded patterns match, return a str-repred version of whatever it is
 		else:
 			return this()
-
 
 	globals()["fmt_iterable"] = _reset_return_wrapper(fmt_iterable)
 	# Done this way to trick the IDE code snippets since the deco forwards the *args, **kwargs to the decorated func anyway...

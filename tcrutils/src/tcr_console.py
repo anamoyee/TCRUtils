@@ -1,5 +1,6 @@
 import datetime
 import inspect
+import re as regex
 from collections.abc import Callable
 from functools import partial, reduce
 from sys import argv, exit
@@ -85,15 +86,15 @@ class Console:
 				)
 			return
 
-		values = [(f'{_this_iteration_header or ""}{x}' if isinstance(x, str) else fmt_iterable(x, syntax_highlighting=syntax_highlighting, **kwargs)) for x in values]
+		values = [(f"{_this_iteration_header or ''}{x}" if isinstance(x, str) else fmt_iterable(x, syntax_highlighting=syntax_highlighting, **kwargs)) for x in values]
 
 		out = sep.join(values)
 		out = reduce(lambda x, y: str(x) + sep + str(y), [*values, ""]) + end
 
 		if withprefix:
-			out = f'{letter} {(self._get_callsite_text_if_enabled(4) + " ").lstrip()}{self._get_timestamp()} ' + out
+			out = f"{letter} {(self._get_callsite_text_if_enabled(4) + ' ').lstrip()}{self._get_timestamp()} " + out
 
-		out = f'{color if syntax_highlighting else ""}{out}{CC._ if syntax_highlighting else ""}'
+		out = f"{color if syntax_highlighting else ''}{out}{CC._ if syntax_highlighting else ''}"
 
 		print(out)
 
@@ -123,6 +124,7 @@ class Console:
 		quoteless: bool = True,
 		diff: bool = False,
 		fmt_iterable: Callable[..., str] = fmt_iterable,
+		eval: bool = False,
 		**kwargs,
 	) -> None | object:
 		all_values = (value, *values)
@@ -132,22 +134,44 @@ class Console:
 		if eval_header:
 			padding += eval_header
 
+		if eval and len(all_values) == 1 and isinstance(all_values[0], str):
+			pattern = regex.compile(r"^(.*?) ?(?:(?:=)|(?:->)|(?:=>)) ?$")
+			match = pattern.match(all_values[0])
+
+			if match:
+				expression = match.group(1)
+
+				result = eval_f_back(expression, f_backs=2)
+
+				all_values = (all_values[0], result)
+			else:
+				raise ValueError("eval=True, but the only parameter's structure is invalid, must be a str that ends with '=', if you only want to pretty print, DO NOT USE THE eval=True KWARG!")
+		elif eval:
+			if len(all_values) != 1:
+				raise ValueError("eval=True, but there is not exactly 1 positional parameter, if you only want to pretty print, DO NOT USE THE eval=True KWARG!")
+			raise ValueError("eval=True, but the only parameter's structure is invalid, must be a str, if you only want to pretty print, DO NOT USE THE eval=True KWARG!")
+
 		if len(all_values) >= 2 and all_values[0].__class__ == str and all_values[0]:
 			first_string: str = all_values[0]
 			after_first_string = ""
 
+			found_any = False
+
 			for symbol in ("=", "->", "=>"):
 				if first_string.rstrip().endswith(symbol):
+					found_any = True
 					first_string = first_string.rstrip().removesuffix(symbol)
 					if first_string and first_string[-1] == " ":
 						after_first_string = f"{symbol} "
 					else:
 						after_first_string = symbol
 
-			padding += fmt_iterable(QuotelessString(first_string), syntax_highlighting=syntax_highlighting, **kwargs)
-			padding += after_first_string
+			if found_any:
+				padding += fmt_iterable(QuotelessString(first_string), syntax_highlighting=syntax_highlighting, **kwargs)
+				padding += after_first_string
 
-			all_values = all_values[1:]
+				quoteless = False
+				all_values = all_values[1:]
 
 		out = fmt_iterable(*[(x if ((not quoteless) or (x.__class__ != str) or x == "") else QuotelessString(x)) for x in all_values], syntax_highlighting=syntax_highlighting, **kwargs)
 
@@ -156,7 +180,7 @@ class Console:
 
 		prefix = ""
 		if withprefix:
-			prefix = f'D {(self._get_callsite_text_if_enabled(3) + " ").lstrip()}{self._get_timestamp()}'
+			prefix = f"D {(self._get_callsite_text_if_enabled(3) + ' ').lstrip()}{self._get_timestamp()}"
 
 		c_debug = ""
 		c_reset = ""
@@ -237,6 +261,16 @@ def _clean_built_in_methods(d: dict) -> dict:
 	return {k: v for k, v in d.items() if not isinstance(v, type(abs))}
 
 
+def eval_f_back(code: str, *, f_backs: int = 1):
+	"""Evaluates `code` in the context of the caller `f_backs` frames back."""
+
+	frame = inspect.currentframe()
+	for _ in range(f_backs):
+		frame = frame.f_back
+
+	return eval(code, frame.f_globals, frame.f_locals)
+
+
 def start_eval_session(f_backs: int = 1) -> None:
 	"""Starts an interactive shell. For debugging purposes."""
 	try:
@@ -265,7 +299,7 @@ def start_eval_session(f_backs: int = 1) -> None:
 						lines = lines[max(0, lineno - (AROUND + 1)) : lineno + AROUND]
 						while all(x.startswith(" ") for x in lines):
 							lines = [x[1:] for x in lines]
-						lines = [f'{FMTC.NUMBER}{lineno - AROUND + i}{Fore.yellow + Style.bold} {">" if i == AROUND else "|"}{FMTC._} {cut_at(x, CUTOFF)}' for i, x in enumerate(lines)]
+						lines = [f"{FMTC.NUMBER}{lineno - AROUND + i}{Fore.yellow + Style.bold} {'>' if i == AROUND else '|'}{FMTC._} {cut_at(x, CUTOFF)}" for i, x in enumerate(lines)]
 						lines = "".join(lines)
 
 						print(lines)
