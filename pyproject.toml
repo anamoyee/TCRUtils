@@ -7,7 +7,7 @@ extend = "C:/CUSTOM_ASSETS/pyproject.toml"
 
 [tool.poetry]
 name = "tcrutils"
-version = "13.0.1"
+version = "13.0.2"
 description = "Useful stuff for TCR projects!"
 authors = ["anamoyee"]
 license = "GPL-3.0"

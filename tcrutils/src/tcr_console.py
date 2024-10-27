@@ -151,7 +151,7 @@ class Console:
 				raise ValueError("eval=True, but there is not exactly 1 positional parameter, if you only want to pretty print, DO NOT USE THE eval=True KWARG!")
 			raise ValueError("eval=True, but the only parameter's structure is invalid, must be a str, if you only want to pretty print, DO NOT USE THE eval=True KWARG!")
 
-		if len(all_values) >= 2 and all_values[0].__class__ == str and all_values[0]:
+		if len(all_values) >= 2 and all_values[0].__class__ is str and all_values[0]:
 			first_string: str = all_values[0]
 			after_first_string = ""
 
@@ -173,7 +173,7 @@ class Console:
 				quoteless = False
 				all_values = all_values[1:]
 
-		out = fmt_iterable(*[(x if ((not quoteless) or (x.__class__ != str) or x == "") else QuotelessString(x)) for x in all_values], syntax_highlighting=syntax_highlighting, **kwargs)
+		out = fmt_iterable(*[(x if ((not quoteless) or (x.__class__ is not str) or x == "" or x.strip() != x) else QuotelessString(x)) for x in all_values], syntax_highlighting=syntax_highlighting, **kwargs)
 
 		if padding == " " and not withprefix:
 			padding = ""
