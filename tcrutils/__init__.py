@@ -62,7 +62,7 @@ from .src.tcr_console import breakpoint, console, start_eval_session
 from .src.tcr_console import console as c
 from .src.tcr_constants import *
 from .src.tcr_context import random_seed_lock
-from .src.tcr_decorator import autorun, convert, copy_kwargs, instance, skip_first_call, skip_first_call_async, test, timeit, with_overrides
+from .src.tcr_decorator import autorun, convert, copy_kwargs, copy_kwargs_sunder, instance, skip_first_call, skip_first_call_async, test, timeit, with_overrides
 from .src.tcr_dev import generate_function_argument_typehints, generate_type_hinter
 from .src.tcr_dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zip, merge_dicts
 from .src.tcr_dir import dir2, dir3, dir_recursive, vars2, vars3, vars_recursive
