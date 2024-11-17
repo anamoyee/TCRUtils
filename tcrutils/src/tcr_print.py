@@ -139,7 +139,7 @@ if True:  # \/ # fmt & print iterable
 		COMPLEX             = Fore.orange_1 + Style.bold
 		COMMA               = Fore.dark_gray + Style.bold
 		PIPE                = Fore.dark_gray + Style.bold
-		SLASH               = Fore.dark_gray + Style.bold
+		SLASH               = Fore.WHITE + Style.bold
 		UNKNOWN             = Fore.dark_gray + Style.bold
 		TRUE                = Fore.GREEN + Style.bold
 		FALSE               = Fore.RED + Style.bold
@@ -356,7 +356,7 @@ if True:  # \/ # fmt & print iterable
 		)
 
 	def _pydantic_hopefully_non_erroring_dumper(obj: PydanticBM) -> dict:
-		return {k: getattr(obj, k) for k in obj.model_fields_set}
+		return {k: getattr(obj, k) for k in obj.model_fields}
 
 	def parse_repr_literal(repr_str: str) -> tuple[str, tuple[Any], dict[str, Any]]:
 		"""Parse a repr in the form of Class('args', 'args', ..., kwargs='kwargs', kwargs2=2) and return ParsedRepr(name='Class', args=('args', 'args', ...), kwargs={'kwargs': 'kwargs', 'kwargs2': 2}). Fail with ValueError on non-literal parsing.
@@ -708,11 +708,14 @@ if True:  # \/ # fmt & print iterable
 				parts.pop(0)
 
 			if drive:
-				drive = f"{FMTC.DECIMAL}{drive}".replace(":", f"{FMTC.COLON}:{FMTC.DECIMAL}")
+				drive = f"{FMTC.STRING}{drive}".replace(":", f"{FMTC.COLON}:{FMTC.DECIMAL}")
 
-			s = f"{FMTC.SLASH}/".join(([drive] if it.is_absolute() else ([""] if it.parts[0] == "\\" else [])) + [f"{FMTC.DECIMAL}{part}" for part in parts])
+			s = f"{FMTC.SLASH}/".join(([drive] if it.is_absolute() else ([""] if it.parts[0] == "\\" else [])) + [f"{FMTC.STRING}{part}" for part in parts])
 
-			return FMT_CLASS[True] % (it.__class__.__name__, s)
+			if "/" not in s:
+				return FMT_CLASS[True] % (it.__class__.__name__, s)
+
+			return s
 
 		if able(issubclass, it, BaseException) and issubclass(it, BaseException):
 			exc_name = extract_error(it, raw=True)[0]
@@ -840,18 +843,22 @@ if True:  # \/ # fmt & print iterable
 			itl, overflow = limited_iterable(it, item_limit)
 			if not able(len, it) or len(it) > 0:
 				if is_mapping:
-					inner = f"{comma}{enter or space}".join([
-						indent + (f"{k}{FMTC.COLON}:{FMTC._}{space}{v}" if syntax_highlighting else f"{k}:{space}{v}").replace("\n", f"{enter}{indent}")
-						for k, v in {this(key): this(value) for key, value in it.items()}.items()
-					]) + (comma if trailing_commas else "")
+					inner = f"{comma}{enter or space}".join(
+						[
+							indent + (f"{k}{FMTC.COLON}:{FMTC._}{space}{v}" if syntax_highlighting else f"{k}:{space}{v}").replace("\n", f"{enter}{indent}")
+							for k, v in {this(key): this(value) for key, value in it.items()}.items()
+						]
+					) + (comma if trailing_commas else "")
 
 					return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[dict])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
 				else:
-					inner = f"{comma}{enter or space}".join([
-						indent + x.replace("\n", f"\n{indent}")
-						for x in [this(element) for element in itl]
-						+ ([] if not (overflow if not kwargs.get("_ov") else kwargs.get("_ov")) else [this(_OverflowClass(overflow if not kwargs.get("_ov") else kwargs.get("_ov")))])
-					]) + (comma if (trailing_commas or ((not kwargs.get("_force_tuple_no_trailing_comma_on_single_element")) and _t is tuple and len(it) == 1)) else "")
+					inner = f"{comma}{enter or space}".join(
+						[
+							indent + x.replace("\n", f"\n{indent}")
+							for x in [this(element) for element in itl]
+							+ ([] if not (overflow if not kwargs.get("_ov") else kwargs.get("_ov")) else [this(_OverflowClass(overflow if not kwargs.get("_ov") else kwargs.get("_ov")))])
+						]
+					) + (comma if (trailing_commas or ((not kwargs.get("_force_tuple_no_trailing_comma_on_single_element")) and _t is tuple and len(it) == 1)) else "")
 
 					return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
 			else:
