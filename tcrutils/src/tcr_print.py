@@ -462,8 +462,8 @@ if True:  # \/ # fmt & print iterable
 			force_slice_parenthesis: bool, Force parenthesis when displaying `slice` type for example `(::-1)` instead of `::-1`. This has no effect when syntax highlighting is turned off.
 			force_union_parenthesis: bool, Force parenthesis when displaying `union` type.` This has no effect when syntax highlighting is turned off.
 			prefer_full_names: bool, whether or not to use the full names of objects if possible.
-			let_no_inder_max_iterables: int = 1, (advanced) override the limit for iterables for the let_no_indent feature
-			let_no_inder_max_non_iterables: int = 4, (advanced) override the limit for non-iterables for the let_no_indent feature
+			let_no_indent_max_iterables: int = 1, (advanced) override the limit for iterables for the let_no_indent feature
+			let_no_indent_max_non_iterables: int = 4, (advanced) override the limit for non-iterables for the let_no_indent feature
 			str_repr: Callable[[str], str] = double_quoted_repr, (advanced) override the default string repr callable
 			prefer_pydantic_better_dump: bool = False, Will use the pydantic's custom dumper which prints the model name in more places, instead of leaving it only for the moment when pydantic SHITS ITS PANTS (raises random shitass errors). i have nothing more to say about this.
 
@@ -515,11 +515,11 @@ if True:  # \/ # fmt & print iterable
 			else:
 				# Case 1: If the iterable in question contains iterables
 				# If there is at most 1 iterable in the outer iterable of iterables
-				if len(it) <= Or(kwargs.get("let_no_inder_max_iterables"), 1) and any(isinstance(x, Iterable) for x in it):
+				if len(it) <= Or(kwargs.get("let_no_indent_max_iterables"), 1) and any(isinstance(x, Iterable) for x in it):
 					force_no_indent = -1
 				# Case 2: If the outer iterable consists of non-iterables: If there are at most 4 non-iterables
 				if all((not isinstance(x, Iterable)) or isinstance(x, str | bytes) or (able(len, x) and len(x) == 0) for x in it) and len(it) <= Or(
-					kwargs.get("let_no_inder_max_non_iterables"), 4
+					kwargs.get("let_no_indent_max_non_iterables"), 4
 				):
 					force_no_indent = -1
 
@@ -561,10 +561,10 @@ if True:  # \/ # fmt & print iterable
 			"no_try": kwargs.get("no_try"),
 			"__depth": kwargs.get("__depth", 2) + 1,
 		}
-		if a := kwargs.get("let_no_inder_max_iterables"):
-			thisdict["let_no_inder_max_iterables"] = a
-		if a := kwargs.get("let_no_inder_max_non_iterables"):
-			thisdict["let_no_inder_max_non_iterables"] = a
+		if a := kwargs.get("let_no_indent_max_iterables"):
+			thisdict["let_no_indent_max_iterables"] = a
+		if a := kwargs.get("let_no_indent_max_non_iterables"):
+			thisdict["let_no_indent_max_non_iterables"] = a
 
 		this = partial(fmt_iterable, **thisdict)
 
@@ -944,8 +944,8 @@ if True:  # \/ # fmt & print iterable
 			force_slice_parenthesis: bool, Force parenthesis when displaying `slice` type for example `(::-1)` instead of `::-1`. This has no effect when syntax highlighting is turned off.
 			force_union_parenthesis: bool, Force parenthesis when displaying `union` type.` This has no effect when syntax highlighting is turned off.
 			prefer_full_names: bool, whether or not to use the full names of objects if possible.
-			let_no_inder_max_iterables: int = 1, (advanced) override the limit for iterables for the let_no_indent feature
-			let_no_inder_max_non_iterables: int = 4, (advanced) override the limit for non-iterables for the let_no_indent feature
+			let_no_indent_max_iterables: int = 1, (advanced) override the limit for iterables for the let_no_indent feature
+			let_no_indent_max_non_iterables: int = 4, (advanced) override the limit for non-iterables for the let_no_indent feature
 			str_repr: Callable[[str], str] = double_quoted_repr, (advanced) override the default string repr callable
 			prefer_pydantic_better_dump: bool = False, Will use the pydantic's custom dumper which prints the model name in more places, instead of leaving it only for the moment when pydantic SHITS ITS PANTS (raises random shitass errors). i have nothing more to say about this.
 
