@@ -327,12 +327,14 @@ if True:  # \/ # Tests
 
 		import hikari
 
-		π((
-			hikari.Status.ONLINE,
-			hikari.Status.IDLE,
-			hikari.Status.DO_NOT_DISTURB,
-			hikari.Status.OFFLINE,
-		))
+		π(
+			(
+				hikari.Status.ONLINE,
+				hikari.Status.IDLE,
+				hikari.Status.DO_NOT_DISTURB,
+				hikari.Status.OFFLINE,
+			)
+		)
 
 		class PrintableObj2:
 			value: int = -1
@@ -367,34 +369,46 @@ if True:  # \/ # Tests
 		π(str)
 		π([[[[[[[[[[[[]]]]]]]]]]]], let_no_indent=False)
 		π([tcr.types.QuotelessString("quoteless string")] * 3)
-		π({
-			"a": [
-				"nya",
-				"owo",
-				"uwu",
-				{
-					"12": 34,
-					"56": 78,
-				},
-				[10, 20, 30],
-			]
-		})
-		π({
-			"b": [],
-		})
-		π({
-			"b": 2,
-		})
-		π({
-			"b": 2,
-			"d": 4,
-		})
-		π({
-			"b": None,
-		})
-		π({
-			"b": Null,
-		})
+		π(
+			{
+				"a": [
+					"nya",
+					"owo",
+					"uwu",
+					{
+						"12": 34,
+						"56": 78,
+					},
+					[10, 20, 30],
+				]
+			}
+		)
+		π(
+			{
+				"b": [],
+			}
+		)
+		π(
+			{
+				"b": 2,
+			}
+		)
+		π(
+			{
+				"b": 2,
+				"d": 4,
+			}
+		)
+		π(
+			{
+				"b": None,
+			}
+		)
+		π(
+			{
+				"b": Null,
+			}
+		)
 
 		datetime = dt.datetime.now()
 		π(datetime)
@@ -542,9 +556,7 @@ if True:  # \/ # Tests
 
 		class B(pydantic.BaseModel): ...
 
-		a = A(a=1, b=2, c=3)
-
-		π(a)
+		π(A(a=1, b=2, c=3))
 		π(A)
 		π(pydantic.BaseModel)
 		π(B)
@@ -938,11 +950,13 @@ if True:  # \/ # Tests
 		console.critical("test")
 
 	def test_dunder_version():
-		console({
-			"__version__": tcr.__version__,
-			"__name__": tcr.__name__,
-			"__file__": tcr.__file__,
-		})
+		console(
+			{
+				"__version__": tcr.__version__,
+				"__name__": tcr.__name__,
+				"__file__": tcr.__file__,
+			}
+		)
 
 	def test_dotdicts():
 		from tcrutils import Undefined
