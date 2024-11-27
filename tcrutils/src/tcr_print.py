@@ -139,7 +139,7 @@ if True:  # \/ # fmt & print iterable
 		COMPLEX             = Fore.orange_1 + Style.bold
 		COMMA               = Fore.dark_gray + Style.bold
 		PIPE                = Fore.dark_gray + Style.bold
-		SLASH               = Fore.WHITE + Style.bold
+		SLASH               = STRING + Style.bold
 		UNKNOWN             = Fore.dark_gray + Style.bold
 		TRUE                = Fore.GREEN + Style.bold
 		FALSE               = Fore.RED + Style.bold
