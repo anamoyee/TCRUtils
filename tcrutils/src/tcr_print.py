@@ -422,7 +422,7 @@ if True:  # \/ # fmt & print iterable
 		trailing_commas: bool = True,
 		int_formatter: Callable[[int], str] | None = None,
 		let_no_indent: bool = True,
-		force_no_indent: bool = False,
+		force_no_indent: int = 0,
 		force_no_spaces: bool = False,
 		force_complex_parenthesis: bool = False,
 		force_slice_parenthesis: bool = False,
@@ -509,9 +509,8 @@ if True:  # \/ # fmt & print iterable
 			and len(it) > 0
 		):
 			if is_mapping:
-				if len(it) == 1 and ((type(next(iter(it.values()))) in (int, float, complex, bool)) or next(iter(it.values())) in (None, Null, "", [], (), {}, set())):
-					pass  # This broke some stuff so now no mappings can be folded in
-					# force_no_indent = -1
+				if len(it) == 1:
+					force_no_indent = -1
 			else:
 				# Case 1: If the iterable in question contains iterables
 				# If there is at most 1 iterable in the outer iterable of iterables
@@ -525,7 +524,7 @@ if True:  # \/ # fmt & print iterable
 
 		name = "__qualname__" if prefer_full_names else "__name__"
 		space = " " if not force_no_spaces else ""
-		indent = space * indentation if not force_no_indent else ""
+		indent = (space * indentation) if not force_no_indent else ""
 		enter = "\n" if not force_no_indent else ""
 		trailing_commas = trailing_commas if (trailing_commas == 2 or not force_no_indent) else False
 
@@ -845,7 +844,7 @@ if True:  # \/ # fmt & print iterable
 				if is_mapping:
 					inner = f"{comma}{enter or space}".join(
 						[
-							indent + (f"{k}{FMTC.COLON}:{FMTC._}{space}{v}" if syntax_highlighting else f"{k}:{space}{v}").replace("\n", f"{enter}{indent}")
+							indent + (f"{k}{FMTC.COLON}:{FMTC._}{space}{v}" if syntax_highlighting else f"{k}:{space}{v}").replace(enter, f"{enter}{indent}")
 							for k, v in {this(key): this(value) for key, value in it.items()}.items()
 						]
 					) + (comma if trailing_commas else "")
@@ -891,7 +890,7 @@ if True:  # \/ # fmt & print iterable
 				return FMT_UNKNOWN_NO_PARENS[syntax_highlighting] % (
 					parse_repr_name,
 					FMT_BRACKETS[tuple][syntax_highlighting]
-					% (FMT_ASTERISK[syntax_highlighting] + this(parse_repr_args) + comma + " " + (FMT_ASTERISK[syntax_highlighting] * 2) + this(parse_repr_kwargs)),
+					% (FMT_ASTERISK[syntax_highlighting] + this(parse_repr_args) + comma + space + (FMT_ASTERISK[syntax_highlighting] * 2) + this(parse_repr_kwargs)),
 				)
 
 			# If the repr looks like a instantiation Name(args, kw=args), etc. then parse it into a str(*tuple, **dict) nice looking, indentend thing.
@@ -901,7 +900,8 @@ if True:  # \/ # fmt & print iterable
 		else:
 			return this()
 
-	globals()["fmt_iterable"] = _reset_return_wrapper(fmt_iterable)
+	if not sys.gettrace():  # If debugger is not running, dont optimize since it is a hassle to get into the fmt_iterable func
+		globals()["fmt_iterable"] = _reset_return_wrapper(fmt_iterable)
 	# Done this way to trick the IDE code snippets since the deco forwards the *args, **kwargs to the decorated func anyway...
 	# If i were to @decorate the def fmt_iterable it'd replace the code snippets with the decorated function's code snippets.
 	# Or i'm a dumbass and there's a better way of doing it.. (<- probably this)

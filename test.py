@@ -25,7 +25,7 @@ if True:  # \/ # Imports
 
 
 # _rich_traceback_install(width=tcr.terminal.width-1)
-if sys.gettrace() is None:
+if not sys.gettrace():
 	c(sorted(_ := list(filter(lambda x: not x.startswith("_"), globals().copy()))), len(_))
 	del _
 	c.log(f"Running on Python %s.%s" % sys.version_info[:2])
@@ -599,6 +599,12 @@ if True:  # \/ # Tests
 		π(Reprer("nya", "uwu", "owo", "hihi", "mrrraaaw :3"))
 		π(Reprer("nya", "uwu", "owo", "hihi", "mrrraaaw :3", x="nyaaaa", y="uwu"))
 		π(Reprer(x="nya", y="uwu"))
+		π(Reprer(x="nya"))
+
+		π({1: 2})
+		π({1: 2, 3: 4})
+		π([1, 2, 3, 4])
+		π([1, 2, 3, 4, 5])
 
 	def test_markdown():
 		from tcrutils import codeblock, uncodeblock
@@ -1867,10 +1873,11 @@ if __name__ == "__main__":
 	# test_echo()
 	# test_console_with_eval()
 
-	ass.total(prefix="\n")
-	print()
-	c("test# =", __TESTS_RAN_GLOBAL)
-	pass  # noqa: PIE790, RUF100
+	if not sys.gettrace():
+		ass.total(prefix="\n")
+		print()
+		c("test# =", __TESTS_RAN_GLOBAL)
+		pass  # noqa: PIE790, RUF100
 
 if BOT:
 	BOT.run()
