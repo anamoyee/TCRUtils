@@ -526,7 +526,12 @@ if True:  # \/ # fmt & print iterable
 		space = " " if not force_no_spaces else ""
 		indent = (space * indentation) if not force_no_indent else ""
 		enter = "\n" if not force_no_indent else ""
-		trailing_commas = trailing_commas if (trailing_commas == 2 or not force_no_indent) else False
+
+		if trailing_commas is None:
+			trailing_commas = 1
+
+		if force_no_indent and trailing_commas < 2:
+			trailing_commas = None
 
 		if is_mapping or (PydanticBM is not None and (able(isinstance, it, PydanticBM) and isinstance(it, PydanticBM))):
 			asterisks = FMT_ASTERISK[syntax_highlighting] * 2
