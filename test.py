@@ -606,6 +606,15 @@ if True:  # \/ # Tests
 		π([1, 2, 3, 4])
 		π([1, 2, 3, 4, 5])
 
+		class ListResult(tcr.Result[list, ValueError]): ...
+
+		res1 = ListResult.new_ok(["nya", 123, 3 + 2j, True, None])
+		res2 = ListResult.new_err(ValueError("wal-konia-ue ełrołr"))
+
+		π(ListResult)
+		π(res1)
+		π(res2)
+
 	def test_markdown():
 		from tcrutils import codeblock, uncodeblock
 

@@ -84,6 +84,7 @@ from .src.tcr_overload import Overload, OverloadMeta, overload
 from .src.tcr_path import path
 from .src.tcr_print import alert, double_quoted_repr, fmt_iterable, gay, print_block, print_iterable
 from .src.tcr_regex import RegexPreset
+from .src.tcr_result import Result
 from .src.tcr_run import RunSACAble, run_sac
 from .src.tcr_sdb import ShelveDB
 from .src.tcr_string import SlashableString, commafy, custom_zfill, join_urlstr, polaris_progressbar

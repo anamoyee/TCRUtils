@@ -592,7 +592,7 @@ if True:  # \/ # fmt & print iterable
 
 		if hasattr(it, "__tcr_fmt__") and callable(it.__tcr_fmt__):
 			try:
-				tcr_formatted = it.__tcr_fmt__(**thisdict, fmt_iterable=fmt_iterable, _ran_from_tcr_display=True)
+				tcr_formatted = it.__tcr_fmt__(**thisdict, fmt_iterable=this, _ran_from_tcr_display=True)
 
 				if tcr_formatted is not None:
 					return tcr_formatted
@@ -602,6 +602,9 @@ if True:  # \/ # fmt & print iterable
 				if kwargs.get("_raise_errors"):
 					raise
 				return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f"{queue_name}, {extract_error(e, raw=True)[0]}"
+
+		if not syntax_highlighting and isinstance(it, type):
+			return it.__name__
 
 		if "_force_next_type" in kwargs and kwargs.get("_ran_from_tcr_display"):
 			return FMT_CLASS[syntax_highlighting] % (
