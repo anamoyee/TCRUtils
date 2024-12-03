@@ -48,6 +48,8 @@ class _Ass:
 	_totals: list[_TestResult]
 	error_func: Callable[[Exception, str], None]
 
+	EXPR_EQ_BY_FMT = "fmt_iterable(a, syntax_highlighting=True) == fmt_iterable(b, syntax_highlighting=True)"
+
 	def __init__(self, error_func: Callable[[Exception, str], None] | None = None) -> None:
 		self._totals = []
 		self.error_func = error_func

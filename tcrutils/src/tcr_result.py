@@ -12,6 +12,7 @@ class EmptyType(Enum):
 
 Ok = TypeVar("Ok")
 Err = TypeVar("Err", bound=BaseException)
+Default = TypeVar("Default")
 
 
 @dataclass
@@ -47,7 +48,7 @@ class Result(Generic[Ok, Err]):
 		self._is_err = bool(is_error)
 
 		if is_error and not isinstance(value, BaseException):
-			raise ValueError("If is_error=True, value must be an instance of a subclass of BaseException")
+			raise ValueError(f"If is_error=True, value must be an {'**INSTANCE**' if isinstance(value, type) else 'instance'} of a subclass of BaseException")
 
 		self._value = value
 
@@ -65,7 +66,13 @@ class Result(Generic[Ok, Err]):
 
 	@property
 	def is_err(self) -> bool:
-		return self.is_err
+		return self._is_err
+
+	def __eq__(self, other):
+		if not isinstance(other, self.__class__):
+			return NotImplemented
+
+		return self._is_err == other._is_err and self._value == other._value
 
 	def unwrap(self) -> Ok:
 		"""If the result contains an error, raise ResultUnwrappedIncorrectlyError(that_error), else return the value."""
@@ -81,28 +88,28 @@ class Result(Generic[Ok, Err]):
 
 		return self._value
 
-	def unwrap_or(self, default: Ok) -> Ok:
+	def unwrap_or(self, default: Default) -> Ok | Default:
 		"""If the result contains an error, return default, else return the value."""
 		if self.is_err:
 			return default
 
 		return self._value
 
-	def unwrap_err_or(self, default: Err) -> Err:
+	def unwrap_err_or(self, default: Default) -> Err | Default:
 		"""If the result contains a value, return default, else return the error."""
 		if not self.is_err:
 			return default
 
 		return self._value
 
-	def unwrap_or_else(self, default_factory: Callable[[Err], Ok]) -> Ok:
+	def unwrap_or_else(self, default_factory: Callable[[Err], Default]) -> Ok | Default:
 		"""If the result contains an error, return default_factory(that_error), else return the value."""
 		if self.is_err:
 			return default_factory(self._value)
 
 		return self._value
 
-	def unwrap_err_or_else(self, default_factory: Callable[[Ok], Err]) -> Err:
+	def unwrap_err_or_else(self, default_factory: Callable[[Ok], Default]) -> Err | Default:
 		"""If the result contains a value, return default_factory(that_value), else return the error."""
 		if not self.is_err:
 			return default_factory(self._value)

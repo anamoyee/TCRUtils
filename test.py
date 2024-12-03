@@ -1754,6 +1754,33 @@ ID: {server|id}
 		c("c=", eval=True)
 		c("nya=", ("c", "uwu"))
 
+	def test_result():
+		def f(lhs: int, rhs: int) -> tcr.Result[float, ZeroDivisionError]:
+			try:
+				return tcr.Result.new_ok(lhs / rhs)
+			except ZeroDivisionError as e:
+				return tcr.Result.new_err(e)
+
+		res1 = f(1, 2)
+		res2 = f(1, 0)
+
+		ass(res1, tcr.Result.new_ok(0.5), expr=ass.EXPR_EQ_BY_FMT)
+		ass(res2, tcr.Result.new_err(ZeroDivisionError("division by zero")), expr=ass.EXPR_EQ_BY_FMT)
+		ass(res1.is_ok, True)
+		ass(res1.is_err, False)
+		ass(res1.unwrap(), 0.5)
+		rass(res2.unwrap)(tcr.ResultUnwrappedOnErrorError)
+		rass(res1.unwrap_err)(tcr.ResultUnwrappedErrOnValueError)
+		ass(res1.unwrap_or("idk"), 0.5)
+		ass(res2.unwrap_or("sex"), "sex")  # 💀
+		ass(res1.unwrap_or_else(lambda _: "idk"), 0.5)
+		ass(res2.unwrap_or_else(lambda _: "Or else... i'll fuck you up, bitch!"), "Or else... i'll fuck you up, bitch!")  # 💀💀💀
+		ass(res1.unwrap_err_or("secks"), "secks")
+		ass(res2.unwrap_err_or("secks"), ZeroDivisionError("division by zero"), expr=ass.EXPR_EQ_BY_FMT)
+		ass(res1.unwrap_err_or_else(lambda _: "huj"), "huj")
+		ass(res2.unwrap_err_or_else(lambda _: "huj"), ZeroDivisionError("division by zero"), expr=ass.EXPR_EQ_BY_FMT)
+		ass.total()
+
 
 if True:  # \/ # Test setup
 	__TESTS_RAN_GLOBAL = 0
@@ -1881,6 +1908,7 @@ if __name__ == "__main__":
 	# test_console_with_header()
 	# test_echo()
 	# test_console_with_eval()
+	test_result()
 
 	if not sys.gettrace():
 		ass.total(prefix="\n")
