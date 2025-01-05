@@ -1,5 +1,5 @@
-[tool.ruff]
-extend = "C:/CUSTOM_ASSETS/pyproject.toml"
+# [tool.ruff]
+# extend = "C:/CUSTOM_ASSETS/pyproject.toml"
 # indent-width = 4
 # [tool.ruff.format]
 # quote-style = "single"
@@ -14,25 +14,33 @@ license = "GPL-3.0"
 readme = "README.md"
 repository = "https://github.com/anamoyee/TCRUtils"
 classifiers = [
-  "Development Status :: 3 - Alpha",
-  "Intended Audience :: Developers",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3 :: Only",
-  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-  "Typing :: Typed",
-  "Topic :: Utilities",
-  "Operating System :: POSIX",
-  "Operating System :: POSIX :: Linux",
-  "Operating System :: MacOS",
-  "Operating System :: Microsoft :: Windows",
-  "Operating System :: Microsoft :: MS-DOS",
+	"Development Status :: 3 - Alpha",
+	"Intended Audience :: Developers",
+	"Programming Language :: Python :: 3.11",
+	"Programming Language :: Python :: 3.12",
+	"Programming Language :: Python :: 3 :: Only",
+	"License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+	"Typing :: Typed",
+	"Topic :: Utilities",
+	"Operating System :: POSIX",
+	"Operating System :: POSIX :: Linux",
+	"Operating System :: MacOS",
+	"Operating System :: Microsoft :: Windows",
+	"Operating System :: Microsoft :: MS-DOS",
 ]
 
 [tool.poetry.extras]
 imgui = ["imgui", "glfw", "PyOpenGL", "numpy"]
 discord = ["hikari", "hikari-miru", "hikari-arc"]
-full = ["imgui", "glfw", "PyOpenGL", "numpy", "hikari", "hikari-miru", "hikari-arc"]
+full = [
+	"imgui",
+	"glfw",
+	"PyOpenGL",
+	"numpy",
+	"hikari",
+	"hikari-miru",
+	"hikari-arc",
+]
 
 
 [tool.poetry.dependencies]

@@ -21,7 +21,7 @@ Joke functions and other barely useful crap are not included in star imports.
 from types import ModuleType as __ModuleType
 
 
-def __getattr__(name: str) -> __ModuleType:
+def _getattr__(name: str) -> __ModuleType:
 	"""Map `tcr.discord` to tcrdiscord (separate pip-installable module). This does not install the module via pip, only prompts you to do so if it cant be imported.
 
 	This is done for backwards-compatibility, for fresh projects use tcrdiscord or equivalent, not tcr.discord.
@@ -38,9 +38,7 @@ def __getattr__(name: str) -> __ModuleType:
 
 	import warnings
 
-	warnings.warn(
-		f"Accessing subpackages of tcrutils as tcr.<name> (tcr.{name}) is deprecated. Do this instead:\n\n$ pip install {pip_name}\n\n>>> import {import_name}\n", DeprecationWarning, stacklevel=2
-	)
+	warnings.warn(f"Accessing subpackages of tcrutils as tcr.<name> (tcr.{name}) is deprecated. Do this instead:\n\n$ pip install {pip_name}\n\n>>> import {import_name}\n", DeprecationWarning, stacklevel=2)
 
 	try:
 		return __import__(import_name)
@@ -48,7 +46,10 @@ def __getattr__(name: str) -> __ModuleType:
 		raise ImportError(f"Unable to locate pip-installable tcrutils submodule: {import_name!r}, please install it with by running the following command:\n\n$ pip install {pip_name}") from e
 
 
-from . import src
+exec("__getattr__ = _getattr__; del _getattr__")
+# Done, not to tip off any IDE hints, otherwise it says any unknown attr is there actually, and of type ModuleType even though that's not the case
+
+from . import repl, src
 from ._version import __version__
 from .src import tcr_case as case
 from .src import tcr_ensure_deps as ensure_depencencies
@@ -69,7 +70,7 @@ from .src.tcr_dir import dir2, dir3, dir_recursive, vars2, vars3, vars_recursive
 from .src.tcr_error import error
 from .src.tcr_extract_error import extract_error, extract_traceback, module_error_map, modules_error_map, print_exception_with_traceback
 from .src.tcr_F import F
-from .src.tcr_getch import getch
+from .src.tcr_getch import KeyCode, KeyCodeCompound, KeyCodeSimple, getch, getchs
 from .src.tcr_import import load_package_dynamically
 from .src.tcr_inject import ErrorCatcher, WarningCatcher
 from .src.tcr_input import insist
@@ -82,7 +83,7 @@ from .src.tcr_null import Null, Undefined, UniqueDefault
 from .src.tcr_other import intbool
 from .src.tcr_overload import Overload, OverloadMeta, overload
 from .src.tcr_path import path
-from .src.tcr_print import alert, double_quoted_repr, fmt_iterable, gay, print_block, print_iterable
+from .src.tcr_print import FMT_BRACKETS, FMTC, alert, fmt_iterable, gay, print_block, print_iterable
 from .src.tcr_regex import RegexPreset
 from .src.tcr_result import Result, ResultUnwrappedErrOnValueError, ResultUnwrappedOnErrorError
 from .src.tcr_run import RunSACAble, run_sac

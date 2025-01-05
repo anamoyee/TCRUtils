@@ -1,0 +1,221 @@
+import string
+
+from ..src.tcr_console import console as c
+from ..src.tcr_getch import getchs as getchs
+from ..src.tcr_terminal import terminal
+from .tcrr_nodes import *
+from .tcrr_parser import parse_and_submit_nodes
+
+if False:
+	pass  # old impl
+
+	# root_nodes = (
+	# 	KeywordNode(
+	# 		"new",
+	# 		WordBreakNode(
+	# 			"wordbreak",
+	# 			EllipsisNode(
+	# 				"...",
+	# 				".*",
+	# 				".*/.*",
+	# 			),
+	# 			SignedIntNode("int"),
+	# 			SignedFloatNode("float"),
+	# 			DoublequoteStrNode("dqstr"),
+	# 			SinglequoteStrNode("sqstr"),
+	# 			PyIdentifierNode("identifier"),
+	# 		),
+	# 	),
+	# 	AliasKeywordNode(
+	# 		{"n": "new"},
+	# 		"new/.*",
+	# 	),
+	# 	# KeywordNode(
+	# 	# 	"robo",
+	# 	# 	RoboStrNode("robostr"),
+	# 	# ),
+	# 	# AliasKeywordNode(
+	# 	# 	("r", "robo"),
+	# 	# 	"robo/.*",
+	# 	# ),
+	# )
+
+	# replable = string.ascii_letters + string.punctuation + string.digits + " \t" + "ąłćżźśćó"
+
+	# def repl():
+	# 	chars = []
+
+	# 	terminal.cursor.hide()
+
+	# 	print(">>>", end="\r")
+
+	# 	last_err = None
+
+	# 	try:
+	# 		while True:
+	# 			try:
+	# 				ch = getchs()
+
+	# 				if ch == getchs.CTRL_C:
+	# 					raise KeyboardInterrupt
+	# 				if ch == getchs.CTRL_D:
+	# 					raise EOFError
+
+	# 				if ch == getchs.CTRL_U:
+	# 					chars.clear()
+	# 				elif ch == getchs.ENTER:
+	# 					print()
+	# 					chars.clear()
+	# 				elif ch == getchs.BACKSPACE:
+	# 					if chars:
+	# 						chars.pop()
+	# 				else:
+	# 					if ch in replable:
+	# 						chars.append(ch)
+
+	# 				try:
+	# 					parsed = parse_and_submit_nodes("".join(chars), root_nodes)
+	# 				except Exception as e:
+	# 					parsed = e
+	# 					last_err = e
+	# 				else:
+	# 					last_err = None
+
+	# 				if not isinstance(parsed, Exception):
+	# 					displayed = (node.__str__() for node in parsed)
+	# 				else:
+	# 					displayed = ("N/A",)
+
+	# 				print(
+	# 					(terminal.width * " ") + f"\r>>> {''.join(displayed)} /// {''.join(chars)!r} /// {fmt_iterable(parsed, force_no_indent=True, syntax_highlighting=True)}",
+	# 					end="\r",
+	# 				)
+
+	# 			except (KeyboardInterrupt, EOFError):
+	# 				break
+	# 	finally:
+	# 		terminal.cursor.unhide()
+	# 		if last_err is not None:
+	# 			raise last_err
+
+
+def raise_for_not_only_nodes(nodes: tuple[Node]):
+	if nodes and not all(isinstance(node, Node) for node in nodes):
+		raise ValueError("nodes must be tuple[Node]")
+
+
+class Repl:
+	def __init__(self, *nodes: Node):
+		raise_for_not_only_nodes(nodes)
+
+		self.nodes = nodes
+		self.chs_history = []
+		self.chs_history_ptr = 0
+
+	def on_ctrl(self, key: str) -> str | None:
+		if key == getchs.CTRL_U:
+			self.chs.clear()
+			return
+		if key == getchs.CTRL_C:
+			raise KeyboardInterrupt
+
+		if self.chs:
+			return
+
+		if key == getchs.CTRL_D:
+			raise EOFError
+
+	def on_arrow(self, key: str) -> str | None:
+		if key == getchs.UP:
+			if self.chs_history_ptr < self.chs_history.__len__() - 1:
+				self.chs_history_ptr += 1
+		if key == getchs.DOWN:
+			if self.chs_history_ptr > 0:
+				self.chs_history_ptr -= 1
+
+	def printhook_prompt(self, last_char: str | None, *submitted_nodes: Node) -> tuple[bool, str]:
+		fucked = bool(submitted_nodes and isinstance(submitted_nodes[-1], UnknownNode))
+
+		chr1 = ">"
+
+		if fucked:
+			chr1 = "!"
+		elif not submitted_nodes:
+			chr1 = " "
+		elif submitted_nodes[-1].children:
+			chr1 = "+"
+
+		chr2 = " " if chr1 != ">" else ">"
+
+		chr3 = ">"
+
+		if self.chs_history_ptr:
+			chr3 = (str(self.chs_history_ptr)[-3:].__len__() - 1) * "\b" + str(self.chs_history_ptr)[-3:]
+
+		return (fucked, f"{chr1}{chr2}{chr3}")
+
+	def printhook(self, last_char: str | None, *submitted_nodes: Node) -> None:
+		print(f"{(terminal.width * " ")}\r{self.printhook_prompt(last_char, *submitted_nodes)[1]} {''.join(x.__str__() for x in submitted_nodes)}", end="\r")
+
+	hide_cursor: bool = True
+	valid_chars = string.ascii_letters + string.punctuation + string.digits + " \t" + "ąłćżźśćó"
+	no_enter_on_unknown: bool = True
+
+	@property
+	def chs(self):
+		return self.chs_history[self.chs_history_ptr]
+
+	def __call__(self) -> list[Node]:
+		while [] in self.chs_history:
+			self.chs_history.remove([])
+
+		self.chs_history.insert(0, [])
+		self.chs_history_ptr = 0
+
+		if self.hide_cursor:
+			terminal.cursor.hide()
+
+		self.printhook(None)
+
+		try:
+			while True:
+				ch = getchs()
+
+				if ch == getchs.ENTER:
+					pass
+				elif ch == getchs.CTRL_BACKSPACE:
+					if self.chs:
+						while self.chs and self.chs[-1] in " \t":
+							self.chs.pop()
+						while self.chs and self.chs[-1] not in " \t":
+							self.chs.pop()
+						while self.chs and self.chs[-1] in " \t":
+							self.chs.pop()
+				elif ch == getchs.BACKSPACE:
+					if self.chs:
+						self.chs.pop()
+
+				elif ch in (getchs.UP, getchs.DOWN, getchs.LEFT, getchs.RIGHT):
+					ch = self.on_arrow(ch)
+				elif getchs.is_simple_ctrl(ch):
+					ch = self.on_ctrl(ch)
+				elif ch in self.valid_chars:
+					self.chs.append(ch)
+
+				submitted_nodes = parse_and_submit_nodes("".join(self.chs), self.nodes)
+
+				self.printhook(ch, *submitted_nodes)
+
+				if ch == getchs.ENTER:
+					if self.no_enter_on_unknown and isinstance(submitted_nodes[-1], UnknownNode):
+						continue
+
+					if submitted_nodes[-1].children:
+						continue
+
+					submitted_nodes = [x for x in submitted_nodes if not isinstance(x, DisposableNode)]
+					submitted_nodes = [(x.convert() if isinstance(x, ConvertableNode) else x) for x in submitted_nodes]
+					return submitted_nodes  # noqa: RET504
+		finally:
+			if self.hide_cursor:
+				terminal.cursor.unhide()

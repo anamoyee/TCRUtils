@@ -61,9 +61,7 @@ class Console:
 
 		return result_str
 
-	def _generate_out_and_print(
-		self, *values, sep="\n", end="", withprefix=True, syntax_highlighting: bool = True, color: str, letter: str, _this_iteration_header: str | None = None, **kwargs
-	) -> None:
+	def _generate_out_and_print(self, *values, sep="\n", end="", withprefix=True, syntax_highlighting: bool = True, color: str, letter: str, _this_iteration_header: str | None = None, **kwargs) -> None:
 		if _this_iteration_header is None:
 			_this_iteration_header = self.evaluate_header()
 
@@ -81,9 +79,7 @@ class Console:
 
 				print(char, end=" ")
 
-				self._generate_out_and_print(
-					v, sep=sep, end=end, withprefix=withprefix, syntax_highlighting=syntax_highlighting, color=color, letter=letter, _this_iteration_header=_this_iteration_header, **kwargs
-				)
+				self._generate_out_and_print(v, sep=sep, end=end, withprefix=withprefix, syntax_highlighting=syntax_highlighting, color=color, letter=letter, _this_iteration_header=_this_iteration_header, **kwargs)
 			return
 
 		values = [(f"{_this_iteration_header or ''}{x}" if isinstance(x, str) else fmt_iterable(x, syntax_highlighting=syntax_highlighting, **kwargs)) for x in values]
@@ -96,7 +92,10 @@ class Console:
 
 		out = f"{color if syntax_highlighting else ''}{out}{CC._ if syntax_highlighting else ''}"
 
-		print(out)
+		if end in ('', ' ', '\r'):
+			print(out, end=end)
+		else:
+			print(out)
 
 	def log(self, *values, sep=" ", end="", withprefix=True) -> None | str:
 		self._generate_out_and_print(*values, sep=sep, end=end, withprefix=withprefix, color=CC.LOG, letter="I")

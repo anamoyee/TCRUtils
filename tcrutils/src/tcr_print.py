@@ -6,6 +6,8 @@ import sys
 import typing
 from enum import Enum, EnumMeta
 from functools import partial, wraps
+from json import dumps as _json_dumps
+from json import loads as _json_loads
 from types import GeneratorType, UnionType
 from typing import Any
 from typing import get_args as unpack_union
@@ -56,17 +58,54 @@ from .tcr_iterable import Or, getattr_queue, limited_iterable
 from .tcr_null import Null, Undefined
 from .tcr_types import BrainfuckCode, GayString, QuotelessString
 
+# def double_quoted_repr(s: str, *, quote_char: str = '"'):
+# 	"""Return a string that is the same as `s` but always uses `quote_char` instead of single or double quotes on string boundaries. Make sure to correctly escape every character if needed so there are no edge cases that might break the result."""
+# 	assert quote_char in ('"', "'")
+# 	result = quote_char
+# 	for char in s:
+# 		if char in "\\" + quote_char:
+# 			result += "\\" + char
+# 		else:
+# 			result += char
+# 	return result + quote_char
 
-def double_quoted_repr(s: str, *, quote_char: str = '"'):
-	"""Return a string that is the same as `s` but always uses `quote_char` instead of single or double quotes on string boundaries. Make sure to correctly escape every character if needed so there are no edge cases that might break the result."""
-	assert quote_char in ('"', "'")
-	result = quote_char
-	for char in s:
-		if char in "\\" + quote_char:
-			result += "\\" + char
-		else:
-			result += char
-	return result + quote_char
+# fuck this shit, json dumps exists
+# https://tenor.com/en-GB/view/faktycznie-ok-dobra-drake-gif-25333966
+
+
+def _regex_replace_u(m: regex.Match):
+	rest = _json_loads(f'"{m.group(2)}"')
+
+	return repr(f"{m.group(1) or ''}{rest}")[1:-1]
+
+
+def repr_if_needed(
+	s: str,
+	*,
+	syntax_highlighting=True,
+	quoteless=False,
+	no_implicit_quoteless=False,
+) -> str:
+	dumped = _json_dumps(s)
+
+	# fmt: off
+	subs = (
+		(r"(?<!\\)(\\\\)*\\u0000(?![0-9])",      r"\1\\0"),
+		(r"(?<!\\)(\\\\)*\\u00([a-z0-9]{2})",    r"\1\\x\2"),
+		(r"(?<!\\)(\\\\)*((?:\\u[a-z0-9]{4})+)", _regex_replace_u), # Commented out - possibly better to leave things as they are - with \u's instead of 񂍆 񂍆 񂍆
+	)
+	# fmt: on
+
+	for pat, sub in subs:
+		dumped = regex.sub(pat, sub, dumped)
+
+	if not syntax_highlighting:
+		return dumped
+
+	if quoteless or (not no_implicit_quoteless and regex.match(r'"[a-zA-Z0-9]+"', dumped)):
+		return f"{FMTC.STRING}{dumped[1:-1]}{FMTC._}"
+	else:
+		return f"{FMTC.QUOTES}{dumped[0]}{FMTC.STRING}{dumped[1:-1]}{FMTC.QUOTES}{dumped[-1]}{FMTC._}"
 
 
 def print_block(
@@ -317,7 +356,10 @@ if True:  # \/ # fmt & print iterable
 		return s
 
 	def _fmt_unknown_highlighted(it: object, /, queue_name: str) -> str:
-		if match := regex.match(r"<module '(?P<module_name>[^']+)'(?: from '(?P<path>[^']+)')?(?: \((?P<namespace>[^)]+)\))?>", repr(it)):
+		if match := regex.match(
+			r"<module '(?P<module_name>[^']+)'(?: from '(?P<path>[^']+)')?(?: \((?P<namespace>[^)]+)\))?>",
+			repr(it),
+		):
 			d = match.groupdict()
 
 			name = d["module_name"]
@@ -328,7 +370,10 @@ if True:  # \/ # fmt & print iterable
 
 			return _fmt_module_highlighted(name, path, namespace)
 
-		elif match := regex.match(r"^([^\d\W](?:(?:\w)|(?:\.<locals>\.)|(?:\.<globals>\.))*)\((.*)\)$", repr(it)):
+		elif match := regex.match(
+			r"^([^\d\W](?:(?:\w)|(?:\.<locals>\.)|(?:\.<globals>\.))*)\((.*)\)$",
+			repr(it),
+		):
 			name, body = match.groups()
 
 			return FMT_UNKNOWN[True] % (name, body)
@@ -343,17 +388,7 @@ if True:  # \/ # fmt & print iterable
 
 		Assuming syntax_highlighting==True && isinstance(text, BrainfuckCode)
 		"""
-		return str(
-			text.replace("[", "#")
-			.replace("<", f"{FMTC.ASTERISK}<")
-			.replace(">", f"{FMTC.ASTERISK}>")
-			.replace(".", f"{FMTC.DECIMAL}.")
-			.replace(",", f"{FMTC.COMMA},")
-			.replace("+", f"{FMTC.TRUE}+")
-			.replace("-", f"{FMTC.FALSE}-")
-			.replace("]", f"{FMTC.BRACKET}]")
-			.replace("#", f"{FMTC.BRACKET}[")
-		)
+		return str(text.replace("[", "#").replace("<", f"{FMTC.ASTERISK}<").replace(">", f"{FMTC.ASTERISK}>").replace(".", f"{FMTC.DECIMAL}.").replace(",", f"{FMTC.COMMA},").replace("+", f"{FMTC.TRUE}+").replace("-", f"{FMTC.FALSE}-").replace("]", f"{FMTC.BRACKET}]").replace("#", f"{FMTC.BRACKET}["))
 
 	def _pydantic_hopefully_non_erroring_dumper(obj: PydanticBM) -> dict:
 		return {k: getattr(obj, k) for k in obj.model_fields}
@@ -396,11 +431,15 @@ if True:  # \/ # fmt & print iterable
 				try:
 					args.append(ast.literal_eval(arg))  # Ensure it's a literal
 				except ValueError:
-					raise ValueError(f"Invalid literal in positional args: {ast.dump(arg)}")  # noqa: B904
+					raise ValueError(  # noqa: B904
+						f"Invalid literal in positional args: {ast.dump(arg)}"
+					)
 
 			kwargs = {}
 			for kwarg in node.body.keywords:
-				if not isinstance(kwarg.value, (ast.Constant, ast.List, ast.Tuple, ast.Dict, ast.Set)):  # noqa: UP038
+				if not isinstance(  # noqa: UP038
+					kwarg.value, (ast.Constant, ast.List, ast.Tuple, ast.Dict, ast.Set)
+				):
 					raise ValueError(f"Invalid literal in keyword args: {kwarg.arg}")  # noqa: TRY004
 				kwargs[kwarg.arg] = ast.literal_eval(kwarg.value)
 
@@ -428,7 +467,7 @@ if True:  # \/ # fmt & print iterable
 		force_slice_parenthesis: bool = False,
 		force_union_parenthesis: bool = True,
 		prefer_full_names: bool = False,
-		str_repr: Callable[[str], str] = double_quoted_repr,
+		str_repr: Callable[[str], str] = repr_if_needed,
 		prefer_pydantic_better_dump: bool = False,
 		**kwargs,
 	) -> str:
@@ -464,7 +503,7 @@ if True:  # \/ # fmt & print iterable
 			prefer_full_names: bool, whether or not to use the full names of objects if possible.
 			let_no_indent_max_iterables: int = 1, (advanced) override the limit for iterables for the let_no_indent feature
 			let_no_indent_max_non_iterables: int = 4, (advanced) override the limit for non-iterables for the let_no_indent feature
-			str_repr: Callable[[str], str] = double_quoted_repr, (advanced) override the default string repr callable
+			str_repr: Callable[[str], str] = json_dumps, (advanced) override the default string repr callable
 			prefer_pydantic_better_dump: bool = False, Will use the pydantic's custom dumper which prints the model name in more places, instead of leaving it only for the moment when pydantic SHITS ITS PANTS (raises random shitass errors). i have nothing more to say about this.
 
 		If no formatting is set for an object, it can be defined using the __tcr_display__(self, **kwargs) or __tcr_fmt__(self, *, fmt_iterable, **kwargs) methods.
@@ -517,9 +556,7 @@ if True:  # \/ # fmt & print iterable
 				if len(it) <= Or(kwargs.get("let_no_indent_max_iterables"), 1) and any(isinstance(x, Iterable) for x in it):
 					force_no_indent = -1
 				# Case 2: If the outer iterable consists of non-iterables: If there are at most 4 non-iterables
-				if all((not isinstance(x, Iterable)) or isinstance(x, str | bytes) or (able(len, x) and len(x) == 0) for x in it) and len(it) <= Or(
-					kwargs.get("let_no_indent_max_non_iterables"), 4
-				):
+				if all((not isinstance(x, Iterable)) or isinstance(x, str | bytes) or (able(len, x) and len(x) == 0) for x in it) and len(it) <= Or(kwargs.get("let_no_indent_max_non_iterables"), 4):
 					force_no_indent = -1
 
 		name = "__qualname__" if prefer_full_names else "__name__"
@@ -562,6 +599,7 @@ if True:  # \/ # fmt & print iterable
 			"depth_limit": depth_limit,
 			"prefer_pydantic_better_dump": prefer_pydantic_better_dump,
 			"str_repr": str_repr,
+			"no_implicit_quoteless": kwargs.get("no_implicit_quoteless", False),
 			"no_try": kwargs.get("no_try"),
 			"__depth": kwargs.get("__depth", 2) + 1,
 		}
@@ -571,6 +609,7 @@ if True:  # \/ # fmt & print iterable
 			thisdict["let_no_indent_max_non_iterables"] = a
 
 		this = partial(fmt_iterable, **thisdict)
+		str_repr = partial(str_repr, no_implicit_quoteless=kwargs.get("no_implicit_quoteless"))
 
 		queue_name = getattr_queue(
 			type(it),
@@ -592,7 +631,7 @@ if True:  # \/ # fmt & print iterable
 
 		if hasattr(it, "__tcr_fmt__") and callable(it.__tcr_fmt__):
 			try:
-				tcr_formatted = it.__tcr_fmt__(**thisdict, fmt_iterable=this, _ran_from_tcr_display=True)
+				tcr_formatted = it.__tcr_fmt__(**thisdict, fmt_iterable=this, it=it, _ran_from_tcr_display=True)
 
 				if tcr_formatted is not None:
 					return tcr_formatted
@@ -609,7 +648,7 @@ if True:  # \/ # fmt & print iterable
 		if "_force_next_type" in kwargs and kwargs.get("_ran_from_tcr_display"):
 			return FMT_CLASS[syntax_highlighting] % (
 				(queue_name + ("(...)" if not syntax_highlighting and not kwargs.get("_i_am_class") else "") + (FMT_LETTERS.META if syntax_highlighting and kwargs.get("_i_am_class") else "")),
-				asterisks + this(it),
+				asterisks + this(it, no_implicit_quoteless=True),
 			)
 
 		if isinstance(it, _OverflowClass):
@@ -637,7 +676,13 @@ if True:  # \/ # fmt & print iterable
 		if (_result := able(issubclass, it, Enum)) and (_result.result):
 			return FMT_CLASS[syntax_highlighting] % (
 				it.__name__ + (FMT_LETTERS.META if syntax_highlighting else ""),
-				((1 if _is_enum_auto(it) else 2) * FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True),
+				((1 if _is_enum_auto(it) else 2) * FMT_ASTERISK[syntax_highlighting])
+				+ this(
+					list(it),
+					_force_next_type=set,
+					let_no_ident=False,
+					_enums_next_hide_class=True,
+				),
 			)
 
 		if repr(it) == "<class 'pydantic.main.BaseModel'>":  # Kurwa pierdole tego kurwa pydantica chujowego
@@ -653,7 +698,13 @@ if True:  # \/ # fmt & print iterable
 		if _HikariEnum is not None and (_result := able(issubclass, it, _HikariEnum)) and (_result.result):
 			return FMT_CLASS[syntax_highlighting] % (
 				it.__name__ + (FMT_LETTERS.META if syntax_highlighting else ""),
-				((1 if _is_enum_auto(it) else 2) * FMT_ASTERISK[syntax_highlighting]) + this(list(it), _force_next_type=set, let_no_ident=False, _enums_next_hide_class=True),
+				((1 if _is_enum_auto(it) else 2) * FMT_ASTERISK[syntax_highlighting])
+				+ this(
+					list(it),
+					_force_next_type=set,
+					let_no_ident=False,
+					_enums_next_hide_class=True,
+				),
 			)
 		if isinstance(it, Enum) or (_HikariEnum is not None and isinstance(it, _HikariEnum)):
 			if kwargs.get("_enums_next_hide_class"):
@@ -662,11 +713,18 @@ if True:  # \/ # fmt & print iterable
 				else:
 					return FMT_ENUM_VARIANT_NO_CLASS[syntax_highlighting] % (
 						_fmt_enum_variant_name(it.name, syntax_highlighting),
-						this(it.value, force_no_indent=True, force_complex_parenthesis=True),
+						this(
+							it.value,
+							force_no_indent=True,
+							force_complex_parenthesis=True,
+						),
 					)
 			else:
 				if _is_enum_auto(it.__class__):
-					return FMT_ENUM_VARIANT_AUTO[syntax_highlighting] % (it.__class__.__name__, _fmt_enum_variant_name(it.name, syntax_highlighting))
+					return FMT_ENUM_VARIANT_AUTO[syntax_highlighting] % (
+						it.__class__.__name__,
+						_fmt_enum_variant_name(it.name, syntax_highlighting),
+					)
 				return FMT_ENUM_VARIANT[syntax_highlighting] % (
 					it.__class__.__name__,
 					_fmt_enum_variant_name(it.name, syntax_highlighting),
@@ -683,7 +741,10 @@ if True:  # \/ # fmt & print iterable
 					dumped = _pydantic_hopefully_non_erroring_dumper(it)
 
 			if dumped:
-				return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, asterisks + this(dumped))
+				return FMT_CLASS[syntax_highlighting] % (
+					it.__class__.__name__,
+					asterisks + this(dumped, no_implicit_quoteless=True),
+				)
 			else:
 				return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, "")
 		if isinstance(it, dt.datetime | dt.date | dt.time):
@@ -753,8 +814,7 @@ if True:  # \/ # fmt & print iterable
 		_t = kwargs.get("_force_next_type") or type(it)
 
 		if _t is QuotelessString:
-			reprit = str_repr(it)
-			return f"{FMTC.STRING}{reprit[1:-1]}" if syntax_highlighting else (str_repr(it)[1:-1])
+			return str_repr(it, quoteless=True, syntax_highlighting=syntax_highlighting)
 		if _t is GayString:
 			return gay(it)
 		if _t is BrainfuckCode:
@@ -789,8 +849,7 @@ if True:  # \/ # fmt & print iterable
 		if _t is float:
 			return f"{FMTC.NUMBER}{str(it).replace('.', f'{FMTC.DECIMAL}.{FMTC.NUMBER}')}{FMTC._}" if syntax_highlighting else str(it)
 		if _t is str:
-			reprit = str_repr(it)
-			return f"{FMTC.QUOTES}{reprit[0]}{FMTC.STRING}{reprit[1:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}" if syntax_highlighting else str_repr(it)
+			return str_repr(it, syntax_highlighting=syntax_highlighting)
 		if _t is bytes:
 			reprit = repr(it)
 			return f"{FMTC.BYTESTR_B}{reprit[0]}{FMTC.QUOTES}{reprit[1]}{FMTC.STRING}{reprit[2:-1]}{FMTC.QUOTES}{reprit[-1]}{FMTC._}" if syntax_highlighting else repr(it)
@@ -850,22 +909,13 @@ if True:  # \/ # fmt & print iterable
 			itl, overflow = limited_iterable(it, item_limit)
 			if not able(len, it) or len(it) > 0:
 				if is_mapping:
-					inner = f"{comma}{enter or space}".join(
-						[
-							indent + (f"{k}{FMTC.COLON}:{FMTC._}{space}{v}" if syntax_highlighting else f"{k}:{space}{v}").replace(enter, f"{enter}{indent}")
-							for k, v in {this(key): this(value) for key, value in it.items()}.items()
-						]
-					) + (comma if trailing_commas else "")
+					inner = f"{comma}{enter or space}".join([indent + (f"{k}{FMTC.COLON}:{FMTC._}{space}{v}" if syntax_highlighting else f"{k}:{space}{v}").replace(enter, f"{enter}{indent}") for k, v in {this(key): this(value) for key, value in it.items()}.items()]) + (comma if trailing_commas else "")
 
 					return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[dict])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
 				else:
-					inner = f"{comma}{enter or space}".join(
-						[
-							indent + x.replace("\n", f"\n{indent}")
-							for x in [this(element) for element in itl]
-							+ ([] if not (overflow if not kwargs.get("_ov") else kwargs.get("_ov")) else [this(_OverflowClass(overflow if not kwargs.get("_ov") else kwargs.get("_ov")))])
-						]
-					) + (comma if (trailing_commas or ((not kwargs.get("_force_tuple_no_trailing_comma_on_single_element")) and _t is tuple and len(it) == 1)) else "")
+					inner = f"{comma}{enter or space}".join([indent + x.replace("\n", f"\n{indent}") for x in [this(element) for element in itl] + ([] if not (overflow if not kwargs.get("_ov") else kwargs.get("_ov")) else [this(_OverflowClass(overflow if not kwargs.get("_ov") else kwargs.get("_ov")))])]) + (
+						comma if (trailing_commas or ((not kwargs.get("_force_tuple_no_trailing_comma_on_single_element")) and _t is tuple and len(it) == 1)) else ""
+					)
 
 					return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
 			else:
@@ -887,26 +937,30 @@ if True:  # \/ # fmt & print iterable
 			elif parse_repr_args and not parse_repr_kwargs:
 				return FMT_UNKNOWN_NO_PARENS[syntax_highlighting] % (
 					parse_repr_name,
-					this(parse_repr_args, _force_tuple_no_trailing_comma_on_single_element=True),
+					this(
+						parse_repr_args,
+						_force_tuple_no_trailing_comma_on_single_element=True,
+						no_implicit_quoteless=True,
+					),
 				)
 			elif not parse_repr_args and parse_repr_kwargs:
 				return FMT_UNKNOWN_NO_PARENS[syntax_highlighting] % (
 					parse_repr_name,
-					FMT_BRACKETS[tuple][syntax_highlighting] % ((FMT_ASTERISK[syntax_highlighting] * 2) + this(parse_repr_kwargs)),
+					FMT_BRACKETS[tuple][syntax_highlighting] % ((FMT_ASTERISK[syntax_highlighting] * 2) + this(parse_repr_kwargs, no_implicit_quoteless=True)),
 				)
 			else:
 				return FMT_UNKNOWN_NO_PARENS[syntax_highlighting] % (
 					parse_repr_name,
-					FMT_BRACKETS[tuple][syntax_highlighting]
-					% (FMT_ASTERISK[syntax_highlighting] + this(parse_repr_args) + comma + space + (FMT_ASTERISK[syntax_highlighting] * 2) + this(parse_repr_kwargs)),
+					FMT_BRACKETS[tuple][syntax_highlighting] % (FMT_ASTERISK[syntax_highlighting] + this(parse_repr_args, no_implicit_quoteless=True) + comma + space + (FMT_ASTERISK[syntax_highlighting] * 2) + this(parse_repr_kwargs, no_implicit_quoteless=True)),
 				)
 
 			# If the repr looks like a instantiation Name(args, kw=args), etc. then parse it into a str(*tuple, **dict) nice looking, indentend thing.
-		except (ValueError, TypeError):  # parse repr failed or __repr__ returned a non-str value
+		except (
+			ValueError,
+			TypeError,
+		):  # parse repr failed or __repr__ returned a non-str value
 			return _fmt_unknown_highlighted(it, queue_name)
 			# If no hardcoded patterns match, return a str-repred version of whatever it is
-		else:
-			return this()
 
 	if not sys.gettrace():  # If debugger is not running, dont optimize since it is a hassle to get into the fmt_iterable func
 		globals()["fmt_iterable"] = _reset_return_wrapper(fmt_iterable)
@@ -961,7 +1015,7 @@ if True:  # \/ # fmt & print iterable
 			prefer_full_names: bool, whether or not to use the full names of objects if possible.
 			let_no_indent_max_iterables: int = 1, (advanced) override the limit for iterables for the let_no_indent feature
 			let_no_indent_max_non_iterables: int = 4, (advanced) override the limit for non-iterables for the let_no_indent feature
-			str_repr: Callable[[str], str] = double_quoted_repr, (advanced) override the default string repr callable
+			str_repr: Callable[[str], str] = json_dumps, (advanced) override the default string repr callable
 			prefer_pydantic_better_dump: bool = False, Will use the pydantic's custom dumper which prints the model name in more places, instead of leaving it only for the moment when pydantic SHITS ITS PANTS (raises random shitass errors). i have nothing more to say about this.
 
 		If no formatting is set for an object, it can be defined using the __tcr_display__(self, **kwargs) or __tcr_fmt__(self, *, fmt_iterable, **kwargs) methods.
@@ -994,7 +1048,16 @@ def alert(s: str, *, printhook: Callable[[str], None] = print, raw=False) -> Non
 
 def gay(text: str, offset: int = 0) -> str:
 	"""Turn a string gay. Happy pride :3"""  # noqa: D400
-	colors = [Fore.RED, Fore.orange_1, Fore.YELLOW, Fore.GREEN, Fore.MAGENTA, Fore.BLUE, Fore.purple_1b, Fore.purple_4b]
+	colors = [
+		Fore.RED,
+		Fore.orange_1,
+		Fore.YELLOW,
+		Fore.GREEN,
+		Fore.MAGENTA,
+		Fore.BLUE,
+		Fore.purple_1b,
+		Fore.purple_4b,
+	]
 
 	if text != "tcrutils":
 		colors.pop()

@@ -18,7 +18,6 @@ if True:  # \/ # Imports
 	import arc
 	import hikari
 	import miru
-
 	import tcrutils as tcr
 	from tcrutils import ass, c, console, rass
 	from tcrutils.src.tcr_constants import *
@@ -26,7 +25,10 @@ if True:  # \/ # Imports
 
 # _rich_traceback_install(width=tcr.terminal.width-1)
 if not sys.gettrace():
-	c(sorted(_ := list(filter(lambda x: not x.startswith("_"), globals().copy()))), len(_))
+	c(
+		sorted(_ := list(filter(lambda x: not x.startswith("_"), globals().copy()))),
+		len(_),
+	)
 	del _
 	c.log(f"Running on Python %s.%s" % sys.version_info[:2])
 
@@ -36,13 +38,21 @@ ACL: arc.GatewayClient | None = None
 MCL: miru.Client | None = None
 
 
-def spin_up_bot(*, bot_kwargs: dict[str, Any] = {}, acl_kwargs: dict[str, Any] = {}) -> None:  # noqa: B006
+def spin_up_bot(
+	*,
+	bot_kwargs: dict[str, Any] = {},  # noqa: B006
+	acl_kwargs: dict[str, Any] = {},  # noqa: B006
+) -> None:
 	global BOT
 	global ACL
 	global MCL
 	if BOT is not None:
 		return  # Already spun up
-	BOT = hikari.GatewayBot(token=tcr.get_token("TESTBOT_TOKEN.txt"), intents=hikari.Intents.ALL, **bot_kwargs)
+	BOT = hikari.GatewayBot(
+		token=tcr.get_token("TESTBOT_TOKEN.txt"),
+		intents=hikari.Intents.ALL,
+		**bot_kwargs,
+	)
 	ACL = arc.GatewayClient(BOT, **acl_kwargs)
 	MCL = miru.Client(BOT)
 
@@ -81,7 +91,12 @@ if True:  # \/ # Tests
 
 		result = merge_dicts(master, slave, recursive=True, strict=True)
 		result2 = merge_dicts({}, {}, recursive=True, strict=True)
-		result3 = merge_dicts({"first_seen": 10}, {"first_seen": 5, "data": 1}, {"first_seen": None, "data": "owo", "test": "hihi"}, strict=True)
+		result3 = merge_dicts(
+			{"first_seen": 10},
+			{"first_seen": 5, "data": 1},
+			{"first_seen": None, "data": "owo", "test": "hihi"},
+			strict=True,
+		)
 		console(result)
 		print()
 		console(result2)
@@ -130,7 +145,17 @@ if True:  # \/ # Tests
 		tcr.breakpoint(printhook=print)
 
 	def test_getch():
-		print(tcr.getch())
+		c(tcr.KeyCodeCompound.vars())
+
+		while 1:
+			print("getchs() >>> ", end="", flush=True)
+			ch = tcr.getchs()
+
+			print(end="\r")
+			c("getchs() ->", ch, ch.__len__())
+
+			if ch == tcr.getchs.CTRL_C:
+				break
 
 	def test_trei():
 		from tcrutils import trei
@@ -150,7 +175,10 @@ if True:  # \/ # Tests
 	def test_iterable(*, batched_=True, cut_at_=True):
 		if batched_:
 			console(tcr.batched("1234567890", n=3), print_iterable_=False)
-			console(tcr.batched("1234567890", n=3, back_to_front=True), print_iterable_=False)
+			console(
+				tcr.batched("1234567890", n=3, back_to_front=True),
+				print_iterable_=False,
+			)
 			console(tcr.batched("", n=3), print_iterable_=False)
 			console(tcr.batched("", n=3) or [[]], print_iterable_=False)
 		if cut_at_:
@@ -161,10 +189,41 @@ if True:  # \/ # Tests
 			console(repr(tcr.cut_at("uwuwuwuuwuwu", n=1)))
 			console(repr(tcr.cut_at("uwuwuwuuwuwu", n=0)))
 			console(repr(tcr.cut_at("uwuwuwuuwuwu", n=-1)))
-			console(((a := tcr.cut_at("http://te.st.com.chudj/asdf", n=16, filter_links=r"[\3]")), len(a)), print_iterable_=False)
-			console(((a := tcr.cut_at("http://te.st/asdf", n=16, filter_links=False)), len(a)), print_iterable_=False)
-			console(((a := tcr.cut_at("uwuwuwuuwuwuieiei", n=16, filter_links=r"[\3]")), len(a)), print_iterable_=False)
-			console(((a := tcr.cut_at("http://te.st.com.chudj/asgsdfgsdfgdf", n=300, filter_links=r"[\3]", shrink_links_visually_if_fits=True)), len(a)), print_iterable_=False)
+			console(
+				(
+					(a := tcr.cut_at("http://te.st.com.chudj/asdf", n=16, filter_links=r"[\3]")),
+					len(a),
+				),
+				print_iterable_=False,
+			)
+			console(
+				(
+					(a := tcr.cut_at("http://te.st/asdf", n=16, filter_links=False)),
+					len(a),
+				),
+				print_iterable_=False,
+			)
+			console(
+				(
+					(a := tcr.cut_at("uwuwuwuuwuwuieiei", n=16, filter_links=r"[\3]")),
+					len(a),
+				),
+				print_iterable_=False,
+			)
+			console(
+				(
+					(
+						a := tcr.cut_at(
+							"http://te.st.com.chudj/asgsdfgsdfgdf",
+							n=300,
+							filter_links=r"[\3]",
+							shrink_links_visually_if_fits=True,
+						)
+					),
+					len(a),
+				),
+				print_iterable_=False,
+			)
 
 	def test_path():
 		console(tcr.path.newdir("owo"))
@@ -227,7 +286,11 @@ if True:  # \/ # Tests
 		π([])
 		π({1, 2})
 		π("asdf")
-		π([3, 4, 5, range(105)], item_limit=5, **{x: y for x, y in kwargs.items() if x != "item_limit"})
+		π(
+			[3, 4, 5, range(105)],
+			item_limit=5,
+			**{x: y for x, y in kwargs.items() if x != "item_limit"},
+		)
 
 		def a():
 			while True:
@@ -614,6 +677,15 @@ if True:  # \/ # Tests
 		π(ListResult)
 		π(res1)
 		π(res2)
+		print()
+		π("\x011")
+		π("\x01a")
+		π("\x001")
+		π("\x00a")
+		print()
+		π('"\U00042346')
+		π('"\U00012345')
+		π("'\"nya")
 
 	def test_markdown():
 		from tcrutils import codeblock, uncodeblock
@@ -1120,7 +1192,10 @@ if True:  # \/ # Tests
 
 		ass.error_func = lambda *_, **__: ...
 
-		ass(await EXECUTE("owo {add|1|{add|2|2}} asdfasdfgsdfg {uwu} {nyaaa}"), expr="bool(a) == b")
+		ass(
+			await EXECUTE("owo {add|1|{add|2|2}} asdfasdfgsdfg {uwu} {nyaaa}"),
+			expr="bool(a) == b",
+		)
 		# This shall forever stay executed to signify a potential fuckup in the nested placeholder capabilities
 
 		if __TEXT := True:
@@ -1469,13 +1544,22 @@ ID: {server|id}
 		console(tstr.to_datetime("23:59:59").strftime(STRFTIME_FORMAT_SPECIFIER))
 		console("1.", tstr.to_datetime("1.").strftime(STRFTIME_FORMAT_SPECIFIER))
 		console("28.", tstr.to_datetime("28.").strftime(STRFTIME_FORMAT_SPECIFIER))
-		console(f"{now1.day}.", tstr.to_datetime(f"{now1.day}.").strftime(STRFTIME_FORMAT_SPECIFIER))
+		console(
+			f"{now1.day}.",
+			tstr.to_datetime(f"{now1.day}.").strftime(STRFTIME_FORMAT_SPECIFIER),
+		)
 		console("1.!::", tstr.to_datetime("1.!::").strftime(STRFTIME_FORMAT_SPECIFIER))
 		console("28.!::", tstr.to_datetime("28.!::").strftime(STRFTIME_FORMAT_SPECIFIER))
-		console(f"{now1.day}.!::", tstr.to_datetime(f"{now1.day}.!::").strftime(STRFTIME_FORMAT_SPECIFIER))
+		console(
+			f"{now1.day}.!::",
+			tstr.to_datetime(f"{now1.day}.!::").strftime(STRFTIME_FORMAT_SPECIFIER),
+		)
 		console("1.!14::", tstr.to_datetime("1.!14::").strftime(STRFTIME_FORMAT_SPECIFIER))
 		console("28.!14::", tstr.to_datetime("28.!14::").strftime(STRFTIME_FORMAT_SPECIFIER))
-		console(f"{now1.day}.!14::", tstr.to_datetime(f"{now1.day}.!14::").strftime(STRFTIME_FORMAT_SPECIFIER))
+		console(
+			f"{now1.day}.!14::",
+			tstr.to_datetime(f"{now1.day}.!14::").strftime(STRFTIME_FORMAT_SPECIFIER),
+		)
 		console(f"wed!:", tstr.to_datetime(f"wed!:").strftime(STRFTIME_FORMAT_SPECIFIER))
 		print()
 		console(tstr.to_str(60))
@@ -1590,7 +1674,13 @@ ID: {server|id}
 		# c(a1 is a2 and a2 is a3)
 		# c(a1._cache)
 
-		class TestCIM_DB(tcr.ShelveDB, metaclass=tcr.CachedInstancesMeta, max_instances=2, max_time=2, restore_method="restore"):
+		class TestCIM_DB(
+			tcr.ShelveDB,
+			metaclass=tcr.CachedInstancesMeta,
+			max_instances=2,
+			max_time=2,
+			restore_method="restore",
+		):
 			directory = str((p.Path(__file__).parent / "test_db").absolute())
 
 		db = TestCIM_DB("tedddst145345")
@@ -1644,7 +1734,10 @@ ID: {server|id}
 	def test_is_snowflake():
 		ass(tcr.discord.is_snowflake(0b1111111111111111111111111111111111111111111111111111111111111111))
 		ass(tcr.discord.is_snowflake(0b1111111111111111111111111111111111111111111111111111111111111110))
-		ass(tcr.discord.is_snowflake(0b1111111111111111111111111111111111111111111111111111111111111111 + 1), False)
+		ass(
+			tcr.discord.is_snowflake(0b1111111111111111111111111111111111111111111111111111111111111111 + 1),
+			False,
+		)
 		ass(tcr.discord.is_snowflake(0))
 		ass(tcr.discord.is_snowflake(-1), False)
 
@@ -1696,7 +1789,6 @@ ID: {server|id}
 
 	def test_fucking_pydantic_model_dump_my_ass():
 		from pydantic import BaseModel
-
 		from tcrutils import c
 
 		class I(BaseModel):
@@ -1765,7 +1857,11 @@ ID: {server|id}
 		res2 = f(1, 0)
 
 		ass(res1, tcr.Result.new_ok(0.5), expr=ass.EXPR_EQ_BY_FMT)
-		ass(res2, tcr.Result.new_err(ZeroDivisionError("division by zero")), expr=ass.EXPR_EQ_BY_FMT)
+		ass(
+			res2,
+			tcr.Result.new_err(ZeroDivisionError("division by zero")),
+			expr=ass.EXPR_EQ_BY_FMT,
+		)
 		ass(res1.is_ok, True)
 		ass(res1.is_err, False)
 		ass(res1.unwrap(), 0.5)
@@ -1774,12 +1870,67 @@ ID: {server|id}
 		ass(res1.unwrap_or("idk"), 0.5)
 		ass(res2.unwrap_or("sex"), "sex")  # 💀
 		ass(res1.unwrap_or_else(lambda _: "idk"), 0.5)
-		ass(res2.unwrap_or_else(lambda _: "Or else... i'll fuck you up, bitch!"), "Or else... i'll fuck you up, bitch!")  # 💀💀💀
+		ass(
+			res2.unwrap_or_else(lambda _: "Or else... i'll fuck you up, bitch!"),
+			"Or else... i'll fuck you up, bitch!",
+		)  # 💀💀💀
 		ass(res1.unwrap_err_or("secks"), "secks")
-		ass(res2.unwrap_err_or("secks"), ZeroDivisionError("division by zero"), expr=ass.EXPR_EQ_BY_FMT)
+		ass(
+			res2.unwrap_err_or("secks"),
+			ZeroDivisionError("division by zero"),
+			expr=ass.EXPR_EQ_BY_FMT,
+		)
 		ass(res1.unwrap_err_or_else(lambda _: "huj"), "huj")
-		ass(res2.unwrap_err_or_else(lambda _: "huj"), ZeroDivisionError("division by zero"), expr=ass.EXPR_EQ_BY_FMT)
+		ass(
+			res2.unwrap_err_or_else(lambda _: "huj"),
+			ZeroDivisionError("division by zero"),
+			expr=ass.EXPR_EQ_BY_FMT,
+		)
 		ass.total()
+
+	def test_repl():
+		from tcrutils.repl import node
+
+		class Repl(tcr.repl.Repl):
+			def printhook(self, last_char: str | None, *submitted_nodes: node.Node):
+				trailing_unknown, prompt = self.printhook_prompt(last_char, *submitted_nodes)
+
+				body = "".join(x.display() for x in submitted_nodes)
+
+				cursor = "_" if submitted_nodes and submitted_nodes[-1].text and submitted_nodes[-1].text[-1] in " \t" else ""
+
+				print(tcr.FMTC._ + tcr.terminal.width * " " + "\r" + f"{prompt} {body}{tcr.FMTC._}{cursor}", end="\r")
+
+		repl = Repl(
+			node.KeywordNode(
+				"new",
+				node.WordBreakNode(
+					"wordbreak",
+					node.EllipsisNode(
+						"...",
+						"new/.*",
+						".*",
+					),
+					node.SignedIntNode("int"),
+					node.SignedFloatNode("float"),
+					node.DoublequoteStrNode("dqstr"),
+					node.SinglequoteStrNode("sqstr"),
+					node.PwshVariableNode("pwshvariable"),
+					node.PyIdentifierNode("pyidentifier"),
+				),
+			),
+			node.AliasKeywordNode(
+				"n -> new",
+				"new/.*",
+			),
+		)
+
+		c(repl.nodes)
+
+		while 1:
+			submitted_nodes = repl()
+
+			c(submitted_nodes)
 
 
 if True:  # \/ # Test setup
@@ -1799,22 +1950,21 @@ if True:  # \/ # Test setup
 			globals()[k] = tcr.test(_count_tests_decorator(v))
 
 if __name__ == "__main__":
-	test_print_iterable(
-		π=tcr.print_iterable,
-		_raise_errors=True,
-		syntax_highlighting=1,
-		# let_no_indent=0,
-		# force_no_indent=1,
-		# force_no_spaces=0,
-		# force_complex_parenthesis=1,
-		# item_limit=10,
-		# # let_no_indent_max_non_iterables=10,
-		# # let_no_indent_max_iterables=10,
-		# prefer_full_names=1,
-		# force_union_parenthesis=1,
-		# depth_limit=3,
-		# str_repr=repr,
-	)
+	# test_print_iterable(
+	# 	_raise_errors=True,
+	# 	syntax_highlighting=1,
+	# 	# let_no_indent=0,
+	# 	# force_no_indent=1,
+	# 	# force_no_spaces=0,
+	# 	# force_complex_parenthesis=1,
+	# 	# item_limit=10,
+	# 	# # let_no_indent_max_non_iterables=10,
+	# 	# # let_no_indent_max_iterables=10,
+	# 	# prefer_full_names=1,
+	# 	# force_union_parenthesis=1,
+	# 	# depth_limit=3,
+	# 	# str_repr=repr,
+	# )
 
 	# test_timestr()
 	# test_dict_merge()
@@ -1823,7 +1973,6 @@ if __name__ == "__main__":
 	# test_timeit()
 	# test_autorun()
 	# test_breakpoint()
-	# test_getch()
 	# test_trei()
 	# test_asert()
 	# test_iterable(batched_=True, cut_at_=False)
@@ -1908,7 +2057,9 @@ if __name__ == "__main__":
 	# test_console_with_header()
 	# test_echo()
 	# test_console_with_eval()
-	test_result()
+	# test_result()
+	# test_getch()
+	test_repl()
 
 	if not sys.gettrace():
 		ass.total(prefix="\n")
