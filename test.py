@@ -43,9 +43,7 @@ def spin_up_bot(
 	bot_kwargs: dict[str, Any] = {},  # noqa: B006
 	acl_kwargs: dict[str, Any] = {},  # noqa: B006
 ) -> None:
-	global BOT
-	global ACL
-	global MCL
+	global BOT, ACL, MCL
 	if BOT is not None:
 		return  # Already spun up
 	BOT = hikari.GatewayBot(
@@ -390,14 +388,12 @@ if True:  # \/ # Tests
 
 		import hikari
 
-		π(
-			(
-				hikari.Status.ONLINE,
-				hikari.Status.IDLE,
-				hikari.Status.DO_NOT_DISTURB,
-				hikari.Status.OFFLINE,
-			)
-		)
+		π((
+			hikari.Status.ONLINE,
+			hikari.Status.IDLE,
+			hikari.Status.DO_NOT_DISTURB,
+			hikari.Status.OFFLINE,
+		))
 
 		class PrintableObj2:
 			value: int = -1
@@ -432,46 +428,34 @@ if True:  # \/ # Tests
 		π(str)
 		π([[[[[[[[[[[[]]]]]]]]]]]], let_no_indent=False)
 		π([tcr.types.QuotelessString("quoteless string")] * 3)
-		π(
-			{
-				"a": [
-					"nya",
-					"owo",
-					"uwu",
-					{
-						"12": 34,
-						"56": 78,
-					},
-					[10, 20, 30],
-				]
-			}
-		)
-		π(
-			{
-				"b": [],
-			}
-		)
-		π(
-			{
-				"b": 2,
-			}
-		)
-		π(
-			{
-				"b": 2,
-				"d": 4,
-			}
-		)
-		π(
-			{
-				"b": None,
-			}
-		)
-		π(
-			{
-				"b": Null,
-			}
-		)
+		π({
+			"a": [
+				"nya",
+				"owo",
+				"uwu",
+				{
+					"12": 34,
+					"56": 78,
+				},
+				[10, 20, 30],
+			]
+		})
+		π({
+			"b": [],
+		})
+		π({
+			"b": 2,
+		})
+		π({
+			"b": 2,
+			"d": 4,
+		})
+		π({
+			"b": None,
+		})
+		π({
+			"b": Null,
+		})
 
 		datetime = dt.datetime.now()
 		π(datetime)
@@ -1037,13 +1021,11 @@ if True:  # \/ # Tests
 		console.critical("test")
 
 	def test_dunder_version():
-		console(
-			{
-				"__version__": tcr.__version__,
-				"__name__": tcr.__name__,
-				"__file__": tcr.__file__,
-			}
-		)
+		console({
+			"__version__": tcr.__version__,
+			"__name__": tcr.__name__,
+			"__file__": tcr.__file__,
+		})
 
 	def test_dotdicts():
 		from tcrutils import Undefined
@@ -1891,9 +1873,19 @@ ID: {server|id}
 	def test_repl():
 		from tcrutils.repl import node
 
+		class QuitNode(node._RegexNodeBase[str], pattern=r"^(quit|q|exit)(.*)$"):
+			def display(self):
+				return f"{tcr.FMTC.COLON}{super().display()}{tcr.FMTC._}"
+
+		from typing import Never
+
+		class UnreachableNode(node.Node[Never]):
+			def match(self, s):
+				return None
+
 		class Repl(tcr.repl.Repl):
 			def printhook(self, last_char: str | None, *submitted_nodes: node.Node):
-				trailing_unknown, prompt = self.printhook_prompt(last_char, *submitted_nodes)
+				trailing_unknown, prompt = self.printhook_prompt(last_char, *submitted_nodes)  # noqa: F841
 
 				body = "".join(x.display() for x in submitted_nodes)
 
@@ -1902,33 +1894,44 @@ ID: {server|id}
 				print(tcr.FMTC._ + tcr.terminal.width * " " + "\r" + f"{prompt} {body}{tcr.FMTC._}{cursor}", end="\r")
 
 		repl = Repl(
+			UnreachableNode(
+				"junc1",
+				node.WordBreakNode(
+					"junc1-wordbreak",
+					node.KeywordNode(
+						"then",
+						"new/.*",
+					),
+				),
+			),
 			node.KeywordNode(
 				"new",
 				node.WordBreakNode(
 					"wordbreak",
-					node.EllipsisNode(
-						"...",
-						"new/.*",
-						".*",
-					),
-					node.SignedIntNode("int"),
-					node.SignedFloatNode("float"),
-					node.DoublequoteStrNode("dqstr"),
-					node.SinglequoteStrNode("sqstr"),
-					node.PwshVariableNode("pwshvariable"),
-					node.PyIdentifierNode("pyidentifier"),
+					node.EllipsisNode("...", "junc1/.*"),
+					node.SignedIntNode("int", "junc1/.*"),
+					node.SignedFloatNode("float", "junc1/.*"),
+					node.DoublequoteStrNode("dqstr", "junc1/.*"),
+					node.SinglequoteStrNode("sqstr", "junc1/.*"),
+					node.PwshVariableNode("pwshvariable", "junc1/.*"),
+					node.PyIdentifierNode("pyidentifier", "junc1/.*"),
 				),
 			),
 			node.AliasKeywordNode(
 				"n -> new",
 				"new/.*",
 			),
+			QuitNode("quit"),
 		)
 
 		c(repl.nodes)
 
 		while 1:
 			submitted_nodes = repl()
+
+			match submitted_nodes[0]:
+				case QuitNode():
+					exit(0)
 
 			c(submitted_nodes)
 

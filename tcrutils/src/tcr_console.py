@@ -289,7 +289,7 @@ def start_eval_session(f_backs: int = 1) -> None:
 					elif a.strip().lower() == "globals":
 						console(_clean_built_in_methods(clean_dunder_dict(desired_globals)))
 					elif a.strip().lower() == "code":
-						lines, start_line = inspect.findsource(current_frame)
+						lines, _ = inspect.findsource(current_frame)
 						lineno = current_frame.f_lineno
 
 						AROUND = 2

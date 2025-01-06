@@ -133,7 +133,7 @@ def print_block(
 
 	text = str(text)
 
-	if not allow_invalid_config and margin < 0 or border < 0 or padding < 0:
+	if (not allow_invalid_config and margin < 0) or border < 0 or padding < 0:
 		msg = f"Invalid margin, border and/or padding(s) configuration {(margin, border, padding, padding_top, padding_bottom)!r}. Override this by passing in allow_invalid_config=True"
 		raise ValueError(msg)
 

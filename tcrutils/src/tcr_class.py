@@ -100,7 +100,7 @@ def hasattribute(obj: object, name: str) -> bool:
 
 
 class DefaultsGetSetItem(dict):
-	def __getitem__(self, __key: Any) -> Any:
+	def __getitem__(self, __key: Any, /) -> Any:
 		try:
 			return super().__getitem__(__key)
 		except KeyError:
@@ -113,7 +113,7 @@ class DefaultsGetSetItem(dict):
 
 
 class DefaultsGetItem(dict):
-	def __getitem__(self, __key: Any) -> Any:
+	def __getitem__(self, __key: Any, /) -> Any:
 		try:
 			return super().__getitem__(__key)
 		except KeyError:
@@ -124,7 +124,7 @@ class DefaultsGetItem(dict):
 
 
 class DefaultsGetSetAttr:
-	def __getattr__(self, __name: str) -> Any:
+	def __getattr__(self, __name: str, /) -> Any:
 		try:
 			return getattr(super(), __name)
 		except AttributeError as e:
@@ -137,7 +137,7 @@ class DefaultsGetSetAttr:
 
 
 class DefaultsGetAttr:
-	def __getattr__(self, __name: str) -> Any:
+	def __getattr__(self, __name: str, /) -> Any:
 		try:
 			return getattr(super(), __name)
 		except AttributeError as e:
@@ -172,7 +172,7 @@ class CachedInstancesMeta(type):
 		cls._remove_old_instances()
 
 		if key in cls._cache:
-			instance, timestamp = cls._cache.pop(key)
+			instance, _ = cls._cache.pop(key)
 			cls._cache[key] = (instance, time.time())
 
 			if instance._restore_method is not None:

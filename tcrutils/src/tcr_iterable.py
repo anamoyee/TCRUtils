@@ -43,22 +43,22 @@ def cut_at(
 ) -> str:
 	"""### Return a cut off part of the provided `it` iterable.
 
-  with the `end` added at the end such that the return value is exactly `n` in length.\\
-  Mainly strings but also supports other iterables\\
-  Set `end` to `''`/`[]` to disable it.\\
+	with the `end` added at the end such that the return value is exactly `n` in length.\\
+	Mainly strings but also supports other iterables\\
+	Set `end` to `''`/`[]` to disable it.\\
 
-  Use `filter_links` to shorten links to this string, only applicable if the iterable provided is a string and if the iterable exceeded `n`, else nothing will be affected
-  - `$1` - Entire link
-  - `$2` - http/https (will keep the 's' if present, that's its point)
-  - `$3` - any `subdomains.` (if present), `.domains.` or `.tld`s
-  - `$4` - `.domain` (second to last (possibly after . and) before the last .)
-  - `$5` - `.tld` (in between the last . and / or end of match)
-  - `$6` - part of the link after `/` (not including it, may be '')
+	Use `filter_links` to shorten links to this string, only applicable if the iterable provided is a string and if the iterable exceeded `n`, else nothing will be affected
+	- `$1` - Entire link
+	- `$2` - http/https (will keep the 's' if present, that's its point)
+	- `$3` - any `subdomains.` (if present), `.domains.` or `.tld`s
+	- `$4` - `.domain` (second to last (possibly after . and) before the last .)
+	- `$5` - `.tld` (in between the last . and / or end of match)
+	- `$6` - part of the link after `/` (not including it, may be '')
 
-  https://regex101.com/r/46LZtS/1
+	https://regex101.com/r/46LZtS/1
 
-  `shrink_links_visually_if_fits` replaces links with their markdown counterparts where the visible text is http(s):/subdomain.domain.tld/ (no further part of the links is visible, but the entire link is contained)
-  """
+	`shrink_links_visually_if_fits` replaces links with their markdown counterparts where the visible text is http(s):/subdomain.domain.tld/ (no further part of the links is visible, but the entire link is contained)
+	"""
 	if len(it) <= n:
 		if shrink_links_visually_if_fits and len(a := regex.sub(RegexPreset.URL, r"[\2:/\3/](<\1>)", it)) <= n:  # :/ instead of :// because discord bruh
 			return a
@@ -212,9 +212,9 @@ def getattr_queue(
 def Or(arg: T, *args: Ts, none: Any = None) -> T | Ts:
 	"""### Returns the first element of the tuple (arg, *args) that does not equal the supplied (`none`) variable, by default None.
 
-  This is different from or chaining because this does not check for truthy values but rather non-none values.\\
-  Keep in mind, the passed in none may be unrelateed to built-in None however that is its default.
-  """
+	This is different from or chaining because this does not check for truthy values but rather non-none values.\\
+	Keep in mind, the passed in none may be unrelateed to built-in None however that is its default.
+	"""
 	args = (arg, *args)
 
 	for a in args:

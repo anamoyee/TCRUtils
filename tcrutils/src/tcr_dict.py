@@ -33,10 +33,10 @@ def dict_zip(dict1: Mapping, *dicts: Mapping) -> Generator[tuple[Hashable, Any],
 def merge_dicts(master: Mapping = None, slave: Mapping = None, *dicts: Mapping, recursive=True, strict=False) -> dict:
 	"""Merge dictionaries, made to prioritize the `master` dictionary and if key is not found there, then it takes from the `slave` dictionary.
 
-  Optionally if `recursive=True`, then if the same key is a dict in both master and slave, merge dicts operation is performed on both of them.\\
-  Optionally if `strict=True` it raises `ValueError` if there exists a key that is in master dictionary but not in slave dictionary.\\
-  If there are more than 2 arguments passed in the list is reduced from back to front until two elements are left by the process of merge_dicts(master=list[-2], slave=list[-1])
-  """
+	Optionally if `recursive=True`, then if the same key is a dict in both master and slave, merge dicts operation is performed on both of them.\\
+	Optionally if `strict=True` it raises `ValueError` if there exists a key that is in master dictionary but not in slave dictionary.\\
+	If there are more than 2 arguments passed in the list is reduced from back to front until two elements are left by the process of merge_dicts(master=list[-2], slave=list[-1])
+	"""
 	merged = {}
 
 	if master is None:
@@ -160,7 +160,7 @@ class JSDict(dict):
 		except KeyError:
 			return Undefined
 
-	def __delitem__(self, __key: Any) -> None:
+	def __delitem__(self, __key: Any, /) -> None:
 		with contextlib.suppress(KeyError):
 			return super().__delitem__(__key)
 

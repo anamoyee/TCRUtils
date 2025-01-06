@@ -99,11 +99,11 @@ class ShelveDB(dict):
 		self.alnum_id = str(alnum_id)
 		alnum_dirpath = self.__directory / self.alnum_id
 		alnum_dirpath.mkdir(exist_ok=True)
-		self.s = shelve.open(alnum_dirpath / self.alnum_id)
+		self.s = shelve.open(alnum_dirpath / self.alnum_id)  # noqa: SIM115
 
 		super().__init__(self.s)
 
-	def __getitem__(self, __key: Any) -> Any:
+	def __getitem__(self, __key: Any, /) -> Any:
 		try:
 			return super().__getitem__(__key)
 		except KeyError:
@@ -114,12 +114,12 @@ class ShelveDB(dict):
 			else:
 				raise
 
-	def __setitem__(self, __key: Any, __value: Any) -> None:
+	def __setitem__(self, __key: Any, __value: Any, /) -> None:
 		self.s[__key] = __value
 		self.s.sync()
 		return super().__setitem__(__key, __value)
 
-	def __delitem__(self, __key: Any) -> None:
+	def __delitem__(self, __key: Any, /) -> None:
 		del self.s[__key]
 		self.s.sync()
 		return super().__delitem__(__key)

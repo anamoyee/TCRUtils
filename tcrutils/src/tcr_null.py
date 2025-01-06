@@ -26,10 +26,10 @@ class _NullLike:
 	def __bool__(self):
 		return False
 
-	def __or__(self, __value: T) -> T:
+	def __or__(self, __value: T, /) -> T:
 		return __value
 
-	def __ror__(self, __value: T) -> T:
+	def __ror__(self, __value: T, /) -> T:
 		return __value
 
 

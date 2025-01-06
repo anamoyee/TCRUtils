@@ -155,7 +155,7 @@ class Repl:
 		return (fucked, f"{chr1}{chr2}{chr3}")
 
 	def printhook(self, last_char: str | None, *submitted_nodes: Node) -> None:
-		print(f"{(terminal.width * " ")}\r{self.printhook_prompt(last_char, *submitted_nodes)[1]} {''.join(x.__str__() for x in submitted_nodes)}", end="\r")
+		print(f"{(terminal.width * ' ')}\r{self.printhook_prompt(last_char, *submitted_nodes)[1]} {''.join(x.__str__() for x in submitted_nodes)}", end="\r")
 
 	hide_cursor: bool = True
 	valid_chars = string.ascii_letters + string.punctuation + string.digits + " \t" + "ąłćżźśćó"
@@ -183,6 +183,9 @@ class Repl:
 
 				if ch == getchs.ENTER:
 					pass
+				elif ch == getchs.BACKSPACE:
+					if self.chs:
+						self.chs.pop()
 				elif ch == getchs.CTRL_BACKSPACE:
 					if self.chs:
 						while self.chs and self.chs[-1] in " \t":
@@ -191,10 +194,6 @@ class Repl:
 							self.chs.pop()
 						while self.chs and self.chs[-1] in " \t":
 							self.chs.pop()
-				elif ch == getchs.BACKSPACE:
-					if self.chs:
-						self.chs.pop()
-
 				elif ch in (getchs.UP, getchs.DOWN, getchs.LEFT, getchs.RIGHT):
 					ch = self.on_arrow(ch)
 				elif getchs.is_simple_ctrl(ch):

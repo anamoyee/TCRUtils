@@ -11,11 +11,13 @@ FAKE_PIPE  = '¦'
 
 # fmt: off
 __all__ = [
+  "APOSTROPHE",
   "BACKSLASH",
-  "NEWLINE",
-  "CARR_RET",
   "BACKSPACE",
-  "BACKTICK", "BACKTICKS",
-  "APOSTROPHE", "QUOTE",
+  "BACKTICK",
+  "BACKTICKS",
+  "CARR_RET",
   "FAKE_PIPE",
+  "NEWLINE",
+  "QUOTE",
 ]

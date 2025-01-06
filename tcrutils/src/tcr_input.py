@@ -27,7 +27,7 @@ def insist(
 	if validator(result):
 		return result
 	while True:
-		result = (func2 if func2 else func)()
+		result = (func2 or func)()
 		if not validator(result):
 			continue
 

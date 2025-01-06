@@ -239,4 +239,4 @@ class Overload(metaclass=OverloadMeta):
 	"""
 
 
-__all__ = ["overload", "Overload", "OverloadMeta", "NoMatchingOverloadError"]
+__all__ = ["NoMatchingOverloadError", "Overload", "OverloadMeta", "overload"]

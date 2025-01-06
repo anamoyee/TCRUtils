@@ -52,11 +52,11 @@ class Node(Generic[T]):
 		return f"{self.text}"
 
 
-class DisposableNode(Generic[T], Node[T]):
+class DisposableNode(Node[T], Generic[T]):
 	"""Marked to be skipped when using the data, but not when displaying, for example you dont care about the mandatory space between keywords and identifiers but you still want to display it to the user."""
 
 
-class ConvertableNode(Generic[T], Node[T]):
+class ConvertableNode(Node[T], Generic[T]):
 	"""Marked to be converted into another node with the convert method, after being displayed, before being returned to data processing."""
 
 	@abc.abstractmethod
@@ -123,7 +123,7 @@ class UnknownNode(Node[str]):
 		return f"{colored.Style.UNDERLINE + colored.Fore.RED}{super().display()}{FMTC._}"
 
 
-class _RegexNodeBase(Generic[T], Node[T]):
+class _RegexNodeBase(Node[T], Generic[T]):
 	pattern: str
 
 	def __init_subclass__(cls, pattern):
