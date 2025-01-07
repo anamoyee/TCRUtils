@@ -547,7 +547,7 @@ if True:  # \/ # fmt & print iterable
 			# And they have any length:
 			and len(it) > 0
 			# And none of the items inside have a __tcr_fmt__ because reasons
-			and not any(hasattr(x, '__tcr_fmt__') for x in it)
+			and not any(hasattr(x, "__tcr_fmt__") for x in it)
 		):
 			if is_mapping:
 				if len(it) == 1:
@@ -612,6 +612,19 @@ if True:  # \/ # fmt & print iterable
 
 		this = partial(fmt_iterable, **thisdict)
 		str_repr = partial(str_repr, no_implicit_quoteless=kwargs.get("no_implicit_quoteless"))
+
+		if hasattr(it, "__tcr_rainbow__") and it.__tcr_rainbow__:
+			if isinstance(it.__tcr_rainbow__, str):
+				return gay(it.__tcr_rainbow__)
+
+			_tcr_rainbow_queue_name = getattr_queue(
+				it,
+				name,
+				"__name__",
+				"__class__.__name__",
+				default="__unknown_object__",
+			)
+			return gay(_tcr_rainbow_queue_name)
 
 		queue_name = getattr_queue(
 			type(it),
