@@ -682,6 +682,7 @@ if True:  # \/ # Tests
 		π(Rainbow2)
 		π(Rainbow())
 		π(Rainbow2())
+		π(tcr)
 		print()
 
 	def test_markdown():

