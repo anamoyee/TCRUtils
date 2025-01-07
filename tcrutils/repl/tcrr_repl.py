@@ -6,98 +6,6 @@ from ..src.tcr_terminal import terminal
 from .tcrr_nodes import *
 from .tcrr_parser import parse_and_submit_nodes
 
-if False:
-	pass  # old impl
-
-	# root_nodes = (
-	# 	KeywordNode(
-	# 		"new",
-	# 		WordBreakNode(
-	# 			"wordbreak",
-	# 			EllipsisNode(
-	# 				"...",
-	# 				".*",
-	# 				".*/.*",
-	# 			),
-	# 			SignedIntNode("int"),
-	# 			SignedFloatNode("float"),
-	# 			DoublequoteStrNode("dqstr"),
-	# 			SinglequoteStrNode("sqstr"),
-	# 			PyIdentifierNode("identifier"),
-	# 		),
-	# 	),
-	# 	AliasKeywordNode(
-	# 		{"n": "new"},
-	# 		"new/.*",
-	# 	),
-	# 	# KeywordNode(
-	# 	# 	"robo",
-	# 	# 	RoboStrNode("robostr"),
-	# 	# ),
-	# 	# AliasKeywordNode(
-	# 	# 	("r", "robo"),
-	# 	# 	"robo/.*",
-	# 	# ),
-	# )
-
-	# replable = string.ascii_letters + string.punctuation + string.digits + " \t" + "ąłćżźśćó"
-
-	# def repl():
-	# 	chars = []
-
-	# 	terminal.cursor.hide()
-
-	# 	print(">>>", end="\r")
-
-	# 	last_err = None
-
-	# 	try:
-	# 		while True:
-	# 			try:
-	# 				ch = getchs()
-
-	# 				if ch == getchs.CTRL_C:
-	# 					raise KeyboardInterrupt
-	# 				if ch == getchs.CTRL_D:
-	# 					raise EOFError
-
-	# 				if ch == getchs.CTRL_U:
-	# 					chars.clear()
-	# 				elif ch == getchs.ENTER:
-	# 					print()
-	# 					chars.clear()
-	# 				elif ch == getchs.BACKSPACE:
-	# 					if chars:
-	# 						chars.pop()
-	# 				else:
-	# 					if ch in replable:
-	# 						chars.append(ch)
-
-	# 				try:
-	# 					parsed = parse_and_submit_nodes("".join(chars), root_nodes)
-	# 				except Exception as e:
-	# 					parsed = e
-	# 					last_err = e
-	# 				else:
-	# 					last_err = None
-
-	# 				if not isinstance(parsed, Exception):
-	# 					displayed = (node.__str__() for node in parsed)
-	# 				else:
-	# 					displayed = ("N/A",)
-
-	# 				print(
-	# 					(terminal.width * " ") + f"\r>>> {''.join(displayed)} /// {''.join(chars)!r} /// {fmt_iterable(parsed, force_no_indent=True, syntax_highlighting=True)}",
-	# 					end="\r",
-	# 				)
-
-	# 			except (KeyboardInterrupt, EOFError):
-	# 				break
-	# 	finally:
-	# 		terminal.cursor.unhide()
-	# 		if last_err is not None:
-	# 			raise last_err
-
 
 def raise_for_not_only_nodes(nodes: tuple[Node]):
 	if nodes and not all(isinstance(node, Node) for node in nodes):
@@ -134,7 +42,7 @@ class Repl:
 				self.chs_history_ptr -= 1
 
 	def printhook_prompt(self, last_char: str | None, *submitted_nodes: Node) -> tuple[bool, str]:
-		fucked = bool(submitted_nodes and isinstance(submitted_nodes[-1], UnknownNode))
+		fucked = bool(submitted_nodes and isinstance(submitted_nodes[-1], UnknownNode)) or any(isinstance(x, IncompleteNode) for x in submitted_nodes)
 
 		chr1 = ">"
 
@@ -142,7 +50,7 @@ class Repl:
 			chr1 = "!"
 		elif not submitted_nodes:
 			chr1 = " "
-		elif submitted_nodes[-1].children:
+		elif not submitted_nodes[-1].children_optional and submitted_nodes[-1].children:
 			chr1 = "+"
 
 		chr2 = " " if chr1 != ">" else ">"
@@ -159,7 +67,8 @@ class Repl:
 
 	hide_cursor: bool = True
 	valid_chars = string.ascii_letters + string.punctuation + string.digits + " \t" + "ąłćżźśćó"
-	no_enter_on_unknown: bool = True
+	no_enter_on_unknown_or_incomplete: bool = True
+	remove_root_node_from_output: bool = True
 
 	@property
 	def chs(self):
@@ -206,10 +115,14 @@ class Repl:
 				self.printhook(ch, *submitted_nodes)
 
 				if ch == getchs.ENTER:
-					if self.no_enter_on_unknown and isinstance(submitted_nodes[-1], UnknownNode):
-						continue
+					if self.no_enter_on_unknown_or_incomplete:
+						if isinstance(submitted_nodes[-1], UnknownNode):
+							continue
 
-					if submitted_nodes[-1].children:
+						if any(isinstance(x, IncompleteNode) for x in submitted_nodes):
+							continue
+
+					if not submitted_nodes[-1].children_optional and submitted_nodes[-1].children:
 						continue
 
 					submitted_nodes = [x for x in submitted_nodes if not isinstance(x, DisposableNode)]

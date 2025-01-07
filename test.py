@@ -1873,55 +1873,62 @@ ID: {server|id}
 	def test_repl():
 		from tcrutils.repl import node
 
-		class QuitNode(node._RegexNodeBase[str], pattern=r"^(quit|q|exit)(.*)$"):
-			def display(self):
-				return f"{tcr.FMTC.COLON}{super().display()}{tcr.FMTC._}"
-
-		from typing import Never
-
-		class UnreachableNode(node.Node[Never]):
-			def match(self, s):
-				return None
-
-		class Repl(tcr.repl.Repl):
+		class TestingRepl(tcr.repl.Repl):
 			def printhook(self, last_char: str | None, *submitted_nodes: node.Node):
 				trailing_unknown, prompt = self.printhook_prompt(last_char, *submitted_nodes)  # noqa: F841
 
 				body = "".join(x.display() for x in submitted_nodes)
 
-				cursor = "_" if submitted_nodes and submitted_nodes[-1].text and submitted_nodes[-1].text[-1] in " \t" else ""
+				cursor = "_" if submitted_nodes and not isinstance(submitted_nodes[-1], node.IncompleteNode) and submitted_nodes[-1].text and submitted_nodes[-1].text[-1] in " \t" else ""
 
 				print(tcr.FMTC._ + tcr.terminal.width * " " + "\r" + f"{prompt} {body}{tcr.FMTC._}{cursor}", end="\r")
 
-		repl = Repl(
-			UnreachableNode(
-				"junc1",
-				node.WordBreakNode(
-					"junc1-wordbreak",
+			no_enter_on_unknown = False
+
+		repl = TestingRepl(
+			node.IrrefutableNode(
+				"",
+				node.UnreachableNode(
+					"makeshift-junc",
+					node.WordBreakNode("makeshift-junc-wordbreak", "/makeshift-junc/*"),
 					node.KeywordNode(
 						"then",
-						"new/.*",
+						"/new/*",
 					),
 				),
-			),
-			node.KeywordNode(
-				"new",
-				node.WordBreakNode(
-					"wordbreak",
-					node.EllipsisNode("...", "junc1/.*"),
-					node.SignedIntNode("int", "junc1/.*"),
-					node.SignedFloatNode("float", "junc1/.*"),
-					node.DoublequoteStrNode("dqstr", "junc1/.*"),
-					node.SinglequoteStrNode("sqstr", "junc1/.*"),
-					node.PwshVariableNode("pwshvariable", "junc1/.*"),
-					node.PyIdentifierNode("pyidentifier", "junc1/.*"),
+				node.KeywordNode(
+					"new",
+					node.WordBreakNode(
+						"wordbreak",
+						"/new/*",
+						node.EllipsisNode("...", "/makeshift-junc/*", children_optional=True),
+						node.IntNode("int", "/makeshift-junc/*", children_optional=True),
+						node.SignedFloatNode("float", "/makeshift-junc/*", children_optional=True),
+						# node.DoublequoteStrNode("dqstr", "/makeshift-junc/*", children_optional=True),
+						# node.SinglequoteStrNode("sqstr", "/makeshift-junc/*", children_optional=True),
+						node.PwshVariableNode("pwshvariable", "/makeshift-junc/*", children_optional=True),
+						node.PyIdentifierNode("pyidentifier", "/makeshift-junc/*", children_optional=True),
+						# TODO: string nie dziala jezeli jest pod listofint, i vice versa
+						# node.ListOfStr("list_str", "/makeshift-junc/*", children_optional=True),
+						# node.ListOfStrOrInt("list_str_or_int", "/makeshift-junc/*", children_optional=True),
+					),
 				),
+				node.KeywordNode(
+					"dupa",
+					node.WordBreakNode("wordbreak", "/dupa/*"),
+					node.String("string", "/makeshift-junc/*", children_optional=True),
+				),
+				node.KeywordNode(
+					"ass",
+					node.WordBreakNode("wordbreak", "/ass/*"),
+					node.ListOfInt("list_int", "/makeshift-junc/*", children_optional=True),
+				),
+				node.AliasKeywordNode(
+					"n -> new",
+					"/new/*",
+				),
+				node.QuitNode("quit"),
 			),
-			node.AliasKeywordNode(
-				"n -> new",
-				"new/.*",
-			),
-			QuitNode("quit"),
 		)
 
 		c(repl.nodes)
@@ -1930,7 +1937,7 @@ ID: {server|id}
 			submitted_nodes = repl()
 
 			match submitted_nodes[0]:
-				case QuitNode():
+				case node.QuitNode():
 					exit(0)
 
 			c(submitted_nodes)

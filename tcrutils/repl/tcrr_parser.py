@@ -1,13 +1,15 @@
-import re
+import fnmatch
+from copy import copy
 
-from .tcrr_nodes import DisposableNode, Node, UnknownNode
+from ..src.tcr_console import console as c
+from . import tcrr_nodes as m_nodes
 
 
 def get_nodes_by_name_from_root_nodes(
-	root_nodes: tuple[Node],
+	root_nodes: tuple["m_nodes.Node"],
 	name: str,
 	*names: str,
-) -> tuple[Node]:
+) -> tuple["m_nodes.Node"]:
 	maching_nodes = []
 
 	for node in root_nodes:
@@ -15,7 +17,7 @@ def get_nodes_by_name_from_root_nodes(
 			# c.warn("Ignoring isinstance(node, str)==True in get_nodes_by_name_from_root_nodes")
 			continue
 
-		if re.match(name, node.name) is None:
+		if not fnmatch.fnmatch(node.name, name):
 			continue
 
 		maching_nodes.append(node)
@@ -28,9 +30,9 @@ def get_nodes_by_name_from_root_nodes(
 
 def parse_and_submit_nodes(
 	input_str: str,
-	nodes: tuple["Node | str", ...],
-	_root_nodes: tuple[Node, ...] = None,
-) -> tuple[Node]:
+	nodes: tuple["m_nodes.Node | str", ...],
+	_root_nodes: tuple["m_nodes.Node", ...] = None,
+) -> tuple["m_nodes.Node"]:
 	if _root_nodes is None:
 		_root_nodes = nodes  # No need to copy i tihnk?
 
@@ -40,10 +42,14 @@ def parse_and_submit_nodes(
 		if groups is None:
 			continue
 
-		node_text, rest = groups
+		if len(groups) == 2:
+			groups = (*groups, False)
+
+		node_text, rest, incomplete = groups
 
 		node_text = node_text
-		rest = rest
+
+		node = copy(node)
 
 		node.submit(node_text)
 
@@ -53,7 +59,7 @@ def parse_and_submit_nodes(
 				for y in (
 					get_nodes_by_name_from_root_nodes(
 						_root_nodes,
-						*[f"^{y}$" for y in x.split("/")],
+						*x.split("/"),
 					)
 					if isinstance(x, str)
 					else (x,)
@@ -63,9 +69,14 @@ def parse_and_submit_nodes(
 			]
 
 			rest = parse_and_submit_nodes(rest, node_children, _root_nodes)
+		else:
+			rest = ()
 
-			return (node, *rest)
+		if incomplete:
+			incomplete = (m_nodes.IncompleteNode(unknown_text="?"),)
+		else:
+			incomplete = ()
 
-		return (node,)
+		return (node, *incomplete, *rest)
 
-	return (UnknownNode(unknown_text=input_str),)
+	return (m_nodes.UnknownNode(unknown_text=input_str),)

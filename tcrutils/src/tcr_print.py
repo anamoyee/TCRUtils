@@ -546,6 +546,8 @@ if True:  # \/ # fmt & print iterable
 			and able(len, it)
 			# And they have any length:
 			and len(it) > 0
+			# And none of the items inside have a __tcr_fmt__ because reasons
+			and not any(hasattr(x, '__tcr_fmt__') for x in it)
 		):
 			if is_mapping:
 				if len(it) == 1:
