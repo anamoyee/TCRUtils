@@ -192,6 +192,9 @@ if True:  # \/ # fmt & print iterable
 		BUILT_IN_EXCEPTION  = Fore.BLUE + Style.bold
 		MODULE              = Fore.orange_1 + Style.bold
 
+		def __call__(self): # If called FMTC() then passed instance as FMTC= kwarg, then another piece of code makes another instance thus FMTC()() effectively
+			return self
+
 	class FMT_LETTERS:
 		b    = f'{FMTC.BYTESTR_B}b'
 		i    = f'{FMTC.ITER_I}i{FMTC._}'
@@ -256,7 +259,7 @@ if True:  # \/ # fmt & print iterable
 	FMT_ASTERISK = ('*', f'{FMTC.ASTERISK}*')
 	"""FMT_ASTERISK[syntax_highlighting: bool]"""
 
-	FMT_SYS_VERSION_INFO = f'{FMTC.COLON}Python {FMTC.DECIMAL}%s{FMTC.COMMA}.{FMTC.DECIMAL}%s{FMTC.COMMA}.{FMTC.DECIMAL}%s'
+	FMT_SYS_VERSION_INFO = f'{FMTC.COLON}Python%s'
 	"""FMT_SYS_VERSION_INFO % sys.version_info[:3] # :3"""
 
 	# fmt: on
@@ -469,6 +472,7 @@ if True:  # \/ # fmt & print iterable
 		prefer_full_names: bool = False,
 		str_repr: Callable[[str], str] = repr_if_needed,
 		prefer_pydantic_better_dump: bool = False,
+		FMTC=FMTC,
 		**kwargs,
 	) -> str:
 		"""### Return iterable as formatted string with optional syntax highlighting.
@@ -603,6 +607,7 @@ if True:  # \/ # fmt & print iterable
 			"str_repr": str_repr,
 			"no_implicit_quoteless": kwargs.get("no_implicit_quoteless", False),
 			"no_try": kwargs.get("no_try"),
+			"FMTC": FMTC,
 			"__depth": kwargs.get("__depth", 2) + 1,
 		}
 		if a := kwargs.get("let_no_indent_max_iterables"):
@@ -856,7 +861,9 @@ if True:  # \/ # fmt & print iterable
 			pass
 
 		if it.__class__ == sys.version_info.__class__ and syntax_highlighting:
-			return FMT_BRACKETS[tuple][1] % FMT_SYS_VERSION_INFO % it[:3]
+			fmtc = FMTC()
+			fmtc.NUMBER = FMTC.DECIMAL
+			return FMT_SYS_VERSION_INFO % this(it[:3], FMTC=fmtc)
 		if _t is int:
 			if int_formatter:
 				it = int_formatter(it)

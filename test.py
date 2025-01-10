@@ -263,7 +263,7 @@ if True:  # \/ # Tests
 
 		console.debug(f"{a()!r}")
 
-	# @tcr.timeit
+	@tcr.timeit
 	def test_print_iterable(π=tcr.print_iterable, **kwargs):
 		import datetime as dt
 		from dataclasses import dataclass, field
@@ -610,8 +610,12 @@ if True:  # \/ # Tests
 		π(B())
 
 		print()
-		π(tcr.joke.echo[:])
-		π(tcr.joke.echo[::-1])
+		π(
+			tcr.joke.echo,
+			tcr.joke.echo[:],
+			tcr.joke.echo[::-1],
+		)
+		print()
 
 		class Reprer:
 			def __init__(self, *args, **kwargs) -> None:
@@ -637,8 +641,6 @@ if True:  # \/ # Tests
 				else:
 					raise ValueError("What?")
 
-		print()
-		π(tcr.joke.echo)
 		π(Reprer)
 		π(Reprer())
 		π(Reprer("nya"))
@@ -662,14 +664,19 @@ if True:  # \/ # Tests
 		π(res1)
 		π(res2)
 		print()
-		π("\x011")
-		π("\x01a")
-		π("\x001")
-		π("\x00a")
-		print()
-		π('"\U00042346')
-		π('"\U00012345')
-		π("'\"nya")
+		π(
+			[
+				"\x011",
+				"\x01a",
+				"\x001",
+				"\x00a",
+			],
+			[
+				'"\U00042346',
+				'"\U00012345',
+				"'\"nya",
+			],
+		)
 		print()
 
 		class Rainbow:
@@ -678,11 +685,13 @@ if True:  # \/ # Tests
 		class Rainbow2:
 			__tcr_rainbow__ = "reynbou"
 
-		π(Rainbow)
-		π(Rainbow2)
-		π(Rainbow())
-		π(Rainbow2())
-		π(tcr)
+		π([
+			Rainbow,
+			Rainbow2,
+			Rainbow(),
+			Rainbow2(),
+			tcr,
+		])
 		print()
 
 	def test_markdown():
