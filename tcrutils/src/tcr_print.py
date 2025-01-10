@@ -102,7 +102,7 @@ def repr_if_needed(
 	if not syntax_highlighting:
 		return dumped
 
-	if quoteless or (not no_implicit_quoteless and regex.match(r'"[a-zA-Z0-9]+"', dumped)):
+	if quoteless or (not no_implicit_quoteless and regex.match(r'"[a-zA-Z0-9_]+"', dumped)):
 		return f"{FMTC.STRING}{dumped[1:-1]}{FMTC._}"
 	else:
 		return f"{FMTC.QUOTES}{dumped[0]}{FMTC.STRING}{dumped[1:-1]}{FMTC.QUOTES}{dumped[-1]}{FMTC._}"
@@ -924,6 +924,8 @@ if True:  # \/ # fmt & print iterable
 			itl, overflow = limited_iterable(it, item_limit)
 			if not able(len, it) or len(it) > 0:
 				if is_mapping:
+					if it is sys.modules:
+						it = it.copy()  # Fix crash because changed size during iteration because reasons
 					inner = f"{comma}{enter or space}".join([indent + (f"{k}{FMTC.COLON}:{FMTC._}{space}{v}" if syntax_highlighting else f"{k}:{space}{v}").replace(enter, f"{enter}{indent}") for k, v in {this(key): this(value) for key, value in it.items()}.items()]) + (comma if trailing_commas else "")
 
 					return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[dict])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
