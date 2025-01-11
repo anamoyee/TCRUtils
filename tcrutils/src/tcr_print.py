@@ -532,7 +532,7 @@ if True:  # \/ # fmt & print iterable
 			return FMT_TOO_DEEP[syntax_highlighting]
 
 		if its:
-			it = (it, *its)
+			it = [it, *its]
 
 		item_limit = int(item_limit)
 		if item_limit < 0:

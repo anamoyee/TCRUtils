@@ -660,10 +660,11 @@ if True:  # \/ # Tests
 		res1 = ListResult.new_ok(["nya", 123, 3 + 2j, True, None])
 		res2 = ListResult.new_err(ValueError("wal-konia-ue ełrołr"))
 
-		π(ListResult)
-		π(res1)
-		π(res2)
-		print()
+		π(
+			ListResult,
+			res1,
+			res2,
+		)
 		π(
 			[
 				"\x011",
@@ -685,13 +686,13 @@ if True:  # \/ # Tests
 		class Rainbow2:
 			__tcr_rainbow__ = "reynbou"
 
-		π([
+		π(
 			Rainbow,
 			Rainbow2,
 			Rainbow(),
 			Rainbow2(),
 			tcr,
-		])
+		)
 		print()
 		π(type.__mro__)
 		print()
