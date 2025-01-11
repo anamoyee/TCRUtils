@@ -274,19 +274,20 @@ if True:  # \/ # Tests
 
 		π = partial(π, **kwargs)
 
-		mappingproxy = type.__dict__
-		π(mappingproxy)
+		# PrintIterable - π
+		# (so funny.. :3)
+
 		π("aasd")
 		π({"a": 1, "b": "2"})
 		π({"a": range(3)})
-		π(range(1 << 1000))
+		π(range(1 << 1000), item_limit=3)
 		π(())
 		π([])
 		π({1, 2})
 		π("asdf")
 		π(
 			[3, 4, 5, range(105)],
-			item_limit=5,
+			item_limit=4,
 			**{x: y for x, y in kwargs.items() if x != "item_limit"},
 		)
 
@@ -343,7 +344,7 @@ if True:  # \/ # Tests
 		range_iterator = iter(range(3))
 		longrange_iterator = iter(range(1 << 1000))
 		π(range_iterator)
-		π(longrange_iterator)
+		π(longrange_iterator, item_limit=3)
 		set_iterator = iter({15, 25, 35})
 		π(set_iterator)
 		str_iterator = iter("str iterator")
@@ -354,8 +355,7 @@ if True:  # \/ # Tests
 		π(zip_iterator)
 
 		## misc ##
-		generator = (lambda: (yield))()
-		π(generator)
+		π((lambda: (yield))())
 		π(range(0))
 
 		## coroutine ##
@@ -692,6 +692,8 @@ if True:  # \/ # Tests
 			Rainbow2(),
 			tcr,
 		])
+		print()
+		π(type.__mro__)
 		print()
 
 	def test_markdown():

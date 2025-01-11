@@ -164,21 +164,24 @@ if True:  # \/ # fmt & print iterable
 	# Format Colors, name kept short so lines don't get THAT long if this thing is used like 10 times in a single fstring
 	class FMTC:
 		_                   = Style.reset # Reset
+		bold                = Style.bold
+
 		NUMBER              = Fore.BLUE + Style.bold
 		TYPE                = Fore.BLUE + Style.bold
 		DECIMAL             = Fore.WHITE + Style.bold
 		BRACKET             = Fore.CYAN + Style.bold
-		ENUM_VARIANT_NAME   = _ + Fore.WHITE # Reset to ensure no bold
-		QUOTES              = _ + Fore.WHITE # Reset to ensure no bold
-		STRING              = _ + Fore.YELLOW # Reset to ensure no bold
-		COLON               = Fore.orange_1 + Style.bold
+		ENUM_VARIANT_NAME   = _ + Fore.WHITE # Reset for no bold
+		QUOTES              = _ + Fore.WHITE # Reset for no bold
+		STRING              = _ + Fore.YELLOW # Reset for no bold
+		COLON               = Fore.WHITE + Style.bold # Sorry, no 0xFF8000 gdcolon color, it looked too smushed together with the string color when in a dict {a: b};   = Fore.orange_1 + Style.bold
+		GD_COLON            = Fore.orange_1 + Style.bold # NEVERMIND THE ABOVE i actually need the color for at least one thing so here it is back..
 		ASTERISK            = Fore.orange_1 + Style.bold
 		COROUTINE           = Fore.orange_1 + Style.bold
 		FUNCTION            = Fore.orange_1 + Style.bold
 		COMPLEX             = Fore.orange_1 + Style.bold
 		COMMA               = Fore.dark_gray + Style.bold
 		PIPE                = Fore.dark_gray + Style.bold
-		SLASH               = STRING + Style.bold
+		PATH_SLASH          = DECIMAL
 		UNKNOWN             = Fore.dark_gray + Style.bold
 		TRUE                = Fore.GREEN + Style.bold
 		FALSE               = Fore.RED + Style.bold
@@ -259,7 +262,7 @@ if True:  # \/ # fmt & print iterable
 	FMT_ASTERISK = ('*', f'{FMTC.ASTERISK}*')
 	"""FMT_ASTERISK[syntax_highlighting: bool]"""
 
-	FMT_SYS_VERSION_INFO = f'{FMTC.COLON}Python%s'
+	FMT_SYS_VERSION_INFO = f'{FMTC.GD_COLON}Python%s'
 	"""FMT_SYS_VERSION_INFO % sys.version_info[:3] # :3"""
 
 	# fmt: on
@@ -798,7 +801,7 @@ if True:  # \/ # fmt & print iterable
 			if drive:
 				drive = f"{FMTC.STRING}{drive}".replace(":", f"{FMTC.COLON}:{FMTC.DECIMAL}")
 
-			s = f"{FMTC.SLASH}/".join(([drive] if it.is_absolute() else ([""] if it.parts[0] == "\\" else [])) + [f"{FMTC.STRING}{part}" for part in parts])
+			s = f"{FMTC.PATH_SLASH}/".join(([drive] if it.is_absolute() else ([""] if it.parts[0] == "\\" else [])) + [f"{FMTC.STRING}{part}" for part in parts])
 
 			if "/" not in s:
 				return FMT_CLASS[True] % (it.__class__.__name__, s)
@@ -890,8 +893,8 @@ if True:  # \/ # fmt & print iterable
 
 		if _t is bytes_iterator:
 			return FMT_ITER[syntax_highlighting] % this(bytes(it))
-		if _t is str_iterator:
-			return FMT_ITER[syntax_highlighting] % this("".join(it))
+		if _t is type(iter("a")) or _t is type(iter("\u1234")):  # str_ascii_iterator and str_iterator ????
+			return FMT_ITER[syntax_highlighting] % this("".join(it), no_implicit_quoteless=True)
 		if _t is bytearray_iterator:
 			return FMT_ITER[syntax_highlighting] % this(bytearray(it))
 		if _t is dict_keyiterator:
