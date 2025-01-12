@@ -18,6 +18,7 @@ if True:  # \/ # Imports
 	import arc
 	import hikari
 	import miru
+	import pydantic
 	import tcrutils as tcr
 	from tcrutils import ass, c, console, rass
 	from tcrutils.src.tcr_constants import *
@@ -594,22 +595,6 @@ if True:  # \/ # Tests
 		π(sys.version_info)
 
 		print()
-		import pydantic
-
-		class A(pydantic.BaseModel):
-			a: int
-			b: int
-			c: int
-
-		class B(pydantic.BaseModel): ...
-
-		π(A(a=1, b=2, c=3))
-		π(A)
-		π(pydantic.BaseModel)
-		π(B)
-		π(B())
-
-		print()
 		π(
 			tcr.joke.echo,
 			tcr.joke.echo[:],
@@ -696,6 +681,19 @@ if True:  # \/ # Tests
 		print()
 		π(type.__mro__)
 		print()
+
+		class A(pydantic.BaseModel):
+			a: int
+			b: int
+			c: int
+
+		class B(pydantic.BaseModel): ...
+
+		π(A(a=1, b=2, c=3))
+		π(A)
+		π(pydantic.BaseModel)
+		π(B)
+		π(B())
 
 	def test_markdown():
 		from tcrutils import codeblock, uncodeblock
@@ -1968,6 +1966,21 @@ ID: {server|id}
 
 			c(submitted_nodes)
 
+	def test_typehints():
+		class Eent(int): ...
+
+		@tcr.force_keyword_only_typehints(key=lambda v, t: v.__class__ is t)
+		def nya(*, a: int, b: int) -> str:
+			return f"{a!r}, {b!r}"
+
+		@tcr.force_keyword_only_typehints()
+		async def anya(*, a: int, b) -> str:
+			return f"async: {a!r}, {b!r}"
+
+		c(nya(a=1, b=2))
+
+		c(asyncio.run(anya(a=Eent(2), b=4)))
+
 
 if True:  # \/ # Test setup
 	__TESTS_RAN_GLOBAL = 0
@@ -2096,6 +2109,7 @@ if __name__ == "__main__":
 	# test_result()
 	# test_getch()
 	# test_repl()
+	test_typehints()
 
 	if not sys.gettrace():
 		ass.total(prefix="\n")

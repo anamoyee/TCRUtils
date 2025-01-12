@@ -92,7 +92,7 @@ class Console:
 
 		out = f"{color if syntax_highlighting else ''}{out}{CC._ if syntax_highlighting else ''}"
 
-		if end in ('', ' ', '\r'):
+		if end in ("", " ", "\r"):
 			print(out, end=end)
 		else:
 			print(out)
@@ -166,6 +166,8 @@ class Console:
 						after_first_string = symbol
 
 			if found_any:
+				if not withprefix and padding == " ":
+					padding = ""
 				padding += fmt_iterable(QuotelessString(first_string), syntax_highlighting=syntax_highlighting, **kwargs)
 				padding += after_first_string
 

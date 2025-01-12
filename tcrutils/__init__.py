@@ -93,6 +93,7 @@ from .src.tcr_temp import temp_file
 from .src.tcr_terminal import terminal
 from .src.tcr_test import ass, raises, rass
 from .src.tcr_timestr import TStr, t_day, t_hour, t_minute, t_week, t_year, timestr
+from .src.tcr_typehints import force_keyword_only_typehints
 from .src.tcr_uptime import Uptime
 from .src.tcr_void import alambda, araiser, avoid, raiser, void
 
