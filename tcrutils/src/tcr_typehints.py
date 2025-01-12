@@ -5,7 +5,7 @@ from typing import Any
 
 
 def force_keyword_only_typehints(key: Callable[[Any, type], bool] = isinstance):
-	def decorator(func: Callable):
+	def decorator(func):
 		signature = inspect.signature(func)
 		kwarg_hints = {name: param.annotation for name, param in signature.parameters.items() if param.kind == param.KEYWORD_ONLY and param.annotation != inspect.Parameter.empty and param.annotation != Any}
 
