@@ -1932,9 +1932,8 @@ ID: {server|id}
 						# node.SinglequoteStrNode("sqstr", "/makeshift-junc/*", children_optional=True),
 						node.PwshVariableNode("pwshvariable", "/makeshift-junc/*", children_optional=True),
 						node.PyIdentifierNode("pyidentifier", "/makeshift-junc/*", children_optional=True),
-						# TODO: string nie dziala jezeli jest pod listofint, i vice versa
-						# node.ListOfStr("list_str", "/makeshift-junc/*", children_optional=True),
-						# node.ListOfStrOrInt("list_str_or_int", "/makeshift-junc/*", children_optional=True),
+						node.String("streeeng", "/makeshift-junc/*", children_optional=True),
+						node.ListOfStrOrInt("list_str_or_int", "/makeshift-junc/*", children_optional=True),
 					),
 				),
 				node.KeywordNode(
@@ -1962,7 +1961,7 @@ ID: {server|id}
 
 			match submitted_nodes[0]:
 				case node.QuitNode():
-					exit(0)
+					break
 
 			c(submitted_nodes)
 
@@ -1980,6 +1979,36 @@ ID: {server|id}
 		c(nya(a=1, b=2))
 
 		c(asyncio.run(anya(a=Eent(2), b=4)))
+
+	def test_nodes():
+		node = tcr.repl.node.QuitNode("quit")
+
+		try:
+			match node:
+				case tcr.repl.node.ExecutableNode():
+					node.execute()
+		except SystemExit:
+			pass
+
+		node = tcr.repl.node.PyIdentifierNode("ident")
+		node.submit("ifier")
+
+		print()
+
+		match node:
+			case tcr.repl.node.PyIdentifierNode(name, text):
+				c("name=", name)
+				c("text=", text)
+
+		print()
+
+		node = tcr.repl.node.IntNode("number")
+		node.submit("69")
+
+		match node:
+			case tcr.repl.node.IntNode(name, value):
+				c("name=", name)
+				c("value=", value)
 
 
 if True:  # \/ # Test setup
@@ -1999,21 +2028,21 @@ if True:  # \/ # Test setup
 			globals()[k] = tcr.test(_count_tests_decorator(v))
 
 if __name__ == "__main__":
-	test_print_iterable(
-		_raise_errors=True,
-		syntax_highlighting=1,
-		# let_no_indent=0,
-		# force_no_indent=1,
-		# force_no_spaces=0,
-		# force_complex_parenthesis=1,
-		# item_limit=10,
-		# # let_no_indent_max_non_iterables=10,
-		# # let_no_indent_max_iterables=10,
-		# prefer_full_names=1,
-		# force_union_parenthesis=1,
-		# depth_limit=3,
-		# str_repr=repr,
-	)
+	# test_print_iterable(
+	# 	_raise_errors=True,
+	# 	syntax_highlighting=1,
+	# 	# let_no_indent=0,
+	# 	# force_no_indent=1,
+	# 	# force_no_spaces=0,
+	# 	# force_complex_parenthesis=1,
+	# 	# item_limit=10,
+	# 	# # let_no_indent_max_non_iterables=10,
+	# 	# # let_no_indent_max_iterables=10,
+	# 	# prefer_full_names=1,
+	# 	# force_union_parenthesis=1,
+	# 	# depth_limit=3,
+	# 	# str_repr=repr,
+	# )
 
 	# test_timestr()
 	# test_dict_merge()
@@ -2108,8 +2137,9 @@ if __name__ == "__main__":
 	# test_console_with_eval()
 	# test_result()
 	# test_getch()
-	# test_repl()
-	test_typehints()
+	test_repl()
+	# test_typehints()
+	test_nodes()
 
 	if not sys.gettrace():
 		ass.total(prefix="\n")

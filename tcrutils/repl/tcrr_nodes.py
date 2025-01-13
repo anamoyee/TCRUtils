@@ -8,13 +8,17 @@ from ..src.tcr_console import console as c
 from ..src.tcr_print import FMTC
 from .tcrr_parser import parse_and_submit_nodes
 
+### Root class
+
 
 class Node:
+	__match_args__ = ("name", "text")
+
 	name: str
+	text: str | None
+
 	children: tuple["Node | str", ...]
 	children_optional: bool
-
-	text: str | None
 
 	def __str__(self):
 		return self.text
@@ -63,10 +67,14 @@ class Node:
 		return f"{self.text}"
 
 
+### Bases
+
 T = TypeVar("T")
 
 
 class ParsableNode(Node, Generic[T]):
+	__match_args__ = ("name", "value")
+
 	def _init__(self, *args, **kwargs):
 		if self.__class__ is ParsableNode:
 			raise RuntimeError("Cannot instantiate Node without subclassing.")
@@ -79,6 +87,10 @@ class ParsableNode(Node, Generic[T]):
 	def parse(self) -> T:
 		raise NotImplementedError("Must implement method parse() for ParsableNode")
 
+	@property
+	def value(self) -> T:
+		return self.parse()
+
 
 class DisposableNode(Node):
 	"""Marked to be skipped when using the data, but not when displaying, for example you dont care about the mandatory space between keywords and identifiers but you still want to display it to the user."""
@@ -90,6 +102,14 @@ class ConvertableNode(Node):
 	@abc.abstractmethod
 	def convert(self) -> Node:
 		raise NotImplementedError("Must implement method convert for ConvertableNode")
+
+
+class ExecutableNode(Node):
+	"""An action is associated with this node, for example QuitNode: its action is to call exit(0)."""
+
+	@abc.abstractmethod
+	def execute(self) -> None:
+		raise NotImplementedError("Must implement method execute for ExecutableNode")
 
 
 class _RegexNodeBase(Node):
@@ -107,9 +127,15 @@ class _RegexNodeBase(Node):
 		return m
 
 
-class QuitNode(_RegexNodeBase, pattern=r"^(quit|q|exit)(.*)$"):
+### Usable nodes
+
+
+class QuitNode(_RegexNodeBase, ExecutableNode, pattern=r"^(quit|q|exit)(.*)$"):
 	def display(self):
-		return f"{FMTC.COLON}{super().display()}{FMTC._}"
+		return f"{FMTC.GD_COLON}{super().display()}{FMTC._}"
+
+	def execute(self):
+		exit(0)
 
 
 class UnreachableNode(Node):
@@ -137,7 +163,7 @@ class KeywordNode(Node):
 		return m
 
 	def display(self):
-		return f"{FMTC.COLON}{super().display()}{FMTC._}"
+		return f"{FMTC.GD_COLON}{super().display()}{FMTC._}"
 
 
 class AliasKeywordNode(KeywordNode, ConvertableNode):
@@ -207,7 +233,7 @@ class SignedFloatNode(_RegexNodeBase, pattern=r"^(-?(?:\d+\.?\d*|\.?\d+))(.*)$")
 
 class PyIdentifierNode(_RegexNodeBase, pattern=r"^([a-zA-Z_][a-zA-Z0-9_]*)(.*)$"):
 	def display(self):
-		return f"{FMTC.SLASH}{super().display()}{FMTC._}"
+		return f"{FMTC.DECIMAL}{super().display()}{FMTC._}"
 
 
 class PwshVariableNode(_RegexNodeBase, pattern=r"^(\$[a-zA-Z_][a-zA-Z0-9_]*|\$\{[^{}\s]+\})(.*)$"):
@@ -286,11 +312,14 @@ class CompoundNode(Node):
 			case UnknownNode():
 				parsed = parsed[:-1]  # Accounted for with s.removeprefix(text), since text wouldnt contain the unknown node text.
 
-		incomplete = parsed and not parsed[-1].children_optional and parsed[-1].children
+		incomplete = bool(parsed and not parsed[-1].children_optional and parsed[-1].children)
 
 		self._parsed = parsed
 
 		text = "".join(x.text for x in parsed)
+
+		if not text:
+			return None
 
 		return text, s.removeprefix(text), incomplete
 
@@ -343,7 +372,6 @@ if True:  # String
 				_CompoundNodeMatchedMarkerNode("_", "juncsq/*"),
 			),
 		),
-		require_matched_marker=False,
 	):
 		def parse(self) -> str:
 			parsed = [x for x in self._parsed if not isinstance(x, DisposableNode)]
@@ -377,7 +405,6 @@ if True:  # List
 				_ListCommaNode(
 					",",
 					"content/*",
-					"junc/]",
 				),
 				_ListClosingBracketNode("]"),
 			),
@@ -423,6 +450,7 @@ if True:  # List
 					"content-wordbreak",
 					"content/*",
 				),
+				_ListClosingBracketNode("]"),
 			)
 
 			cls.nodes = (*cls.nodes, content_unreachable_node)
