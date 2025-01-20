@@ -5,8 +5,17 @@ from typing import Generic, TypeVar
 import colored
 
 from ..src.tcr_console import console as c
-from ..src.tcr_print import FMTC
+from ..src.tcr_print import FMTC, fmt_iterable
 from .tcrr_parser import parse_and_submit_nodes
+
+
+class UnaccountedForNodesError(RuntimeError):
+	nodes: tuple["Node"]
+
+	def __init__(self, *nodes: "Node", syntax_highlighting: bool = True):
+		self.nodes = nodes
+		super().__init__(fmt_iterable(nodes, syntax_highlighting=syntax_highlighting))
+
 
 ### Root class
 
@@ -17,7 +26,7 @@ class Node:
 	name: str
 	text: str | None
 
-	children: tuple["Node | str", ...]
+	children: list["Node | str"]
 	children_optional: bool
 
 	def __str__(self):
@@ -49,7 +58,7 @@ class Node:
 			raise RuntimeError("Cannot instantiate Node without subclassing.")
 
 		self.name = name
-		self.children = children
+		self.children = list(children)
 		self.children_optional = children_optional
 		self.text = None
 
@@ -147,6 +156,9 @@ class IrrefutableNode(DisposableNode, Node):
 	def match(self, s):
 		return ("", s)
 
+	def __init__(self, name: str = "_", *children: Node, **kwargs):
+		super().__init__(name, *children, **kwargs)
+
 
 class KeywordNode(Node):
 	matching_text_escaped: str
@@ -183,18 +195,18 @@ class AliasKeywordNode(KeywordNode, ConvertableNode):
 		self.alias_to = alias_to
 
 	def convert(self) -> KeywordNode:
-		node = KeywordNode(self.name, self.children)
+		node = KeywordNode(self.name, *self.children, children_optional=self.children_optional)
 		node.submit(self.text)
 		return node
 
 
 class UnknownNode(Node):
-	children: tuple[()]  # Cannot have children nodes
+	children: list  # Cannot have children nodes
 
 	def __init__(self, *, unknown_text: str):
 		super().__init__(unknown_text)
 		self.submit(unknown_text)
-		self.children = ()
+		self.children = []
 
 	def match(self, s) -> tuple[str, str]:
 		m = re.match(r"^(.*)()$", s)

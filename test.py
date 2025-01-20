@@ -1910,60 +1910,70 @@ ID: {server|id}
 			no_enter_on_unknown = False
 
 		repl = TestingRepl(
-			node.IrrefutableNode(
-				"",
-				node.UnreachableNode(
-					"makeshift-junc",
-					node.WordBreakNode("makeshift-junc-wordbreak", "/makeshift-junc/*"),
-					node.KeywordNode(
-						"then",
-						"/new/*",
-					),
-				),
+			n_makeshift_junc := node.UnreachableNode(
+				"makeshift-junc",
+				node.WordBreakNode("makeshift-junc-wordbreak", "makeshift-junc/*"),
 				node.KeywordNode(
-					"new",
-					node.WordBreakNode(
-						"wordbreak",
-						"/new/*",
-						node.EllipsisNode("...", "/makeshift-junc/*", children_optional=True),
-						node.IntNode("int", "/makeshift-junc/*", children_optional=True),
-						node.SignedFloatNode("float", "/makeshift-junc/*", children_optional=True),
-						# node.DoublequoteStrNode("dqstr", "/makeshift-junc/*", children_optional=True),
-						# node.SinglequoteStrNode("sqstr", "/makeshift-junc/*", children_optional=True),
-						node.PwshVariableNode("pwshvariable", "/makeshift-junc/*", children_optional=True),
-						node.PyIdentifierNode("pyidentifier", "/makeshift-junc/*", children_optional=True),
-						node.String("streeeng", "/makeshift-junc/*", children_optional=True),
-						node.ListOfStrOrInt("list_str_or_int", "/makeshift-junc/*", children_optional=True),
-					),
+					"then",
+					"new/*",
 				),
-				node.KeywordNode(
-					"dupa",
-					node.WordBreakNode("wordbreak", "/dupa/*"),
-					node.String("string", "/makeshift-junc/*", children_optional=True),
-				),
-				node.KeywordNode(
-					"ass",
-					node.WordBreakNode("wordbreak", "/ass/*"),
-					node.ListOfInt("list_int", "/makeshift-junc/*", children_optional=True),
-				),
-				node.AliasKeywordNode(
-					"n -> new",
-					"/new/*",
-				),
-				node.QuitNode("quit"),
 			),
+			node.KeywordNode(
+				"new",
+				node.WordBreakNode(
+					"wordbreak",
+					"new/*",
+					node.EllipsisNode("...", *n_makeshift_junc.children, children_optional=True),
+					node.IntNode("int", *n_makeshift_junc.children, children_optional=True),
+					node.SignedFloatNode("float", *n_makeshift_junc.children, children_optional=True),
+					# node.DoublequoteStrNode("dqstr", *makeshift_junc.children, children_optional=True),
+					# node.SinglequoteStrNode("sqstr", *makeshift_junc.children, children_optional=True),
+					node.PwshVariableNode("pwshvariable", *n_makeshift_junc.children, children_optional=True),
+					node.PyIdentifierNode("pyidentifier", *n_makeshift_junc.children, children_optional=True),
+					node.String("streeeng", *n_makeshift_junc.children, children_optional=True),
+					node.ListOfStrOrInt("list_str_or_int", *n_makeshift_junc.children, children_optional=True),
+				),
+			),
+			node.KeywordNode(
+				"dupa",
+				node.WordBreakNode("wordbreak", "dupa/*"),
+				node.String("string", *n_makeshift_junc.children, children_optional=True),
+			),
+			node.KeywordNode(
+				"ass",
+				node.WordBreakNode("wordbreak", "ass/*"),
+				node.ListOfInt("list_int", *n_makeshift_junc.children, children_optional=True),
+			),
+			node.AliasKeywordNode(
+				"n -> new",
+				"new/*",
+			),
+			node.QuitNode("quit"),
 		)
 
 		c(repl.nodes)
 
+		def cmd_dupa(n: node.String) -> True:
+			c("Dupa haha -> ", n.parse())
+			return True
+
+		def cmd(n: node.Node, *ns: node.Node) -> bool:
+			match n:
+				case node.QuitNode():
+					n.execute()
+				case node.KeywordNode("new"):
+					c("new ->", ns)
+					return True
+				case node.KeywordNode("dupa"):
+					return cmd_dupa(*ns)
+
 		while 1:
 			submitted_nodes = repl()
 
-			match submitted_nodes[0]:
-				case node.QuitNode():
-					break
+			if cmd(*submitted_nodes):
+				continue
 
-			c(submitted_nodes)
+			raise tcr.repl.node.UnaccountedForNodesError(*submitted_nodes)
 
 	def test_typehints():
 		class Eent(int): ...
