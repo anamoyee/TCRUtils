@@ -1,7 +1,6 @@
 import datetime as dt
 from functools import partial
 
-from . import tcr_print as _m_print
 from .tcr_int import hex
 
 

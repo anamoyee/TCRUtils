@@ -621,7 +621,7 @@ if True:  # \/ # fmt & print iterable
 		this = partial(fmt_iterable, **thisdict)
 		str_repr = partial(str_repr, no_implicit_quoteless=kwargs.get("no_implicit_quoteless"))
 
-		if hasattr(it, "__tcr_rainbow__") and it.__tcr_rainbow__:
+		if syntax_highlighting and hasattr(it, "__tcr_rainbow__") and it.__tcr_rainbow__:
 			if isinstance(it.__tcr_rainbow__, str):
 				return gay(it.__tcr_rainbow__)
 

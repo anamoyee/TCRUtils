@@ -1,6 +1,4 @@
-import inspect
 import time
-from asyncio import iscoroutinefunction
 from collections.abc import Callable
 from functools import partial, wraps
 from typing import TypeVar, overload

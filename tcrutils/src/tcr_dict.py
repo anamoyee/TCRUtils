@@ -83,8 +83,8 @@ def clean_dunder_dict(
 
 	Strategy types:
 	- 0: Remove only __dunder__ keys
-	- 1: Do whatever lower-number strategies do but also remove __double_underscore_prefixed keys (default)
-	- 2: Do whatever lower-number strategies do but also remove _single_underscore_prefixed keys
+	- 1: 0™ and also remove __double_underscore_prefixed keys (default)
+	- 2: 1™ and also remove _single_underscore_prefixed keys
 	"""
 
 	if strategy == 0:

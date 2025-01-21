@@ -1,9 +1,8 @@
 """Contains joke functions or the ones that will never be used in a serious situations/prod (This entire package sucks so much it should never be used in prod but uhhhhh.....)."""
 
 from collections.abc import Callable
-from typing import Any, Literal, Self, TypeVar
+from typing import Literal, Self, TypeVar
 
-from ..src import tcr_cloud_imports as cloud_imports
 from .tcr_decorator import instance
 from .tcr_print import FMT_BRACKETS
 from .tcr_types import HexInt
