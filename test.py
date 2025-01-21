@@ -2147,9 +2147,9 @@ if __name__ == "__main__":
 	# test_console_with_eval()
 	# test_result()
 	# test_getch()
-	test_repl()
+	# test_repl()
 	# test_typehints()
-	test_nodes()
+	# test_nodes()
 
 	if not sys.gettrace():
 		ass.total(prefix="\n")

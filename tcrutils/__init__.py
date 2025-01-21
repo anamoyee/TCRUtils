@@ -18,9 +18,27 @@ Update: neeevermind there's just so much stuff you better import directly.
 Joke functions and other barely useful crap are not included in star imports.
 """
 
+if True:
+	import time
+
+	def b(s=""):
+		if not hasattr(b, "t"):
+			b.t = time.perf_counter()
+			b.s = 0
+			return
+		t1 = b.t
+		t2 = time.perf_counter()
+
+		t = t2 - t1
+		b.s += t
+
+		print(f"{s:10} {t:.10f}")
+		b.t = time.perf_counter()
+
+
+b()
 from . import repl, src
 from ._version import __version__
-from .discord import IFYs, codeblock, codeblocks, embed, modal, uncodeblock
 from .src import tcr_case as case
 from .src import tcr_ensure_deps as ensure_depencencies
 from .src import tcr_joke as joke
@@ -66,6 +84,9 @@ from .src.tcr_timestr import TStr, t_day, t_hour, t_minute, t_week, t_year, time
 from .src.tcr_typehints import force_keyword_only_typehints
 from .src.tcr_uptime import Uptime
 from .src.tcr_void import alambda, araiser, avoid, raiser, void
+
+b()
+
 
 # fmt: off
 

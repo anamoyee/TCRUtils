@@ -4,22 +4,6 @@ import pathlib
 import re as regex
 import sys
 import typing
-from enum import Enum, EnumMeta
-from functools import partial, wraps
-from json import dumps as _json_dumps
-from json import loads as _json_loads
-from types import GeneratorType, UnionType
-from typing import Any
-from typing import get_args as unpack_union
-from warnings import warn
-
-from .tcr_path import path as tcr_path_utils
-
-try:
-	from hikari.internal.enums import Enum as _HikariEnum
-except ModuleNotFoundError:
-	_HikariEnum = None
-
 from _collections_abc import (
 	Callable,
 	Iterable,
@@ -42,13 +26,16 @@ from _collections_abc import (
 	tuple_iterator,
 	zip_iterator,
 )
+from enum import Enum, EnumMeta
+from functools import partial, wraps
+from json import dumps as _json_dumps
+from json import loads as _json_loads
+from types import GeneratorType, UnionType
+from typing import Any
+from typing import get_args as unpack_union
+from warnings import warn
 
 from colored import Back, Fore, Style
-
-try:
-	from pydantic import BaseModel as PydanticBM
-except ImportError:
-	exec("PydanticBM = None")
 
 from .tcr_compare import able
 from .tcr_constants import NEWLINE
@@ -56,7 +43,11 @@ from .tcr_extract_error import extract_error
 from .tcr_int import hex as tcrhex
 from .tcr_iterable import Or, getattr_queue, limited_iterable
 from .tcr_null import Null, Undefined
+from .tcr_path import path as tcr_path_utils
 from .tcr_types import BrainfuckCode, GayString, QuotelessString
+
+_HikariEnum = None
+PydanticBM = None
 
 # def double_quoted_repr(s: str, *, quote_char: str = '"'):
 # 	"""Return a string that is the same as `s` but always uses `quote_char` instead of single or double quotes on string boundaries. Make sure to correctly escape every character if needed so there are no edge cases that might break the result."""
@@ -396,7 +387,7 @@ if True:  # \/ # fmt & print iterable
 		"""
 		return str(text.replace("[", "#").replace("<", f"{FMTC.ASTERISK}<").replace(">", f"{FMTC.ASTERISK}>").replace(".", f"{FMTC.DECIMAL}.").replace(",", f"{FMTC.COMMA},").replace("+", f"{FMTC.TRUE}+").replace("-", f"{FMTC.FALSE}-").replace("]", f"{FMTC.BRACKET}]").replace("#", f"{FMTC.BRACKET}["))
 
-	def _pydantic_hopefully_non_erroring_dumper(obj: PydanticBM) -> dict:
+	def _pydantic_hopefully_non_erroring_dumper(obj) -> dict:
 		return {k: getattr(obj, k) for k in obj.model_fields}
 
 	def parse_repr_literal(repr_str: str) -> tuple[str, tuple[Any], dict[str, Any]]:
@@ -455,6 +446,17 @@ if True:  # \/ # fmt & print iterable
 			raise
 		except Exception as e:
 			raise ValueError(e)  # noqa: B904
+
+	def load_dynamic_modules_if_needed():
+		global _HikariEnum, PydanticBM
+
+		if "hikari.internal.enums" in sys.modules:
+			from hikari.internal.enums import Enum as _HikariEnum
+
+		if "pydantic" in sys.modules:
+			from pydantic import BaseModel as PydanticBM
+
+	load_dynamic_modules_if_needed()  # Try to find dynamic modules and load them at load time, not to slow down the query time, though it might not be possible if the import order is fucked
 
 	def fmt_iterable(
 		it: Iterable | Any,
@@ -578,6 +580,8 @@ if True:  # \/ # fmt & print iterable
 
 		if force_no_indent and trailing_commas < 2:
 			trailing_commas = None
+
+		load_dynamic_modules_if_needed()
 
 		if is_mapping or (PydanticBM is not None and (able(isinstance, it, PydanticBM) and isinstance(it, PydanticBM))):
 			asterisks = FMT_ASTERISK[syntax_highlighting] * 2

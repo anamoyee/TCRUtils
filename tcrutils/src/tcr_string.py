@@ -21,6 +21,11 @@ def commafy(text: str | int, splitter: str = ","):
 	return temp[::-1]
 
 
+def backtick_comma_str_list_join(*args: str, joiner: str = ", ", pattern: str = "`%s`", fix_backticks: bool = True) -> str:
+	"""Generate a colon-styled list of strings to display in Discord. Replace any backticks with apostrophes by default if fix_backticks is True."""
+	return joiner.join((pattern % (a.replace("`", "'") if fix_backticks else a)) for a in args)
+
+
 def join_urlstr(*urlstrs: str) -> str:
 	"""Join a sequence of urlstrs with '/'. Cleans up extra slashes."""
 	s = [str(x).strip("/") for x in urlstrs]

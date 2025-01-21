@@ -1,16 +1,17 @@
 from collections.abc import Callable
 
-from ...src.tcr_constants import BACKTICKS, NEWLINE
-from ...src.tcr_extract_error import extract_error, extract_traceback
-from ...src.tcr_iterable import cut_at
-from .tcrd_limits import DiscordLimits
+from .tcr_iterable import cut_at
+
+BACKTICK = "`"
+BACKTICKS = 3 * BACKTICK
+NEWLINE = "\n"
 
 
 def codeblock(
 	text: str,
 	*,
 	langcode: str = "",
-	max_length: int = DiscordLimits.Message.LENGTH_SAFE,
+	max_length: int = 1984,
 	cut_at_func: Callable[[str, int], str] = cut_at,
 	smart_empty: bool = True,
 ) -> str:
@@ -49,7 +50,7 @@ def codeblocks(
 	text1: str,
 	*texts: str,
 	langcodes: tuple[str] | None = None,
-	max_length: int = DiscordLimits.Message.LENGTH_SAFE,
+	max_length: int = 1984,
 	cut_at_func: Callable[[str, int], str] = cut_at,
 	smart_empty: bool = True,
 ):
@@ -68,16 +69,3 @@ def codeblocks(
 		out += codeblock(text, langcode=langcode, max_length=max_length - len(out), cut_at_func=cut_at_func, smart_empty=smart_empty)
 
 	return out
-
-
-def discord_error(e: BaseException) -> str:
-	return codeblocks(
-		extract_error(e),
-		extract_traceback(e),
-		langcodes=(
-			"txt",
-			"py",
-		),
-		max_length=DiscordLimits.Message.LENGTH_SAFEST,
-		smart_empty=True,
-	)
