@@ -1,5 +1,7 @@
 import string
 
+import colored
+
 from ..src.tcr_console import console as c
 from ..src.tcr_getch import getchs as getchs
 from ..src.tcr_terminal import terminal
@@ -72,11 +74,10 @@ class Repl:
 
 		chr2 = " " if chr1 != ">" else ">"
 
-		chr3 = ">"
-
 		if self.chs_history_ptr:
 			chr3 = (str(self.chs_history_ptr)[-3:].__len__() - 1) * "\b" + str(self.chs_history_ptr)[-3:]
 
+		chr3 = ">"
 		return f"{chr1}{chr2}{chr3}"
 
 	def printhook(self, last_char: str | None, *submitted_nodes: Node) -> None:

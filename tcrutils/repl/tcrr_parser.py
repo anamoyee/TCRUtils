@@ -1,5 +1,4 @@
 import fnmatch
-from copy import copy
 
 from ..src.tcr_console import console as c
 from . import tcrr_nodes as m_nodes
@@ -47,22 +46,23 @@ def parse_and_submit_nodes(
 
 		node_text, rest, incomplete = groups
 
-		node = copy(node)
+		node = node.copy()
 
 		node.submit(node_text)
 
 		node_children = [
-			x
+			z
 			for y in (
-				get_nodes_by_name_from_root_nodes(
-					_root_nodes,
-					*x.split("/"),
+				(
+					# get_nodes_by_name_from_root_nodes(
+					# 	_root_nodes,
+					# 	*x.split("/"),
+					# )
+					node.resolve_path(x) if isinstance(x, str) else (x,)
 				)
-				if isinstance(x, str)
-				else (x,)
 				for x in node.children
 			)
-			for x in y
+			for z in y
 		]
 
 		if rest:

@@ -1,24 +1,15 @@
 import abc
 import datetime
+import fnmatch
 import re
-from typing import Generic, TypeVar
-
-import colored
+from copy import copy
+from typing import Self
 
 from ..src.tcr_console import console as c
-from ..src.tcr_print import FMTC, fmt_iterable
+from ..src.tcr_print import FMTC
 from .tcrr_parser import parse_and_submit_nodes
 
-
-class UnaccountedForNodesError(RuntimeError):
-	nodes: tuple["Node"]
-
-	def __init__(self, *nodes: "Node", syntax_highlighting: bool = True):
-		self.nodes = nodes
-		super().__init__(fmt_iterable(nodes, syntax_highlighting=syntax_highlighting))
-
-
-### Root class
+PRINT_FORMAT_NODE_HTML_LIKE_OUTPUT = False
 
 
 class Node:
@@ -28,6 +19,7 @@ class Node:
 	text: str | None
 
 	children: list["Node | str"]
+	parent: "Node | None"
 
 	def __str__(self):
 		return self.text
@@ -50,15 +42,31 @@ class Node:
 				)
 			)
 
-		return f"{FMTC.TYPE}{self.__class__.__name__}{body}"
+		if PRINT_FORMAT_NODE_HTML_LIKE_OUTPUT:
+			color = FMTC._
+			op_bracket = f"{color}<"
+			cl_bracket = f"{color}>"
+			slash = f"{color}/"
+			return f"{op_bracket}{FMTC.TYPE}{self.__class__.__name__}{cl_bracket}{body}{op_bracket}{slash}{FMTC.TYPE}{self.__class__.__name__}{cl_bracket}{FMTC._}"
+		else:
+			return f"{FMTC.TYPE}{self.__class__.__name__}{body}{FMTC._}"
 
-	def __init__(self, name: str = "", *children: "Node"):
+	def __init__(self, *children: "Node", name: str = ""):
 		if self.__class__ is Node:
 			raise RuntimeError("Cannot instantiate Node without subclassing.")
 
+		if not isinstance(name, str):
+			raise TypeError(f"name must me a str, got {name.__class__!r}")
+
 		self.name = name
-		self.children = list(children)
 		self.text = None
+		self.parent = None
+
+		self.children = list(children)
+		for child in self.children:
+			if isinstance(child, str):
+				continue
+			child.parent = self
 
 	@abc.abstractmethod
 	def match(self, s: str) -> tuple[str, str] | None:
@@ -67,13 +75,61 @@ class Node:
 	def submit(self, s: str) -> None:
 		self.text = s
 
+	def copy_and_submit(self, s: str) -> Self:
+		n = self.copy()
+		n.submit(s)
+		return n
+
+	def copy(self) -> Self:
+		return copy(self)
+
+	def get_root_parent(self) -> "Node":
+		current = self
+		while (tmp := current.parent) is not None:
+			current = tmp
+
+		return current
+
+	def resolve_path(self, path: str, *, _seen: None | set = None):
+		if _seen is None:
+			_seen = set()
+
+		if path.startswith("/"):
+			root = self.get_root_parent()
+			nodes = [root]
+		else:
+			nodes = [self]
+
+		parts = [x for x in path.split("/") if x]
+		# if x removes consecutive and leading/trailing slashes
+
+		for part in parts:
+			if part == ".":
+				continue
+			if part == "..":
+				nodes = [node.parent for node in nodes if node.parent is not None]
+			else:
+				matched = []
+				for node in nodes:
+					for child in node.children:
+						if isinstance(child, Node):
+							if fnmatch.fnmatch(child.name, part):
+								matched.append(child)
+						elif isinstance(child, str):
+							if child in _seen:
+								continue
+							_seen.add(child)
+							resolved_nodes = node.resolve_path(child, _seen=_seen)
+							matched.extend(n for n in resolved_nodes if fnmatch.fnmatch(n.name, part))
+				nodes = matched
+
+		return nodes
+
 
 ### Bases
 
-T = TypeVar("T")
 
-
-class ParsableNode(Node, Generic[T]):
+class ParsableNode[T](Node):
 	__match_args__ = ("name", "value")
 
 	def _init__(self, *args, **kwargs):
@@ -97,11 +153,11 @@ class DisposableNode(Node):
 	"""Marked to be skipped when using the data, but not when displaying, for example you dont care about the mandatory space between keywords and identifiers but you still want to display it to the user."""
 
 
-class ConvertableNode(Node):
+class ConvertableNode[T: Node](Node):
 	"""Marked to be converted into another node with the convert method, after being displayed, before being returned to data processing."""
 
 	@abc.abstractmethod
-	def convert(self) -> Node:
+	def convert(self) -> T:
 		raise NotImplementedError("Must implement method convert for ConvertableNode")
 
 
@@ -142,6 +198,9 @@ if True:  # Bases
 
 
 class LiteralNode(Node):
+	def __init__(self, name: str, *children: Node):
+		super().__init__(*children, name=name)
+
 	def match(self, s):
 		if not s.startswith(self.name):
 			return None
@@ -161,15 +220,12 @@ class IrrefutableNode(DisposableNode, Node):
 	def match(self, s):
 		return ("", s)
 
-	def __init__(self, name: str = "_", *children: Node, **kwargs):
-		super().__init__(name, *children, **kwargs)
-
 
 class KeywordNode(OwnDisplayNode):
 	matching_text_escaped: str
 
 	def __init__(self, name: str, *children: Node):
-		super().__init__(name, *children)
+		super().__init__(*children, name=name)
 		self.matching_text_escaped = re.escape(name)
 
 	def match(self, s: str) -> tuple[str, str] | None:
@@ -183,33 +239,32 @@ class KeywordNode(OwnDisplayNode):
 		return f"{FMTC.GD_COLON}{super().display()}{FMTC._}"
 
 
-class AliasKeywordNode(KeywordNode, ConvertableNode):
-	alias_to: str
+class AliasKeywordNode(KeywordNode, ConvertableNode[KeywordNode]):
+	target_path: str
 
-	def __init__(self, alias_ARROW_name: str, *children: Node):
-		if not isinstance(alias_ARROW_name, str) or alias_ARROW_name.count("->") != 1:
-			raise RuntimeError('In AliasKeywordNode declaration the first parameter must be a str containing exactly one occurence of "->". like this: "alias_name->actual_name"')
+	def __init__(self, *children: Node, alias_name: str, target_path: str, autoadd_link_child: bool = True):
+		super().__init__(alias_name, *children, *((f"{target_path}/*",) if autoadd_link_child else ()))
+		self.target_path = target_path
 
-		alias_to, name = alias_ARROW_name.split("->")
+	def convert(self):
+		nodelist = self.resolve_path(self.target_path)
 
-		alias_to = alias_to.strip()
-		name = name.strip()
+		if len(nodelist) != 1:
+			if not nodelist:
+				raise RuntimeError("AliasKeywordNode.convert(): was not pointing to a node (invalid path)")
+			raise RuntimeError("AliasKeywordNode.convert(): was pointing to multiple nodes (valid path, but cannot point to >1 node)")
 
-		super().__init__(name, *children)
-		self.matching_text_escaped = re.escape(alias_to)
-		self.alias_to = alias_to
+		if not isinstance(nodelist[0], KeywordNode):
+			raise RuntimeError("AliasKeywordNode.convert(): was pointing to a valid node, but it's not a KeywordNode")  # noqa: TRY004
 
-	def convert(self) -> KeywordNode:
-		node = KeywordNode(self.name, *self.children)
-		node.submit(self.text)
-		return node
+		return nodelist[0].copy_and_submit(self.text)
 
 
 class UnknownNode(Node):
 	children: list  # Cannot have children nodes
 
 	def __init__(self, *, unknown_text: str):
-		super().__init__(unknown_text)
+		super().__init__(name=unknown_text)
 		self.submit(unknown_text)
 		self.children = []
 
@@ -261,7 +316,7 @@ class IntNode(OwnDisplayNode, _RegexNodeBase, ParsableNode[int], pattern=r"^(-?\
 	def display(self):
 		return f"{FMTC.NUMBER}{self.text}{FMTC._}"
 
-	def parse(self) -> T:
+	def parse(self):
 		return int(self.text)
 
 
@@ -396,27 +451,25 @@ if True:  # String
 		CompoundNode,
 		ParsableNode[str],
 		nodes=(
-			UnreachableNode(
-				"juncdq",
-				_StringDQContent(
-					"contentdq",
-					_StringDQuoteNode("dqclose"),
+			IrrefutableNode(
+				UnreachableNode(
+					_StringDQContent(
+						_StringDQuoteNode(),
+					),
+					name="juncdq",
 				),
-			),
-			UnreachableNode(
-				"juncsq",
-				_StringSQContent(
-					"contentsq",
-					_StringSQuoteNode("sqclose"),
+				UnreachableNode(
+					_StringSQContent(
+						_StringSQuoteNode(),
+					),
+					name="juncsq",
 				),
-			),
-			_StringDQuoteNode(
-				"dqopen",
-				CompoundNodeMatchedMarkerNode("_", "juncdq/*"),
-			),
-			_StringSQuoteNode(
-				"sqopen",
-				CompoundNodeMatchedMarkerNode("_", "juncsq/*"),
+				_StringDQuoteNode(
+					CompoundNodeMatchedMarkerNode("/juncdq/*"),
+				),
+				_StringSQuoteNode(
+					CompoundNodeMatchedMarkerNode("/juncsq/*"),
+				),
 			),
 		),
 	):
@@ -453,33 +506,25 @@ if True:  # List
 		def display(self):
 			return f"{FMTC.DECIMAL}{self.text}{FMTC._}"
 
-	class _GenericListNode(
+	class _GenericListNode[T](
 		CompoundNode,
 		ParsableNode[list[T]],
-		Generic[T],
 		require_matched_marker=True,
 		nodes=(
-			UnreachableNode(
-				"junc",
-				WordBreakNode(
-					"wordbreak",
-					"junc/*",
-				),
-				_ListCommaNode(
-					",",
-					"content/*",
-				),
-				_ListClosingBracketNode("]"),
-			),
 			IrrefutableNode(
-				"",
-				CompoundNodeMatchedMarkerNode(
-					"_",
-					_ListOpeningBracketNode(
-						"[",
-						"content/*",
-						WordBreakNode("wordbreak", "/_/[/*", "junc/]"),
-						"junc/]",
+				UnreachableNode(
+					WordBreakNode("../*"),
+					_ListCommaNode("/content/*"),
+					_ListClosingBracketNode(),
+					name="junc",
+				),
+				IrrefutableNode(
+					CompoundNodeMatchedMarkerNode(
+						_ListOpeningBracketNode(
+							"/content/*",
+							WordBreakNode("../*"),
+							_ListClosingBracketNode(),
+						),
 					),
 				),
 			),
@@ -506,20 +551,20 @@ if True:  # List
 			return l
 
 		def __init_subclass__(cls, listof):
-			listof = [x(f"listitem{i}", "junc/*") for i, x in enumerate(listof)]
+			listof = [x(f"listitem{i}", "/junc/*") for i, x in enumerate(listof)]
 
 			content_unreachable_node = UnreachableNode(
-				"content",
 				*listof,
 				WordBreakNode(
-					"content-wordbreak",
-					"content/*",
+					"../*",
 				),
-				_ListClosingBracketNode("]"),
+				_ListClosingBracketNode(),
+				name="content",
 			)
 			cls._symlink_to_content_node = content_unreachable_node
 
-			cls.nodes.append(content_unreachable_node)
+			content_unreachable_node.parent = cls.nodes[0]
+			cls.nodes[0].children.append(content_unreachable_node)
 
 	class ListOfInt(_GenericListNode[int], listof=(IntNode,)): ...
 
@@ -537,9 +582,7 @@ if True:  # Timestr
 		require_matched_marker=True,
 		nodes=(
 			FloatNode(
-				"number",
 				CompoundNodeMatchedMarkerNode(
-					"",
 					*[LiteralNode(unit, "*", IrrefutableNode()) for unit in sorted(timestr_lookup, key=len, reverse=True)],
 				),
 			),
@@ -565,16 +608,13 @@ if True:  # Timestr
 		require_matched_marker=True,
 		nodes=(
 			Hour24IntNode(
-				"hours",
 				DisposableLiteralNode(
 					":",
 					CompoundNodeMatchedMarkerNode(
-						"",
 						MinuteOrSecondIntNode(
-							"minutes",
 							DisposableLiteralNode(
 								":",
-								MinuteOrSecondIntNode("seconds"),
+								MinuteOrSecondIntNode(),
 								IrrefutableNode(),
 							),
 							IrrefutableNode(),
@@ -610,16 +650,13 @@ if True:  # Timestr
 		require_matched_marker=True,
 		nodes=(
 			DayNode(
-				"days",
 				DisposableLiteralNode(
 					"-",
 					CompoundNodeMatchedMarkerNode(
-						"",
 						MonthNode(
-							"months",
 							DisposableLiteralNode(
 								"-",
-								YearNode("years"),
+								YearNode(),
 								IrrefutableNode(),
 							),
 							IrrefutableNode(),
@@ -686,23 +723,20 @@ if True:  # Timestr
 		ParsableNode[float],
 		nodes=(
 			UnreachableNode(
-				"junc",
 				KeywordNode(
 					"!",
-					"*",
+					"/*",
 				),
+				name="junc",
 			),
 			TimestrNodeTIMEPartNode(
-				"",
-				CompoundNodeMatchedMarkerNode("", "junc/*", IrrefutableNode()),
+				CompoundNodeMatchedMarkerNode("/junc/*", IrrefutableNode()),
 			),
 			TimestrNodeDATEPartNode(
-				"",
-				CompoundNodeMatchedMarkerNode("", "junc/*", IrrefutableNode()),
+				CompoundNodeMatchedMarkerNode("/junc/*", IrrefutableNode()),
 			),
 			TimestrNodeRobostrPartNode(
-				"",
-				CompoundNodeMatchedMarkerNode("", "junc/*", IrrefutableNode()),
+				CompoundNodeMatchedMarkerNode("/junc/*", IrrefutableNode()),
 			),
 		),
 	):
