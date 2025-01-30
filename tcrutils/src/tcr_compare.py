@@ -60,6 +60,24 @@ def able(func: Callable, *args, able_exception__: BaseException = Exception, **k
 		return AbleResult(True, result)
 
 
+def able_simple[**P](f: Callable[P, Any], *args: P.args, **kwargs: P.kwargs) -> bool:
+	try:
+		f(*args, **kwargs)
+	except Exception:
+		return False
+	else:
+		return True
+
+
+def able_simple_result[**P, R](f: Callable[P, R], *args: P.args, **kwargs: P.kwargs) -> None | R:
+	try:
+		result = f(*args, **kwargs)
+	except Exception:
+		return False
+	else:
+		return result
+
+
 def isdunder(s: str):
 	"""Return True if the string ends and starts with at least two underscores each.
 

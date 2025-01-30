@@ -214,3 +214,8 @@ class ErrDenoted:
 		if self.is_err():
 			raise self
 		return self
+
+
+def new_cell():
+	return (lambda: a).__closure__[0].__class__()  # type: ignore <-- hehe :3
+	a = 1

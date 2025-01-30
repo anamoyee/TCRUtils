@@ -37,7 +37,7 @@ from warnings import warn
 
 from colored import Back, Fore, Style
 
-from .tcr_compare import able
+from .tcr_compare import able, able_simple, able_simple_result
 from .tcr_constants import NEWLINE
 from .tcr_extract_error import extract_error
 from .tcr_int import hex as tcrhex
@@ -220,6 +220,9 @@ if True:  # \/ # fmt & print iterable
 
 	FMT_TOO_DEEP = ('[ ... ]', f'{FMTC.BRACKET}[ {FMTC.DECIMAL}... {FMTC.BRACKET}]{FMTC._}')
 	"""FMT_TOO_DEEP[syntax_highlighting: bool] -> attaches '[ ... ]' to the content with respect to syntax highlighting"""
+
+	FMT_RECURSIVE_STRUCTURE_SEEN = ('[[ ... ]]', f'{FMTC.BRACKET}[[ {FMTC.SPECIAL}... {FMTC.BRACKET}]]{FMTC._}')
+	"""FMT_RECURSIVE_STRUCTURE_SEEN[syntax_highlighting: bool]"""
 
 	FMT_UNION_SEPARATOR = ('|', f'{FMTC.PIPE} | {FMTC._}')
 	"""FMT_UNION_SEPARATOR[syntax_highlighting: bool] -> attaches ' | ' to the content with respect to syntax highlighting"""
@@ -533,6 +536,9 @@ if True:  # \/ # fmt & print iterable
 		if kwargs.get("__depth", 0) > depth_limit:
 			return FMT_TOO_DEEP[syntax_highlighting]
 
+		if id(it) in kwargs.get("__seen", {}):
+			return FMT_RECURSIVE_STRUCTURE_SEEN[syntax_highlighting]
+
 		if its:
 			it = [it, *its]
 
@@ -540,8 +546,8 @@ if True:  # \/ # fmt & print iterable
 		if item_limit < 0:
 			item_limit = 1
 
-		is_iterable = able(isinstance, it, Iterable) and isinstance(it, Iterable)
-		is_mapping = able(isinstance, it, Mapping) and isinstance(it, Mapping)
+		is_iterable = able_simple(isinstance, it, Iterable) and isinstance(it, Iterable)
+		is_mapping = able_simple(isinstance, it, Mapping) and isinstance(it, Mapping)
 
 		if (
 			# if this feature is turned on:
@@ -552,7 +558,7 @@ if True:  # \/ # fmt & print iterable
 			# ...that don't have already hardcoded displays
 			and not isinstance(it, str | bytes)
 			# If their length can be checked (e.g. not generators)
-			and able(len, it)
+			and able_simple(len, it)
 			# And they have any length:
 			and len(it) > 0
 			# And none of the items inside have a __tcr_fmt__ because reasons
@@ -583,7 +589,7 @@ if True:  # \/ # fmt & print iterable
 
 		load_dynamic_modules_if_needed()
 
-		if is_mapping or (PydanticBM is not None and (able(isinstance, it, PydanticBM) and isinstance(it, PydanticBM))):
+		if is_mapping or (PydanticBM is not None and (able_simple(isinstance, it, PydanticBM) and isinstance(it, PydanticBM))):
 			asterisks = FMT_ASTERISK[syntax_highlighting] * 2
 		elif is_iterable:
 			asterisks = FMT_ASTERISK[syntax_highlighting] * 1
@@ -616,6 +622,7 @@ if True:  # \/ # fmt & print iterable
 			"no_try": kwargs.get("no_try"),
 			"FMTC": FMTC,
 			"__depth": kwargs.get("__depth", 2) + 1,
+			"__seen": {*kwargs.get("__seen", {}), id(it)},
 		}
 		if a := kwargs.get("let_no_indent_max_iterables"):
 			thisdict["let_no_indent_max_iterables"] = a
@@ -700,7 +707,7 @@ if True:  # \/ # fmt & print iterable
 			if not syntax_highlighting:
 				return "..."
 			return f"{FMTC.DECIMAL}..."
-		if (_result := able(issubclass, it, Enum)) and (_result.result):
+		if able_simple_result(issubclass, it, Enum):
 			return FMT_CLASS[syntax_highlighting] % (
 				it.__name__ + (FMT_LETTERS.META if syntax_highlighting else ""),
 				((1 if _is_enum_auto(it) else 2) * FMT_ASTERISK[syntax_highlighting])
@@ -722,7 +729,7 @@ if True:  # \/ # fmt & print iterable
 
 			it_name = it_name.get("model_name", "<UnknownPydanticType>")
 			return (FMTC.TYPE if syntax_highlighting else "") + it_name
-		if _HikariEnum is not None and (_result := able(issubclass, it, _HikariEnum)) and (_result.result):
+		if _HikariEnum is not None and able_simple_result(issubclass, it, _HikariEnum):
 			return FMT_CLASS[syntax_highlighting] % (
 				it.__name__ + (FMT_LETTERS.META if syntax_highlighting else ""),
 				((1 if _is_enum_auto(it) else 2) * FMT_ASTERISK[syntax_highlighting])
@@ -757,7 +764,7 @@ if True:  # \/ # fmt & print iterable
 					_fmt_enum_variant_name(it.name, syntax_highlighting),
 					this(it.value, force_no_indent=True, force_complex_parenthesis=True),
 				)
-		if PydanticBM is not None and (able(isinstance, it, PydanticBM) and isinstance(it, PydanticBM)):
+		if PydanticBM is not None and able_simple_result(isinstance, it, PydanticBM):
 			if prefer_pydantic_better_dump:
 				dumped = _pydantic_hopefully_non_erroring_dumper(it)
 			else:
@@ -812,7 +819,7 @@ if True:  # \/ # fmt & print iterable
 
 			return s
 
-		if able(issubclass, it, BaseException) and issubclass(it, BaseException):
+		if able_simple_result(issubclass, it, BaseException):
 			exc_name = extract_error(it, raw=True)[0]
 
 			if not syntax_highlighting:
@@ -936,7 +943,7 @@ if True:  # \/ # fmt & print iterable
 				this = partial(this, _enums_next_hide_class=True)
 
 			itl, overflow = limited_iterable(it, item_limit)
-			if not able(len, it) or len(it) > 0:
+			if not able_simple(len, it) or len(it) > 0:
 				if is_mapping:
 					if it is sys.modules:
 						it = it.copy()  # Fix crash because changed size during iteration because reasons
