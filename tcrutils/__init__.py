@@ -43,9 +43,9 @@ from .src import tcr_ensure_deps as ensure_depencencies
 from .src import tcr_joke as joke
 from .src import tcr_types as types
 from .src.tcr_b64 import b64
-from .src.tcr_class import CachedInstancesMeta, DefaultsGetAttr, DefaultsGetItem, DefaultsGetSetAttr, DefaultsGetSetItem, ErrDenoted, NoInit, Singleton, partial_class
+from .src.tcr_class import CachedInstancesMeta, DefaultsGetAttr, DefaultsGetItem, DefaultsGetSetAttr, DefaultsGetSetItem, ErrDenoted, NoInit, Singleton, new_cell, partial_class
 from .src.tcr_classfuncs import get_classname, get_name_classname, get_qualname_classname
-from .src.tcr_compare import able, isdunder
+from .src.tcr_compare import able, able_simple, able_simple_result, isdunder
 from .src.tcr_console import breakpoint, console, start_eval_session
 from .src.tcr_console import console as c
 from .src.tcr_constants import *

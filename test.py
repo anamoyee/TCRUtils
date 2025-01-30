@@ -1919,56 +1919,56 @@ ID: {server|id}
 			no_enter_on_unknown_or_incomplete = "-f" not in sys.argv
 
 		repl = TestingRepl(
-			node.KeywordNode(
-				"t",
-				node.WordBreakNode("", "t/*"),
-				node.TimestrNode(
-					"timestr",
-					node.WordBreakNode(
-						"",
-						node.PyIdentifierNode(""),
-					),
-					node.IrrefutableNode(),
-				),
-			),
-			n_makeshift_junc := node.UnreachableNode(
-				"makeshift-junc",
-				node.WordBreakNode("makeshift-junc-wordbreak", "makeshift-junc/*"),
+			node.IrrefutableNode(
 				node.KeywordNode(
-					"then",
-					"new/*",
+					"t",
+					node.WordBreakNode("/t/*"),
+					node.TimestrNode(
+						node.WordBreakNode(
+							node.PyIdentifierNode(),
+						),
+						node.IrrefutableNode(),
+					),
 				),
-			),
-			node.KeywordNode(
-				"new",
-				node.WordBreakNode(
-					"wordbreak",
-					"new/*",
-					node.EllipsisNode("...", *n_makeshift_junc.children, node.IrrefutableNode()),
-					node.IntNode("int", *n_makeshift_junc.children, node.IrrefutableNode()),
-					node.FloatNode("float", *n_makeshift_junc.children, node.IrrefutableNode()),
-					# node.DoublequoteStrNode("dqstr", *makeshift_junc.children, node.IrrefutableNode()),
-					# node.SinglequoteStrNode("sqstr", *makeshift_junc.children, node.IrrefutableNode()),
-					node.PyIdentifierNode("pyidentifier", *n_makeshift_junc.children, node.IrrefutableNode()),
-					node.StringNode("streeeng", *n_makeshift_junc.children, node.IrrefutableNode()),
-					node.ListOfStrOrInt("list_str_or_int", *n_makeshift_junc.children, node.IrrefutableNode()),
+				n_makeshift_junc := node.UnreachableNode(
+					node.WordBreakNode("/makeshift-junc/*"),
+					node.KeywordNode(
+						"then",
+						"/new/*",
+					),
+					name="makeshift-junc",
 				),
-			),
-			node.KeywordNode(
-				"dupa",
-				node.WordBreakNode("wordbreak", "dupa/*"),
-				node.StringNode("string", *n_makeshift_junc.children, node.IrrefutableNode()),
-			),
-			node.KeywordNode(
-				"ass",
-				node.WordBreakNode("wordbreak", "ass/*"),
-				node.ListOfInt("list_int", *n_makeshift_junc.children, node.IrrefutableNode()),
-			),
-			node.AliasKeywordNode(
-				"n -> new",
-				"new/*",
-			),
-			node.KeywordNode("q"),
+				node.KeywordNode(
+					"new",
+					node.WordBreakNode(
+						"../*",
+						node.EllipsisNode(*n_makeshift_junc.children, node.IrrefutableNode()),
+						node.IntNode(*n_makeshift_junc.children, node.IrrefutableNode()),
+						node.FloatNode(*n_makeshift_junc.children, node.IrrefutableNode()),
+						node.PyIdentifierNode(*n_makeshift_junc.children, node.IrrefutableNode()),
+						# node.DoublequoteStrNode(*makeshift_junc.children, node.IrrefutableNode()),
+						# node.SinglequoteStrNode(*makeshift_junc.children, node.IrrefutableNode()),
+						node.StringNode(*n_makeshift_junc.children, node.IrrefutableNode()),
+						node.ListOfStrOrInt(*n_makeshift_junc.children, node.IrrefutableNode()),
+					),
+				),
+				node.KeywordNode(
+					"dupa",
+					node.WordBreakNode("../*"),
+					node.StringNode(*n_makeshift_junc.children, node.IrrefutableNode()),
+				),
+				node.KeywordNode(
+					"ass",
+					node.WordBreakNode("../*"),
+					node.ListOfInt(*n_makeshift_junc.children, node.IrrefutableNode()),
+				),
+				node.AliasKeywordNode(
+					alias_name="n",
+					target_path="/new",
+				),
+				node.KeywordNode("q"),
+				node.IrrefutableNode(),
+			)
 		)
 
 		c(repl.nodes)
@@ -1996,15 +1996,25 @@ ID: {server|id}
 				case node.TimestrNode():
 					return cmd_timestr(n, *ns)
 
+		class UnaccountedForNodesError(RuntimeError):
+			nodes: tuple[node.Node]
+
+			def __init__(self, *nodes: node.Node, syntax_highlighting: bool = True):
+				self.nodes = nodes
+				super().__init__(tcr.fmt_iterable(nodes, syntax_highlighting=syntax_highlighting))
+
 		while 1:
 			submitted_nodes = repl()
 			print()
 
-			if False:
+			if not submitted_nodes:
+				continue
+
+			if 1 - 1:
 				if cmd(*submitted_nodes):
 					continue
 
-				raise tcr.repl.node.UnaccountedForNodesError(*submitted_nodes)
+				raise UnaccountedForNodesError(*submitted_nodes)
 
 			match submitted_nodes[0]:
 				case node.KeywordNode("q"):
