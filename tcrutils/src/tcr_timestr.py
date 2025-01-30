@@ -14,65 +14,65 @@ from .tcr_extract_error import extract_error
 
 # fmt: off
 timestr_lookup = {
-    's':       (t_second := 1),
-    'sec':     t_second,
-    'secs':    t_second,
-    'sex':     t_second, # >:3 # I am so funny, i know
-    'second':  t_second,
-    'seconds': t_second,
+	's':       (t_second := 1),
+	'sec':     t_second,
+	'secs':    t_second,
+	'sex':     t_second, # >:3 # I am so funny, i know
+	'second':  t_second,
+	'seconds': t_second,
 
-    'm':       (t_minute := 60*t_second),
-    'min':     t_minute,
-    'mins':    t_minute,
-    'minute':  t_minute,
-    'minutes': t_minute,
+	'm':       (t_minute := 60*t_second),
+	'min':     t_minute,
+	'mins':    t_minute,
+	'minute':  t_minute,
+	'minutes': t_minute,
 
-    'h':     (t_hour := 60*t_minute),
-    'hr':    t_hour,
-    'hrs':   t_hour,
-    'hour':  t_hour,
-    'hours': t_hour,
+	'h':     (t_hour := 60*t_minute),
+	'hr':    t_hour,
+	'hrs':   t_hour,
+	'hour':  t_hour,
+	'hours': t_hour,
 
-    'd':    (t_day := 24*t_hour),
-    'day':  t_day,
-    'days': t_day,
+	'd':    (t_day := 24*t_hour),
+	'day':  t_day,
+	'days': t_day,
 
-    'w':     (t_week := 7*t_day),
-    'week':  t_week,
-    'weeks': t_week,
+	'w':     (t_week := 7*t_day),
+	'week':  t_week,
+	'weeks': t_week,
 
-    'y':     (t_year := 365*t_day),
-    'year':  t_year,
-    'years': t_year,
+	'y':     (t_year := 365*t_day),
+	'year':  t_year,
+	'years': t_year,
 
-    'pul':   (t_pull := (11*t_hour + 30*t_minute)),
-    'pull':  t_pull,
-    'puls':  t_pull,
-    'pulls': t_pull,
-    'card':  t_pull,
-    'cards': t_pull,
+	'pul':   (t_pull := (11*t_hour + 30*t_minute)),
+	'pull':  t_pull,
+	'puls':  t_pull,
+	'pulls': t_pull,
+	'card':  t_pull,
+	'cards': t_pull,
 
-    'res':     (t_rescue := 6*t_hour),
-    'reses':   t_rescue,
-    'resees':  t_rescue,
-    'rescue':  t_rescue,
-    'rescues': t_rescue,
+	'res':     (t_rescue := 6*t_hour),
+	'reses':   t_rescue,
+	'resees':  t_rescue,
+	'rescue':  t_rescue,
+	'rescues': t_rescue,
 
-    'decade':    (t_decade := 10 * t_year),
-    'century':   (t_century := 100 * t_year),
-    'millenium': (t_millenium := 1000 * t_year),
-  }
+	'decade':    (t_decade := 10 * t_year),
+	'century':   (t_century := 100 * t_year),
+	'millenium': (t_millenium := 1000 * t_year),
+}
 
 weekday_lookup = [
-  'mo',           'tu',      'we',        'th',       'fr',     'sa',       'su',
-  'mon',          'tue',     'wed',       'thu',      'fri',    'sat',      'sun',
-  'monday',       'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
-  "po",           "wt",      "sr",        "cz",       "pi",     "so",       "ni",
-  "pn",           "wt",      "śr",        "cz",       "pt",     "so",       "nd",
-  "pon",          "wto",     "śro",       "czw",      "pią",    "sob",      "nie",
-  "pon",          "wto",     "sro",       "czw",      "pia",    "sob",      "nie",
-  "poniedzialek", "wtorek",  "sroda",     "czwartek", "piatek", "sobota",   "niedziela",
-  "poniedziałek", "wtorek",  "środa",     "czwartek", "piątek", "sobota",   "niedziela",
+	'mo',           'tu',      'we',        'th',       'fr',     'sa',       'su',
+	'mon',          'tue',     'wed',       'thu',      'fri',    'sat',      'sun',
+	'monday',       'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
+	"po",           "wt",      "sr",        "cz",       "pi",     "so",       "ni",
+	"pn",           "wt",      "śr",        "cz",       "pt",     "so",       "nd",
+	"pon",          "wto",     "śro",       "czw",      "pią",    "sob",      "nie",
+	"pon",          "wto",     "sro",       "czw",      "pia",    "sob",      "nie",
+	"poniedzialek", "wtorek",  "sroda",     "czwartek", "piatek", "sobota",   "niedziela",
+	"poniedziałek", "wtorek",  "środa",     "czwartek", "piątek", "sobota",   "niedziela",
 ]
 # fmt: on
 
@@ -173,7 +173,6 @@ def __setup():
 
 
 def evaluate_single_timestr(s: str, *, units: Mapping[str, int]) -> int:
-	# sourcery skip: assign-if-exp, extract-method, hoist-similar-statement-from-if, hoist-statement-from-if, reintroduce-else, remove-unnecessary-else, use-fstring-for-concatenation
 	if not s:
 		return 0
 
@@ -508,66 +507,66 @@ class TStr:
   It's in a strucuture of
   ```py
   {
-    'unit': 123, # name: seconds
-    'second': 1,
-    'minute': 60,
-    'minutes': 60, # You have to provide copies for all the plurals and whatnot (or just use the default)
+	'unit': 123, # name: seconds
+	'second': 1,
+	'minute': 60,
+	'minutes': 60, # You have to provide copies for all the plurals and whatnot (or just use the default)
   }
   ```
 
   The default is (though may be outdated, go check):
   ```py
   {
-    's':       (t_second := 1),
-    'sec':     t_second,
-    'secs':    t_second,
-    'sex':     t_second, # >:3 # I am so funny, i know
-    'second':  t_second,
-    'seconds': t_second,
+	's':       (t_second := 1),
+	'sec':     t_second,
+	'secs':    t_second,
+	'sex':     t_second, # >:3 # I am so funny, i know
+	'second':  t_second,
+	'seconds': t_second,
 
-    'm':       (t_minute := 60*t_second),
-    'min':     t_minute,
-    'mins':    t_minute,
-    'minute':  t_minute,
-    'minutes': t_minute,
+	'm':       (t_minute := 60*t_second),
+	'min':     t_minute,
+	'mins':    t_minute,
+	'minute':  t_minute,
+	'minutes': t_minute,
 
-    'h':     (t_hour := 60*t_minute),
-    'hr':    t_hour,
-    'hrs':   t_hour,
-    'hour':  t_hour,
-    'hours': t_hour,
+	'h':     (t_hour := 60*t_minute),
+	'hr':    t_hour,
+	'hrs':   t_hour,
+	'hour':  t_hour,
+	'hours': t_hour,
 
-    'd':    (t_day := 24*t_hour),
-    'day':  t_day,
-    'days': t_day,
+	'd':    (t_day := 24*t_hour),
+	'day':  t_day,
+	'days': t_day,
 
-    'w':     (t_week := 7*t_day),
-    'week':  t_week,
-    'weeks': t_week,
+	'w':     (t_week := 7*t_day),
+	'week':  t_week,
+	'weeks': t_week,
 
-    'y':     (t_year := 365*t_day),
-    'year':  t_year,
-    'years': t_year,
+	'y':     (t_year := 365*t_day),
+	'year':  t_year,
+	'years': t_year,
 
-    'pul':   (t_pull := (11*t_hour + 30*t_minute)),
-    'pull':  t_pull,
-    'puls':  t_pull,
-    'pulls': t_pull,
-    'card':  t_pull,
-    'cards': t_pull,
+	'pul':   (t_pull := (11*t_hour + 30*t_minute)),
+	'pull':  t_pull,
+	'puls':  t_pull,
+	'pulls': t_pull,
+	'card':  t_pull,
+	'cards': t_pull,
 
-    'res':     (t_rescue := 6*t_hour),
-    'reses':   t_rescue,
-    'resees':  t_rescue,
-    'rescue':  t_rescue,
-    'rescues': t_rescue,
+	'res':     (t_rescue := 6*t_hour),
+	'reses':   t_rescue,
+	'resees':  t_rescue,
+	'rescue':  t_rescue,
+	'rescues': t_rescue,
 
-    'decade':    10 * t_year,
-    'century':   100 * t_year,
-    'millenium': 1000 * t_year,
+	'decade':    10 * t_year,
+	'century':   100 * t_year,
+	'millenium': 1000 * t_year,
 
-    # Some extra few units that i will not tell you hehe :3 (if you wish to discard them, pass whatever you see above as units)
-    # You will not find them in the default configuration btw :3
+	# Some extra few units that i will not tell you hehe :3 (if you wish to discard them, pass whatever you see above as units)
+	# You will not find them in the default configuration btw :3
   }
   ```
   """
@@ -579,9 +578,9 @@ class TStr:
   It is built of 7-element segments like this:
   ```py
   [
-    'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', # Segment #1
-    'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', # Segment #2
-    # ... # Segment #3, etc. etc.
+	'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', # Segment #1
+	'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', # Segment #2
+	# ... # Segment #3, etc. etc.
   ]
   ```
   The default is:

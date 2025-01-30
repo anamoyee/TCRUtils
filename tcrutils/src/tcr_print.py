@@ -652,7 +652,7 @@ if True:  # \/ # fmt & print iterable
 			except NotImplementedError:
 				pass
 			except Exception as e:
-				if kwargs.get("_raise_errors"):
+				if kwargs.get("_raise_errors") or "--tcr-raise-errors" in sys.argv:
 					raise
 				return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f"{queue_name}, {extract_error(e, raw=True)[0]}"
 
@@ -665,7 +665,7 @@ if True:  # \/ # fmt & print iterable
 			except NotImplementedError:
 				pass
 			except Exception as e:
-				if kwargs.get("_raise_errors"):
+				if kwargs.get("_raise_errors") or "--tcr-raise-errors" in sys.argv:
 					raise
 				return FMT_INTERNAL_EXCEPTION[syntax_highlighting] % f"{queue_name}, {extract_error(e, raw=True)[0]}"
 

@@ -126,9 +126,4 @@ class Result(Generic[Ok, Err]):
 		if self is None:
 			raise NotImplementedError
 
-		return (
-			fmt_iterable(self.__class__)
-			+ fmt_iterable(696969.696969).replace("696969", "")
-			+ fmt_iterable(bool(self.is_ok)).replace("True", "Ok").replace("False", "Err")
-			+ (FMT_BRACKETS[tuple][syntax_highlighting] % fmt_iterable(self._value))
-		)
+		return fmt_iterable(self.__class__) + fmt_iterable(696969.696969).replace("696969", "") + fmt_iterable(bool(self.is_ok)).replace("True", "Ok").replace("False", "Err") + (FMT_BRACKETS[tuple][syntax_highlighting] % fmt_iterable(self._value))

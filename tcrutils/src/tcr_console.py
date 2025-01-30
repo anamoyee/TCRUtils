@@ -217,8 +217,11 @@ class Console:
 		return None if not passthrough else value
 
 	def hr(self, newlines_on_both_sides: bool = True, **kwargs):
-		newline = "\n" if newlines_on_both_sides else ""
-		self.debug(QuotelessString(newline + ("=" * terminal.width) + newline), withprefix=False, **kwargs)
+		if newlines_on_both_sides:
+			print()
+		self.debug(QuotelessString("=" * terminal.width), withprefix=False, **kwargs)
+		if newlines_on_both_sides:
+			print()
 
 	def with_expr_header(self, header_expr: str, literal: bool = False, joiner: str | None = None, end: str | None = None) -> "Console":
 		if not isinstance(header_expr, str):
