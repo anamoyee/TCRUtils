@@ -12,7 +12,24 @@ def raise_for_not_only_nodes(nodes: tuple[Node]):
 		raise ValueError("nodes must be tuple[Node]")
 
 
+def contains_incomplete_nodes(submitted_nodes: tuple[Node]):
+	return any(isinstance(x, IncompleteNode) for x in submitted_nodes) or any(contains_incomplete_nodes(node._parsed or ()) for node in submitted_nodes if isinstance(node, CompoundNode))
+
+
 class Repl:
+	def display_node(self, n: Node, /) -> str:
+		match n:
+			case OwnDisplayNode():
+				return n.display()
+			case UnknownNode(text=text):
+				return f"{colored.Style.UNDERLINE + colored.Fore.RED}{text}{FMTC._}"
+			case CompoundNode():
+				return "".join(self.display_node(x) for x in n._parsed)
+			case Node(text=text):
+				return f"{text}"
+			case _:
+				raise TypeError("Cannot display anything other than a Node")
+
 	def __init__(self, *nodes: Node):
 		raise_for_not_only_nodes(nodes)
 
@@ -42,7 +59,7 @@ class Repl:
 				self.chs_history_ptr -= 1
 
 	def printhook_prompt(self, last_char: str | None, *submitted_nodes: Node) -> tuple[bool, str]:
-		fucked = bool(submitted_nodes and isinstance(submitted_nodes[-1], UnknownNode)) or any(isinstance(x, IncompleteNode) for x in submitted_nodes)
+		fucked = bool(submitted_nodes and isinstance(submitted_nodes[-1], UnknownNode)) or contains_incomplete_nodes(submitted_nodes)
 
 		chr1 = ">"
 
@@ -50,7 +67,7 @@ class Repl:
 			chr1 = "!"
 		elif not submitted_nodes:
 			chr1 = " "
-		elif not submitted_nodes[-1].children_optional and submitted_nodes[-1].children:
+		elif submitted_nodes[-1].children:
 			chr1 = "+"
 
 		chr2 = " " if chr1 != ">" else ">"
@@ -60,10 +77,10 @@ class Repl:
 		if self.chs_history_ptr:
 			chr3 = (str(self.chs_history_ptr)[-3:].__len__() - 1) * "\b" + str(self.chs_history_ptr)[-3:]
 
-		return (fucked, f"{chr1}{chr2}{chr3}")
+		return f"{chr1}{chr2}{chr3}"
 
 	def printhook(self, last_char: str | None, *submitted_nodes: Node) -> None:
-		print(f"{(terminal.width * ' ')}\r{self.printhook_prompt(last_char, *submitted_nodes)[1]} {''.join(x.__str__() for x in submitted_nodes)}", end="\r")
+		print(f"{(terminal.width * ' ')}\r{self.printhook_prompt(last_char, *submitted_nodes)} {''.join(x.__str__() for x in submitted_nodes)}", end="\r")
 
 	hide_cursor: bool = True
 	valid_chars = string.ascii_letters + string.punctuation + string.digits + " \t" + "ąłćżźśćó"
@@ -119,10 +136,10 @@ class Repl:
 						if isinstance(submitted_nodes[-1], UnknownNode):
 							continue
 
-						if any(isinstance(x, IncompleteNode) for x in submitted_nodes):
+						if contains_incomplete_nodes(submitted_nodes):
 							continue
 
-					if not submitted_nodes[-1].children_optional and submitted_nodes[-1].children:
+					if submitted_nodes[-1].children:
 						continue
 
 					submitted_nodes = [x for x in submitted_nodes if not isinstance(x, DisposableNode)]

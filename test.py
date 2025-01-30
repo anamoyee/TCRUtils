@@ -1895,21 +1895,42 @@ ID: {server|id}
 		ass.total()
 
 	def test_repl():
+		import colored
 		from tcrutils.repl import node
+		from tcrutils.src.tcr_print import FMTC
 
 		class TestingRepl(tcr.repl.Repl):
 			def printhook(self, last_char: str | None, *submitted_nodes: node.Node):
-				trailing_unknown, prompt = self.printhook_prompt(last_char, *submitted_nodes)  # noqa: F841
+				prompt = self.printhook_prompt(last_char, *submitted_nodes)
 
-				body = "".join(x.display() for x in submitted_nodes)
+				body = "".join(self.display_node(n) for n in submitted_nodes)
 
 				cursor = "_" if submitted_nodes and not isinstance(submitted_nodes[-1], node.IncompleteNode) and submitted_nodes[-1].text and submitted_nodes[-1].text[-1] in " \t" else ""
 
 				print(tcr.FMTC._ + tcr.terminal.width * " " + "\r" + f"{prompt} {body}{tcr.FMTC._}{cursor}", end="\r")
 
-			no_enter_on_unknown = False
+			def display_node(self, n: node.Node, /) -> str:
+				match n:
+					case node.EllipsisNode(text=text):
+						return f"{FMTC.DECIMAL}{text}{FMTC._}"
+
+				return super().display_node(n)
+
+			no_enter_on_unknown_or_incomplete = "-f" not in sys.argv
 
 		repl = TestingRepl(
+			node.KeywordNode(
+				"t",
+				node.WordBreakNode("", "t/*"),
+				node.TimestrNode(
+					"timestr",
+					node.WordBreakNode(
+						"",
+						node.PyIdentifierNode(""),
+					),
+					node.IrrefutableNode(),
+				),
+			),
 			n_makeshift_junc := node.UnreachableNode(
 				"makeshift-junc",
 				node.WordBreakNode("makeshift-junc-wordbreak", "makeshift-junc/*"),
@@ -1923,57 +1944,73 @@ ID: {server|id}
 				node.WordBreakNode(
 					"wordbreak",
 					"new/*",
-					node.EllipsisNode("...", *n_makeshift_junc.children, children_optional=True),
-					node.IntNode("int", *n_makeshift_junc.children, children_optional=True),
-					node.SignedFloatNode("float", *n_makeshift_junc.children, children_optional=True),
-					# node.DoublequoteStrNode("dqstr", *makeshift_junc.children, children_optional=True),
-					# node.SinglequoteStrNode("sqstr", *makeshift_junc.children, children_optional=True),
-					node.PwshVariableNode("pwshvariable", *n_makeshift_junc.children, children_optional=True),
-					node.PyIdentifierNode("pyidentifier", *n_makeshift_junc.children, children_optional=True),
-					node.String("streeeng", *n_makeshift_junc.children, children_optional=True),
-					node.ListOfStrOrInt("list_str_or_int", *n_makeshift_junc.children, children_optional=True),
+					node.EllipsisNode("...", *n_makeshift_junc.children, node.IrrefutableNode()),
+					node.IntNode("int", *n_makeshift_junc.children, node.IrrefutableNode()),
+					node.FloatNode("float", *n_makeshift_junc.children, node.IrrefutableNode()),
+					# node.DoublequoteStrNode("dqstr", *makeshift_junc.children, node.IrrefutableNode()),
+					# node.SinglequoteStrNode("sqstr", *makeshift_junc.children, node.IrrefutableNode()),
+					node.PyIdentifierNode("pyidentifier", *n_makeshift_junc.children, node.IrrefutableNode()),
+					node.StringNode("streeeng", *n_makeshift_junc.children, node.IrrefutableNode()),
+					node.ListOfStrOrInt("list_str_or_int", *n_makeshift_junc.children, node.IrrefutableNode()),
 				),
 			),
 			node.KeywordNode(
 				"dupa",
 				node.WordBreakNode("wordbreak", "dupa/*"),
-				node.String("string", *n_makeshift_junc.children, children_optional=True),
+				node.StringNode("string", *n_makeshift_junc.children, node.IrrefutableNode()),
 			),
 			node.KeywordNode(
 				"ass",
 				node.WordBreakNode("wordbreak", "ass/*"),
-				node.ListOfInt("list_int", *n_makeshift_junc.children, children_optional=True),
+				node.ListOfInt("list_int", *n_makeshift_junc.children, node.IrrefutableNode()),
 			),
 			node.AliasKeywordNode(
 				"n -> new",
 				"new/*",
 			),
-			node.QuitNode("quit"),
+			node.KeywordNode("q"),
 		)
 
 		c(repl.nodes)
+		c.hr(newlines_on_both_sides=False)
+		c("no_enter_on_unknown_or_incomplete=", repl.no_enter_on_unknown_or_incomplete, withprefix=False)
 
-		def cmd_dupa(n: node.String) -> True:
+		def cmd_dupa(n: node.StringNode):
 			c("Dupa haha -> ", n.parse())
+			return True
+
+		def cmd_timestr(this: node.TimestrNode):
+			c("sigma")
+			c(this._parsed)
 			return True
 
 		def cmd(n: node.Node, *ns: node.Node) -> bool:
 			match n:
-				case node.QuitNode():
-					n.execute()
+				case node.KeywordNode("q"):
+					exit(0)
 				case node.KeywordNode("new"):
 					c("new ->", ns)
 					return True
 				case node.KeywordNode("dupa"):
 					return cmd_dupa(*ns)
+				case node.TimestrNode():
+					return cmd_timestr(n, *ns)
 
 		while 1:
 			submitted_nodes = repl()
+			print()
 
-			if cmd(*submitted_nodes):
-				continue
+			if False:
+				if cmd(*submitted_nodes):
+					continue
 
-			raise tcr.repl.node.UnaccountedForNodesError(*submitted_nodes)
+				raise tcr.repl.node.UnaccountedForNodesError(*submitted_nodes)
+
+			match submitted_nodes[0]:
+				case node.KeywordNode("q"):
+					exit(0)
+
+			c(submitted_nodes)
 
 	def test_typehints():
 		class Eent(int): ...
@@ -1991,15 +2028,6 @@ ID: {server|id}
 		c(asyncio.run(anya(a=Eent(2), b=4)))
 
 	def test_nodes():
-		node = tcr.repl.node.QuitNode("quit")
-
-		try:
-			match node:
-				case tcr.repl.node.ExecutableNode():
-					node.execute()
-		except SystemExit:
-			pass
-
 		node = tcr.repl.node.PyIdentifierNode("ident")
 		node.submit("ifier")
 
@@ -2147,7 +2175,7 @@ if __name__ == "__main__":
 	# test_console_with_eval()
 	# test_result()
 	# test_getch()
-	# test_repl()
+	test_repl()
 	# test_typehints()
 	# test_nodes()
 

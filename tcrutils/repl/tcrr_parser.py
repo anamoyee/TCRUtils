@@ -47,28 +47,28 @@ def parse_and_submit_nodes(
 
 		node_text, rest, incomplete = groups
 
-		node_text = node_text
-
 		node = copy(node)
 
 		node.submit(node_text)
 
-		if rest:
-			node_children = [
-				x
-				for y in (
-					get_nodes_by_name_from_root_nodes(
-						_root_nodes,
-						*x.split("/"),
-					)
-					if isinstance(x, str)
-					else (x,)
-					for x in node.children
+		node_children = [
+			x
+			for y in (
+				get_nodes_by_name_from_root_nodes(
+					_root_nodes,
+					*x.split("/"),
 				)
-				for x in y
-			]
+				if isinstance(x, str)
+				else (x,)
+				for x in node.children
+			)
+			for x in y
+		]
 
+		if rest:
 			rest = parse_and_submit_nodes(rest, node_children, _root_nodes)
+		elif any(node_children_irrefutable := [x for x in node_children if isinstance(x, m_nodes.IrrefutableNode)]):
+			rest = parse_and_submit_nodes(rest, node_children_irrefutable, ())
 		else:
 			rest = ()
 
