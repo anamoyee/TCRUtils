@@ -1,9 +1,9 @@
 try:
-	from .tcri_handler import ImGuiHandler
+	from .handler import ImGuiHandler
 except ImportError:
 
 	def ImGuiHandler(*_, **__):
-		from ..src.console import console as __c
+		from ..console import console as __c
 
 		msg1 = "You need to install tcrutils with the [full] extra or [imgui] extra to use this module"
 		msg2 = "pip install tcrutils[imgui]"
@@ -12,5 +12,5 @@ except ImportError:
 		raise RuntimeError(f"{msg1}\n{msg2}")
 
 
-from .tcri_utils import Every
-from .types import tcri_types_imgui as imtypes
+from .types import imgui as imtypes
+from .utils import Every

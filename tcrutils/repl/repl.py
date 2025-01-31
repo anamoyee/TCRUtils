@@ -2,11 +2,11 @@ import string
 
 import colored
 
-from ..src.console import console as c
-from ..src.getch import getchs as getchs
-from ..src.terminal import terminal
-from .tcrr_nodes import *
-from .tcrr_parser import parse_and_submit_nodes
+from ..console import console as c
+from ..getch import getchs as getchs
+from ..terminal import terminal
+from .nodes import *
+from .parser import parse_and_submit_nodes
 
 
 def raise_for_not_only_nodes(nodes: tuple[Node]):

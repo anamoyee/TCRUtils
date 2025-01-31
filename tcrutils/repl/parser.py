@@ -1,7 +1,7 @@
 import fnmatch
 
-from ..src.console import console as c
-from . import tcrr_nodes as m_nodes
+from ..console import console as c
+from . import nodes as m_nodes
 
 
 def get_nodes_by_name_from_root_nodes(

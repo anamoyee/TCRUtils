@@ -1,3 +1,3 @@
-from . import tcrr_nodes as node
-from .tcrr_parser import parse_and_submit_nodes
-from .tcrr_repl import Repl
+from . import nodes as node
+from .parser import parse_and_submit_nodes
+from .repl import Repl

@@ -20,8 +20,8 @@ if True:  # \/ # Imports
 	import miru
 	import pydantic
 	import tcrutils as tcr
-	from tcrutils import ass, c, console, rass
-	from tcrutils.src.constants import *
+	from tcrutils import ass, c, console, joke, rass
+	from tcrutils.constants import *
 
 
 # _rich_traceback_install(width=tcr.terminal.width-1)
@@ -1702,9 +1702,9 @@ ID: {server|id}
 		c(db)
 
 	def test_gmail():
-		from tcrutils.src.tcr_joke import gmail
+		gmail = joke.gmail
 
-		my_email = "my_email" @ gmail.com
+		my_email = "my_email"@gmail.com  # fmt: skip
 
 		my_email.send(title="Tytuł emaila", body="treść maila")
 
@@ -1895,9 +1895,8 @@ ID: {server|id}
 		ass.total()
 
 	def test_repl():
-		import colored
+		from tcrutils.print import FMTC
 		from tcrutils.repl import node
-		from tcrutils.src.print import FMTC
 
 		class TestingRepl(tcr.repl.Repl):
 			def printhook(self, last_char: str | None, *submitted_nodes: node.Node):
