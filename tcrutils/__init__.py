@@ -16,7 +16,7 @@ from ._version import __version__
 __tcr_rainbow__ = True
 
 
-if False:  # A crude performance-measuring function
+if 0:  # A crude performance-measuring function
 	import time
 
 	def b(s=""):
@@ -34,8 +34,7 @@ if False:  # A crude performance-measuring function
 		b.t = time.perf_counter()
 
 
-if False:  # Left `if False`d out for archival purposes (yeah.. there's git but i like it being here :3 uwu)
-	# fmt: off
+if 0:  # Left `if False`d out for archival purposes (yeah.. there's git but i like it being here :3 uwu)
 	from . import case as case
 	from . import ensure_deps as ensure_depencencies
 	from . import joke as joke
