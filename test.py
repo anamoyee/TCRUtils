@@ -1,11 +1,5 @@
 import sys
 
-if "--syntax-only" in sys.argv:
-	import tcrutils as tcr
-
-	tcr.console.log(f"Syntax test passed on Python %s.%s" % sys.version_info[:2])
-	exit(0)
-
 if True:  # \/ # Imports
 	import asyncio
 	import os
@@ -19,9 +13,14 @@ if True:  # \/ # Imports
 	import hikari
 	import miru
 	import pydantic
-	import tcrutils as tcr
-	from tcrutils import ass, c, console, joke, rass
+	from tcrutils import joke
+	from tcrutils import types as tcr_types
+	from tcrutils.console import console
+	from tcrutils.console import console as c
 	from tcrutils.constants import *
+	from tcrutils.decorator import test, timeit
+	from tcrutils.print import fmt_iterable, print_iterable
+	from tcrutils.test_ import ass, rass
 
 
 # _rich_traceback_install(width=tcr.terminal.width-1)
@@ -118,7 +117,7 @@ if True:  # \/ # Tests
 		console(f"{tcr.oddeven( 3 ) = }")
 		console(f"{tcr.oddeven( 4 ) = }")
 
-	@tcr.timeit(printhook=console)
+	@timeit(printhook=console)
 	def test_timeit():
 		times = 3
 		for i in range(times):
@@ -264,14 +263,15 @@ if True:  # \/ # Tests
 
 		console.debug(f"{a()!r}")
 
-	@tcr.timeit
-	def test_print_iterable(π=tcr.print_iterable, **kwargs):
+	@timeit
+	def test_print_iterable(π=print_iterable, **kwargs):
 		import datetime as dt
 		from dataclasses import dataclass, field
 		from enum import Enum, Flag, IntEnum, IntFlag, ReprEnum, StrEnum, auto
 		from functools import partial
 
-		from tcrutils import Null
+		import tcrutils
+		from tcrutils.null import Null
 
 		π = partial(π, **kwargs)
 
@@ -403,8 +403,10 @@ if True:  # \/ # Tests
 				self.value = value
 
 			def __tcr_display__(self=None, **kwargs) -> str:
-				return tcr.fmt_iterable(
-					tcr.clean_dunder_dict((self if self is not None else PrintableObj2).__dict__),
+				from tcrutils.dict import clean_dunder_dict
+
+				return fmt_iterable(
+					clean_dunder_dict((self if self is not None else PrintableObj2).__dict__),
 					_force_next_type=PrintableObj2,
 					_i_am_class=not self,
 					**kwargs,
@@ -424,11 +426,11 @@ if True:  # \/ # Tests
 
 		π(Client("test"))
 		π(0x7FFFFFFF)
-		π(tcr.types.HexInt(0x7FFFFFFF))
+		π(tcr_types.HexInt(0x7FFFFFFF))
 		π(float | int)
 		π(str)
 		π([[[[[[[[[[[[]]]]]]]]]]]], let_no_indent=False)
-		π([tcr.types.QuotelessString("quoteless string")] * 3)
+		π([tcr_types.QuotelessString("quoteless string")] * 3)
 		π({
 			"a": [
 				"nya",
@@ -463,19 +465,19 @@ if True:  # \/ # Tests
 		π(datetime.date())
 		π(datetime.time())
 
-		ts = tcr.types.UnixTimestampInt(1719949074443)
+		ts = tcr_types.UnixTimestampInt(1719949074443)
 
 		π(ts, _raise_errors=True)
 		π(ts.to_datetime(), _raise_errors=True)
-		π(tcr.types.HexInt(2, leading_zeroes=2))
-		π(tcr.types.HexInt(3, leading_zeroes=3))
-		π(tcr.types.HexInt(4, leading_zeroes=4))
-		π(tcr.types.HexInt(5, leading_zeroes=5))
-		π(tcr.types.HexInt(6))
+		π(tcr_types.HexInt(2, leading_zeroes=2))
+		π(tcr_types.HexInt(3, leading_zeroes=3))
+		π(tcr_types.HexInt(4, leading_zeroes=4))
+		π(tcr_types.HexInt(5, leading_zeroes=5))
+		π(tcr_types.HexInt(6))
 		print()
-		π(tcr)
-		π([tcr])
-		π((tcr,))
+		π(tcrutils)
+		π([tcrutils])
+		π((tcrutils,))
 		print()
 		π("nya")
 		π('n"ya')
@@ -574,7 +576,7 @@ if True:  # \/ # Tests
 
 		π(hikari)
 		π(sys)
-		π(tcr)
+		π(tcrutils)
 		π(TestDataclass)
 		π(TestDataclass(value="nya"))
 		print()
@@ -587,7 +589,7 @@ if True:  # \/ # Tests
 		π(hikari.ActivityType)
 		π(hikari.ActivityType.CUSTOM)
 		print()
-		bf_code = tcr.types.BrainfuckCode(",asdf>.<++[uwu-]nya")
+		bf_code = tcrutils.types.BrainfuckCode(",asdf>.<++[uwu-]nya")
 		π(bf_code)
 		print()
 		π(...)
@@ -596,9 +598,9 @@ if True:  # \/ # Tests
 
 		print()
 		π(
-			tcr.joke.echo,
-			tcr.joke.echo[:],
-			tcr.joke.echo[::-1],
+			joke.echo,
+			joke.echo[:],
+			joke.echo[::-1],
 		)
 		print()
 
@@ -640,7 +642,9 @@ if True:  # \/ # Tests
 		π([1, 2, 3, 4])
 		π([1, 2, 3, 4, 5])
 
-		class ListResult(tcr.Result[list, ValueError]): ...
+		from tcrutils.result import Result
+
+		class ListResult(Result[list, ValueError]): ...
 
 		res1 = ListResult.new_ok(["nya", 123, 3 + 2j, True, None])
 		res2 = ListResult.new_err(ValueError("wal-konia-ue ełrołr"))
@@ -676,7 +680,7 @@ if True:  # \/ # Tests
 			Rainbow2,
 			Rainbow(),
 			Rainbow2(),
-			tcr,
+			tcrutils,
 		)
 		print()
 		π(type.__mro__)
@@ -1895,10 +1899,12 @@ ID: {server|id}
 		ass.total()
 
 	def test_repl():
+		import tcrutils.repl as repl
 		from tcrutils.print import FMTC
 		from tcrutils.repl import node
+		from tcrutils.terminal import terminal
 
-		class TestingRepl(tcr.repl.Repl):
+		class TestingRepl(repl.Repl):
 			def printhook(self, last_char: str | None, *submitted_nodes: node.Node):
 				prompt = self.printhook_prompt(last_char, *submitted_nodes)
 
@@ -1906,7 +1912,7 @@ ID: {server|id}
 
 				cursor = "_" if submitted_nodes and not isinstance(submitted_nodes[-1], node.IncompleteNode) and submitted_nodes[-1].text and submitted_nodes[-1].text[-1] in " \t" else ""
 
-				print(tcr.FMTC._ + tcr.terminal.width * " " + "\r" + f"{prompt} {body}{tcr.FMTC._}{cursor}", end="\r")
+				print(FMTC._ + terminal.width * " " + "\r" + f"{prompt} {body}{FMTC._}{cursor}", end="\r")
 
 			def display_node(self, n: node.Node, /) -> str:
 				match n:
@@ -2072,7 +2078,7 @@ if True:  # \/ # Test setup
 
 	for k, v in globals().copy().items():  # Decorate each test_... function with the @tcr.test decorator
 		if k.startswith("test_"):
-			globals()[k] = tcr.test(_count_tests_decorator(v))
+			globals()[k] = test(_count_tests_decorator(v))
 
 if __name__ == "__main__":
 	test_print_iterable(
