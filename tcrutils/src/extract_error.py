@@ -4,8 +4,8 @@ import traceback
 from collections.abc import Callable
 from types import ModuleType
 
-from .tcr_compare import able
-from .tcr_iterable import getattr_queue
+from .compare import able
+from .iterable import getattr_queue
 
 
 def extract_error(e: BaseException, pattern="%s: %s", *, raw=False) -> tuple[str, str] | str:

@@ -37,14 +37,14 @@ from warnings import warn
 
 from colored import Back, Fore, Style
 
-from .tcr_compare import able, able_simple, able_simple_result
-from .tcr_constants import NEWLINE
-from .tcr_extract_error import extract_error
-from .tcr_int import hex as tcrhex
-from .tcr_iterable import Or, getattr_queue, limited_iterable
-from .tcr_null import Null, Undefined
-from .tcr_path import path as tcr_path_utils
-from .tcr_types import BrainfuckCode, GayString, QuotelessString
+from .compare import able, able_simple, able_simple_result
+from .constants import NEWLINE
+from .extract_error import extract_error
+from .int import hex as tcrhex
+from .iterable import Or, getattr_queue, limited_iterable
+from .null import Null, Undefined
+from .path import path as tcr_path_utils
+from .types import BrainfuckCode, GayString, QuotelessString
 
 _HikariEnum = None
 PydanticBM = None

@@ -7,13 +7,13 @@ from typing import Any, NoReturn
 
 from colored import Back, Fore, Style
 
-from .tcr_compare import able
-from .tcr_console import console
-from .tcr_extract_error import extract_error
-from .tcr_iterable import getattr_queue
-from .tcr_print import FMT_BRACKETS, FMTC, fmt_iterable
-from .tcr_types import UnreprableString
-from .tcr_void import raiser
+from .compare import able
+from .console import console
+from .extract_error import extract_error
+from .iterable import getattr_queue
+from .print import FMT_BRACKETS, FMTC, fmt_iterable
+from .types import UnreprableString
+from .void import raiser
 
 ASSERTION_ASS = f"{Style.reset}{Fore.GREEN + Style.bold} PASS {Style.reset}"
 """Uh i meant assertion_pass..."""

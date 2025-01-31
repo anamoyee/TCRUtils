@@ -2,7 +2,7 @@ from collections.abc import Callable
 from functools import wraps
 from typing import Any, NoReturn
 
-from .tcr_void import void
+from .void import void
 
 
 class MayNotReturn:

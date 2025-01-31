@@ -3,7 +3,7 @@ try:
 except ImportError:
 
 	def ImGuiHandler(*_, **__):
-		from ..src.tcr_console import console as __c
+		from ..src.console import console as __c
 
 		msg1 = "You need to install tcrutils with the [full] extra or [imgui] extra to use this module"
 		msg2 = "pip install tcrutils[imgui]"

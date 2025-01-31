@@ -1,6 +1,6 @@
 from typing import Any
 
-from .tcr_iterable import getattr_queue
+from .iterable import getattr_queue
 
 
 def get_classname(obj: Any, *, default: str = "UnknownClass") -> str:

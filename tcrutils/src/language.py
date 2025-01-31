@@ -1,6 +1,6 @@
 from functools import wraps
 
-from .tcr_error import error
+from .error import error
 
 
 def apostrophe_s(word: str):

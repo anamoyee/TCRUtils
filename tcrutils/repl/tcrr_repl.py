@@ -2,9 +2,9 @@ import string
 
 import colored
 
-from ..src.tcr_console import console as c
-from ..src.tcr_getch import getchs as getchs
-from ..src.tcr_terminal import terminal
+from ..src.console import console as c
+from ..src.getch import getchs as getchs
+from ..src.terminal import terminal
 from .tcrr_nodes import *
 from .tcrr_parser import parse_and_submit_nodes
 

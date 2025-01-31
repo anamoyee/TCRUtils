@@ -5,7 +5,7 @@ from typing import TypeVar, overload
 
 from colored import Back, Fore, Style
 
-from .tcr_print import print_block
+from .print import print_block
 
 F = TypeVar("F", bound=Callable[..., None])
 

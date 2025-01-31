@@ -1,6 +1,6 @@
 import fnmatch
 
-from ..src.tcr_console import console as c
+from ..src.console import console as c
 from . import tcrr_nodes as m_nodes
 
 

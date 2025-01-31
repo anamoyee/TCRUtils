@@ -1,7 +1,7 @@
 import subprocess
 import sys
 
-from .tcr_console import console as c
+from .console import console as c
 
 
 class Dependency:

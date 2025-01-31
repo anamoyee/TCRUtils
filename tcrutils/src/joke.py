@@ -3,9 +3,9 @@
 from collections.abc import Callable
 from typing import Literal, Self, TypeVar
 
-from .tcr_decorator import instance
-from .tcr_print import FMT_BRACKETS
-from .tcr_types import HexInt
+from .decorator import instance
+from .print import FMT_BRACKETS
+from .types import HexInt
 
 
 def fizzbuzz(n: int) -> str: ...

@@ -1,7 +1,7 @@
 import datetime as dt
 from functools import partial
 
-from .tcr_int import hex
+from .int import hex
 
 
 class BrainfuckCode(str):

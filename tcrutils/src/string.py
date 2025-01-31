@@ -2,7 +2,7 @@ import os
 import pathlib as p
 import re as regex
 
-from .tcr_int import clamp
+from .int import clamp
 
 
 def commafy(text: str | int, splitter: str = ","):

@@ -7,14 +7,14 @@ from sys import argv, exit
 
 from colored import Back, Fore, Style
 
-from .tcr_dict import clean_dunder_dict
-from .tcr_extract_error import extract_error, extract_traceback
-from .tcr_getch import getch
-from .tcr_inspect import eval_fback, get_file_colon_lineno
-from .tcr_iterable import cut_at
-from .tcr_print import FMTC, fmt_iterable
-from .tcr_terminal import terminal
-from .tcr_types import QuotelessString
+from .dict import clean_dunder_dict
+from .extract_error import extract_error, extract_traceback
+from .getch import getch
+from .inspect import eval_fback, get_file_colon_lineno
+from .iterable import cut_at
+from .print import FMTC, fmt_iterable
+from .terminal import terminal
+from .types import QuotelessString
 
 
 class CC:

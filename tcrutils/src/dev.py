@@ -4,7 +4,7 @@ import inspect
 from types import FunctionType
 from typing import Any
 
-from .tcr_classfuncs import get_name_classname
+from .classfuncs import get_name_classname
 
 print_ = print
 
@@ -105,7 +105,7 @@ def generate_type_hinter(
 			print_(result)
 
 	if clipboard:
-		from .tcr_console import console
+		from .console import console
 
 		try:
 			import pyperclip

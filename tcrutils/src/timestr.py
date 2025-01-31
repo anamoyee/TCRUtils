@@ -6,11 +6,11 @@ from dataclasses import dataclass, field
 
 import pytz
 
-from .tcr_compare import able
-from .tcr_console import console
-from .tcr_decorator import autorun, with_overrides
-from .tcr_error import ConfigurationError
-from .tcr_extract_error import extract_error
+from .compare import able
+from .console import console
+from .decorator import autorun, with_overrides
+from .error import ConfigurationError
+from .extract_error import extract_error
 
 # fmt: off
 timestr_lookup = {

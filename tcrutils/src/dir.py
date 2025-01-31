@@ -2,7 +2,7 @@ from builtins import vars as _builtin_vars
 from collections.abc import Callable, Iterable
 from typing import Any
 
-from .tcr_dict import merge_dicts
+from .dict import merge_dicts
 
 
 def vars(x: object, /) -> dict[str, Any]:

@@ -39,7 +39,7 @@ import importlib.machinery
 import sys
 import types
 
-from ..src.tcr_console import console as c
+from .console import console as c
 
 
 def is_valid_python_source(code: str) -> bool:

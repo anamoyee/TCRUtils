@@ -1,7 +1,7 @@
 from types import UnionType
 from typing import Any, Self, TypeVar, Union
 
-from .tcr_class import Singleton
+from .class_ import Singleton
 
 
 def instance(func):

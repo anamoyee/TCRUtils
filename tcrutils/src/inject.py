@@ -7,10 +7,10 @@ from collections.abc import Callable
 
 from colored import Back, Fore, Style
 
-from .tcr_classfuncs import get_classname
-from .tcr_console import console
-from .tcr_iterable import cut_at
-from .tcr_print import FMTC
+from .classfuncs import get_classname
+from .console import console
+from .iterable import cut_at
+from .print import FMTC
 
 C_WHITE = Fore.white + Style.bold
 C_NUMBER = FMTC.NUMBER

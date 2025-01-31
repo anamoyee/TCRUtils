@@ -5,8 +5,8 @@ import re
 from copy import copy
 from typing import Self
 
-from ..src.tcr_console import console as c
-from ..src.tcr_print import FMTC
+from ..src.console import console as c
+from ..src.print import FMTC
 from .tcrr_parser import parse_and_submit_nodes
 
 PRINT_FORMAT_NODE_HTML_LIKE_OUTPUT = False
@@ -574,7 +574,7 @@ if True:  # List
 
 
 if True:  # Timestr
-	from ..src.tcr_timestr import timestr_lookup
+	from ..src.timestr import timestr_lookup
 
 	class TimestrNodeRobostrPartNode(
 		CompoundNode,

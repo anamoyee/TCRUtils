@@ -21,7 +21,7 @@ if True:  # \/ # Imports
 	import pydantic
 	import tcrutils as tcr
 	from tcrutils import ass, c, console, rass
-	from tcrutils.src.tcr_constants import *
+	from tcrutils.src.constants import *
 
 
 # _rich_traceback_install(width=tcr.terminal.width-1)
@@ -1897,7 +1897,7 @@ ID: {server|id}
 	def test_repl():
 		import colored
 		from tcrutils.repl import node
-		from tcrutils.src.tcr_print import FMTC
+		from tcrutils.src.print import FMTC
 
 		class TestingRepl(tcr.repl.Repl):
 			def printhook(self, last_char: str | None, *submitted_nodes: node.Node):

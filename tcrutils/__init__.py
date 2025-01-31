@@ -38,51 +38,51 @@ if False:
 
 from . import repl, src
 from ._version import __version__
-from .src import tcr_case as case
-from .src import tcr_ensure_deps as ensure_depencencies
-from .src import tcr_joke as joke
-from .src import tcr_types as types
-from .src.tcr_b64 import b64
-from .src.tcr_class import CachedInstancesMeta, DefaultsGetAttr, DefaultsGetItem, DefaultsGetSetAttr, DefaultsGetSetItem, ErrDenoted, NoInit, Singleton, new_cell, partial_class
-from .src.tcr_classfuncs import get_classname, get_name_classname, get_qualname_classname
-from .src.tcr_compare import able, able_simple, able_simple_result, isdunder
-from .src.tcr_console import breakpoint, console, start_eval_session
-from .src.tcr_console import console as c
-from .src.tcr_constants import *
-from .src.tcr_context import random_seed_lock
-from .src.tcr_decorator import autorun, convert, copy_kwargs, copy_kwargs_sunder, instance, skip_first_call, skip_first_call_async, test, timeit, with_overrides
-from .src.tcr_dev import generate_function_argument_typehints, generate_type_hinter
-from .src.tcr_dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zip, merge_dicts
-from .src.tcr_dir import dir2, dir3, dir_recursive, vars2, vars3, vars_recursive
-from .src.tcr_error import error
-from .src.tcr_extract_error import extract_error, extract_traceback, module_error_map, modules_error_map, print_exception_with_traceback
-from .src.tcr_F import F
-from .src.tcr_getch import KeyCode, KeyCodeCompound, KeyCodeSimple, getch, getchs
-from .src.tcr_import import load_package_dynamically
-from .src.tcr_inject import ErrorCatcher, WarningCatcher
-from .src.tcr_input import insist
-from .src.tcr_inspect import eval_fback, get_file_colon_lineno, get_lineno
-from .src.tcr_int import clamp, float2int, hex, recursive_sum
-from .src.tcr_iterable import Or, batched, bogo_sort, cut_at, getattr_queue, getmanyattrs, hasmanyattrs, limited_iterable, shuffled, slice_between, stalin_sort
-from .src.tcr_language import apostrophe_s, make_plural, nth, plural_s
-from .src.tcr_misspellings import asert, trei
-from .src.tcr_null import Null, Undefined, UniqueDefault
-from .src.tcr_other import intbool
-from .src.tcr_overload import Overload, OverloadMeta, overload
-from .src.tcr_path import path
-from .src.tcr_print import FMT_BRACKETS, FMTC, alert, fmt_iterable, gay, print_block, print_iterable
-from .src.tcr_regex import RegexPreset
-from .src.tcr_result import Result, ResultUnwrappedErrOnValueError, ResultUnwrappedOnErrorError
-from .src.tcr_run import RunSACAble, run_sac
-from .src.tcr_sdb import ShelveDB
-from .src.tcr_string import SlashableString, commafy, custom_zfill, get_token, join_urlstr, polaris_progressbar
-from .src.tcr_temp import temp_file
-from .src.tcr_terminal import terminal
-from .src.tcr_test import ass, raises, rass
-from .src.tcr_timestr import TStr, t_day, t_hour, t_minute, t_week, t_year, timestr
-from .src.tcr_typehints import force_keyword_only_typehints
-from .src.tcr_uptime import Uptime
-from .src.tcr_void import alambda, araiser, avoid, raiser, void
+from .src import case as case
+from .src import ensure_deps as ensure_depencencies
+from .src import joke as joke
+from .src import types as types
+from .src.b64 import b64
+from .src.class_ import CachedInstancesMeta, DefaultsGetAttr, DefaultsGetItem, DefaultsGetSetAttr, DefaultsGetSetItem, ErrDenoted, NoInit, Singleton, new_cell, partial_class
+from .src.classfuncs import get_classname, get_name_classname, get_qualname_classname
+from .src.compare import able, able_simple, able_simple_result, isdunder
+from .src.console import breakpoint, console, start_eval_session
+from .src.console import console as c
+from .src.constants import *
+from .src.context import random_seed_lock
+from .src.decorator import autorun, convert, copy_kwargs, copy_kwargs_sunder, instance, skip_first_call, skip_first_call_async, test, timeit, with_overrides
+from .src.dev import generate_function_argument_typehints, generate_type_hinter
+from .src.dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zip, merge_dicts
+from .src.dir import dir2, dir3, dir_recursive, vars2, vars3, vars_recursive
+from .src.error import error
+from .src.extract_error import extract_error, extract_traceback, module_error_map, modules_error_map, print_exception_with_traceback
+from .src.F import F
+from .src.getch import KeyCode, KeyCodeCompound, KeyCodeSimple, getch, getchs
+from .src.import_ import load_package_dynamically
+from .src.inject import ErrorCatcher, WarningCatcher
+from .src.input import insist
+from .src.inspect import eval_fback, get_file_colon_lineno, get_lineno
+from .src.int import clamp, float2int, hex, recursive_sum
+from .src.iterable import Or, batched, bogo_sort, cut_at, getattr_queue, getmanyattrs, hasmanyattrs, limited_iterable, shuffled, slice_between, stalin_sort
+from .src.language import apostrophe_s, make_plural, nth, plural_s
+from .src.misspellings import asert, trei
+from .src.null import Null, Undefined, UniqueDefault
+from .src.other import intbool
+from .src.overload import Overload, OverloadMeta, overload
+from .src.path import path
+from .src.print import FMT_BRACKETS, FMTC, alert, fmt_iterable, gay, print_block, print_iterable
+from .src.regex import RegexPreset
+from .src.result import Result, ResultUnwrappedErrOnValueError, ResultUnwrappedOnErrorError
+from .src.run import RunSACAble, run_sac
+from .src.sdb import ShelveDB
+from .src.string import SlashableString, commafy, custom_zfill, get_token, join_urlstr, polaris_progressbar
+from .src.temp import temp_file
+from .src.terminal import terminal
+from .src.test import ass, raises, rass
+from .src.timestr import TStr, t_day, t_hour, t_minute, t_week, t_year, timestr
+from .src.typehints import force_keyword_only_typehints
+from .src.uptime import Uptime
+from .src.void import alambda, araiser, avoid, raiser, void
 
 # fmt: off
 

@@ -3,9 +3,9 @@ from collections.abc import Callable, Iterable, Iterator, MutableSequence
 from random import shuffle
 from typing import Any, Literal, TypeVar
 
-from .tcr_compare import able
-from .tcr_null import UniqueDefault as RaiseError
-from .tcr_regex import RegexPreset
+from .compare import able
+from .null import UniqueDefault as RaiseError
+from .regex import RegexPreset
 
 T = TypeVar("T")
 Ts = TypeVar("Ts")

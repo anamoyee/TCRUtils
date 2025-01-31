@@ -1,6 +1,6 @@
 from collections.abc import Callable
 
-from .tcr_iterable import cut_at
+from .iterable import cut_at
 
 BACKTICK = "`"
 BACKTICKS = 3 * BACKTICK

@@ -2,8 +2,8 @@ import contextlib
 from collections.abc import Generator, Hashable, Mapping
 from typing import Any
 
-from .tcr_compare import isdunder
-from .tcr_null import Undefined
+from .compare import isdunder
+from .null import Undefined
 
 
 def _check_strict(master: Mapping, slave: Mapping, *, recursive: bool) -> bool:

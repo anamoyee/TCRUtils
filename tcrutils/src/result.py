@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Generic, Literal, TypeVar, overload
 
-from .tcr_print import FMT_BRACKETS
+from .print import FMT_BRACKETS
 
 
 class EmptyType(Enum):
