@@ -1,5 +1,7 @@
 graft tcrutils
 include pyproject.toml
 include setup.py
+include requirements.txt
+graft requirements
 global-exclude *.py[cod]
 global-exclude upload.py
