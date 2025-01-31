@@ -1,24 +1,12 @@
-# TCRUtils - Utility Package for TCR Projects
+# TCRUtils - yet another utilities package
 
-`TCRUtils` is a collection of utility functions, classes, and helpers designed to streamline various tasks in TCR projects. Below is a brief overview of some of the key features.
-
-## Installation and Importing
-
-Importing '''convention''' (it's just me using it...)
-```python
-import tcrutils as tcr
-```
-
-Star-importng is supported (overriden) but you'd be a lot better off by just importng by name or the module itself not to litter your global scope with all this garbage
-```python
-from tcrutils import timestr
-```
+`TCRUtils` is a collection of utility functions, classes, and helpers designed to streamline various tasks in projects. Below is a brief overview of some of the key features.
 
 ## Featured Features (yipee :3)
 
 - **`fmt_iterable(x: LITERALLY_ANY_OBJECT_TYPE)`**: Pretty-formats any python object that i have thought of for easier readability, even some third-party-library ones.
 - **`console`, or just `tcr.c`**: Provides [hikari](https://pypi.org/project/hikari/)-styled logging combined with the above fmt_iterable to pretty-print your debugging! Yay!
-- **`TStr`**: Convert between seconds and readable timestrs. Now with timezones! for example `str("1h")` -> `int(3600)`.
+- **`TStr`**: Convert between seconds and readable timestrs. Now with timezones! for example `"1h"` -> `3600`.
 - **`ShelveDB`**: Quickly and easily set up a dict-based, python built-in shelve module's shelf - a python dictionary able to contain arbitrary python types that persists on restart.
 
 ### Iterable Helpers
