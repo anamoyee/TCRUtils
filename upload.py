@@ -33,14 +33,14 @@ def rm_r_dist_directory():
 def run_shell_commands(*, version_after_bump: str):
 	cmds = f"""
 git add .
-git commit -m "commit files not committed before upload and bump version to {version_after_bump}"
+git commit -m "commit before uploading (v{version_after_bump})"
 git push
 py -m build
 py -m twine upload dist/*
 """.strip().split("\n")
 
 	for cmd in cmds:
-		# input(f'RUNNING: {cmd!r}\n>>> ')
+		print(f" > > > {cmd!r}")
 		subprocess.run(cmd, shell=True)
 
 
