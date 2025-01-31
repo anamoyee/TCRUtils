@@ -10,26 +10,24 @@ class EmptyType(Enum):
 	EMPTY = auto()
 
 
-Ok = TypeVar("Ok")
-Err = TypeVar("Err", bound=BaseException)
 Default = TypeVar("Default")
 
 
 @dataclass
-class ResultUnwrappedOnErrorError(Exception):
+class ResultUnwrappedOnErrorError[Err: BaseException](Exception):
 	"""An unwrap() was called on a Result containing an error."""
 
 	that_error: Err
 
 
 @dataclass
-class ResultUnwrappedErrOnValueError(Exception):
+class ResultUnwrappedErrOnValueError[Ok](Exception):
 	"""An unwrap_err() was called on a Result contaning a value."""
 
 	that_value: Ok
 
 
-class Result(Generic[Ok, Err]):
+class Result[Ok, Err: BaseException]:
 	_value: Ok | Err
 	_is_err: bool
 
@@ -77,14 +75,14 @@ class Result(Generic[Ok, Err]):
 	def unwrap(self) -> Ok:
 		"""If the result contains an error, raise ResultUnwrappedIncorrectlyError(that_error), else return the value."""
 		if self._is_err:
-			raise ResultUnwrappedOnErrorError(self._value)
+			raise ResultUnwrappedOnErrorError[Err](self._value)
 
 		return self._value
 
 	def unwrap_err(self) -> Err:
 		"""If the result contains a value, raise ResultUnwrappedErrOnValueError(that_value), else return the error."""
 		if not self._is_err:
-			raise ResultUnwrappedErrOnValueError(self._value)
+			raise ResultUnwrappedErrOnValueError[Ok](self._value)
 
 		return self._value
 
