@@ -54,7 +54,6 @@ if 0:  # Left `if False`d out for archival purposes (yeah.. there's git but i li
 	from .dir import dir2, dir3, dir_recursive, vars2, vars3, vars_recursive
 	from .error import error
 	from .extract_error import extract_error, extract_traceback, module_error_map, modules_error_map, print_exception_with_traceback
-	from .F import F
 	from .getch import KeyCode, KeyCodeCompound, KeyCodeSimple, getch, getchs
 	from .import_ import load_package_dynamically
 	from .inject import ErrorCatcher, WarningCatcher
