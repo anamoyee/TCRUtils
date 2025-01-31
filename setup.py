@@ -29,7 +29,15 @@ def main():
 			"Intended Audience :: Developers",
 			"Programming Language :: Python :: 3.12",
 			"Programming Language :: Python :: 3.13",
+			"Programming Language :: Python :: 3 :: Only",
+			"License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+			"Typing :: Typed",
 			"Topic :: Utilities",
+			"Operating System :: POSIX",
+			"Operating System :: POSIX :: Linux",
+			"Operating System :: MacOS",
+			"Operating System :: Microsoft :: Windows",
+			"Operating System :: Microsoft :: MS-DOS",
 		],
 		python_requires=">=3.12",
 		extras_require=find_all_extras(),
@@ -37,6 +45,7 @@ def main():
 		packages=setuptools.find_packages(),
 		include_package_data=True,
 	)
+
 
 VERSION_REGEX = r"__version__\s*=\s*[\"'](.*?)[\"']"
 
