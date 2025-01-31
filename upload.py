@@ -31,17 +31,26 @@ def rm_r_dist_directory():
 
 
 def run_shell_commands(*, version_after_bump: str):
-	cmds = f"""
+	cmds_groups = [
+		x.strip().split("\n")
+		for x in [
+			f"""
 git add .
 git commit -m "commit before uploading (v{version_after_bump})"
 git push
+""",
+			f"""
 py -m build
 py -m twine upload dist/*
-""".strip().split("\n")
+""",
+		]
+	]
 
-	for cmd in cmds:
-		print(f" > > > {cmd!r}")
-		subprocess.run(cmd, shell=True)
+	for cmds in cmds_groups:
+		for cmd in cmds:
+			print(f" > > > {cmd!r}")
+			subprocess.run(cmd, shell=True)
+		input("Everything going fine? Ctrl+C to abort, enter to continue.")
 
 
 def main():
