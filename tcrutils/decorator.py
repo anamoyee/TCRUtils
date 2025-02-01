@@ -1,14 +1,11 @@
 import time
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from functools import partial, wraps
 from typing import TypeVar, overload
 
 from colored import Back, Fore, Style
 
 from .print import print_block
-
-F = TypeVar("F", bound=Callable[..., None])
-
 
 if True:  # \/ # @test
 
@@ -95,10 +92,10 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 if True:  # \/ # @autorun, @instance
 
 	@overload
-	def autorun(func: F) -> F: ...
+	def autorun[F: Callable[..., None]](func: F) -> F: ...
 
 	@overload
-	def autorun(*args, **kwargs) -> Callable[[F], F]: ...
+	def autorun[F: Callable[..., None]](*args, **kwargs) -> Callable[[F], F]: ...
 
 	def autorun(*args, **kwargs):
 		if len(args) == 1 and callable(args[0]):
@@ -107,13 +104,13 @@ if True:  # \/ # @autorun, @instance
 			return func
 		else:
 
-			def decorator(func: F, args=args, kwargs=kwargs) -> F:
+			def decorator[F: Callable[..., None]](func: F, args=args, kwargs=kwargs) -> F:
 				func(*args, **kwargs)
 				return func
 
 			return decorator
 
-	def instance(func):
+	def instance[R](func: Callable[..., R]) -> R:
 		return func()
 
 
@@ -202,14 +199,21 @@ if True:  # \/ # @convert.stringify
 
 	convert = Convert()
 
-	def aconvert(converter: Callable, await_converter: bool = False):
-		def decorator(afunc):
+	def aconvert[**P, From, To, F: Callable[P, Awaitable[From]]](converter: Callable[[From], To]):
+		def decorator(afunc: F):
 			@wraps(afunc)
-			async def wrapper(*args, **kwargs):
-				if await_converter:
-					return await converter(await afunc(*args, **kwargs))
-				else:
-					return converter(await afunc(*args, **kwargs))
+			async def wrapper(*args: P.args, **kwargs: P.kwargs) -> To:
+				return converter(await afunc(*args, **kwargs))
+
+			return wrapper
+
+		return decorator
+
+	def aaconvert[**P, From, To, F: Callable[P, Awaitable[From]]](converter: Callable[[From], Awaitable[To]]):
+		def decorator(afunc: F):
+			@wraps(afunc)
+			async def wrapper(*args: P.args, **kwargs: P.kwargs) -> To:
+				return await converter(await afunc(*args, **kwargs))
 
 			return wrapper
 
@@ -253,9 +257,9 @@ if True:  # \/ # @copy_kwargs
 		return wrapper
 
 	def copy_kwargs_sunder(func):
-		"""Pack all of that func's kwargs into __kwargs and pass the kwarguments normally along with _kwargs kwarg which contains all the kwargs in a dict.
+		"""Pack all of that func's kwargs into _kwargs and pass the kwarguments normally along with _kwargs kwarg which contains all the kwargs in a dict.
 
-		This will error if func receives a literal "__kwargs" kwarg.
+		This will error if func receives a literal "_kwargs" kwarg.
 		```py
 		>>> a(_kwargs=kwargs, **{"_kwargs": "some_value"})
 		```
