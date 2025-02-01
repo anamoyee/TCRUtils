@@ -49,7 +49,7 @@ py -m twine upload dist/*
 	_ = 0
 	for cmds in cmds_groups:
 		if _:
-			input("Everything going fine? Ctrl+C to abort, enter to continue.")
+			input("\n\nEverything going fine? Ctrl+C to abort, enter to continue.\n\n")
 		_ = 1
 		for cmd in cmds:
 			print(f" >>> {cmd!r}")
