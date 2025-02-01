@@ -17,7 +17,6 @@ if True:  # \/ # Imports
 	from tcrutils import types as tcr_types
 	from tcrutils.console import console
 	from tcrutils.console import console as c
-	from tcrutils.constants import *
 	from tcrutils.decorator import test, timeit
 	from tcrutils.print import fmt_iterable, print_iterable
 	from tcrutils.test_ import ass, rass

@@ -41,7 +41,7 @@ if 0:  # Left `if False`d out for archival purposes (yeah.. there's git but i li
 	from . import repl
 	from . import types as types
 	from .b64 import b64
-	from .class_ import CachedInstancesMeta, DefaultsGetAttr, DefaultsGetItem, DefaultsGetSetAttr, DefaultsGetSetItem, ErrDenoted, NoInit, Singleton, new_cell, partial_class
+	from .class_ import CachedInstancesMeta, DefaultsGetAttr, DefaultsGetItem, DefaultsGetSetAttr, DefaultsGetSetItem, NoInit, Singleton, new_cell, partial_class
 	from .classfuncs import get_classname, get_name_classname, get_qualname_classname
 	from .compare import able, able_simple, able_simple_result, isdunder
 	from .console import breakpoint, console, start_eval_session

@@ -201,21 +201,6 @@ class CachedInstancesMeta(type):
 			cls._cache.popitem(last=False)
 
 
-class ErrDenoted:
-	"""Defines an is_err() method to tell if an object is a valid result or an error."""
-
-	@classmethod
-	def is_err(cls) -> bool:
-		"""Return True if this object inherits from Exception, else return False."""
-		return BaseException in cls.__mro__
-
-	def unwrap(self) -> Self:
-		"""If this object is_err, raise self, else return self."""
-		if self.is_err():
-			raise self
-		return self
-
-
 def new_cell():
 	return (lambda: a).__closure__[0].__class__()  # type: ignore <-- hehe :3
 	a = 1
