@@ -1180,17 +1180,6 @@ if True:  # \/ # Tests
 
 		tcr.generate_type_hinter(imgui, print=True, clipboard=False)
 
-	def test_b64():
-		def get_enc_len(text: str, I: int):
-			encoded = tcr.b64.encode(text)
-
-			for _ in range(I):
-				encoded = tcr.b64.encode(encoded)
-
-			return len(encoded)
-
-		c([get_enc_len("uwu", x) for x in range(40)])
-
 	async def test_dynamic_responses():
 		EXECUTE = tcr.dynamic_responses.DynamicResponseBuilder(
 			tcr.dr.placeholder_set.ALL_NON_DISCORD,
