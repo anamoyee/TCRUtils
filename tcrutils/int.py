@@ -32,3 +32,13 @@ def float2int(n: float) -> float | int:
 
 def clamp(min: Number, n: Number, max: Number) -> Number:
 	return min if n < min else max if n > max else n  # noqa: FURB136
+
+
+def is_snowflake(snowflake: int | str, *, allow_string=True) -> bool:
+	if not isinstance(snowflake, ((int | str) if allow_string else int)):
+		return False
+
+	if not str(snowflake).isnumeric() or (int(snowflake) not in range(1 << 64)):  # noqa: SIM103
+		return False
+
+	return True
