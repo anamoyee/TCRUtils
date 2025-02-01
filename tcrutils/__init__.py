@@ -64,7 +64,6 @@ if 0:  # Left `if False`d out for archival purposes (yeah.. there's git but i li
 	from .misspellings import asert, trei
 	from .null import Null, Undefined, UniqueDefault
 	from .other import intbool
-	from .overload import NoMatchingOverloadError, Overload, OverloadMeta, overload
 	from .path import path
 	from .print import FMT_BRACKETS, FMTC, alert, fmt_iterable, gay, print_block, print_iterable
 	from .regex import RegexPreset
