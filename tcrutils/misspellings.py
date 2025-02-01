@@ -1,13 +1,8 @@
 from collections.abc import Callable
 from functools import wraps
-from typing import Any, NoReturn
+from typing import Any
 
 from .void import void
-
-
-class MayNotReturn:
-	"""Denote a return value for a function that may or may not return."""
-
 
 if True:  # \/ # @trei
 
@@ -40,7 +35,7 @@ if True:  # \/ # @trei
 
 if True:  # \/ # asert
 
-	def asert(condition_func: Callable, errmsg: str | None = None, *args: Any, **kwargs: Any) -> Any | MayNotReturn:
+	def asert(condition_func: Callable, errmsg: str | None = None, *args: Any, **kwargs: Any) -> Any:
 		if not condition_func(*args, **kwargs):
 			if errmsg:
 				raise AssertionError(errmsg)
