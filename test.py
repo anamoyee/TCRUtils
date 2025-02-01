@@ -719,22 +719,6 @@ if True:  # \/ # Tests
 	def test_fizzbuzz(n=30):
 		console({x + 1: tcr.fizzbuzz(x + 1) for x in range(n)})
 
-	def test_constants():
-		console(
-			x
-			for x in [
-				BACKSLASH,
-				NEWLINE,
-				CARR_RET,
-				BACKSPACE,
-				BACKTICK,
-				BACKTICKS,
-				APOSTROPHE,
-				QUOTE,
-				FAKE_PIPE,
-			]
-		)
-
 	def test_sort():
 		@tcr.timeit
 		def bogo_sort():
