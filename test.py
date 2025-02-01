@@ -154,17 +154,8 @@ if True:  # \/ # Tests
 			if ch == tcr.getchs.CTRL_C:
 				break
 
-	def test_trei():
-		from tcrutils import trei
-
-		@trei(ZeroDivisionError, excepth=print)
-		def inner():
-			1 / 0  # noqa: B018
-
-		inner()
-
 	def test_asert():
-		from tcrutils import asert
+		from tcrutils.misspellings import asert
 
 		asert(lambda: 1 == 1)
 		asert(lambda: 1 != 2)
