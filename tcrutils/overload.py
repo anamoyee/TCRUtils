@@ -35,7 +35,9 @@ Small modifications were made to this code
 
 import inspect
 
-from .error import NoMatchingOverloadError
+
+class NoMatchingOverloadError(Exception):
+	"""Used in tcr.Overload."""
 
 
 def _type_hint_matches(obj, hint):

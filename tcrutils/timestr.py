@@ -9,7 +9,6 @@ import pytz
 from .compare import able
 from .console import console
 from .decorator import autorun, with_overrides
-from .error import ConfigurationError
 from .extract_error import extract_error
 
 # fmt: off
@@ -292,7 +291,7 @@ $
 		>>> timestr.to_int('-1h')
 		-3600
 		>>> timestr2.to_int('-1h')
-		ConfigurationError: 'Stopped return of disallowed number: -3600'
+		RuntimeError: 'Stopped return of disallowed number: -3600'
 		```
 		"""
 		return cls(allow_negative=allow_negative, allow_zero=allow_zero)
@@ -361,10 +360,10 @@ $
 
 		if not self.allow_negative and partial_sum < 0:
 			msg = f"Stopped return of disallowed number: {partial_sum}"
-			raise ConfigurationError(msg)
+			raise RuntimeError(msg)
 		if not self.allow_zero and partial_sum == 0:
 			msg = "Stopped return of disallowed number: 0"
-			raise ConfigurationError(msg)
+			raise RuntimeError(msg)
 
 		return partial_sum
 

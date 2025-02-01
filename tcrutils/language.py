@@ -1,7 +1,5 @@
 from functools import wraps
 
-from .error import error
-
 
 def apostrophe_s(word: str):
 	"""### Adds 's to a word unless it ends with s, then it adds only the apostrphe '.
@@ -107,7 +105,7 @@ def nth(n: int):
 	```
 	"""
 	if not isinstance(n, int):
-		raise error.NotIntegerError(n)
+		raise TypeError(n)
 
 	if n < 0:
 		return "-" + nth(-n)

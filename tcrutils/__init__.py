@@ -52,7 +52,6 @@ if 0:  # Left `if False`d out for archival purposes (yeah.. there's git but i li
 	from .dev import generate_function_argument_typehints, generate_type_hinter
 	from .dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zip, merge_dicts
 	from .dir import dir2, dir3, dir_recursive, vars2, vars3, vars_recursive
-	from .error import error
 	from .extract_error import extract_error, extract_traceback, module_error_map, modules_error_map, print_exception_with_traceback
 	from .getch import KeyCode, KeyCodeCompound, KeyCodeSimple, getch, getchs
 	from .import_ import load_package_dynamically
@@ -65,7 +64,7 @@ if 0:  # Left `if False`d out for archival purposes (yeah.. there's git but i li
 	from .misspellings import asert, trei
 	from .null import Null, Undefined, UniqueDefault
 	from .other import intbool
-	from .overload import Overload, OverloadMeta, overload
+	from .overload import NoMatchingOverloadError, Overload, OverloadMeta, overload
 	from .path import path
 	from .print import FMT_BRACKETS, FMTC, alert, fmt_iterable, gay, print_block, print_iterable
 	from .regex import RegexPreset
