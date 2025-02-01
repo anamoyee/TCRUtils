@@ -43,6 +43,7 @@ if 0:  # Left `if False`d out for archival purposes (yeah.. there's git but i li
 	from .b64 import b64
 	from .class_ import CachedInstancesMeta, DefaultsGetAttr, DefaultsGetItem, DefaultsGetSetAttr, DefaultsGetSetItem, NoInit, Singleton, new_cell, partial_class
 	from .classfuncs import get_classname, get_name_classname, get_qualname_classname
+	from .codeblock import codeblock, codeblocks, uncodeblock
 	from .compare import able, able_simple, able_simple_result, isdunder
 	from .console import breakpoint, console, start_eval_session
 	from .console import console as c
@@ -77,63 +78,3 @@ if 0:  # Left `if False`d out for archival purposes (yeah.. there's git but i li
 	from .typehints import force_keyword_only_typehints
 	from .uptime import Uptime
 	from .void import alambda, araiser, avoid, raiser, void
-
-	# fmt: off
-	__all__ = [  # noqa: RUF022
-		"console",                            # console
-
-		"autorun", "convert",                 # decorator
-
-		"dict_zip", "merge_dicts",            # dict
-
-		"extract_error", "extract_traceback", # extract_error
-
-		"getch",                              # getch
-
-		"batched", "cut_at", "shuffled",      # iterable
-		"limited_iterable", "getattr_queue",
-		"Or", "hasmanyattrs", "getmanyattrs",
-
-		"codeblock", "uncodeblock",           # markdown
-
-		"asert", "trei",                      # misspellings
-
-		"Null", "Undefined", "UniqueDefault", # null
-
-		"commafy",                            # string
-
-		"nth", "make_plural",                 # language
-		"apostrophe_s",
-
-		"hex", "float2int",                   # int
-
-		"intbool",                            # other
-
-		"dir2", "dir3",                       # dir
-
-		"print_iterable", "print_block",      # print
-		"fmt_iterable",
-
-		"RegexPreset",                        # regex
-
-		"run_sac",                            # run
-
-		"timestr",                            # timestr
-
-		"insist",                             # input
-
-		"able",                               # compare
-
-		"ShelveDB",                           # sdb
-
-		"Overload", "overload",               # overload
-
-		"BACKSLASH",                          # constants
-		"NEWLINE",
-		"CARR_RET",
-		"BACKSPACE",
-		"BACKTICK", "BACKTICKS",
-		"APOSTROPHE", "QUOTE",
-		"FAKE_PIPE",
-	]
-	# fmt: on
