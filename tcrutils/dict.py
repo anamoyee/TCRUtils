@@ -3,7 +3,6 @@ from collections.abc import Generator, Hashable, Mapping
 from typing import Any
 
 from .compare import isdunder
-from .null import Undefined
 
 
 def _check_strict(master: Mapping, slave: Mapping, *, recursive: bool) -> bool:
@@ -146,29 +145,3 @@ class DotDict(dict):
 			return delattr(self, attr)
 
 		super().__delitem__(attr)
-
-
-class JSDict(dict):
-	"""Returns tcr.Undefined when a value is not found rather than erroring.
-
-	In order to effectively replace the undefined value (tcr.Undefined) bitwise or it with any other value, (`tcr.Undefined | T -> T`).
-	"""
-
-	def __getitem__(self, key):
-		try:
-			return super().__getitem__(key)
-		except KeyError:
-			return Undefined
-
-	def __delitem__(self, __key: Any, /) -> None:
-		with contextlib.suppress(KeyError):
-			return super().__delitem__(__key)
-
-
-class JSDotDict(DotDict, JSDict):
-	"""Combines tcr.DotDict and tcr.JSDict.
-
-	(Allows for dot-access and returns tcr.Undefined when a value is not found rather than erroring.)
-
-	For full description see the previously mentioned class doc strings.
-	"""

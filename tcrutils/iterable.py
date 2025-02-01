@@ -4,7 +4,6 @@ from random import shuffle
 from typing import Any, Literal, TypeVar
 
 from .compare import able
-from .null import UniqueDefault as RaiseError
 from .regex import RegexPreset
 
 T = TypeVar("T")
@@ -175,12 +174,15 @@ def getmanyattrs(obj, attr: str, *attrs: str) -> Any:
 	return obj
 
 
+RaiseError = object()
+
+
 def getattr_queue(
 	obj: object,
 	/,
 	*queue: str,
 	return_as_str: bool = False,
-	default: Any | RaiseError = RaiseError,
+	default: Any = RaiseError,
 ):
 	"""## Try to access `obj`'s attrs in order.
 
