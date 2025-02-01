@@ -254,7 +254,7 @@ class Console:
 		return self.debug(other, passthrough=True)
 
 
-console = Console()
+c = console = Console()
 """### Provides logging capabilities.
 
   `console(...)` == `console.debug(...)`
