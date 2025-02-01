@@ -46,11 +46,14 @@ py -m twine upload dist/*
 		]
 	]
 
+	_ = 0
 	for cmds in cmds_groups:
+		if _:
+			input("Everything going fine? Ctrl+C to abort, enter to continue.")
+		_ = 1
 		for cmd in cmds:
-			print(f" > > > {cmd!r}")
+			print(f" >>> {cmd!r}")
 			subprocess.run(cmd, shell=True)
-		input("Everything going fine? Ctrl+C to abort, enter to continue.")
 
 
 def main():
