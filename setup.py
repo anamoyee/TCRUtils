@@ -51,11 +51,11 @@ VERSION_REGEX = r"__version__\s*=\s*[\"'](.*?)[\"']"
 
 
 def find_all_extras():
-	"""Rummage through ./requirements/ and find all dependencies, return them in the correct format for setuptools.setup()."""
+	"""Rummage through ./extras/ and find all dependencies, return them in the correct format for setuptools.setup()."""
 	extras_mapping = {}
 
-	for req_file in p.Path("./requirements/").glob("requirements-*.txt"):
-		extra_name = req_file.stem.replace("requirements-", "")
+	for req_file in p.Path("./extras/").glob("requirements-*.txt"):
+		extra_name = req_file.stem.removeprefix("requirements-")
 
 		with req_file.open() as f:
 			dependencies = [line.strip() for line in f if line.strip()]
