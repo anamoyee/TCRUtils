@@ -299,14 +299,13 @@ if True:  # \/ # Tests
 		π(bytearray([10, 20, 30]))
 		π(b"uwu\"'")
 		π(bytearray([10, 20, 30]), b"abcd", "abcd", r"\1")
-		π((Null, None, True, False))
-		π({Null: Null, None: None, True: True, False: False})
+		π((None, True, False))
+		π({None: None, True: True, False: False})
 		π(1)
 		π(1.5)
 		π(True)
 		π(False)
 		π(None)
-		π(Null)
 		π(set())
 		π({10, 20, 30})
 		π(frozenset({"asdf", 1, 3.2j + 1}))
@@ -453,9 +452,6 @@ if True:  # \/ # Tests
 		})
 		π({
 			"b": None,
-		})
-		π({
-			"b": Null,
 		})
 
 		datetime = dt.datetime.now()
