@@ -41,7 +41,6 @@ from .compare import able, able_simple, able_simple_result
 from .extract_error import extract_error
 from .int import hex as tcrhex
 from .iterable import Or, getattr_queue, limited_iterable
-from .null import Null, Undefined
 from .path import path as tcr_path_utils
 from .types import BrainfuckCode, GayString, QuotelessString
 
@@ -175,7 +174,6 @@ if True:  # \/ # fmt & print iterable
 		UNKNOWN             = Fore.dark_gray + Style.bold
 		TRUE                = Fore.GREEN + Style.bold
 		FALSE               = Fore.RED + Style.bold
-		NULL                = Fore.dark_gray + Style.bold
 		UNDEFINED           = Fore.dark_gray + Style.bold
 		NONE                = Fore.light_gray + Style.bold
 		BYTESTR_B           = Fore.RED + Style.bold
@@ -833,10 +831,6 @@ if True:  # \/ # fmt & print iterable
 		if not syntax_highlighting and isinstance(it, BrainfuckCode):
 			return str(it)
 
-		if it is Null:
-			return f"{FMTC.NULL}{it}{FMTC._}" if syntax_highlighting else str(it)
-		if it is Undefined:
-			return f"{FMTC.UNDEFINED}{it}{FMTC._}" if syntax_highlighting else str(it)
 		if it is None:
 			return f"{FMTC.NONE}{it}{FMTC._}" if syntax_highlighting else str(it)
 		if it is True:

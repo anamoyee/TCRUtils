@@ -270,7 +270,6 @@ if True:  # \/ # Tests
 		from functools import partial
 
 		import tcrutils
-		from tcrutils.null import Null
 
 		π = partial(π, **kwargs)
 
