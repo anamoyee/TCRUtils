@@ -38,7 +38,6 @@ from warnings import warn
 from colored import Back, Fore, Style
 
 from .compare import able, able_simple, able_simple_result
-from .constants import NEWLINE
 from .extract_error import extract_error
 from .int import hex as tcrhex
 from .iterable import Or, getattr_queue, limited_iterable
@@ -139,9 +138,9 @@ def print_block(
 
 	bar = f"{border_char * (border + margin + len(text) + margin + border)}"
 	block = f"""
-{padding_top * NEWLINE}{padding * " "}{reset}{border_color}{bar}
+{padding_top * "\n"}{padding * " "}{reset}{border_color}{bar}
 {padding * " "}{border * border_char}{reset}{margin * " "}{text_color}{text}{reset}{margin * " "}{border_color}{border * border_char}
-{padding * " "}{bar}{reset}{padding_bottom * NEWLINE}
+{padding * " "}{bar}{reset}{padding_bottom * "\n"}
 """[1:-1]
 	if raw:
 		return block

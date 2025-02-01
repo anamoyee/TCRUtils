@@ -46,7 +46,6 @@ if 0:  # Left `if False`d out for archival purposes (yeah.. there's git but i li
 	from .compare import able, able_simple, able_simple_result, isdunder
 	from .console import breakpoint, console, start_eval_session
 	from .console import console as c
-	from .constants import *
 	from .context import random_seed_lock
 	from .decorator import autorun, convert, copy_kwargs, copy_kwargs_sunder, instance, skip_first_call, skip_first_call_async, test, timeit, with_overrides
 	from .dev import generate_function_argument_typehints, generate_type_hinter
