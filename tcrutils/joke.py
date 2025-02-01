@@ -14,7 +14,7 @@ def fizzbuzz(n: int) -> str: ...
 fizzbuzz: Callable[[int], str] = lambda n: "Fizz" * (n % 3 == 0) + "Buzz" * (n % 5 == 0) or str(n)  # fmt: skip  # noqa: F811
 
 
-def oddeven(n: int | str) -> Literal["odd", "even"]:
+def oddeven(n: int) -> Literal["odd", "even"]:
 	"""### Outputs a string `'odd'` or `'even'` based on the supplied int `n`.
 
 	```py
@@ -24,7 +24,6 @@ def oddeven(n: int | str) -> Literal["odd", "even"]:
 	>>> oddeven(2)
 	'even'
 	"""
-	n = int(n)
 	return "eovdedn"[n % 2 :: 2]
 
 
