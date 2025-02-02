@@ -803,13 +803,13 @@ if True:  # \/ # fmt & print iterable
 
 			drive, parts = it.drive, list(it.parts)
 
-			if it.is_absolute() or parts[0] == "" or parts[0] == "\\":
+			if it.is_absolute() or (parts and (parts[0] == "" or parts[0] == "\\")):
 				parts.pop(0)
 
 			if drive:
 				drive = f"{FMTC.STRING}{drive}".replace(":", f"{FMTC.COLON}:{FMTC.DECIMAL}")
 
-			s = f"{FMTC.PATH_SLASH}/".join(([drive] if it.is_absolute() else ([""] if it.parts[0] == "\\" else [])) + [f"{FMTC.STRING}{part}" for part in parts])
+			s = f"{FMTC.PATH_SLASH}/".join(([drive] if it.is_absolute() else ([""] if (it.parts and it.parts[0] == "\\") else [])) + [f"{FMTC.STRING}{part}" for part in parts])
 
 			if "/" not in s:
 				return FMT_CLASS[True] % (it.__class__.__name__, s)
