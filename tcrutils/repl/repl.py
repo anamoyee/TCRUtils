@@ -14,10 +14,6 @@ def raise_for_not_only_nodes(nodes: tuple[Node]):
 		raise ValueError("nodes must be tuple[Node]")
 
 
-def contains_incomplete_nodes(submitted_nodes: tuple[Node]):
-	return any(isinstance(x, IncompleteNode) for x in submitted_nodes) or any(contains_incomplete_nodes(node._parsed or ()) for node in submitted_nodes if isinstance(node, CompoundNode))
-
-
 class Repl:
 	def display_node(self, n: Node, /) -> str:
 		match n:

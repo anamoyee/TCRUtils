@@ -1884,14 +1884,29 @@ ID: {server|id}
 		repl = TestingRepl(
 			node.IrrefutableNode(
 				node.KeywordNode(
+					"any",
+					node.WordBreakNode("../*"),
+					node.MatchEverythingNode(),
+				),
+				node.KeywordNode(
+					"p",
+					node.WordBreakNode(
+						"../*",
+					),
+					node.PathNode(
+						valid_state=node.PathNode.ValidState.EXISTS_FILE,
+						filename_regex=r"^.*\.py$",
+					),
+				),
+				node.KeywordNode(
 					"t",
-					node.WordBreakNode("/t/*"),
+					node.WordBreakNode("../*"),
 					node.TimestrNode(
 						node.WordBreakNode(
 							node.PyIdentifierNode(),
 						),
 						node.IrrefutableNode(),
-					),
+					).with_tzinfo(),
 				),
 				n_makeshift_junc := node.UnreachableNode(
 					node.WordBreakNode("/makeshift-junc/*"),
@@ -1964,7 +1979,7 @@ ID: {server|id}
 
 			def __init__(self, *nodes: node.Node, syntax_highlighting: bool = True):
 				self.nodes = nodes
-				super().__init__(tcr.fmt_iterable(nodes, syntax_highlighting=syntax_highlighting))
+				super().__init__(fmt_iterable(nodes, syntax_highlighting=syntax_highlighting))
 
 		while 1:
 			submitted_nodes = repl()
@@ -1973,7 +1988,7 @@ ID: {server|id}
 			if not submitted_nodes:
 				continue
 
-			if 1 - 1:
+			if 0:
 				if cmd(*submitted_nodes):
 					continue
 
@@ -1999,27 +2014,6 @@ ID: {server|id}
 		c(nya(a=1, b=2))
 
 		c(asyncio.run(anya(a=Eent(2), b=4)))
-
-	def test_nodes():
-		node = tcr.repl.node.PyIdentifierNode("ident")
-		node.submit("ifier")
-
-		print()
-
-		match node:
-			case tcr.repl.node.PyIdentifierNode(name, text):
-				c("name=", name)
-				c("text=", text)
-
-		print()
-
-		node = tcr.repl.node.IntNode("number")
-		node.submit("69")
-
-		match node:
-			case tcr.repl.node.IntNode(name, value):
-				c("name=", name)
-				c("value=", value)
 
 
 if True:  # \/ # Test setup
@@ -2150,7 +2144,6 @@ if __name__ == "__main__":
 	# test_getch()
 	test_repl()
 	# test_typehints()
-	# test_nodes()
 
 	if not sys.gettrace():
 		ass.total(prefix="\n")

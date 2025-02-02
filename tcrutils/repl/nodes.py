@@ -1,7 +1,11 @@
 import abc
 import datetime
+import enum
 import fnmatch
+import os
+import pathlib
 import re
+import sys
 from copy import copy
 from typing import Self
 
@@ -11,6 +15,10 @@ from ..timestr import timestr_lookup
 from .parser import parse_and_submit_nodes
 
 PRINT_FORMAT_NODE_HTML_LIKE_OUTPUT = False
+
+
+def contains_incomplete_nodes(submitted_nodes: tuple["Node"]):
+	return any(isinstance(x, IncompleteNode) for x in submitted_nodes) or any(contains_incomplete_nodes(node._parsed or ()) for node in submitted_nodes if isinstance(node, CompoundNode))
 
 
 class Node:
@@ -222,6 +230,14 @@ class IrrefutableNode(DisposableNode, Node):
 		return ("", s)
 
 
+class MatchEverythingNode(Node):
+	def __init__(self, **kwargs):
+		super().__init__(**kwargs)
+
+	def match(self, s):
+		return s, ""
+
+
 class KeywordNode(OwnDisplayNode):
 	matching_text_escaped: str
 
@@ -345,6 +361,11 @@ class FloatNode(OwnDisplayNode, _RegexNodeBase, ParsableNode[float], pattern=r"^
 class WordNode(OwnDisplayNode, _RegexNodeBase, pattern=r"^([a-zA-Z]+)(.*)$"): ...
 
 
+class WordishNode(OwnDisplayNode, _RegexNodeBase, pattern=r"^([^ ]+)(.*)$"):
+	def __init_subclass__(cls, **kwargs):
+		return super().__init_subclass__(pattern=cls.pattern, **kwargs)
+
+
 class PyIdentifierNode(_RegexNodeBase, pattern=r"^([a-zA-Z_][a-zA-Z0-9_]*)(.*)$"):
 	def display(self):
 		return f"{FMTC.DECIMAL}{super().display()}{FMTC._}"
@@ -363,78 +384,82 @@ class SinglequoteStrNode(OwnDisplayNode, _RegexNodeBase, pattern=r"^'((?:[^'\\]|
 class WordBreakNode(DisposableNode, _RegexNodeBase, pattern=r"^(\s|$)(.*)$"): ...
 
 
-class CompoundNodeMatchedMarkerNode(IrrefutableNode): ...
+if True:  # Compound Node Basis
 
+	class CompoundNodeMatchedMarkerNode(IrrefutableNode): ...
 
-class CompoundNode(Node):
-	_parsed: None | list[Node]
-	nodes: list[Node]
-	require_matched_marker: bool
+	class CompoundNode(Node):
+		_parsed: None | list[Node]
+		nodes: list[Node]
+		require_matched_marker: bool
 
-	def _init__(self, *args, **kwargs):
-		if self.__class__ is CompoundNode:
-			raise RuntimeError("Cannot instantiate CompoundNode without subclassing.")
+		def _init__(self, *args, **kwargs):
+			if self.__class__ is CompoundNode:
+				raise RuntimeError("Cannot instantiate CompoundNode without subclassing.")
 
-		self._parsed = None
+			self._parsed = None
 
-		super().__init__(*args, **kwargs)
+			super().__init__(*args, **kwargs)
 
-	exec("__init__ = _init__; del _init__")
+		exec("__init__ = _init__; del _init__")
 
-	def __tcr_fmt__(self=None, *, fmt_iterable, syntax_highlighting, **kwargs):
-		if self is None:
-			raise NotImplementedError
+		def __tcr_fmt__(self=None, *, fmt_iterable, syntax_highlighting, **kwargs):
+			if self is None:
+				raise NotImplementedError
 
-		if self.text is None:
-			at = f"{FMTC.DECIMAL}@" if syntax_highlighting else "@"
-			body = (
-				fmt_iterable(self.nodes, _force_next_type=list)
-				+ at
-				+ fmt_iterable(self.name)
-				+ fmt_iterable(
-					self.children,
-					let_no_indent=all(isinstance(x, str) for x in self.children),
-					_force_tuple_no_trailing_comma_on_single_element=True,
+			if self.text is None:
+				at = f"{FMTC.DECIMAL}@" if syntax_highlighting else "@"
+				body = (
+					fmt_iterable(self.nodes, _force_next_type=list)
+					+ at
+					+ fmt_iterable(self.name)
+					+ fmt_iterable(
+						self.children,
+						let_no_indent=all(isinstance(x, str) for x in self.children),
+						_force_tuple_no_trailing_comma_on_single_element=True,
+					)
 				)
-			)
-		else:
-			if isinstance(self, ParsableNode):
-				try:
-					parsed = self.parse()
-				except Exception:
-					parsed = "< FAILED TO PARSE >"
-				body = fmt_iterable(()).replace(")", "") + fmt_iterable(parsed) + fmt_iterable(()).replace("(", "") + fmt_iterable([None] if self._parsed is None else [x for x in self._parsed if not isinstance(x, DisposableNode)])
 			else:
-				body = fmt_iterable(self._parsed)
+				if isinstance(self, ParsableNode):
+					try:
+						parsed = self.parse()
+					except Exception:
+						parsed = "< FAILED TO PARSE >"
 
-		return f"{FMTC.TYPE}{self.__class__.__name__}{body}"
+						if "--tcr-raise-errors" in sys.argv:
+							raise
+					body = fmt_iterable(()).replace(")", "") + fmt_iterable(parsed) + fmt_iterable(()).replace("(", "") + fmt_iterable([None] if self._parsed is None else [x for x in self._parsed if not isinstance(x, DisposableNode)])
+				else:
+					body = fmt_iterable(self._parsed)
 
-	def __init_subclass__(cls, nodes: list[Node], require_matched_marker: bool = False, **kwargs):
-		cls.nodes = list(nodes)
-		cls.require_matched_marker = require_matched_marker
+			return f"{FMTC.TYPE}{self.__class__.__name__}{body}"
 
-		super().__init_subclass__(**kwargs)
+		def __init_subclass__(cls, nodes: list[Node], require_matched_marker: bool = False, **kwargs):
+			cls.nodes = list(nodes)
+			cls.require_matched_marker = require_matched_marker
 
-	def match(self, s):
-		parsed = parse_and_submit_nodes(s, self.nodes)
+			super().__init_subclass__(**kwargs)
 
-		if self.require_matched_marker and not any(isinstance(x, CompoundNodeMatchedMarkerNode) for x in parsed):
-			return None
+		def match(self, s):
+			parsed = parse_and_submit_nodes(s, self.nodes)
 
-		match parsed[-1]:
-			case UnknownNode():
-				parsed = parsed[:-1]  # Accounted for with s.removeprefix(text), since text wouldnt contain the unknown node text.
+			if self.require_matched_marker and not any(isinstance(x, CompoundNodeMatchedMarkerNode) for x in parsed):
+				return None
 
-		incomplete = bool(parsed and parsed[-1].children)
+			match parsed[-1]:
+				case UnknownNode():
+					parsed = parsed[:-1]  # Accounted for with s.removeprefix(text), since text wouldnt contain the unknown node text.
 
-		self._parsed = list(parsed)
+			incomplete = bool(parsed and parsed[-1].children)
 
-		text = "".join(x.text for x in parsed if not isinstance(x, IncompleteNode))
+			self._parsed = list(parsed)
 
-		if not text:
-			return None
+			text = "".join(x.text for x in parsed if not isinstance(x, IncompleteNode))
 
-		return text, s.removeprefix(text), incomplete
+			if not text:
+				return None
+
+			return text, s.removeprefix(text), incomplete
 
 
 if True:  # String
@@ -474,6 +499,9 @@ if True:  # String
 			),
 		),
 	):
+		def __init_subclass__(cls, **kwargs):
+			return super().__init_subclass__(cls.nodes, cls.require_matched_marker, **kwargs)
+
 		def parse(self) -> str:
 			parsed = [x for x in self._parsed if not isinstance(x, DisposableNode)]
 
@@ -604,7 +632,7 @@ if True:  # Timestr
 
 	class TimestrNodeTIMEPartNode(
 		CompoundNode,
-		ParsableNode[datetime.time],
+		ParsableNode[tuple[int, int, int]],
 		require_matched_marker=True,
 		nodes=(
 			Hour24IntNode(
@@ -629,11 +657,11 @@ if True:  # Timestr
 
 		def _init__(self, *args, **kwargs):
 			super().__init__(*args, **kwargs)
-			self.set_tzinfo()
+			self.with_tzinfo()
 
 		exec("__init__ = _init__; del _init__")
 
-		def set_tzinfo(self, tzinfo: datetime.tzinfo = datetime.datetime.now().astimezone().tzinfo):
+		def with_tzinfo(self, tzinfo: datetime.tzinfo = datetime.datetime.now().astimezone().tzinfo):
 			self.tzinfo = tzinfo
 			return self
 
@@ -642,11 +670,11 @@ if True:  # Timestr
 
 			h, m, s, *_ = (*parsed, 0, 0)  # Fill unspecified values with zeroes, eg. 13: -> 13:00:00
 
-			return datetime.time(h, m, s, tzinfo=self.tzinfo)
+			return (h, m, s)
 
 	class TimestrNodeDATEPartNode(
 		CompoundNode,
-		ParsableNode[datetime.date],
+		ParsableNode[tuple[int, int, int]],
 		require_matched_marker=True,
 		nodes=(
 			DayNode(
@@ -671,15 +699,15 @@ if True:  # Timestr
 
 		def _init__(self, *args, **kwargs):
 			super().__init__(*args, **kwargs)
-			self.set_tzinfo()
+			self.with_tzinfo()
 
 		exec("__init__ = _init__; del _init__")
 
-		def set_tzinfo(self, tzinfo: datetime.tzinfo = datetime.datetime.now().astimezone().tzinfo):
+		def with_tzinfo(self, tzinfo: datetime.tzinfo = datetime.datetime.now().astimezone().tzinfo):
 			self.tzinfo = tzinfo
 			return self
 
-		def _try_parse(self, d: int, m: int, y: int) -> datetime.date | None:
+		def _try_parse(self, d: str, m: str, y: str):
 			if not m or not y:
 				now = datetime.datetime.now(tz=self.tzinfo)
 
@@ -691,10 +719,7 @@ if True:  # Timestr
 
 			y, m, d = int(y), int(m), int(d)
 
-			try:
-				return datetime.date(y, m, d)
-			except ValueError:
-				return None
+			return (y, m, d)
 
 		def match(self, s):
 			result = super().match(s)
@@ -714,7 +739,7 @@ if True:  # Timestr
 		def parse(self):
 			parsed = [x.parse() for x in self._parsed if not isinstance(x, DisposableNode)]
 
-			d, m, y, *_ = (*parsed, "", "")  # Fill unspecified values with zeroes, eg. 13: -> 13:00:00
+			d, m, y, *_ = (*parsed, "", "")
 
 			return self._try_parse(d, m, y)
 
@@ -742,14 +767,14 @@ if True:  # Timestr
 	):
 		def _init__(self, *args, **kwargs):
 			super().__init__(*args, **kwargs)
-			self.set_tzinfo()
+			self.with_tzinfo()
 
 		exec("__init__ = _init__; del _init__")
 
-		def set_tzinfo(self, tzinfo: datetime.tzinfo = datetime.datetime.now().astimezone().tzinfo):
+		def with_tzinfo(self, tzinfo: datetime.tzinfo = datetime.datetime.now().astimezone().tzinfo):
 			for node in self.children:
-				if hasattr(node, "set_timezone"):
-					node.set_timezone(tzinfo)
+				if hasattr(node, "with_tzinfo"):
+					node.with_tzinfo(tzinfo)
 			return self
 
 		def match(self, s):
@@ -760,7 +785,7 @@ if True:  # Timestr
 
 			return result
 
-		def parse(self, *, tzinfo: datetime.tzinfo = datetime.datetime.now().astimezone().tzinfo):
+		def parse(self):
 			parsed = (x for x in self._parsed if not isinstance(x, DisposableNode))
 
 			seconds = 0
@@ -781,13 +806,113 @@ if True:  # Timestr
 					case n:
 						raise RuntimeError(f"[BUG] Unknown node: {n!r}")
 
-			if node_time_result is None or node_date_result is None:
-				now = datetime.datetime.now(tz=tzinfo)
+			# now = datetime.datetime.now(tz=tzinfo)
 
-			if node_time_result is None:
-				node_time_result = (now.hour, now.minute, now.second)
+			# then = datetime.datetime.combine(node_date_result, node_time_result)
 
-			if node_date_result is None:
-				node_date_result = (now.year, now.month, now.day)
+			# seconds += (then - now).total_seconds()
 
 			return seconds
+
+
+if True:  # Path Stuff
+
+	class _PathWordishNode(WordishNode, OwnDisplayNode):
+		def display(self):
+			text = self.text.replace("/", f"{FMTC.PATH_SLASH}/{FMTC.STRING}")
+
+			if os.name == "nt":
+				text = text.replace("\\", f"{FMTC.PATH_SLASH}\\{FMTC.STRING}")
+
+			return f"{FMTC.STRING}{text}"
+
+	class _PathStringNode(StringNode):
+		def display(self):
+			text = super().display().replace("/", f"{FMTC.PATH_SLASH}/{FMTC.STRING}")
+
+			if os.name == "nt":
+				text = text.replace("\\", f"{FMTC.PATH_SLASH}\\{FMTC.STRING}")
+
+			return f"{text}"
+
+	class PurePathNode(
+		CompoundNode,
+		ParsableNode[pathlib.PurePath],
+		require_matched_marker=True,
+		nodes=(
+			IrrefutableNode(
+				_PathStringNode(CompoundNodeMatchedMarkerNode()),
+				_PathWordishNode(CompoundNodeMatchedMarkerNode()),
+			),
+		),
+	):
+		def __init_subclass__(cls, **kwargs):
+			return super().__init_subclass__(cls.nodes, cls.require_matched_marker, **kwargs)
+
+		def parse(self):
+			parsed = [x for x in self._parsed if not isinstance(x, DisposableNode)]
+
+			match parsed:
+				case [WordishNode(_, s) | StringNode(_, s)]:
+					return pathlib.PurePath(s)
+				case _:
+					raise RuntimeError(f"Invalid matched sequence?: {parsed}")
+
+	class PathNode(PurePathNode, ParsableNode[pathlib.Path]):
+		class ValidState(enum.Flag):
+			EXISTS_FILE = 1 << 0
+			EXISTS_DIRECTORY = 1 << 1
+			DOESNT_EXIST = 1 << 2
+
+			@classmethod
+			def all(cls):
+				return cls.DOESNT_EXIST | cls.EXISTS_DIRECTORY | cls.EXISTS_FILE
+
+		valid_state: ValidState
+		filename_regex: str | re.Pattern
+
+		def __init__(
+			self,
+			*children,
+			valid_state: ValidState = ValidState.all(),
+			filename_regex: str | re.Pattern = r"^.*$",
+			**kwargs,
+		):
+			super().__init__(*children, **kwargs)
+			self.valid_state = valid_state
+			self.filename_regex = filename_regex
+
+		def _validate_filename(self, path: pathlib.Path):
+			return bool(re.match(self.filename_regex, path.name))
+
+		def _validate_state(self, path: pathlib.Path):
+			if not path.exists() and (self.valid_state & self.ValidState.DOESNT_EXIST):
+				return True
+
+			if path.is_file() and (self.valid_state & self.ValidState.EXISTS_FILE):
+				return True
+
+			if path.is_dir() and (self.valid_state & self.ValidState.EXISTS_DIRECTORY):  # noqa: SIM103
+				return True
+
+			return False
+
+		def match(self, s):
+			m = super().match(s)
+
+			if contains_incomplete_nodes(self._parsed):
+				return m
+
+			path = self.parse()
+
+			if not all((
+				self._validate_filename(path),
+				self._validate_state(path),
+			)):
+				self._parsed.insert(0, IncompleteNode(unknown_text="!{"))
+				self._parsed.append(IncompleteNode(unknown_text="}"))
+
+			return m
+
+		def parse(self):
+			return pathlib.Path(super().parse()).resolve()
