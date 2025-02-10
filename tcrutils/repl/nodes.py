@@ -806,6 +806,7 @@ if True:  # Timestr
 					case n:
 						raise RuntimeError(f"[BUG] Unknown node: {n!r}")
 
+			print("tcrutils:nodes.py:TimestrNode | warning, timestr isnt finished yet dont use it...")
 			# now = datetime.datetime.now(tz=tzinfo)
 
 			# then = datetime.datetime.combine(node_date_result, node_time_result)
