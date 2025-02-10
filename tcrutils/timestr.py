@@ -40,7 +40,7 @@ timestr_lookup = {
 	'week':  t_week,
 	'weeks': t_week,
 
-	'y':     (t_year := 365*t_day),
+	'y':     (t_year := 365*t_day), # assuming the 'y' unit always means the non-leap year...
 	'year':  t_year,
 	'years': t_year,
 
@@ -58,14 +58,20 @@ timestr_lookup = {
 	'rescues': t_rescue,
 
 	'decade':    (t_decade := 10 * t_year),
+	'decades':    t_decade,
+
 	'century':   (t_century := 100 * t_year),
+	'centuries':   t_century,
+
 	'millenium': (t_millenium := 1000 * t_year),
+	'millenia': t_millenium,
 }
 
 weekday_lookup = [
 	'mo',           'tu',      'we',        'th',       'fr',     'sa',       'su',
 	'mon',          'tue',     'wed',       'thu',      'fri',    'sat',      'sun',
 	'monday',       'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
+
 	"po",           "wt",      "sr",        "cz",       "pi",     "so",       "ni",
 	"pn",           "wt",      "śr",        "cz",       "pt",     "so",       "nd",
 	"pon",          "wto",     "śro",       "czw",      "pią",    "sob",      "nie",
