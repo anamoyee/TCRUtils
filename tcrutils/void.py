@@ -35,3 +35,14 @@ def alambda[T, **P](f: Callable[P, T]) -> Callable[P, Awaitable[T]]:
 		return f(*args, **kwargs)
 
 	return wrapper
+
+@lambda x: x()
+class Void:
+	def __call__(self, *args: Any, **kwargs: Any):
+		return self
+
+	def __getattr__(self, name):
+		return self
+
+	def __bool__(self):
+		return False
