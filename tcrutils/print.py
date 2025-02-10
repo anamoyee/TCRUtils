@@ -267,6 +267,16 @@ if True:  # \/ # fmt & print iterable
 		def __str__(self) -> str:
 			return str(self.amount) if self.amount != -1 else "?"
 
+	def _is_date_in_the_past(input_dt: dt.datetime | dt.date | dt.time) -> bool:
+		if isinstance(input_dt, dt.datetime):
+			return input_dt < dt.datetime.now(tz=input_dt.tzinfo)
+		elif isinstance(input_dt, dt.date):
+			return input_dt < dt.date.today()
+		elif isinstance(input_dt, dt.time):
+			return input_dt < dt.datetime.now(tz=input_dt.tzinfo).time()
+
+		raise TypeError("input must be either datetime, date or time")
+
 	def _reset_return_wrapper(func):
 		@wraps(func)
 		def wrapper(*args, append_syntax_reset: bool = True, **kwargs):
@@ -790,7 +800,8 @@ if True:  # \/ # fmt & print iterable
 				return repr(it)
 			else:
 				main_color = FMTC.NUMBER
-				secondary_color = FMTC.DECIMAL
+
+				secondary_color = FMTC.COMMA if _is_date_in_the_past(it) else FMTC.DECIMAL
 				s = f"<{it:{format_str}}>"
 
 				for x in ("-", ":", "<", ">"):
