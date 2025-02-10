@@ -89,30 +89,6 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 	timeit = Timeit()
 
 
-if True:  # \/ # @autorun, @instance
-
-	@overload
-	def autorun[F: Callable[..., None]](func: F) -> F: ...
-
-	@overload
-	def autorun[F: Callable[..., None]](*args, **kwargs) -> Callable[[F], F]: ...
-
-	def autorun(*args, **kwargs):
-		if len(args) == 1 and callable(args[0]):
-			func = args[0]
-			func()
-			return func
-		else:
-
-			def decorator[F: Callable[..., None]](func: F, args=args, kwargs=kwargs) -> F:
-				func(*args, **kwargs)
-				return func
-
-			return decorator
-
-	def instance[R](func: Callable[..., R]) -> R:
-		return func()
-
 
 if True:  # \/ # @convert.stringify
 

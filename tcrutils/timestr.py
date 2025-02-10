@@ -8,8 +8,9 @@ import pytz
 
 from .compare import able
 from .console import console
-from .decorator import autorun, with_overrides
 from .extract_error import extract_error
+
+autorun = lambda x: (x(), x)[-1]
 
 # fmt: off
 timestr_lookup = {

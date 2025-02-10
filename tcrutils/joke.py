@@ -3,7 +3,6 @@
 from collections.abc import Callable
 from typing import Literal, Self, TypeVar
 
-from .decorator import instance
 from .print import FMT_BRACKETS
 from .types import HexInt
 
@@ -124,7 +123,7 @@ class Private:
 		raise AttributeError(f"{class_name!r} object has no attribute {name!r}")
 
 
-@instance
+@lambda x: x()
 class gmail:
 	def __init__(self) -> None:
 		self.tlds = []
