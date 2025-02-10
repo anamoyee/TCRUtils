@@ -2142,7 +2142,7 @@ if __name__ == "__main__":
 	# test_console_with_eval()
 	# test_result()
 	# test_getch()
-	test_repl()
+	# test_repl()
 	# test_typehints()
 
 	if not sys.gettrace():
