@@ -178,17 +178,20 @@ class OwnDisplayNode(Node):
 if True:  # Bases
 
 	class _RegexNodeBase(Node):
-		pattern: str
+		pattern: str | re.Pattern
+		m: re.Match
 
-		def __init_subclass__(cls, *, pattern, **kw):
+		def __init_subclass__(cls, *, pattern: str | re.Pattern, **kwargs):
 			cls.pattern = pattern
-			super().__init_subclass__(**kw)
+			super().__init_subclass__(**kwargs)
 
 		def match(self, s):
 			m = re.match(self.pattern, s)
 
+			self.m = m
+
 			if m is not None:
-				return m.groups()
+				return m.groups()[0], m.groups()[-1]
 			return m
 
 	class _StartswithNodeBase(Node):
@@ -313,7 +316,7 @@ class IntNode(OwnDisplayNode, _RegexNodeBase, ParsableNode[int], pattern=r"^(-?\
 		cls.max = max
 
 	def match(self, s):
-		result = super().match(s)
+		result = super().m(s)
 		if result is None:
 			return None
 
@@ -807,6 +810,7 @@ if True:  # Timestr
 						raise RuntimeError(f"[BUG] Unknown node: {n!r}")
 
 			print("tcrutils:nodes.py:TimestrNode | warning, timestr isnt finished yet dont use it...")
+
 			# now = datetime.datetime.now(tz=tzinfo)
 
 			# then = datetime.datetime.combine(node_date_result, node_time_result)
