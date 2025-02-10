@@ -445,15 +445,35 @@ if True:  # \/ # Tests
 			"b": None,
 		})
 
+		print()  # Now
 		datetime = dt.datetime.now()
 		π(datetime)
 		π(datetime.date())
 		π(datetime.time())
 
+		print()  # In the future by 1 minute
+		datetime2 = dt.datetime.now() + dt.timedelta(minutes=1)
+		π(datetime2)
+		π(datetime2.date())
+		π(datetime2.time())
+
+		print()  # In the past by 1 minute
+		datetime2 = dt.datetime.now() + dt.timedelta(minutes=-1)
+		π(datetime2)
+		π(datetime2.date())
+		π(datetime2.time())
+
+		print()
+		π(dt.timedelta(days=1, hours=1, minutes=1, seconds=1))
+		# NOTE: TIMEDELTA PRETTY PRINTING WAS NEVER IMPLEMENTED, DOTN BE SURPRISED THERES NO IMPL FOR IT AND IT LOOKS LIKE AN UNKNOWN OBJECT WHEN PRINTED!!!
+
+		print()
 		ts = tcr_types.UnixTimestampInt(1719949074443)
 
 		π(ts, _raise_errors=True)
 		π(ts.to_datetime(), _raise_errors=True)
+
+		print()
 		π(tcr_types.HexInt(2, leading_zeroes=2))
 		π(tcr_types.HexInt(3, leading_zeroes=3))
 		π(tcr_types.HexInt(4, leading_zeroes=4))

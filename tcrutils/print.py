@@ -269,11 +269,14 @@ if True:  # \/ # fmt & print iterable
 
 	def _is_date_in_the_past(input_dt: dt.datetime | dt.date | dt.time) -> bool:
 		if isinstance(input_dt, dt.datetime):
-			return input_dt < dt.datetime.now(tz=input_dt.tzinfo)
+			return (dt.datetime.now(tz=input_dt.tzinfo) - input_dt).total_seconds() > 5  # Assume 5s margin of error
 		elif isinstance(input_dt, dt.date):
 			return input_dt < dt.date.today()
 		elif isinstance(input_dt, dt.time):
-			return input_dt < dt.datetime.now(tz=input_dt.tzinfo).time()
+			now_time = dt.datetime.now(tz=input_dt.tzinfo).time()
+			then_total_seconds = input_dt.hour * 3600 + input_dt.minute * 60 + input_dt.second
+			now_total_seconds = now_time.hour * 3600 + now_time.minute * 60 + now_time.second
+			return now_total_seconds - then_total_seconds > 5
 
 		raise TypeError("input must be either datetime, date or time")
 
