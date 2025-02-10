@@ -155,33 +155,33 @@ if True:  # \/ # fmt & print iterable
 		_                   = Style.reset # Reset
 		bold                = Style.bold
 
-		NUMBER              = Fore.BLUE + Style.bold
-		TYPE                = Fore.BLUE + Style.bold
+		NUMBER              = Fore.LIGHT_BLUE + Style.bold
+		TYPE                = Fore.LIGHT_BLUE + Style.bold
 		DECIMAL             = Fore.WHITE + Style.bold
 		BRACKET             = Fore.CYAN + Style.bold
 		ENUM_VARIANT_NAME   = _ + Fore.WHITE # Reset for no bold
 		QUOTES              = _ + Fore.WHITE # Reset for no bold
 		STRING              = _ + Fore.YELLOW # Reset for no bold
 		COLON               = Fore.WHITE + Style.bold # Sorry, no 0xFF8000 gdcolon color, it looked too smushed together with the string color when in a dict {a: b};   = Fore.orange_1 + Style.bold
-		GD_COLON            = Fore.orange_1 + Style.bold # NEVERMIND THE ABOVE i actually need the color for at least one thing so here it is back..
-		ASTERISK            = Fore.orange_1 + Style.bold
-		COROUTINE           = Fore.orange_1 + Style.bold
-		FUNCTION            = Fore.orange_1 + Style.bold
-		COMPLEX             = Fore.orange_1 + Style.bold
-		COMMA               = Fore.dark_gray + Style.bold
-		PIPE                = Fore.dark_gray + Style.bold
+		GD_COLON            = Fore.ORANGE_1 + Style.bold # NEVERMIND THE ABOVE i actually need the color for at least one thing so here it is back..
+		ASTERISK            = Fore.ORANGE_1 + Style.bold
+		COROUTINE           = Fore.ORANGE_1 + Style.bold
+		FUNCTION            = Fore.ORANGE_1 + Style.bold
+		COMPLEX             = Fore.ORANGE_1 + Style.bold
+		COMMA               = Fore.DARK_GRAY + Style.bold
+		PIPE                = Fore.DARK_GRAY + Style.bold
 		PATH_SLASH          = DECIMAL
-		UNKNOWN             = Fore.dark_gray + Style.bold
-		TRUE                = Fore.GREEN + Style.bold
-		FALSE               = Fore.RED + Style.bold
-		UNDEFINED           = Fore.dark_gray + Style.bold
-		NONE                = Fore.light_gray + Style.bold
+		UNKNOWN             = Fore.DARK_GRAY + Style.bold
+		TRUE                = Fore.LIGHT_GREEN + Style.bold
+		FALSE               = Fore.LIGHT_RED + Style.bold
+		UNDEFINED           = Fore.DARK_GRAY + Style.bold
+		NONE                = Fore.LIGHT_GRAY + Style.bold
 		BYTESTR_B           = Fore.RED + Style.bold
 		ITER_I              = Fore.red_3b + Style.bold
 		SPECIAL             = Fore.purple_1b + Style.bold
 		INTERNAL_EXCEPTION  = Fore.red_3b + Style.bold
 		BUILT_IN_EXCEPTION  = Fore.BLUE + Style.bold
-		MODULE              = Fore.orange_1 + Style.bold
+		MODULE              = Fore.ORANGE_1 + Style.bold
 
 		def __call__(self): # If called FMTC() then passed instance as FMTC= kwarg, then another piece of code makes another instance thus FMTC()() effectively
 			return self
@@ -1091,12 +1091,12 @@ def alert(s: str, *, printhook: Callable[[str], None] = print, raw=False) -> Non
 def gay(text: str, offset: int = 0) -> str:
 	"""Turn a string gay. Happy pride :3"""  # noqa: D400
 	colors = [
-		Fore.RED,
-		Fore.orange_1,
-		Fore.YELLOW,
-		Fore.GREEN,
-		Fore.MAGENTA,
-		Fore.BLUE,
+		Fore.LIGHT_RED,
+		Fore.ORANGE_1,
+		Fore.LIGHT_YELLOW,
+		Fore.LIGHT_GREEN,
+		Fore.LIGHT_MAGENTA,
+		Fore.LIGHT_BLUE,
 		Fore.purple_1b,
 		Fore.purple_4b,
 	]
