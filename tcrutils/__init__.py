@@ -40,7 +40,8 @@ if False:  # Left `if False`d out for archival purposes (yeah.. there's git but 
 	from . import joke as joke
 	from . import repl
 	from . import types as types
-	from .b64 import b64
+	from .b64 import decode as b64d
+	from .b64 import encode as b64e
 	from .class_ import CachedInstancesMeta, DefaultsGetAttr, DefaultsGetItem, DefaultsGetSetAttr, DefaultsGetSetItem, NoInit, Singleton, new_cell, partial_class
 	from .classfuncs import get_classname, get_name_classname, get_qualname_classname
 	from .codeblock import codeblock, codeblocks, uncodeblock
@@ -48,9 +49,9 @@ if False:  # Left `if False`d out for archival purposes (yeah.. there's git but 
 	from .console import breakpoint, console, start_eval_session
 	from .console import console as c
 	from .context import random_seed_lock
-	from .decorator import autorun, convert, copy_kwargs, copy_kwargs_sunder, instance, skip_first_call, skip_first_call_async, test, timeit, with_overrides
+	from .decorator import convert, copy_kwargs, copy_kwargs_sunder, skip_first_call, skip_first_call_async, test, timeit, with_overrides
 	from .dev import generate_function_argument_typehints, generate_type_hinter
-	from .dict import DotDict, JSDict, JSDotDict, clean_dunder_dict, dict_zip, merge_dicts
+	from .dict import DotDict, clean_dunder_dict, dict_zip, merge_dicts
 	from .dir import dir2, dir3, dir_recursive, vars2, vars3, vars_recursive
 	from .extract_error import extract_error, extract_traceback, module_error_map, modules_error_map, print_exception_with_traceback
 	from .getch import KeyCode, KeyCodeCompound, KeyCodeSimple, getch, getchs
@@ -61,7 +62,7 @@ if False:  # Left `if False`d out for archival purposes (yeah.. there's git but 
 	from .int import clamp, float2int, hex, recursive_sum
 	from .iterable import Or, batched, bogo_sort, cut_at, getattr_queue, getmanyattrs, hasmanyattrs, limited_iterable, shuffled, slice_between, stalin_sort
 	from .language import apostrophe_s, make_plural, nth, plural_s
-	from .misspellings import asert, trei
+	from .misspellings import asert
 	from .other import intbool
 	from .path import path
 	from .print import FMT_BRACKETS, FMTC, alert, fmt_iterable, gay, print_block, print_iterable
