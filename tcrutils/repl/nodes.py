@@ -815,6 +815,52 @@ if True:  # Timestr
 			return seconds
 
 
+# if True:  # TStrNode
+
+# 	class _TStrDateNode(_RegexNodeBase, ParsableNode[tuple[int, int, int]], pattern=r"^((?P<d>\d?\d)-(?:(?P<m>\d?\d)(?:-(?P<y>(?:\d\d)?\d\d)?)?)?)(.*)$"):
+# 		def match(self, s):
+# 			result = super().match(s)
+
+# 			return result
+
+# 		@staticmethod
+# 		def _validate_by_str_parts(d: str, m: str | None, y: str | None):
+# 			try:
+# 				d, m, y = int(d), int(m), int(y)
+# 				datetime.date(y, m, d)
+# 			except Exception:
+# 				return False
+# 			else:
+# 				return True
+
+# 		def parse(self):
+# 			groups = self.m.groupdict()
+
+# 			d, m, y = groups["d"], groups["m"], d["y"]
+
+# 	class TStrNode(
+# 		CompoundNode,
+# 		ParsableNode[float],
+# 		require_matched_marker=True,
+# 		nodes=(
+# 			IrrefutableNode(
+# 				UnreachableNode(
+# 					LiteralNode("!", "/*"),
+# 					name="separator",
+# 				),
+# 				UnreachableNode(
+# 					name="content",
+# 				),
+# 			),
+# 		),
+# 	):
+# 		tzinfo: datetime.tzinfo
+
+# 		def __init__(self, *children, tzinfo: datetime.tzinfo = datetime.datetime.now().astimezone().tzinfo, name: str = ""):
+# 			super().__init__(*children, name=name)
+# 			self.tzinfo = tzinfo
+
+
 if True:  # Path Stuff
 
 	class _PathWordishNode(WordishNode, OwnDisplayNode):
