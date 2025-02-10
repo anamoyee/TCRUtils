@@ -7,7 +7,6 @@ from dataclasses import dataclass, field
 import pytz
 
 from .compare import able
-from .console import console
 from .extract_error import extract_error
 
 autorun = lambda x: (x(), x)[-1]
@@ -77,8 +76,6 @@ weekday_lookup = [
 # fmt: on
 
 assert len(weekday_lookup) % 7 == 0
-
-# console((weekday_lookup, len(weekday_lookup), len(weekday_lookup) % 7)); exit()
 
 
 def days_until_next_weekday(target_weekday):
