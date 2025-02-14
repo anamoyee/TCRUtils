@@ -286,6 +286,7 @@ if True:  # \/ # fmt & print iterable
 	def _reset_return_wrapper(func):
 		@wraps(func)
 		def wrapper(*args, append_syntax_reset: bool = True, **kwargs):
+			return func(*args, **kwargs)  # Disabled due to it kind of really slowing down performance, may be re-enabled later if i want idk......
 			if kwargs.get("syntax_highlighting") and append_syntax_reset:
 				s = f"{FMTC._}{func(*args, **kwargs)}{FMTC._}"
 
