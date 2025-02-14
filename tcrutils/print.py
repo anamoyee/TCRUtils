@@ -2,6 +2,7 @@ import ast
 import datetime as dt
 import pathlib
 import re as regex
+import string
 import sys
 import typing
 from _collections_abc import (
@@ -231,6 +232,8 @@ if True:  # \/ # fmt & print iterable
 	"""(FMT_UNKNOWN[syntax_highlighting: bool] % (name, content)) -> attaches name and content to an unknown object"""
 	FMT_UNKNOWN_NO_PARENS = ('%s%s', f'{FMTC.UNKNOWN}%s{FMTC._}%s{FMTC._}')
 	"""(FMT_UNKNOWN_NO_PARENS[syntax_highlighting: bool] % (name, content_with_parens)) -> attaches name and content to an unknown object"""
+	FMT_UNKNOWN_ADDRESS = ('%s@%s', f'{FMTC.UNKNOWN}%s{FMTC.DECIMAL}@{FMTC._}%s{FMTC._}')
+	FMT_UNKNOWN_ADDRESS_WITH_CALL = ('%s@%s(%s)', f'{FMTC.UNKNOWN}%s{FMTC.DECIMAL}@{FMTC._}%s{FMTC.UNKNOWN}({FMTC._}%s{FMTC.UNKNOWN}){FMTC._}')
 
 	FMT_INTERNAL_EXCEPTION = ("An exception occured while trying to display this item (%s).", f"{FMTC.INTERNAL_EXCEPTION}An exception occured while trying to display this item ({FMTC.UNKNOWN}%s{FMTC.INTERNAL_EXCEPTION}).{FMTC._}")
 	"""(FMT_EXCEPTION[syntax_highlighting: bool] % getattr_queue(obj, '__name__', '__class__.__name__') -> Self explainatory"""
@@ -365,10 +368,12 @@ if True:  # \/ # fmt & print iterable
 			s += f"{FMTC.DECIMAL}@{path}"
 		return s
 
-	def _fmt_unknown_highlighted(it: object, /, queue_name: str) -> str:
+	def _fmt_unknown_highlighted(it: object, /, queue_name: str, *, this) -> str:
+		repr_it = repr(it)
+
 		if match := regex.match(
 			r"<module '(?P<module_name>[^']+)'(?: from '(?P<path>[^']+)')?(?: \((?P<namespace>[^)]+)\))?>",
-			repr(it),
+			repr_it,
 		):
 			d = match.groupdict()
 
@@ -379,10 +384,23 @@ if True:  # \/ # fmt & print iterable
 			namespace = d["namespace"]
 
 			return _fmt_module_highlighted(name, path, namespace)
+		elif match := regex.match(
+			r"<([a-zA-Z_ ]+) at 0x([0-9a-zA-Z]{8,})(?:: )?(.*)>",
+			repr_it,
+		):
+			name, address_str, rest = match.groups()
+
+			allowed_chars = string.ascii_letters + string.digits + "_"
+
+			name_fmted = name if all((ch in allowed_chars) for ch in name) else this(name).replace(FMTC.STRING, FMTC.UNKNOWN)
+
+			address_fmted = this(int(address_str, base=16))
+
+			return FMT_UNKNOWN_ADDRESS_WITH_CALL[True] % (name_fmted, address_fmted, rest)
 
 		elif match := regex.match(
 			r"^([^\d\W](?:(?:\w)|(?:\.<locals>\.)|(?:\.<globals>\.))*)\((.*)\)$",
-			repr(it),
+			repr_it,
 		):
 			name, body = match.groups()
 
@@ -1004,7 +1022,7 @@ if True:  # \/ # fmt & print iterable
 			ValueError,
 			TypeError,
 		):  # parse repr failed or __repr__ returned a non-str value
-			return _fmt_unknown_highlighted(it, queue_name)
+			return _fmt_unknown_highlighted(it, queue_name, this=this)
 			# If no hardcoded patterns match, return a str-repred version of whatever it is
 
 	if not sys.gettrace():  # If debugger is not running, dont optimize since it is a hassle to get into the fmt_iterable func

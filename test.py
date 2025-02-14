@@ -704,6 +704,15 @@ if True:  # \/ # Tests
 		π(B)
 		π(B())
 
+		print()
+		from tcrutils.class_ import new_cell
+
+		π(new_cell)
+		π(new_cell())
+		cell = new_cell()
+		cell.cell_contents = str
+		π(cell)
+
 	def test_markdown():
 		from tcrutils import codeblock, uncodeblock
 
