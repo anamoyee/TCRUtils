@@ -54,7 +54,7 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 			*,
 			printhook=print,
 			color=True,
-			pattern="%(c_White)s%(name)s%(c_Gold)s took %(c_White)s%(time)s%(c_Gold)s seconds to execute.%(c_reset)s",
+			pattern="%(c_White)s%(name)s%(c_Gold)s took %(c_White)s%(time)s%(c_Gold)s seconds to execute%(c_reset)s",
 		):
 			if self.t.get(name) is None:
 				msg = "You cannot stop the timer if it was not started"
@@ -88,6 +88,72 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 
 	timeit = Timeit()
 
+	class TimeitPartial[**P]:
+		name = ""
+		currently_elapsed: float
+		t: float | None
+		partials: int
+
+		def __init__(self, name: str = "", *, perf_counter=time.perf_counter):
+			self.name = name
+			self.currently_elapsed = 0.0
+			self.t = None
+			self.perf_counter = perf_counter
+			self.partials = 0
+
+		def start(self):
+			tmp = self.perf_counter()  # Maximize accuracy
+
+			if self.t is not None:
+				raise RuntimeError(f"Cannot start an already started {self.__class__.__name__}")
+
+			self.t = tmp
+
+		def stop(self):
+			end = self.perf_counter()  # Maximize accuracy
+
+			if self.t is None:
+				raise RuntimeError(f"Cannot stop a stopped (or never-started) {self.__class__.__name__}.")
+
+			start = self.t
+			self.t = None
+
+			self.currently_elapsed += end - start
+			self.partials += 1
+
+		@overload
+		def finish_and_print(self, **kwargs: P.kwargs): ...
+
+		def finish_and_print(
+			self,
+			*,
+			syntax_highlighting: bool = True,
+			time_float_format_str: str = ".3f",
+			printhook=print,
+		):
+			c_white = Fore.white + Style.bold if syntax_highlighting else ""
+			c_gold = Fore.yellow + Style.bold if syntax_highlighting else ""
+			c_reset = Style.reset if syntax_highlighting else ""
+
+			msg = f"{c_reset}{c_white}{self.name or f'{c_gold}test'}{' ' if self.name != '' else ''}{c_gold}took {c_white}{self.currently_elapsed:{time_float_format_str}}{c_gold}s ({c_white}{self.partials} {c_gold}partials) to complete{c_reset}"
+
+			printhook(msg)
+			return msg
+
+		def decorator(self, **finish_and_print_kwargs):
+			def decorator_inner(f):
+				if self.name == "":
+					self.name = f.__name__
+
+				@wraps(f)
+				def wrapper(*args, **kwargs):
+					retv = f(*args, __timeit=self, **kwargs)
+					self.finish_and_print(**finish_and_print_kwargs)
+					return retv
+
+				return wrapper
+
+			return decorator_inner
 
 
 if True:  # \/ # @convert.stringify

@@ -17,7 +17,7 @@ if True:  # \/ # Imports
 	from tcrutils import types as tcr_types
 	from tcrutils.console import console
 	from tcrutils.console import console as c
-	from tcrutils.decorator import test, timeit
+	from tcrutils.decorator import TimeitPartial, test, timeit
 	from tcrutils.print import fmt_iterable, print_iterable
 	from tcrutils.test_ import ass, rass
 
@@ -253,8 +253,8 @@ if True:  # \/ # Tests
 
 		console.debug(f"{a()!r}")
 
-	@timeit
-	def test_print_iterable(π=print_iterable, **kwargs):
+	@TimeitPartial().decorator()
+	def test_print_iterable(π=print_iterable, *, __timeit: TimeitPartial = None, **kwargs):
 		import datetime as dt
 		from dataclasses import dataclass, field
 		from enum import Enum, Flag, IntEnum, IntFlag, ReprEnum, StrEnum, auto
@@ -262,10 +262,9 @@ if True:  # \/ # Tests
 
 		import tcrutils
 
-		π = partial(π, **kwargs)
-
-		# PrintIterable - π
-		# (so funny.. :3)
+		orig_π = π
+		del π
+		π = partial(lambda *a, **kw: [__timeit.start(), orig_π(*a, **kw), __timeit.stop()], **kwargs)
 
 		π("aasd")
 		π({"a": 1, "b": "2"})
@@ -712,6 +711,7 @@ if True:  # \/ # Tests
 		cell = new_cell()
 		cell.cell_contents = str
 		π(cell)
+		print()
 
 	def test_markdown():
 		from tcrutils import codeblock, uncodeblock
