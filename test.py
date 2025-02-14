@@ -17,7 +17,7 @@ if True:  # \/ # Imports
 	from tcrutils import types as tcr_types
 	from tcrutils.console import console
 	from tcrutils.console import console as c
-	from tcrutils.decorator import TimeitPartial, test, timeit
+	from tcrutils.decorator import TimeitPartial, repeat, test, timeit
 	from tcrutils.print import fmt_iterable, print_iterable
 	from tcrutils.test_ import ass, rass
 
@@ -253,7 +253,9 @@ if True:  # \/ # Tests
 
 		console.debug(f"{a()!r}")
 
-	@TimeitPartial().decorator()
+	@(lambda f: lambda *a, **kw: (lst := f(*a, **kw), (None if len(lst) <= 1 else print(f"\n{'\x1b[38;5;3m\x1b[1m'}Average[1:]: {'\x1b[38;5;15m\x1b[1m'}{sum(time_lst := ([x[0] for x in lst])) / len(time_lst):.3f}{'\x1b[0m'}"))))
+	@repeat(50, no_stdout_after_first=True)
+	@(TimeitPartial().decorator(printhook=lambda *a, __sys_stdout=sys.stdout, **kw: (print(*a, **{"end": "\r", "file": __sys_stdout, **kw}), print())))
 	def test_print_iterable(π=print_iterable, *, __timeit: TimeitPartial = None, **kwargs):
 		import datetime as dt
 		from dataclasses import dataclass, field

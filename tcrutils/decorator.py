@@ -1,7 +1,9 @@
+import os
+import sys
 import time
 from collections.abc import Awaitable, Callable
 from functools import partial, wraps
-from typing import TypeVar, overload
+from typing import overload
 
 from colored import Back, Fore, Style
 
@@ -25,6 +27,19 @@ if True:  # \/ # @test
 
 
 if True:  # \/ # @timeit // timeit.start() and .stop()
+
+	class _Mock_dev_null:
+		def write(self, s):
+			return len(s)
+
+		def flush(self):
+			pass
+
+		def read(self):
+			return ""
+
+		def close(self):
+			pass
 
 	class Timeit:
 		t: float | None
@@ -96,9 +111,12 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 
 		def __init__(self, name: str = "", *, perf_counter=time.perf_counter):
 			self.name = name
+			self.perf_counter = perf_counter
+			self.reset()
+
+		def reset(self):
 			self.currently_elapsed = 0.0
 			self.t = None
-			self.perf_counter = perf_counter
 			self.partials = 0
 
 		def start(self):
@@ -130,6 +148,7 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 			syntax_highlighting: bool = True,
 			time_float_format_str: str = ".3f",
 			printhook=print,
+			reset: bool = True,
 		):
 			c_white = Fore.white + Style.bold if syntax_highlighting else ""
 			c_gold = Fore.yellow + Style.bold if syntax_highlighting else ""
@@ -138,6 +157,10 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 			msg = f"{c_reset}{c_white}{self.name or f'{c_gold}test'}{' ' if self.name != '' else ''}{c_gold}took {c_white}{self.currently_elapsed:{time_float_format_str}}{c_gold}s ({c_white}{self.partials} {c_gold}partials) to complete{c_reset}"
 
 			printhook(msg)
+
+			if reset:
+				self.reset()
+
 			return msg
 
 		def decorator(self, **finish_and_print_kwargs):
@@ -148,12 +171,32 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 				@wraps(f)
 				def wrapper(*args, **kwargs):
 					retv = f(*args, __timeit=self, **kwargs)
+					tmp_currently_elapsed = self.currently_elapsed
 					self.finish_and_print(**finish_and_print_kwargs)
-					return retv
+					return (tmp_currently_elapsed, retv)
 
 				return wrapper
 
 			return decorator_inner
+
+	def repeat[**P, R](n: int, *, no_stdout_after_first: bool = False):
+		def decorator(f: Callable[P, R]):
+			@wraps(f)
+			def wrapper(*args: P.args, **kwargs: P.kwargs) -> list[tuple[float, R]]:
+				values = []
+				for i in range(n):
+					if add_back_stdout := (no_stdout_after_first and i > 0):
+						orig_sys_stdout = sys.stdout
+						sys.stdout = _Mock_dev_null()
+					values.append(f(*args, **kwargs))
+					if add_back_stdout:
+						sys.stdout.close()
+						sys.stdout = orig_sys_stdout
+				return values
+
+			return wrapper
+
+		return decorator
 
 
 if True:  # \/ # @convert.stringify
