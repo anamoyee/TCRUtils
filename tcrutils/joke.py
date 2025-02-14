@@ -1,7 +1,7 @@
 """Contains joke functions or the ones that will never be used in a serious situations/prod (This entire package sucks so much it should never be used in prod but uhhhhh.....)."""
 
 from collections.abc import Callable
-from typing import Literal, Self, TypeVar
+from typing import Literal, Self
 
 from .print import FMT_BRACKETS
 from .types import HexInt
@@ -10,7 +10,7 @@ from .types import HexInt
 def fizzbuzz(n: int) -> str: ...
 
 
-fizzbuzz: Callable[[int], str] = lambda n: "Fizz" * (n % 3 == 0) + "Buzz" * (n % 5 == 0) or str(n)  # fmt: skip  # noqa: F811
+fizzbuzz = lambda n: "Fizz" * (n % 3 == 0) + "Buzz" * (n % 5 == 0) or str(n)  # fmt: skip  # noqa: F811
 
 
 def oddeven(n: int) -> Literal["odd", "even"]:
@@ -187,10 +187,7 @@ class Pointer:
 		return f"{this(self.__class__)}{FMT_BRACKETS[range][SH] % type_}{addr}"
 
 
-T = TypeVar("T")
-
-
-class __EchoType:
+class __EchoType[T]:
 	"""Echo the first argument of any interaction, like calling, gettingitem, gettingattr, etc.."""
 
 	def __call__(self, x: T, /) -> T:
