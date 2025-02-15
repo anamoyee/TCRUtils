@@ -1,4 +1,7 @@
 import sys
+import time
+
+_start_time = time.perf_counter()
 
 if True:  # \/ # Imports
 	import asyncio
@@ -2046,6 +2049,16 @@ ID: {server|id}
 
 		c(asyncio.run(anya(a=Eent(2), b=4)))
 
+	def test_c_log_regression_no_newline():
+		c.log("asfasdfas")
+		c.log("12313241234")
+		c.log("nyaaaa")
+		c.log("uwuwuwuwu")
+		c("asfasdfas")
+		c("12313241234")
+		c("nyaaaa")
+		c("uwuwuwuwu")
+
 
 if True:  # \/ # Test setup
 	__TESTS_RAN_GLOBAL = 0
@@ -2064,21 +2077,21 @@ if True:  # \/ # Test setup
 			globals()[k] = test(_count_tests_decorator(v))
 
 if __name__ == "__main__":
-	test_print_iterable(
-		_raise_errors=True,
-		syntax_highlighting=1,
-		# let_no_indent=0,
-		# force_no_indent=1,
-		# force_no_spaces=0,
-		# force_complex_parenthesis=1,
-		# item_limit=10,
-		# # let_no_indent_max_non_iterables=10,
-		# # let_no_indent_max_iterables=10,
-		# prefer_full_names=1,
-		# force_union_parenthesis=1,
-		# depth_limit=3,
-		# str_repr=repr,
-	)
+	# test_print_iterable(
+	# 	_raise_errors=True,
+	# 	syntax_highlighting=1,
+	# 	# let_no_indent=0,
+	# 	# force_no_indent=1,
+	# 	# force_no_spaces=0,
+	# 	# force_complex_parenthesis=1,
+	# 	# item_limit=10,
+	# 	# # let_no_indent_max_non_iterables=10,
+	# 	# # let_no_indent_max_iterables=10,
+	# 	# prefer_full_names=1,
+	# 	# force_union_parenthesis=1,
+	# 	# depth_limit=3,
+	# 	# str_repr=repr,
+	# )
 
 	# test_timestr()
 	# test_dict_merge()
@@ -2175,6 +2188,14 @@ if __name__ == "__main__":
 	# test_getch()
 	# test_repl()
 	# test_typehints()
+	test_c_log_regression_no_newline()
+
+	print()
+	_start_time__timeit_partial = TimeitPartial("*")
+	_start_time__timeit_partial.t = _start_time
+	_start_time__timeit_partial.stop()
+	_start_time__timeit_partial.finish_and_print()
+	del _start_time__timeit_partial, _start_time
 
 	if not sys.gettrace():
 		ass.total(prefix="\n")
