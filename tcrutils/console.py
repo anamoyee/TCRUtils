@@ -85,28 +85,25 @@ class Console:
 		values = [(f"{_this_iteration_header or ''}{x}" if isinstance(x, str) else fmt_iterable(x, syntax_highlighting=syntax_highlighting, **kwargs)) for x in values]
 
 		out = sep.join(values)
-		out = reduce(lambda x, y: str(x) + sep + str(y), [*values, ""]) + end
+		out = reduce(lambda x, y: str(x) + sep + str(y), [*values, ""])
 
 		if withprefix:
 			out = f"{letter} {(self._get_callsite_text_if_enabled(4) + ' ').lstrip()}{self._get_timestamp()} " + out
 
 		out = f"{color if syntax_highlighting else ''}{out}{CC._ if syntax_highlighting else ''}"
 
-		if end in ("", " ", "\r"):
-			print(out, end=end)
-		else:
-			print(out)
+		print(out, end=end)
 
-	def log(self, *values, sep=" ", end="", withprefix=True) -> None | str:
+	def log(self, *values, sep=" ", end="\n", withprefix=True) -> None | str:
 		self._generate_out_and_print(*values, sep=sep, end=end, withprefix=withprefix, color=CC.LOG, letter="I")
 
-	def warn(self, *values, sep=" ", end="", withprefix=True) -> None | str:
+	def warn(self, *values, sep=" ", end="\n", withprefix=True) -> None | str:
 		self._generate_out_and_print(*values, sep=sep, end=end, withprefix=withprefix, color=CC.WARN, letter="W")
 
-	def error(self, *values, sep=" ", end="", withprefix=True) -> None | str:
+	def error(self, *values, sep=" ", end="\n", withprefix=True) -> None | str:
 		self._generate_out_and_print(*values, sep=sep, end=end, withprefix=withprefix, color=CC.ERROR, letter="E")
 
-	def critical(self, *values, sep=" ", end="", withprefix=True) -> None | str:
+	def critical(self, *values, sep=" ", end="\n", withprefix=True) -> None | str:
 		self._generate_out_and_print(*values, sep=sep, end=end, withprefix=withprefix, color=CC.CRITICAL, letter="C")
 
 	def debug(

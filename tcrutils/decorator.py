@@ -42,7 +42,7 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 			pass
 
 	class Timeit:
-		t: float | None
+		t: dict[str, float | None]
 		tname: str
 
 		def __init__(self) -> None:
@@ -149,12 +149,17 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 			time_float_format_str: str = ".3f",
 			printhook=print,
 			reset: bool = True,
-		):
+		) -> str:
 			c_white = Fore.white + Style.bold if syntax_highlighting else ""
 			c_gold = Fore.yellow + Style.bold if syntax_highlighting else ""
 			c_reset = Style.reset if syntax_highlighting else ""
 
-			msg = f"{c_reset}{c_white}{self.name or f'{c_gold}test'}{' ' if self.name != '' else ''}{c_gold}took {c_white}{self.currently_elapsed:{time_float_format_str}}{c_gold}s ({c_white}{self.partials} {c_gold}partials) to complete{c_reset}"
+			msg = f"{c_reset}{c_white}{self.name or f'{c_gold}test'}{' ' if self.name != '' else ''}{c_gold}took {c_white}{self.currently_elapsed:{time_float_format_str}}{c_gold}s"
+
+			if self.partials != 1:
+				msg += f" with {c_white}{self.partials} {c_gold}partials"
+
+			msg += c_reset
 
 			printhook(msg)
 
