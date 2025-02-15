@@ -112,6 +112,8 @@ class ShelveDB(dict):
 				self[__key] = val
 				return val
 			else:
+				if hasattr(self, "default_factory") and callable(self.default_factory):
+					return self.default_factory(__key)
 				raise
 
 	def __setitem__(self, __key: Any, __value: Any, /) -> None:
