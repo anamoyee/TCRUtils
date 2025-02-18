@@ -274,7 +274,7 @@ if True:  # \/ # fmt & print iterable
 		if isinstance(input_dt, dt.datetime):
 			return (dt.datetime.now(tz=input_dt.tzinfo) - input_dt).total_seconds() > 5  # Assume 5s margin of error
 		elif isinstance(input_dt, dt.date):
-			return input_dt < dt.date.today()
+			return input_dt < dt.date.today()  # noqa: DTZ011 <- Cannot obrain a good timezone, if i were to obtain the computer's, that's no differnet than today() obtaining time from time.time(), right?
 		elif isinstance(input_dt, dt.time):
 			now_time = dt.datetime.now(tz=input_dt.tzinfo).time()
 			then_total_seconds = input_dt.hour * 3600 + input_dt.minute * 60 + input_dt.second
@@ -824,7 +824,7 @@ if True:  # \/ # fmt & print iterable
 				main_color = FMTC.NUMBER
 
 				secondary_color = FMTC.COMMA if _is_date_in_the_past(it) else FMTC.DECIMAL
-				s = f"<{it:{format_str}}>" # strftime <3
+				s = f"<{it:{format_str}}>"  # strftime <3
 
 				for x in ("-", ":", "<", ">", ","):
 					s = s.replace(x, f"{secondary_color}{x}{main_color}")
