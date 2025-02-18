@@ -812,9 +812,9 @@ if True:  # \/ # fmt & print iterable
 				return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, "")
 		if isinstance(it, dt.datetime | dt.date | dt.time):
 			if isinstance(it, dt.datetime):
-				format_str = "%H:%M:%S %d-%m-%Y"
+				format_str = "%H:%M:%S %d-%m-%Y, %a"
 			elif isinstance(it, dt.date):
-				format_str = "%d-%m-%Y"
+				format_str = "%d-%m-%Y, %a"
 			else:
 				format_str = "%H:%M:%S"
 
@@ -824,9 +824,9 @@ if True:  # \/ # fmt & print iterable
 				main_color = FMTC.NUMBER
 
 				secondary_color = FMTC.COMMA if _is_date_in_the_past(it) else FMTC.DECIMAL
-				s = f"<{it:{format_str}}>"
+				s = f"<{it:{format_str}}>" # strftime <3
 
-				for x in ("-", ":", "<", ">"):
+				for x in ("-", ":", "<", ">", ","):
 					s = s.replace(x, f"{secondary_color}{x}{main_color}")
 
 				return s
