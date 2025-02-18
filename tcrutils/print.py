@@ -217,47 +217,33 @@ if True:  # \/ # fmt & print iterable
   }
 
 	FMT_TOO_DEEP = ('[ ... ]', f'{FMTC.BRACKET}[ {FMTC.DECIMAL}... {FMTC.BRACKET}]{FMTC._}')
-	"""FMT_TOO_DEEP[syntax_highlighting: bool] -> attaches '[ ... ]' to the content with respect to syntax highlighting"""
 
 	FMT_RECURSIVE_STRUCTURE_SEEN = ('[[ ... ]]', f'{FMTC.BRACKET}[[ {FMTC.SPECIAL}... {FMTC.BRACKET}]]{FMTC._}')
-	"""FMT_RECURSIVE_STRUCTURE_SEEN[syntax_highlighting: bool]"""
 
 	FMT_UNION_SEPARATOR = ('|', f'{FMTC.PIPE} | {FMTC._}')
-	"""FMT_UNION_SEPARATOR[syntax_highlighting: bool] -> attaches ' | ' to the content with respect to syntax highlighting"""
 
 	FMT_ITER = ('iter(%s)', f'{FMT_LETTERS.i}%s')
-	"""(FMT_ITER[syntax_highlighting: bool] % content) -> attaches 'i' or 'iter()' to the content with respect to syntax highlighting"""
 
 	FMT_UNKNOWN = ('%s(%s)', f'{FMTC.UNKNOWN}%s({FMTC._}%s{FMTC.UNKNOWN}){FMTC._}')
-	"""(FMT_UNKNOWN[syntax_highlighting: bool] % (name, content)) -> attaches name and content to an unknown object"""
 	FMT_UNKNOWN_NO_PARENS = ('%s%s', f'{FMTC.UNKNOWN}%s{FMTC._}%s{FMTC._}')
-	"""(FMT_UNKNOWN_NO_PARENS[syntax_highlighting: bool] % (name, content_with_parens)) -> attaches name and content to an unknown object"""
 	FMT_UNKNOWN_ADDRESS = ('%s@%s', f'{FMTC.UNKNOWN}%s{FMTC.DECIMAL}@{FMTC._}%s{FMTC._}')
 	FMT_UNKNOWN_ADDRESS_WITH_CALL = ('%s@%s(%s)', f'{FMTC.UNKNOWN}%s{FMTC.DECIMAL}@{FMTC._}%s{FMTC.UNKNOWN}({FMTC._}%s{FMTC.UNKNOWN}){FMTC._}')
 
 	FMT_INTERNAL_EXCEPTION = ("An exception occured while trying to display this item (%s).", f"{FMTC.INTERNAL_EXCEPTION}An exception occured while trying to display this item ({FMTC.UNKNOWN}%s{FMTC.INTERNAL_EXCEPTION}).{FMTC._}")
-	"""(FMT_EXCEPTION[syntax_highlighting: bool] % getattr_queue(obj, '__name__', '__class__.__name__') -> Self explainatory"""
 
 	FMT_CLASS = ("%s(%s)", f"{FMTC.TYPE}%s{FMTC.BRACKET}({FMTC._}%s{FMTC.BRACKET}){FMTC._}")
-	"""(FMT_CLASS[syntax_highlighting: bool]) % (getattr_queue(obj, '__name__', '__class__.__name__'), this(it))"""
 
 	FMT_ENUM_VARIANT = ('%s.%s=%s', f'{FMTC.TYPE}%s{FMTC.COMMA}.{FMTC._}%s{FMTC.COMMA}: {FMTC._}%s')
-	"""(FMT_ENUM[syntax_highlighting: bool]) % (classname, valuename, this(value))"""
 
 	FMT_ENUM_VARIANT_NO_CLASS = ('%s=%s', f'{FMTC._}%s{FMTC.COMMA}: {FMTC._}%s')
-	"""(FMT_ENUM_NO_CLASS[syntax_highlighting: bool]) % (valuename, this(value))"""
 
 	FMT_ENUM_VARIANT_AUTO = ('%s.%s', f'{FMTC.TYPE}%s{FMTC.COMMA}.{FMTC._}%s')
-	"""(FMT_ENUM_AUTO[syntax_highlighting: bool]) % (classname, valuename)"""
 
 	FMT_ENUM_VARIANT_AUTO_NO_CLASS = ('%s', f'{FMTC._}%s')
-	"""(FMT_ENUM_AUTO_NO_CLASS[syntax_highlighting: bool]) % valuename"""
 
 	FMT_ASTERISK = ('*', f'{FMTC.ASTERISK}*')
-	"""FMT_ASTERISK[syntax_highlighting: bool]"""
 
 	FMT_SYS_VERSION_INFO = f'{FMTC.GD_COLON}Python%s'
-	"""FMT_SYS_VERSION_INFO % sys.version_info[:3] # :3"""
 
 	# fmt: on
 
