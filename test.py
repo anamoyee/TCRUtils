@@ -717,6 +717,11 @@ if True:  # \/ # Tests
 		cell.cell_contents = str
 		π(cell)
 		print()
+		π(dt.datetime(1, 1, 1, 0, 0, 0, 0))
+		π(dt.datetime(1, 1, 1, 0, 0, 0, 0, tzinfo=dt.UTC))
+		π(dt.time(0, 0, 0, 0))
+		π(dt.time(0, 0, 0, 0, tzinfo=dt.UTC))
+		print()
 
 	def test_markdown():
 		from tcrutils import codeblock, uncodeblock
@@ -2058,6 +2063,44 @@ ID: {server|id}
 		c("12313241234")
 		c("nyaaaa")
 		c("uwuwuwuwu")
+
+	def test_timestr2_manual():
+		from datetime import datetime
+
+		from tcrutils.timestr2 import timestr_parser as t
+		from tcrutils.types import LiteralDisplay, PlainDisplay, QuotelessString
+
+		tz = datetime.now().astimezone().tzinfo
+		nowf = lambda tz=tz: datetime.now(tz=tz)
+
+		seth = [
+			"1h20m!13:",
+			"13:!1h20m",
+			"1h!13:",
+			"wed!14:",
+			"",
+			"13:!!!!10m!!!5s",
+			"",
+			"13:",
+			"13:!12:",
+			"13:!13:",
+			"13:!14:",
+		]
+
+		justamt = max(len(x) for x in seth)
+
+		c([
+			(
+				PlainDisplay(
+					LiteralDisplay(f"{k:>{justamt}}"),
+					t.parse(k, tz=tz, _datetime_now=nowf),
+					sep=" ",
+				)
+				if k != ""
+				else LiteralDisplay(" " * (justamt + 39))
+			)
+			for k in seth
+		])
 
 
 if True:  # \/ # Test setup
