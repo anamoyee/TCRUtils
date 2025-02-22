@@ -114,8 +114,8 @@ if True:  # \/ # Tests
 		)
 
 	def test_oddeven():
-		console(f'{tcr.oddeven("1") = }')
-		console(f'{tcr.oddeven("2") = }')
+		console(f"{tcr.oddeven("1") = }")
+		console(f"{tcr.oddeven("2") = }")
 		console(f"{tcr.oddeven( 3 ) = }")
 		console(f"{tcr.oddeven( 4 ) = }")
 
