@@ -1,5 +1,6 @@
 from collections.abc import Callable
 
+from .extract_error import extract_error, extract_traceback
 from .iterable import cut_at
 
 BACKTICK = "`"
@@ -69,3 +70,16 @@ def codeblocks(
 		out += codeblock(text, langcode=langcode, max_length=max_length - len(out), cut_at_func=cut_at_func, smart_empty=smart_empty)
 
 	return out
+
+
+def discord_exception(e: BaseException, *, max_length: int = 1800) -> str:
+	return codeblocks(
+		extract_error(e),
+		extract_traceback(e),
+		langcodes=(
+			"txt",
+			"py",
+		),
+		max_length=max_length,
+		smart_empty=True,
+	)
