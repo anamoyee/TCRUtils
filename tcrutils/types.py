@@ -20,6 +20,29 @@ class QuotelessString(str):
 	"""Used in tcr.fmt_iterable() in order to format it as a plain text, rather than as `"normal str"`."""
 
 
+class PlainDisplay[T](tuple[T]):
+	def __new__(cls, *iterable: T, sep: str = ""):
+		return super().__new__(cls, iterable)
+
+	def __init__(self, *iterable: T, sep: str = ""):
+		self.sep = sep
+		super().__init__()
+
+	def __tcr_fmt__(self=None, *, fmt_iterable, **_):
+		if self is None:
+			raise NotImplementedError()
+
+		return self.sep.join(fmt_iterable(x) for x in self)
+
+
+class LiteralDisplay(str):
+	def __tcr_fmt__(self=None, **_):
+		if self is None:
+			raise NotImplementedError()
+
+		return f"\x1b[0m{self!s}"
+
+
 class HexInt(int):
 	leading_zeroes: int
 
