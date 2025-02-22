@@ -157,8 +157,10 @@ if True:  # \/ # fmt & print iterable
 		bold                = Style.bold
 
 		NUMBER              = Fore.LIGHT_BLUE + Style.bold
+		NUMBER_NO_BOLD      = _ + Fore.LIGHT_BLUE
 		TYPE                = Fore.LIGHT_BLUE + Style.bold
 		DECIMAL             = Fore.WHITE + Style.bold
+		DECIMAL_NO_BOLD     = _ + Fore.WHITE
 		BRACKET             = Fore.CYAN + Style.bold
 		ENUM_VARIANT_NAME   = _ + Fore.WHITE # Reset for no bold
 		QUOTES              = _ + Fore.WHITE # Reset for no bold
@@ -170,6 +172,7 @@ if True:  # \/ # fmt & print iterable
 		FUNCTION            = Fore.ORANGE_1 + Style.bold
 		COMPLEX             = Fore.ORANGE_1 + Style.bold
 		COMMA               = Fore.DARK_GRAY + Style.bold
+		COMMA_NO_BOLD       = _ + Fore.DARK_GRAY
 		PIPE                = Fore.DARK_GRAY + Style.bold
 		PATH_SLASH          = DECIMAL
 		UNKNOWN             = Fore.DARK_GRAY + Style.bold
