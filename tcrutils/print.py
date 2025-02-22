@@ -801,11 +801,11 @@ if True:  # \/ # fmt & print iterable
 				return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, "")
 		if isinstance(it, dt.datetime | dt.date | dt.time):
 			if isinstance(it, dt.datetime):
-				format_str = "%H:%M:%S %d-%m-%Y, %a"
+				format_str = "%H:%M:%S.%f%z %d-%m-%Y, %a"
 			elif isinstance(it, dt.date):
 				format_str = "%d-%m-%Y, %a"
 			else:
-				format_str = "%H:%M:%S"
+				format_str = "%H:%M:%S.%f%z"
 
 			if not syntax_highlighting:
 				return repr(it)
@@ -813,9 +813,21 @@ if True:  # \/ # fmt & print iterable
 				main_color = FMTC.NUMBER
 
 				secondary_color = FMTC.COMMA if _is_date_in_the_past(it) else FMTC.DECIMAL
+
+				zeroes_color = FMTC.NUMBER_NO_BOLD
+
 				s = f"<{it:{format_str}}>"  # strftime <3
 
-				for x in ("-", ":", "<", ">", ","):
+				for find, replace in {
+					".000000": f".{zeroes_color}000000{main_color}",
+					"00:": f"{zeroes_color}00:{main_color}",
+					":00": f"{zeroes_color}:00{main_color}",
+					"00.": f"{zeroes_color}00.{main_color}",
+					"+0000": f"+{zeroes_color}0000{main_color}",
+				}.items():
+					s = s.replace(find, replace)
+
+				for x in ("-", ":", "<", ">", ",", ".", "+"):
 					s = s.replace(x, f"{secondary_color}{x}{main_color}")
 
 				return s
