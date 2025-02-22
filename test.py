@@ -42,8 +42,8 @@ MCL: miru.Client | None = None
 
 def spin_up_bot(
 	*,
-	bot_kwargs: dict[str, Any] = {},  # noqa: B006
-	acl_kwargs: dict[str, Any] = {},  # noqa: B006
+	bot_kwargs: dict[str, Any] = {},
+	acl_kwargs: dict[str, Any] = {},
 ) -> None:
 	global BOT, ACL, MCL
 	if BOT is not None:
