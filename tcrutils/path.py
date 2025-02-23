@@ -85,11 +85,14 @@ def get_unused_dirname(
 	return name
 
 
+def pyrootfile() -> p.Path:
+	"""Return the file from which the python code execution originated, furthest back in the callstack as pathlib.Path."""
+	return p.Path(inspect.stack()[-1].filename)
+
+
 def pyrootdir() -> p.Path:
-	"""Return the directory of the furthest back file in the callstack as pathlib.Path, optionally navigate to it with os.chdir()."""
-	frames = inspect.stack()
-	pth = frames[-1].filename  # Get the filename of the furthest back frame
-	return p.Path(pth).parent
+	"""Return the directory of the furthest back file in the callstack as pathlib.Path."""
+	return pyrootfile().parent
 
 
 if True:  # isreserved
