@@ -7,8 +7,11 @@ import sys
 import typing
 from _collections_abc import (
 	Callable,
+	ItemsView,
 	Iterable,
+	KeysView,
 	Mapping,
+	ValuesView,
 	bytearray_iterator,
 	bytes_iterator,
 	coroutine,
@@ -208,6 +211,9 @@ if True:  # \/ # fmt & print iterable
 		dict_keys:     ('[%s]',            f'{FMT_LETTERS.K}{FMTC.BRACKET}[{FMTC._}%s{FMTC.BRACKET}]{FMTC._}'),
 		dict_values:   ('[%s]',            f'{FMT_LETTERS.V}{FMTC.BRACKET}[{FMTC._}%s{FMTC.BRACKET}]{FMTC._}'),
 		dict_items:    ('[%s]',            f'{FMT_LETTERS.I}{FMTC.BRACKET}[{FMTC._}%s{FMTC.BRACKET}]{FMTC._}'),
+		KeysView:      ('[%s]',            f'{FMT_LETTERS.K}{FMTC.BRACKET}[{FMTC._}%s{FMTC.BRACKET}]{FMTC._}'),
+		ValuesView:    ('[%s]',            f'{FMT_LETTERS.V}{FMTC.BRACKET}[{FMTC._}%s{FMTC.BRACKET}]{FMTC._}'),
+		ItemsView:     ('[%s]',            f'{FMT_LETTERS.I}{FMTC.BRACKET}[{FMTC._}%s{FMTC.BRACKET}]{FMTC._}'),
 		set:           ('{%s}',            f'{FMTC.BRACKET}{{{FMTC._}%s{FMTC.BRACKET}}}{FMTC._}'),
 		frozenset:     ('frozenset({%s})', f'{FMT_LETTERS.F}{FMTC.BRACKET}{{{FMTC._}%s{FMTC.BRACKET}}}{FMTC._}'),
 		dict:          ('{%s}',            f'{FMTC.BRACKET}{{{FMTC._}%s{FMTC.BRACKET}}}{FMTC._}'),
