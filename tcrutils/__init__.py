@@ -38,7 +38,7 @@ if False:  # Left `if False`d out for archival purposes (yeah.. there's git but 
 	from . import case as case
 	from . import ensure_deps as ensure_depencencies
 	from . import joke as joke
-	from . import repl
+	from . import path, repl
 	from . import types as types
 	from .b64 import decode as b64d
 	from .b64 import encode as b64e
@@ -64,7 +64,6 @@ if False:  # Left `if False`d out for archival purposes (yeah.. there's git but 
 	from .language import apostrophe_s, make_plural, nth, plural_s
 	from .misspellings import asert
 	from .other import intbool
-	from .path import path
 	from .print import FMT_BRACKETS, FMTC, alert, fmt_iterable, gay, print_block, print_iterable
 	from .regex import RegexPreset
 	from .result import Result, ResultUnwrappedErrOnValueError, ResultUnwrappedOnErrorError

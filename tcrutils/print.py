@@ -42,7 +42,7 @@ from .compare import able, able_simple, able_simple_result
 from .extract_error import extract_error
 from .int import hex as tcrhex
 from .iterable import Or, getattr_queue, limited_iterable
-from .path import path as tcr_path_utils
+from .path import convert_to_relative_pathstr
 from .types import BrainfuckCode, GayString, QuotelessString
 
 _HikariEnum = None
@@ -370,7 +370,7 @@ if True:  # \/ # fmt & print iterable
 			name = d["module_name"]
 			path = d["path"]
 			if path is not None:
-				path = tcr_path_utils.convert_to_relative_pathstr(path)
+				path = convert_to_relative_pathstr(path)
 			namespace = d["namespace"]
 
 			return _fmt_module_highlighted(name, path, namespace)
