@@ -2131,8 +2131,8 @@ ID: {server|id}
 			def default_factory(self):
 				return User()
 
-		with UserDB.open_shelf() as sh:
-			sh.clear()
+		# with UserDB.open_shelf() as sh:
+		# 	sh.clear()
 
 		with UserDB.open_shelf() as sh:
 			c(sh.keys())
@@ -2141,6 +2141,14 @@ ID: {server|id}
 
 		with UserDB(507642999992352779) as user:
 			c(user)
+
+		with UserDB.open_shelf() as sh:
+			c(sh.keys())
+			c(sh.values())
+			c(sh.items())
+
+		with UserDB(507642999992352779) as user:
+			user.number += 1
 
 		with UserDB.open_shelf() as sh:
 			c(sh.keys())
