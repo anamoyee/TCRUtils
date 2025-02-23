@@ -1,12 +1,12 @@
 """# Useful stuff for tcr projects.
 
-```py
->>> from tcrutils.<feature_module> import feature
+```
+>>> from tcrutils.{feature_module} import feature
 ```
 
-Nyaaa :3
+### Nyaaa :3
 
-```py
+```
 >>> from tcrutils.print import gay
 >>> print(gay('nyaaaaa')) # uwu :3
 """
