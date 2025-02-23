@@ -2108,6 +2108,84 @@ ID: {server|id}
 			for k in seth
 		])
 
+	def test_sdb2():
+		from tcrutils.sdb2 import ShelfManager
+
+		DB_DIRECTORY = (p.Path(__file__).parent / "test_db2").absolute()
+		DB_DIRECTORY.mkdir(exist_ok=True)
+
+		global User
+
+		class User(pydantic.BaseModel):
+			model_config = pydantic.ConfigDict(
+				validate_assignment=True,
+				validate_default=True,
+			)
+
+			displayname: str = "uwu"
+			number: int = 42
+
+		class UserDB(ShelfManager[User]):
+			PATH = DB_DIRECTORY / "users"
+
+			def default_factory(self):
+				return User()
+
+		with UserDB.open_shelf() as sh:
+			sh.clear()
+
+		with UserDB.open_shelf() as sh:
+			c(sh.keys())
+			c(sh.values())
+			c(sh.items())
+
+		with UserDB(507642999992352779) as user:
+			c(user)
+
+		with UserDB.open_shelf() as sh:
+			c(sh.keys())
+			c(sh.values())
+			c(sh.items())
+
+	def test_sdb2_2():
+		from tcrutils.sdb2 import SingleShelfManager
+
+		DB_DIRECTORY = (p.Path(__file__).parent / "test_db2").absolute()
+		DB_DIRECTORY.mkdir(exist_ok=True)
+
+		global GlobalData
+
+		class GlobalData(pydantic.BaseModel):
+			model_config = pydantic.ConfigDict(
+				validate_assignment=True,
+				validate_default=True,
+			)
+
+			something: str = "global data something"
+			eent: int = 69
+
+		class GlobalDB(SingleShelfManager[GlobalData]):
+			PATH = DB_DIRECTORY / "global"
+
+			def default_factory(self):
+				return GlobalData()
+
+		with GlobalDB.open_shelf() as sh:
+			sh.clear()
+
+		with GlobalDB.open_shelf() as sh:
+			c(sh.keys())
+			c(sh.values())
+			c(sh.items())
+
+		with GlobalDB() as gd:
+			c(gd)
+
+		with GlobalDB.open_shelf() as sh:
+			c(sh.keys())
+			c(sh.values())
+			c(sh.items())
+
 
 if True:  # \/ # Test setup
 	__TESTS_RAN_GLOBAL = 0
@@ -2178,7 +2256,7 @@ if __name__ == "__main__":
 	# test_insist()
 	# test_ntpath()
 	# test_newdir2()
-	test_sdb()
+	# test_sdb()
 	# test_language()
 	# test_float2int()
 	# test_manyattrs()
@@ -2239,6 +2317,8 @@ if __name__ == "__main__":
 	# test_typehints()
 	# test_c_log_regression_no_newline()
 	# test_timestr2_manual()
+	test_sdb2()
+	test_sdb2_2()
 
 	print()
 	_start_time__timeit_partial = TimeitPartial("*")
