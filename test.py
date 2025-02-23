@@ -836,53 +836,59 @@ if True:  # \/ # Tests
 		console(tcr.path.nextname_file_ext_fix(tcr.path.nextname_file_ext_fix()))
 
 	def test_sdb():
-		class Database(tcr.ShelveDB):
-			directory = str((p.Path(__file__).parent / "test_db").absolute())
+		from tcrutils.sdb import ShelveDB
+
+		DB_DIRECTORY = (p.Path(__file__).parent / "test_db").absolute()
+		DB_DIRECTORY.mkdir(exist_ok=True)
+
+		class Database(ShelveDB):
+			directory = DB_DIRECTORY
 
 			defaults = {
 				"r": list,
 			}
 
-		c(Database.exists("1"))
-		c(Database.exists("0"))
+		c(Database.exists("db1"))
+		c(Database.exists("db0"))
 
-		db1 = Database("test145345")
-		# db2 = Database("test2")
-		# db3 = Database("test3")
+		db1 = Database("db1")
 
 		c(db1)
 
-		# db1.clear()
+		db1.clear()
 
-		# c(db1)
+		c(db1)
 
-		# c(db1['r'])
+		c(db1["r"])
 
-		# c(db1)
+		c(db1)
 
-		# c(db1.get_directory())
+		c(db1.get_directory())
+		c(db1.get_path())
 
-		# db['OwO'] = 'UwU'
-		# console(db)
+		db = Database("db")
 
-		# del db['OwO']
-		# console(db)
+		db["OwO"] = "UwU"
+		console(db)
 
-		# db.setdefault("a", "A")
-		# console(db)
-		# db.setdefault("b", "B")
-		# db.setdefault("c", "C")
-		# db.setdefault("d", "D")
-		# console(db)
+		del db["OwO"]
+		console(db)
 
-		# console(db.pop('a'))
-		# console(db)
-		# console(db.popitem())
-		# console(db)
-		# console(db.popitem())
-		# console(db)
-		# console(db.popitem())
-		# console(db)
+		db.setdefault("a", "A")
+		console(db)
+		db.setdefault("b", "B")
+		db.setdefault("c", "C")
+		db.setdefault("d", "D")
+		console(db)
+
+		console('db.pop("a")=', db.pop("a"))
+		console("db=", db)
+		console("db.popitem()=", db.popitem())
+		console("db=", db)
+		console("db.popitem()=", db.popitem())
+		console("db=", db)
+		console("db.popitem()=", db.popitem())
+		console("db=", db)
 
 	def test_fmt_iterable(*, printhook=print, syntax_highlighting=True, **kwargs):
 		kwargs["syntax_highlighting"] = syntax_highlighting
@@ -2120,21 +2126,21 @@ if True:  # \/ # Test setup
 			globals()[k] = test(_count_tests_decorator(v))
 
 if __name__ == "__main__":
-	test_print_iterable(
-		_raise_errors=True,
-		syntax_highlighting=1,
-		# let_no_indent=0,
-		# force_no_indent=1,
-		# force_no_spaces=0,
-		# force_complex_parenthesis=1,
-		# item_limit=10,
-		# # let_no_indent_max_non_iterables=10,
-		# # let_no_indent_max_iterables=10,
-		# prefer_full_names=1,
-		# force_union_parenthesis=1,
-		# depth_limit=3,
-		# str_repr=repr,
-	)
+	# test_print_iterable(
+	# 	_raise_errors=True,
+	# 	syntax_highlighting=1,
+	# 	# let_no_indent=0,
+	# 	# force_no_indent=1,
+	# 	# force_no_spaces=0,
+	# 	# force_complex_parenthesis=1,
+	# 	# item_limit=10,
+	# 	# # let_no_indent_max_non_iterables=10,
+	# 	# # let_no_indent_max_iterables=10,
+	# 	# prefer_full_names=1,
+	# 	# force_union_parenthesis=1,
+	# 	# depth_limit=3,
+	# 	# str_repr=repr,
+	# )
 
 	# test_timestr()
 	# test_dict_merge()
@@ -2172,7 +2178,7 @@ if __name__ == "__main__":
 	# test_insist()
 	# test_ntpath()
 	# test_newdir2()
-	# test_sdb()
+	test_sdb()
 	# test_language()
 	# test_float2int()
 	# test_manyattrs()
@@ -2232,7 +2238,7 @@ if __name__ == "__main__":
 	# test_repl()
 	# test_typehints()
 	# test_c_log_regression_no_newline()
-	test_timestr2_manual()
+	# test_timestr2_manual()
 
 	print()
 	_start_time__timeit_partial = TimeitPartial("*")

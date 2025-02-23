@@ -7,43 +7,6 @@ from typing import Any, Self
 
 ALLOWED_CHARACTERS = string.ascii_letters + string.digits + "!&#'^~$,.%`{}[]();@_-+="  # Allowed characters in DB ID
 
-DISALLOWED_SEQUENCES = (
-	"PRN",
-	"CON",
-	"AUX",
-	"NUL",
-	"COM1",
-	"COM2",
-	"COM3",
-	"COM4",
-	"COM5",
-	"COM6",
-	"COM7",
-	"COM8",
-	"COM9",
-	"COM0",
-	"LPT1",
-	"LPT2",
-	"LPT3",
-	"LPT4",
-	"LPT5",
-	"LPT6",
-	"LPT7",
-	"LPT8",
-	"LPT9",
-	"LPT0",
-)
-
-
-def c(a):
-	return f"\x1b[{a}m"
-
-
-A = f"""
-{c("208")}class {c("39")}DB{c("7")}({c}{c(39)}tcr.ShelveDB{c("7")}){c}{c(231)}:
-  {c(7)}directory {c(208)}= {c(46)}"/VALID/path/to/db/dir/" {c(8)}# Or pathlib.Path object{c}
-"""[1:-1]
-
 
 class ShelveDB(dict):
 	"""### Wrapper for shelve module databases.
@@ -61,7 +24,7 @@ class ShelveDB(dict):
 	This is to avoid mutability problems, for each key a new instance is created.
 
 	## Raises:
-	  - ValueError: provided alnum_id is invalid.
+	  - ValueError: provided id_ is invalid.
 	  - RuntimeError: You did not or incorrectly set up the class declaration (shown above).
 	  - NotADirectoryError: The directory path you provided points to a file, not a directory or nothing.
 	"""
@@ -71,13 +34,20 @@ class ShelveDB(dict):
 	s: shelve.Shelf
 	defaults: dict[Any, Callable[[], Any]] = None
 
-	def __init__(self, alnum_id: str | int) -> None:
+	def __init__(self, id_: str | int) -> None:
+		id_ = f"__{id_}__"
+
 		if isinstance(self.directory, str | p.Path):
 			if isinstance(self.directory, str):
 				self.directory = p.Path(self.directory)
 			self.__directory = self.directory
 		else:
-			raise RuntimeError("Set up the db as follows:\n" + A)  # noqa: TRY004
+			raise RuntimeError("""
+Set up the db as follows:
+
+class DB(tcr.ShelveDB):
+  directory = "/VALID/path/to/db/dir/" # Or pathlib.Path object
+"""[1:-1])  # fmt: skip # noqa: TRY004
 
 		if self.__directory.is_file():
 			raise NotADirectoryError("Provide a path to a directory or a nonexistent path (a directory will be created if it doesn't exist).")
@@ -90,16 +60,13 @@ class ShelveDB(dict):
 		if not all(callable(v) for v in self.defaults.values()):
 			raise RuntimeError("All values of defaults must be callable.")
 
-		if not all(char in ALLOWED_CHARACTERS for char in str(alnum_id)):
-			raise ValueError(f"alnum_id must be any of those characters: {ALLOWED_CHARACTERS}")
+		if not all(char in ALLOWED_CHARACTERS for char in str(id_)):
+			raise ValueError(f"id_ must be any of those characters: {ALLOWED_CHARACTERS}")
 
-		if str(alnum_id) in DISALLOWED_SEQUENCES:
-			raise ValueError(f"alnum_id must not be any of theese: {', '.join(DISALLOWED_SEQUENCES)}")
-
-		self.alnum_id = str(alnum_id)
-		alnum_dirpath = self.__directory / self.alnum_id
-		alnum_dirpath.mkdir(exist_ok=True)
-		self.s = shelve.open(alnum_dirpath / self.alnum_id)  # noqa: SIM115
+		self.id_ = str(id_)
+		dirpath = self.__directory / self.id_
+		dirpath.mkdir(exist_ok=True)
+		self.s = shelve.open(dirpath / self.id_)  # noqa: SIM115
 
 		super().__init__(self.s)
 
@@ -175,12 +142,12 @@ class ShelveDB(dict):
 		return self.__directory
 
 	def get_path(self) -> p.Path:
-		return self.get_directory() / self.alnum_id
+		return self.get_directory() / self.id_
 
 	def drop_db(self) -> None:
 		"""Close the shelf and delete the underlying system directory of this database instance."""
 		self.s.close()
-		shutil.rmtree(self.__directory / self.alnum_id)
+		shutil.rmtree(self.__directory / self.id_)
 
 	@classmethod
 	def iter_all(cls) -> Iterator[tuple[str, Self]]:
@@ -202,7 +169,8 @@ class ShelveDB(dict):
 			yield cls(path.name)
 
 	@classmethod
-	def exists(cls, alnum_id: str | int) -> bool:
-		"""Check if the given `alnum_id` is already in use (if a database directory exists and is a directory and is not empty)."""
-		folder = p.Path(cls.directory) / str(alnum_id)
+	def exists(cls, id_: str | int) -> bool:
+		"""Check if the given `id_` is already in use (if a database directory exists and is a directory and is not empty)."""
+		id_ = f"__{id_}__"
+		folder = p.Path(cls.directory) / str(id_)
 		return folder.is_dir() and (len(list(folder.iterdir())) > 0)  # Counting empty directories as non existent because theres no data
