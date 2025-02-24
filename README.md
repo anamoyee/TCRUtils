@@ -7,7 +7,7 @@
 - **`fmt_iterable(x: LITERALLY_ANY_OBJECT_TYPE)`**: Pretty-formats any python object that i have thought of for easier readability, even some third-party-library ones.
 - **`console`, or just `tcr.c`**: Provides [hikari](https://pypi.org/project/hikari/)-styled logging combined with the above fmt_iterable to pretty-print your debugging! Yay!
 - **`timestr2`**: Convert between seconds and readable timestrs. Now with timezones! for example `"1h"` -> `3600`.
-- **`ShelveDB`**: Quickly and easily set up a dict-based, python built-in shelve module's shelf - a python dictionary able to contain arbitrary python types that persists on restart.
+- **`ShelveDB`** & `sdb2`: Quickly and easily set up a dict-based, python built-in shelve module's shelf - a python dictionary able to contain arbitrary python types that persists on restart.
 
 ### Iterable Helpers
 - **`Or`**: Returns the first element of the tuple (arg, *args) that does not equal the supplied (`none`) variable, by default None. This is different from just doing `x or y or y` because it does not fail on falsey values, just the ones that are specified to be equal to the noney value
