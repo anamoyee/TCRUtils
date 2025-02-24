@@ -6,7 +6,7 @@
 
 - **`fmt_iterable(x: LITERALLY_ANY_OBJECT_TYPE)`**: Pretty-formats any python object that i have thought of for easier readability, even some third-party-library ones.
 - **`console`, or just `tcr.c`**: Provides [hikari](https://pypi.org/project/hikari/)-styled logging combined with the above fmt_iterable to pretty-print your debugging! Yay!
-- **`TStr`**: Convert between seconds and readable timestrs. Now with timezones! for example `"1h"` -> `3600`.
+- **`timestr2`**: Convert between seconds and readable timestrs. Now with timezones! for example `"1h"` -> `3600`.
 - **`ShelveDB`**: Quickly and easily set up a dict-based, python built-in shelve module's shelf - a python dictionary able to contain arbitrary python types that persists on restart.
 
 ### Iterable Helpers
