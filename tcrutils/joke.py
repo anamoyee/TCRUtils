@@ -1,16 +1,11 @@
 """Contains joke functions or the ones that will never be used in a serious situations/prod (This entire package sucks so much it should never be used in prod but uhhhhh.....)."""
 
-from collections.abc import Callable
 from typing import Literal, Self
 
 from .print import FMT_BRACKETS
 from .types import HexInt
 
-
-def fizzbuzz(n: int) -> str: ...
-
-
-fizzbuzz = lambda n: "Fizz" * (n % 3 == 0) + "Buzz" * (n % 5 == 0) or str(n)  # fmt: skip  # noqa: F811
+fizzbuzz = lambda n: "Fizz" * (n % 3 == 0) + "Buzz" * (n % 5 == 0) or str(n)  # fmt: skip
 
 
 def oddeven(n: int) -> Literal["odd", "even"]:
