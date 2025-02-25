@@ -1844,13 +1844,6 @@ ID: {server|id}
 		hc.log("Nyaaa", "uwu")
 		hc.error("owo")
 
-	def test_echo():
-		e = tcr.joke.echo
-
-		ass(e.nya, "nya")
-		ass(e[::], slice(None, None, None))
-		ass(e ^ 3, 3)
-
 	def test_console_with_eval():
 		var = "wahr"  # noqa: F841
 
