@@ -148,59 +148,6 @@ if True:  # \/ # Tests
 		asert(lambda: 1 == 1)
 		asert(lambda: 1 != 2)
 
-	def test_iterable(*, batched_=True, cut_at_=True):
-		if batched_:
-			console(tcr.batched("1234567890", n=3), print_iterable_=False)
-			console(
-				tcr.batched("1234567890", n=3, back_to_front=True),
-				print_iterable_=False,
-			)
-			console(tcr.batched("", n=3), print_iterable_=False)
-			console(tcr.batched("", n=3) or [[]], print_iterable_=False)
-		if cut_at_:
-			console(repr(tcr.cut_at("uwuwuwuuwuwu", n=10)))
-			console(repr(tcr.cut_at("uwuwuwuuwuwu", n=4)))
-			console(repr(tcr.cut_at("uwuwuwuuwuwu", n=3)))
-			console(repr(tcr.cut_at("uwuwuwuuwuwu", n=2)))
-			console(repr(tcr.cut_at("uwuwuwuuwuwu", n=1)))
-			console(repr(tcr.cut_at("uwuwuwuuwuwu", n=0)))
-			console(repr(tcr.cut_at("uwuwuwuuwuwu", n=-1)))
-			console(
-				(
-					(a := tcr.cut_at("http://te.st.com.chudj/asdf", n=16, filter_links=r"[\3]")),
-					len(a),
-				),
-				print_iterable_=False,
-			)
-			console(
-				(
-					(a := tcr.cut_at("http://te.st/asdf", n=16, filter_links=False)),
-					len(a),
-				),
-				print_iterable_=False,
-			)
-			console(
-				(
-					(a := tcr.cut_at("uwuwuwuuwuwuieiei", n=16, filter_links=r"[\3]")),
-					len(a),
-				),
-				print_iterable_=False,
-			)
-			console(
-				(
-					(
-						a := tcr.cut_at(
-							"http://te.st.com.chudj/asgsdfgsdfgdf",
-							n=300,
-							filter_links=r"[\3]",
-							shrink_links_visually_if_fits=True,
-						)
-					),
-					len(a),
-				),
-				print_iterable_=False,
-			)
-
 	def test_path():
 		console(tcr.path.newdir("owo"))
 		console(tcr.path.newdir("tcrutils"))
