@@ -87,3 +87,23 @@ def test_gmail():
 	anamoyee = "anamoyee"
 
 	assert ( anamoyee@gmail.com ).__str__() == "anamoyee@gmail.com"  # fmt: skip
+
+
+@pytest.mark.parametrize(
+	("n", "expected"),
+	(
+		(-4, "even"),
+		(-3, "odd"),
+		(-2, "even"),
+		(-1, "odd"),
+		(0, "even"),
+		(1, "odd"),
+		(2, "even"),
+		(3, "odd"),
+		(4, "even"),
+	),
+)
+def test_oddeven(n, expected):
+	from tcrutils.joke import oddeven
+
+	assert oddeven(n) == expected

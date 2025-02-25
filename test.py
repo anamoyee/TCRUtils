@@ -113,12 +113,6 @@ if True:  # \/ # Tests
 			recursive=False,
 		)
 
-	def test_oddeven():
-		console(f"{tcr.oddeven("1") = }")
-		console(f"{tcr.oddeven("2") = }")
-		console(f"{tcr.oddeven( 3 ) = }")
-		console(f"{tcr.oddeven( 4 ) = }")
-
 	@timeit(printhook=console)
 	def test_timeit():
 		times = 3
