@@ -148,12 +148,6 @@ if True:  # \/ # Tests
 		asert(lambda: 1 == 1)
 		asert(lambda: 1 != 2)
 
-	def test_path():
-		console(tcr.path.newdir("owo"))
-		console(tcr.path.newdir("tcrutils"))
-		console(tcr.path.center(__file__))
-		console(os.getcwd())
-
 	def test_ifys():
 		@tcr.convert.boolify
 		def a():

@@ -100,16 +100,23 @@ if True:  # isreserved
 
 	nt_reserved_names = frozenset({"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$"} | {f"COM{c}" for c in "123456789\xb9\xb2\xb3"} | {f"LPT{c}" for c in "123456789\xb9\xb2\xb3"})
 
-	def isreserved(path: str | p.Path) -> bool:
+	def isreserved(path: str | p.Path, *, strict: bool = True) -> bool:
 		"""Return true if the pathname is reserved by the system.
 
-		Part backport of Py3.13's os.path.isreserved() and also works on linux (probably).
+		Part backport of Py3.13's os.path.isreserved() and also works on Linux (probably).
+
+		Args:
+			strict: If true, mark some more paths as reserved on Windows, on Linux no effect.
 		"""
 
 		path = str(path)
 
 		if os.name != "nt":
 			return "\x00" in path
+
+		if strict:
+			if path.startswith(" "):
+				return True
 
 		from os.path import altsep, sep, splitroot
 
