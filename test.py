@@ -1705,17 +1705,6 @@ ID: {server|id}
 		db.restore()
 		c(db)
 
-	def test_gmail():
-		gmail = joke.gmail
-
-		my_email = "my_email"@gmail.com  # fmt: skip
-
-		my_email.send(title="Tytuł emaila", body="treść maila")
-
-		# print(my_email)
-		# print("my_email"@gmail.org)
-		# print("my_email"@gmail.co.uk)
-
 	def test_dir_recursive():
 		class A(dict):
 			def test(self):

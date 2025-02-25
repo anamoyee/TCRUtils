@@ -79,3 +79,11 @@ def test_fizzbuzz(n, expected):
 	from tcrutils.joke import fizzbuzz
 
 	assert fizzbuzz(n) == expected
+
+
+def test_gmail():
+	from tcrutils.joke import gmail
+
+	anamoyee = "anamoyee"
+
+	assert ( anamoyee@gmail.com ).__str__() == "anamoyee@gmail.com"  # fmt: skip
