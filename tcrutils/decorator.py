@@ -204,22 +204,6 @@ if True:  # \/ # @timeit // timeit.start() and .stop()
 		return decorator
 
 
-if True:  # \/ # @printer
-
-	def printer(*, printhook: Callable[[str], None] = print, passthrough: bool = True):
-		def decorator(func: Callable):
-			@wraps(func)
-			def wrapper(*args, **kwargs):
-				result = func(*args, **kwargs)
-				printhook(result)
-				if passthrough:
-					return result
-
-			return wrapper
-
-		return decorator
-
-
 if True:  # \/ # @copy_kwargs
 
 	def copy_kwargs(func):
