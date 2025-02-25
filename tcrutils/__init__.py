@@ -63,7 +63,6 @@ if False:  # Left `if False`d out for archival purposes (yeah.. there's git but 
 	from .iterable import Or, batched, bogo_sort, cut_at, getattr_queue, getmanyattrs, hasmanyattrs, limited_iterable, shuffled, slice_between, stalin_sort
 	from .language import apostrophe_s, make_plural, nth, plural_s
 	from .misspellings import asert
-	from .other import intbool
 	from .print import FMT_BRACKETS, FMTC, alert, fmt_iterable, gay, print_block, print_iterable
 	from .regex import RegexPreset
 	from .result import Result, ResultUnwrappedErrOnValueError, ResultUnwrappedOnErrorError
