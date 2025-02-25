@@ -742,9 +742,6 @@ if True:  # \/ # Tests
 		console(extract_error(ValueError))
 		console(extract_error(ValueError("Ewwow~!"), raw=True), print_iterable_=False)
 
-	def test_fizzbuzz(n=30):
-		console({x + 1: tcr.fizzbuzz(x + 1) for x in range(n)})
-
 	def test_sort():
 		@tcr.timeit
 		def bogo_sort():
@@ -2196,7 +2193,6 @@ if __name__ == "__main__":
 	# test_print_iterable(print_iterable=print_iterable, syntax_highlighting=False)
 	# test_markdown()
 	# test_extract_error()
-	# test_fizzbuzz()
 	# test_constants()
 	# test_sort()
 	# test_path()
@@ -2268,9 +2264,7 @@ if __name__ == "__main__":
 	# test_joke_pointer()
 	# test_eval_fback()
 	# test_console_with_header()
-	# test_echo()
 	# test_console_with_eval()
-	# test_result()
 	# test_getch()
 	# test_repl()
 	# test_typehints()
