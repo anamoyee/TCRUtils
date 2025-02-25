@@ -23,7 +23,7 @@
 - **`extract_error` and `extract_traceback`**: Extracts the error object's name and the error message (or the traceback's contents).
 
 ### Decorators
-- **`@timeit`**: Measures the execution time of a function and prints it to the screen.
+- **`@timeit`**: Measures the execution time of a function and prints it afterwards.
 
 ### Miscellaneous
 - **`insist`**: Prompts user input with a customizable insistence until a valid answer is provided, for example you can keep input()ing the user if they provided invalid value for an integer field.
