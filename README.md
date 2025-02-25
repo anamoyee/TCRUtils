@@ -23,6 +23,7 @@
 - **`extract_error` and `extract_traceback`**: Extracts the error object's name and the error message (or the traceback's contents).
 
 ### Decorators
+- **`@test`**: Prints a nice block separator containing formatted name of the function before executing
 - **`@timeit`**: Measures the execution time of a function and prints it afterwards.
 
 ### Miscellaneous
