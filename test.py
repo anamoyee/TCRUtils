@@ -122,15 +122,6 @@ if True:  # \/ # Tests
 			time.sleep(0.2)
 			tcr.timeit.stop(f"stuff{i + 1}", printhook=console)
 
-	def test_autorun():
-		@tcr.autorun
-		def _test_autorun(*args, **kwargs):
-			console(args, kwargs)  # Should be ((), {})
-
-		@tcr.autorun("nya", "OwO", aaa="hihi")
-		def _test_autorun2(*args, **kwargs):
-			console(args, kwargs)
-
 	def test_breakpoint():
 		tcr.breakpoint()
 		tcr.breakpoint("asdf")

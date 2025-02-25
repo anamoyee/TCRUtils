@@ -23,7 +23,6 @@
 - **`extract_error` and `extract_traceback`**: Extracts the error object's name and the error message (or the traceback's contents).
 
 ### Decorators
-- **`@autorun`**: Automatically runs the the function whenever its definition is completed.
 - **`@timeit`**: Measures the execution time of a function and prints it to the screen.
 
 ### Miscellaneous
