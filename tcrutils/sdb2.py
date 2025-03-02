@@ -20,6 +20,26 @@ class ShelfManager[T](ABC):
 
 		return shelve.open(cls.PATH)  # noqa: SIM115
 
+	@classmethod
+	def contains(cls, key: str) -> bool:
+		with cls.open_shelf() as shelf:
+			return key in shelf
+
+	@classmethod
+	def keys(cls) -> list[str]:
+		with cls.open_shelf() as shelf:
+			return list(shelf.keys())
+
+	@classmethod
+	def values(cls) -> list[T]:
+		with cls.open_shelf() as shelf:
+			return list(shelf.values())
+
+	@classmethod
+	def items(cls) -> list[tuple[str, T]]:
+		with cls.open_shelf() as shelf:
+			return list(shelf.items())
+
 	def __enter__(self) -> T:
 		self._shelf = self.open_shelf()
 
