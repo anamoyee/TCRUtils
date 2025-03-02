@@ -23,7 +23,7 @@ class ShelfManager[T](ABC):
 	@classmethod
 	def contains(cls, key: str) -> bool:
 		with cls.open_shelf() as shelf:
-			return key in shelf
+			return str(key) in shelf
 
 	@classmethod
 	def keys(cls) -> list[str]:

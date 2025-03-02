@@ -2021,7 +2021,12 @@ ID: {server|id}
 			c(sh.values())
 			c(sh.items())
 
-	def test_sdb2_2():
+		c(UserDB.contains(507642999992352779))
+		c(UserDB.contains(507642999992352778))
+		c(UserDB.contains("507642999992352779"))
+		c(UserDB.contains("507642999992352778"))
+
+	def test_sdb2_single():
 		from tcrutils.sdb2 import SingleShelfManager
 
 		DB_DIRECTORY = (p.Path(__file__).parent / "test_db2").absolute()
@@ -2187,9 +2192,9 @@ if __name__ == "__main__":
 	# test_repl()
 	# test_typehints()
 	# test_c_log_regression_no_newline()
-	test_timestr2_manual()
-	# test_sdb2()
-	# test_sdb2_2()
+	# test_timestr2_manual()
+	test_sdb2()
+	# test_sdb2_single()
 
 	print()
 	_start_time__timeit_partial = TimeitPartial("*")
