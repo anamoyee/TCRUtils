@@ -806,16 +806,16 @@ if True:  # \/ # fmt & print iterable
 			else:
 				return FMT_CLASS[syntax_highlighting] % (it.__class__.__name__, "")
 		if isinstance(it, dt.datetime | dt.date | dt.time):
-			if isinstance(it, dt.datetime):
-				format_str = "%H:%M:%S.%f%z %d-%m-%Y, %a"
-			elif isinstance(it, dt.date):
-				format_str = "%d-%m-%Y, %a"
-			else:
-				format_str = "%H:%M:%S.%f%z"
-
 			if not syntax_highlighting:
-				return repr(it)
+				return f"{it.__class__.__name__}.fromisoformat({it.isoformat()!r})"
 			else:
+				if isinstance(it, dt.datetime):
+					format_str = "%H:%M:%S.%f%z %d-%m-%Y, %a"
+				elif isinstance(it, dt.date):
+					format_str = "%d-%m-%Y, %a"
+				else:
+					format_str = "%H:%M:%S.%f%z"
+
 				main_color = FMTC.NUMBER
 
 				secondary_color = FMTC.COMMA if _is_date_in_the_past(it) else FMTC.DECIMAL

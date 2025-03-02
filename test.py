@@ -643,10 +643,13 @@ if True:  # \/ # Tests
 		cell.cell_contents = str
 		π(cell)
 		print()
+		π(dt.datetime.now())
+		π(dt.datetime.now(tz=dt.UTC))
 		π(dt.datetime(1, 1, 1, 0, 0, 0, 0))
 		π(dt.datetime(1, 1, 1, 0, 0, 0, 0, tzinfo=dt.UTC))
 		π(dt.time(0, 0, 0, 0))
 		π(dt.time(0, 0, 0, 0, tzinfo=dt.UTC))
+		π(dt.date(1, 1, 1))
 		print()
 
 	def test_markdown():
@@ -2083,21 +2086,21 @@ if True:  # \/ # Test setup
 			globals()[k] = test(_count_tests_decorator(v))
 
 if __name__ == "__main__":
-	# test_print_iterable(
-	# 	_raise_errors=True,
-	# 	syntax_highlighting=1,
-	# 	# let_no_indent=0,
-	# 	# force_no_indent=1,
-	# 	# force_no_spaces=0,
-	# 	# force_complex_parenthesis=1,
-	# 	# item_limit=10,
-	# 	# # let_no_indent_max_non_iterables=10,
-	# 	# # let_no_indent_max_iterables=10,
-	# 	# prefer_full_names=1,
-	# 	# force_union_parenthesis=1,
-	# 	# depth_limit=3,
-	# 	# str_repr=repr,
-	# )
+	test_print_iterable(
+		_raise_errors=True,
+		syntax_highlighting=1,
+		# let_no_indent=0,
+		# force_no_indent=1,
+		# force_no_spaces=0,
+		# force_complex_parenthesis=1,
+		# item_limit=10,
+		# # let_no_indent_max_non_iterables=10,
+		# # let_no_indent_max_iterables=10,
+		# prefer_full_names=1,
+		# force_union_parenthesis=1,
+		# depth_limit=3,
+		# str_repr=repr,
+	)
 
 	# test_timestr()
 	# test_dict_merge()
@@ -2193,7 +2196,7 @@ if __name__ == "__main__":
 	# test_typehints()
 	# test_c_log_regression_no_newline()
 	# test_timestr2_manual()
-	test_sdb2()
+	# test_sdb2()
 	# test_sdb2_single()
 
 	print()
