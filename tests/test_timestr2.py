@@ -7,7 +7,7 @@ from types import EllipsisType
 import pytest
 from tcrutils.console import c
 from tcrutils.decorator import copy_kwargs
-from tcrutils.timestr2 import timestr_parser as t
+from tcrutils.timestr2 import timestr as t
 
 tz = datetime.now().astimezone().tzinfo
 

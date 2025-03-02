@@ -1936,7 +1936,8 @@ ID: {server|id}
 	def test_timestr2_manual():
 		from datetime import datetime
 
-		from tcrutils.timestr2 import timestr_parser as t
+		from tcrutils.timestr2 import timestr as t_np
+		from tcrutils.timestr2 import timestr_priority_adjusted as t
 		from tcrutils.types import LiteralDisplay, PlainDisplay, QuotelessString
 
 		tz = datetime.now().astimezone().tzinfo
@@ -1962,7 +1963,9 @@ ID: {server|id}
 			(
 				PlainDisplay(
 					LiteralDisplay(f"{k:>{justamt}}"),
-					t.parse(k, tz=tz, _datetime_now=nowf),
+					a := t.parse(k, tz=tz, _datetime_now=nowf),
+					b := t_np.parse(k, tz=tz, _datetime_now=nowf),
+					a == b,
 					sep=" ",
 				)
 				if k != ""
@@ -2184,9 +2187,9 @@ if __name__ == "__main__":
 	# test_repl()
 	# test_typehints()
 	# test_c_log_regression_no_newline()
-	# test_timestr2_manual()
-	test_sdb2()
-	test_sdb2_2()
+	test_timestr2_manual()
+	# test_sdb2()
+	# test_sdb2_2()
 
 	print()
 	_start_time__timeit_partial = TimeitPartial("*")

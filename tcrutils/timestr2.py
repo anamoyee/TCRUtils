@@ -285,9 +285,13 @@ class RobostrSegment(Segment):
 
 class TimestrParser:
 	segment_types: tuple[type[Segment]]
+	respect_segment_priority: bool
+	priorty_overrides: dict[type[Segment], int]
 
-	def __init__(self, *segment_types: type[Segment]):
+	def __init__(self, *segment_types: type[Segment], respect_segment_priority: bool = True, priority_overrides: dict[type[Segment], int] = None):
 		self.segment_types = segment_types
+		self.respect_segment_priority = respect_segment_priority
+		self.priorty_overrides = priority_overrides if priority_overrides is not None else {}
 
 	def parse(self, input_str: str, tz: timezone = datetime.now().astimezone().tzinfo, *, _datetime_now: Callable[[_TzInfo], datetime] = datetime.now) -> datetime:
 		"""Given an input string (e.g. "1h20m!13:") and a timezone, return a datetime representing the datetime after now(tz=tz) + the amount of deltatime stored as segments in the input_str.
@@ -321,10 +325,18 @@ class TimestrParser:
 
 		root_dt = now_dt = _datetime_now(tz).replace(microsecond=0)
 
-		for seg in sorted(all_segments, key=lambda seg: seg.priority, reverse=True):
+		if self.respect_segment_priority:
+			all_segments_priority_adjusted = sorted(all_segments, key=lambda seg: self.priorty_overrides.get(type(seg), seg.priority), reverse=True)
+		else:
+			all_segments_priority_adjusted = all_segments
+
+		for seg in all_segments_priority_adjusted:
 			root_dt = seg.apply(root_dt, now_dt, all_segments)
 
 		return root_dt
 
 
-timestr_parser = TimestrParser(WeekdaySegment, DateSegment, TimeSegment, RobostrSegment)
+SEGMENTS = (WeekdaySegment, DateSegment, TimeSegment, RobostrSegment)
+
+timestr_priority_adjusted = TimestrParser(*SEGMENTS)
+timestr = TimestrParser(*SEGMENTS, respect_segment_priority=False)
