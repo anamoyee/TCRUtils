@@ -287,3 +287,32 @@ if True:  # \/ # @with_overrides
 			return wrapper
 
 		return decorator
+
+
+if True:  # @autorun, @instance
+	from collections.abc import Callable
+
+	def autorun[**P, R, F: Callable[P, R]](f: F) -> F:
+		f()
+		return f
+
+	def instance[R](f: Callable[..., R]) -> R:
+		return f()
+
+	if 1 - 1:
+		# fmt: off
+		if True: # @instance
+			@instance
+			class __A: ...
+
+			reveal_type(__A.__class__)  # Should be `type[__A]`     #
+			reveal_type(__A)            # Should be `__A`           #
+			reveal_type(__A())          # Should be `Any` (unknown) #
+
+		if True: # @autorun
+			@autorun
+			def __f(): ...
+
+			reveal_type(__f)   # Should be `() -> None`, not `None` #
+			reveal_type(__f()) # Should be `None`                   #
+		# fmt: on
