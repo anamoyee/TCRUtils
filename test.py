@@ -645,6 +645,8 @@ if True:  # \/ # Tests
 		print()
 		π(dt.datetime.now())
 		π(dt.datetime.now(tz=dt.UTC))
+		π(dt.datetime.now().replace(microsecond=0))
+		π(dt.datetime.now(tz=dt.UTC).replace(microsecond=0))
 		π(dt.datetime(1, 1, 1, 0, 0, 0, 0))
 		π(dt.datetime(1, 1, 1, 0, 0, 0, 0, tzinfo=dt.UTC))
 		π(dt.time(0, 0, 0, 0))
