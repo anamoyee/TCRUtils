@@ -42,6 +42,7 @@ from warnings import warn
 from colored import Back, Fore, Style
 
 from .compare import able, able_simple, able_simple_result
+from .dict import clean_dunder_dict
 from .extract_error import extract_error
 from .int import hex as tcrhex
 from .iterable import Or, getattr_queue, limited_iterable
@@ -1108,38 +1109,82 @@ if True:  # \/ # fmt & print iterable
 		printhook(result)
 
 
-def alert(s: str, *, printhook: Callable[[str], None] = print, raw=False) -> None:
-	text = "".join([f"{(Fore.BLACK + Back.RED + Style.bold) if i % 2 == 0 else Fore.BLACK + Back.YELLOW}{x}" for i, x in enumerate(s)]) + Style.reset
+if True:  # fmt_ and Fmt
 
-	if raw:
-		return text
+	def tcrfmt_dataclass_by_name_args_kwargs(
+		*,
+		fmt_iterable: Callable[..., str],
+		syntax_highlighting: bool,
+		name: str,
+		obj_args: tuple[Any, ...] = (),
+		obj_kwargs: dict[str, Any] = {},
+	):
+		if obj_args and obj_kwargs:
+			body = (
+				FMT_ASTERISK[syntax_highlighting]
+				+ fmt_iterable(obj_args, syntax_highlighting=syntax_highlighting, _force_next_type=tuple)
+				+ (FMTC.COMMA if syntax_highlighting else "")
+				+ ", "
+				+ FMT_ASTERISK[syntax_highlighting] * 2
+				+ fmt_iterable(obj_kwargs, syntax_highlighting=syntax_highlighting, no_implicit_quoteless=True, _force_next_type=dict)
+			)
+		elif obj_args and not obj_kwargs:
+			body = FMT_ASTERISK[syntax_highlighting] + fmt_iterable(obj_args, syntax_highlighting=syntax_highlighting, _force_next_type=tuple)
+		elif not obj_args and obj_kwargs:
+			body = FMT_ASTERISK[syntax_highlighting] * 2 + fmt_iterable(obj_kwargs, no_implicit_quoteless=True, syntax_highlighting=syntax_highlighting, _force_next_type=dict)
+		elif not obj_args and not obj_kwargs:
+			body = ""
 
-	printhook(text)
+		return FMT_CLASS[syntax_highlighting] % (name, body)
+
+	class TcrFmt_KwargsDataclass:
+		def __tcr_fmt__(self=None, *, fmt_iterable=None, syntax_highlighting, **kwargs):
+			if self is None:
+				raise NotImplementedError
+
+			obj_kwargs = clean_dunder_dict(self.__dict__, strategy=2)
+
+			return tcrfmt_dataclass_by_name_args_kwargs(
+				fmt_iterable=fmt_iterable,
+				syntax_highlighting=syntax_highlighting,
+				name=self.__class__.__name__,
+				obj_kwargs=obj_kwargs,
+			)
 
 
-def gay(text: str, offset: int = 0) -> str:
-	"""Turn a string gay. Happy pride :3"""  # noqa: D400
-	colors = [
-		Fore.LIGHT_RED,
-		Fore.ORANGE_1,
-		Fore.LIGHT_YELLOW,
-		Fore.LIGHT_GREEN,
-		Fore.LIGHT_MAGENTA,
-		Fore.LIGHT_BLUE,
-		Fore.purple_1b,
-		Fore.purple_4b,
-	]
+if True:  # Misc
 
-	if text != "tcrutils":
-		colors.pop()
+	def alert(s: str, *, printhook: Callable[[str], None] = print, raw=False) -> None:
+		text = "".join([f"{(Fore.BLACK + Back.RED + Style.bold) if i % 2 == 0 else Fore.BLACK + Back.YELLOW}{x}" for i, x in enumerate(s)]) + Style.reset
 
-	colors = colors + colors[1:-1:-1]
+		if raw:
+			return text
 
-	result = ""
+		printhook(text)
 
-	for i, char in enumerate(text):
-		color = colors[(i - offset) % len(colors)]
-		result += color + Style.bold + char
+	def gay(text: str, offset: int = 0) -> str:
+		"""Turn a string gay. Happy pride :3"""  # noqa: D400
+		colors = [
+			Fore.LIGHT_RED,
+			Fore.ORANGE_1,
+			Fore.LIGHT_YELLOW,
+			Fore.LIGHT_GREEN,
+			Fore.LIGHT_MAGENTA,
+			Fore.LIGHT_BLUE,
+			Fore.purple_1b,
+			Fore.purple_4b,
+		]
 
-	result += FMTC._
-	return result
+		if text != "tcrutils":
+			colors.pop()
+
+		colors = colors + colors[1:-1:-1]
+
+		result = ""
+
+		for i, char in enumerate(text):
+			color = colors[(i - offset) % len(colors)]
+			result += color + Style.bold + char
+
+		result += FMTC._
+		return result
