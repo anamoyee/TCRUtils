@@ -1,8 +1,7 @@
 import asyncio
 from collections import defaultdict
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Generator
 from typing import Any, Self
-from collections.abc import Generator
 
 from .print import TcrFmt_KwargsDataclass
 from .result import Result
@@ -84,66 +83,67 @@ class BaseEvent[R: Any = None](TcrFmt_KwargsDataclass):
 		return results
 
 
-if __name__ == "__main__":  # Basic inline testing
-	import pydantic as pd
+if __name__ == "__main__":
 
-	from .console import c
+	async def __main():  # Basic inline testing
+		import pydantic as pd
 
-	class BM(pd.BaseModel):
-		model_config = pd.ConfigDict(
-			arbitrary_types_allowed=True,
-			validate_assignment=True,
-		)
+		from .console import c
 
-	class UserEvent(BaseEvent[str]):
-		def __init__(self, username: str):
-			self.username = username
+		class BM(pd.BaseModel):
+			model_config = pd.ConfigDict(
+				arbitrary_types_allowed=True,
+				validate_assignment=True,
+			)
 
-	class UserLoginEvent(UserEvent):
-		def __init__(self, username: str):
-			super().__init__(username)
+		class UserEvent(BaseEvent[str]):
+			def __init__(self, username: str):
+				self.username = username
 
-	class PydanticEvent(BM, BaseEvent[str]):
-		userid: int
+		class UserLoginEvent(UserEvent):
+			def __init__(self, username: str):
+				super().__init__(username)
 
-	####################
+		class PydanticEvent(BM, BaseEvent[str]):
+			userid: int
 
-	@UserLoginEvent.subscribe
-	async def on_user_login(event: UserLoginEvent):
-		print(f"User {event.username} logged in.")
-		return "Login Handled"
+		####################
 
-	@UserEvent.subscribe
-	async def on_any_user_event(event: UserEvent):
-		print(f"User event detected: {event!r}")
-		return "User Event Processed"
+		@UserLoginEvent.subscribe
+		async def on_user_login(event: UserLoginEvent):
+			print(f"User {event.username} logged in.")
+			return "Login Handled"
 
-	######
+		@UserEvent.subscribe
+		async def on_any_user_event(event: UserEvent):
+			print(f"User event detected: {event!r}")
+			return "User Event Processed"
 
-	class BadEvent(BaseEvent): ...
+		######
 
-	@BadEvent.subscribe
-	async def bad_callback(event: BadEvent):
-		raise ValueError("whyvent")
-
-	@BadEvent.subscribe
-	async def ok_callback(event: BadEvent):
-		return "ok"
-
-	for _ in range(10):
+		class BadEvent(BaseEvent): ...
 
 		@BadEvent.subscribe
-		async def bad_callback2(event: BadEvent):
-			raise RuntimeError("evąt")
+		async def bad_callback(event: BadEvent):
+			raise ValueError("whyvent")
 
-	#######
+		@BadEvent.subscribe
+		async def ok_callback(event: BadEvent):
+			return "ok"
 
-	@PydanticEvent.subscribe
-	async def on_pydantic_event(event: PydanticEvent):
-		print(f"Pydantic event detected: {event.userid!r}")
-		return "Pydantic Event Processed"
+		for _ in range(10):
 
-	async def main():
+			@BadEvent.subscribe
+			async def bad_callback2(event: BadEvent):
+				raise RuntimeError("evąt")
+
+		#######
+
+		@PydanticEvent.subscribe
+		async def on_pydantic_event(event: PydanticEvent):
+			print(f"Pydantic event detected: {event.userid!r}")
+			return "Pydantic Event Processed"
+
 		if True:  # happy path
 			event = UserLoginEvent("Alice")
 			results = await event.emit_excgroup()
@@ -187,4 +187,4 @@ if __name__ == "__main__":  # Basic inline testing
 
 			c.hr()
 
-	asyncio.run(main())
+	asyncio.run(__main())
