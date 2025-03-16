@@ -250,6 +250,13 @@ class Console:
 	def __ror__(self, other):
 		return self.debug(other, passthrough=True)
 
+	def __repr__(self):
+		return f"{self.__class__.__name__}()"
+
+	def __lshift__(self, other):
+		self.debug(other)
+		return self
+
 
 c = console = Console()
 """### Provides logging capabilities.
