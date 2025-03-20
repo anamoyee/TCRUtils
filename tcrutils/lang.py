@@ -81,8 +81,15 @@ class Lang[LocaleK: Hashable = str, TranslationK: Hashable = str, V = str]:
 
 		return self._d[k1][k2]
 
-	def get_hikari(self, key: TranslationK, *, name: str) -> dict[str, V | dict[V]]:
-		"""Handle hikari (arc) localizations for the given key, return splattable (`**result`) dict with keys: `{name}` and `{name}_localizations` with the appropriate values."""
+	def get_hikari(self, key: TranslationK, *, name: str | None = None) -> dict[str, V | dict[V]]:
+		"""Handle hikari (arc) localizations for the given key, return splattable (`**result`) dict with keys: `{name}` and `{name}_localizations` with the appropriate values.
+
+		Args:
+			name: If not specified (None), the str(key) will be split by "." and the last part will be used. Warning: this may lead to unexpected results, if the key is not a str itself or does not have a well-made __str__
+		"""
+		if name is None:
+			name = str(key).split(".")[-1]
+
 		localized = self[:, key]
 
 		unlocalized = self[None, key]
@@ -125,12 +132,14 @@ if __name__ == "__main__":
 
 		lang.merge_localepack(L.PL, PL)
 		lang.merge_localepack(L.EN_GB, EN_GB)
+		lang.merge_localepack(L.EN_GB, {"nya": "nyaa"})
 
 		c(lang)
 		c("lang[:, 'hi.name']=", eval=True)
 		c("lang[:, 'hi.desc']=", eval=True)
 		c("lang[L.PL, 'hi.desc']=", eval=True)
 		c('lang.get_hikari("hi.name", name="name")=', eval=True)
+		c('lang.get_hikari("hi.name")=', eval=True)
 
 		c.hr()
 
