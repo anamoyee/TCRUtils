@@ -1,3 +1,5 @@
+"""Not to be confused with `tcrutils.lang`. This module is for natural language processing."""
+
 from functools import wraps
 
 
