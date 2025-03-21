@@ -99,6 +99,13 @@ class Lang[LocaleK: Hashable = str, TranslationK: Hashable = str, V = str]:
 			f"{name}_localizations": localized,
 		}
 
+	def get_arc_command(self, key: TranslationK) -> dict[str, V | dict[LocaleK, V]]:
+		"""Handle hikari-arc's `@slash_command` localizations, by providing a dict with appripriate keys to splat (**result).
+
+		## `!!!` This will only work if the TranslationK generic is str, since it then fetches a value with concatenated str as a key
+		"""
+		return self.get_hikari(f"{key!s}.name") | self.get_hikari(f"{key!s}.description")
+
 
 if __name__ == "__main__":
 
