@@ -77,7 +77,7 @@ class Lang[LocaleK: Hashable = str, TranslationK: Hashable = str, V = str]:
 			if (k1.start, k1.stop, k1.step) != (None, None, None):
 				raise ValueError('No compound slices supported, only ":"')
 
-			return {locale: self._d[locale][k2] for locale in self._d if locale is not None}
+			return {locale: self._d[locale][k2] for locale in self._d if locale is not None if k2 in self._d[locale]}
 
 		return self._d[k1][k2]
 
@@ -141,6 +141,7 @@ if __name__ == "__main__":
 		lang.merge_localepack(L.EN_GB, EN_GB)
 		lang.merge_localepack(L.EN_GB, {"nya": "nyaa"})
 
+		c(lang[:, "hi.extra"])
 		c(lang)
 		c("lang[:, 'hi.name']=", eval=True)
 		c("lang[:, 'hi.desc']=", eval=True)
