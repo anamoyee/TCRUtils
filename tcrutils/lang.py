@@ -81,7 +81,7 @@ class Lang[LocaleK: Hashable = str, TranslationK: Hashable = str, V = str]:
 
 		return self._d[k1][k2]
 
-	def get_hikari(self, key: TranslationK, *, name: str | None = None) -> dict[str, V | dict[V]]:
+	def get_hikari(self, key: TranslationK, *, name: str | None = None) -> dict[str, V | dict[LocaleK, V]]:
 		"""Handle hikari (arc) localizations for the given key, return splattable (`**result`) dict with keys: `{name}` and `{name}_localizations` with the appropriate values.
 
 		Args:
