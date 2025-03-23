@@ -46,10 +46,10 @@ class LiteralDisplay(str):
 class HexInt(int):
 	leading_zeroes: int
 
-	def __new__(cls, value, leading_zeroes=None, prefix=None, **kwargs):
-		return super().__new__(cls, value, **kwargs)
+	def __new__(cls, x, /, *, leading_zeroes=None, prefix=None, **kwargs):
+		return super().__new__(cls, x, **kwargs)
 
-	def __init__(self, value, *, leading_zeroes=6, prefix="0x", **_):
+	def __init__(self, x, /, *, leading_zeroes=6, prefix="0x", **_):
 		self.leading_zeroes = leading_zeroes
 		self.prefix = prefix
 		super().__init__()
