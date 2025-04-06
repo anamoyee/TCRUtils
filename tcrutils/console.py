@@ -257,6 +257,18 @@ class Console:
 		self.debug(other)
 		return self
 
+	def __rrshift__(self, other):
+		self.debug(other)
+		return self
+
+	def __xor__(self, other):
+		self.debug(other, withprefix=False)
+		return other
+
+	def __rxor__(self, other):
+		self.debug(other, withprefix=False)
+		return other
+
 
 c = console = Console()
 """### Provides logging capabilities.
