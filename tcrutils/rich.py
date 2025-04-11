@@ -13,10 +13,8 @@ def yay_print(
 	/,
 	*objs: object,
 	color: str = "yellow b",
-	arrow: str = "=> ",
+	arrow: str = "==> ",
 	arrow_color: str = "white b",
-	indent: int = 0,
-	indent_char: str = " ",
 	escape_markup_obj: bool = True,
 	escape_markup_objs: bool = False,
 	sep: str = "",
@@ -31,18 +29,18 @@ def yay_print(
 	if escape_markup_objs:
 		objs = tuple(escape(s) for s in objs)
 
-	rich.print(f"{indent_char * indent}[{arrow_color}]{arrow}[/][{color}]{obj!s}", *objs, sep=sep, **kwargs)
+	rich.print(f"[{arrow_color}]{arrow}[/][{color}]{obj!s}", *objs, sep=sep, **kwargs)
 
 
 def nay_print(
 	obj: object,
 	*objs: object,
 	color: str = "white b",
+	arrow: str = "  -> ",
 	arrow_color: str = "red b",
-	indent: int = 1,
 	**kwargs,
 ):
-	return yay_print(obj, *objs, color=color, arrow_color=arrow_color, indent=indent, **kwargs)
+	return yay_print(obj, *objs, color=color, arrow=arrow, arrow_color=arrow_color, **kwargs)
 
 
 def nay_print_e(
@@ -95,56 +93,19 @@ def dictlist_to_markup(
 	raise TypeError(f"Expected T = dict[str, T] | list[T] | str, got: {v.__class__!r}")
 
 
-def yayd_print(
-	d: _DictStrSelfOrListSelfOrStr,
-	escape_markup: bool = True,
-	**kwargs,
-):
-	return yay_print(dictlist_to_markup(d, escape_markup=escape_markup), escape_markup_obj=False, **kwargs)
-
-
-def nayd_print(
-	d: _DictStrSelfOrListSelfOrStr,
-	escape_markup: bool = True,
-	**kwargs,
-):
-	return nay_print(dictlist_to_markup(d, escape_markup=escape_markup), escape_markup_obj=False, **kwargs)
-
-
 if __name__ == "__main__":
 
 	def __main():
 		from tcrutils.console import c
 
 		yay_print("yay print :3")
-		yay_print("color='r(ed) i b s'", color="red i b s")
+		yay_print("color='red i b s'", color="red i b s")
 
 		print()
 		nay_print("nay print 3:")
-		nay_print("nay print 3: (no indent)", indent=0)
 
 		print()
 		nay_print_e(KeyError("asdf"), " <- idk")
-
-		print()
-		yayd_print(
-			{
-				"yellow": [
-					"hello ",
-					{"i": "hello"},
-					" world",
-				]
-			},
-		)
-		nayd_print(
-			{
-				"yellow": [
-					"hello ",
-					{"i": "hello"},
-					" world",
-				]
-			},
-		)
 
 		print()
 		c ^ dictlist_to_markup(
