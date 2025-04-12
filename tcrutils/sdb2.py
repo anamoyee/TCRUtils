@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 
 class ShelfManager[T](ABC):
 	PATH: p.Path
+	OPEN_CONTEXT_TS: dict[str, T] = {}
+	OPEN_CONTEXT_AMOUNTS: dict[str, int] = {}
 
 	key: str
 
@@ -15,7 +17,7 @@ class ShelfManager[T](ABC):
 	def default_factory(self) -> T: ...
 
 	@classmethod
-	def open_shelf(cls) -> shelve.Shelf[str, T]:
+	def open_shelf(cls) -> shelve.Shelf[T]:
 		cls.PATH.parent.mkdir(exist_ok=True, parents=True)
 
 		return shelve.open(cls.PATH)  # noqa: SIM115
@@ -43,12 +45,26 @@ class ShelfManager[T](ABC):
 	def __enter__(self) -> T:
 		self._shelf = self.open_shelf()
 
-		self._current_item = self._shelf[self.key] if self.key in self._shelf else self.default_factory()
+		if self.key in self.OPEN_CONTEXT_TS:
+			self._current_item = self.OPEN_CONTEXT_TS[self.key]
+		else:
+			self._current_item = self._shelf[self.key] if self.key in self._shelf else self.default_factory()
+			self.OPEN_CONTEXT_TS[self.key] = self._current_item
+
+		self.OPEN_CONTEXT_AMOUNTS.setdefault(self.key, 0)
+		self.OPEN_CONTEXT_AMOUNTS[self.key] += 1
+
 		return self._current_item
 
 	def __exit__(self, ty, e: BaseException | None, tb) -> None:
 		if e is None:
 			self._shelf[self.key] = self._current_item
+
+		if self.OPEN_CONTEXT_AMOUNTS[self.key] == 1:
+			del self.OPEN_CONTEXT_TS[self.key]
+			del self.OPEN_CONTEXT_AMOUNTS[self.key]
+		else:
+			self.OPEN_CONTEXT_AMOUNTS[self.key] -= 1
 
 		del self._current_item
 
