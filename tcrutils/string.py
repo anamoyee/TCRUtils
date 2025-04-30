@@ -126,7 +126,7 @@ def polaris_progressbar(
 _RaiseError = object()
 
 
-def get_token(filename: str = "TOKEN.txt", depth=2, *, dont_strip=False, default=_RaiseError) -> None | str:
+def get_token(filename: str = "TOKEN.txt", depth=2, *, dont_strip=False, default=_RaiseError) -> str:
 	"""Get the nearest file with name=filename (default 'TOKEN.txt') and return its stripped contents (unless specified not to strip with `dont_strip=True`).
 
 	This algoritm searches for files named TOKEN.txt (or custom name) in the current directory, then the parent directory, then the parent of parent and so on.
@@ -135,17 +135,17 @@ def get_token(filename: str = "TOKEN.txt", depth=2, *, dont_strip=False, default
 	"""
 
 	def rexit(x):
-		os.chdir(origin_path)
+		os.chdir(original_path)
 		return x
 
-	origin_path = p.Path.cwd().absolute()
+	original_path = p.Path.cwd().absolute()
 
-	os.chdir(origin_path)
+	os.chdir(original_path)
 
-	f = origin_path / filename
+	f = original_path / filename
 
 	for i in range(depth + 1):
-		f = (origin_path / "/".join([".."] * i)) / filename
+		f = (original_path / "/".join([".."] * i)) / filename
 		if f.is_file():
 			t = f.read_text()
 			if not dont_strip:
