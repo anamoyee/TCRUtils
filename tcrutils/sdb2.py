@@ -71,6 +71,11 @@ class ShelfManager[T](ABC):
 		self._shelf.close()
 		del self._shelf
 
+	@classmethod
+	def delitem_unchecked(cls, key: str) -> None:
+		with cls.open_shelf() as shelf:
+			del shelf[str(key)]
+
 
 class SingleShelfManager[T](ShelfManager[T]):
 	def __init__(self):
