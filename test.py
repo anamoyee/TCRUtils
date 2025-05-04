@@ -2070,6 +2070,11 @@ ID: {server|id}
 			c(sh.values())
 			c(sh.items())
 
+	def test_dynamic_versioning():
+		import tcrutils
+
+		c("tcrutils.__version__ =", tcrutils.__version__)
+
 
 if True:  # \/ # Test setup
 	__TESTS_RAN_GLOBAL = 0
@@ -2200,6 +2205,7 @@ if __name__ == "__main__":
 	# test_timestr2_manual()
 	# test_sdb2()
 	# test_sdb2_single()
+	test_dynamic_versioning()
 
 	print()
 	_start_time__timeit_partial = TimeitPartial("*")

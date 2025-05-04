@@ -1,6 +1,48 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+[project]
+name = "tcrutils"
+dynamic = ["version"]
+description = "Useful stuff for TCR projects!"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+	"pytz>=2018.5",
+	"colored>=2.3.0",
+]
+license = { text = "GPL-3.0" }
+authors = [{ name = "anamoyee" }]
+maintainers = [{ name = "anamoyee" }]
+classifiers = [
+	"Development Status :: 4 - Beta",
+	"Intended Audience :: Developers",
+	"Programming Language :: Python :: 3.13",
+	"Programming Language :: Python :: 3 :: Only",
+	# "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+	"Typing :: Typed",
+	"Topic :: Utilities",
+	"Operating System :: POSIX",
+	"Operating System :: POSIX :: Linux",
+	"Operating System :: MacOS",
+	"Operating System :: Microsoft :: Windows",
+	"Operating System :: Microsoft :: MS-DOS",
+]
 
-[tool.mypy]
-disable_error_code = ["union-attr"]
+[project.urls]
+"Documentation" = "https://xkcd.com/730/" # :trollface:
+"Source (GitHub)" = "https://github.com/anamoyee/tcrutils"
+
+
+[tool.uv]
+dev-dependencies = [
+	"hikari>=2.3.1",
+	"hikari-miru>=4.2.0,<5.0.0",
+	"hikari-arc>=2.1.0",
+	"pydantic>=2.11.4",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/tcrutils/_version.py"
+pattern = '__version__: str = \"(?P<version>[^\"]+)\"'
