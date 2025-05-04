@@ -45,4 +45,4 @@ build-backend = "hatchling.build"
 
 [tool.hatch.version]
 path = "src/tcrutils/_version.py"
-pattern = '__version__: str = \"(?P<version>[^\"]+)\"'
+pattern = '__version__(?:: str)? *= *\"(?P<version>[^\"]+)\"'

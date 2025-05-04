@@ -350,7 +350,6 @@ wheels = [
 
 [[package]]
 name = "tcrutils"
-version = "13.1.26"
 source = { editable = "." }
 dependencies = [
     { name = "colored" },
@@ -368,7 +367,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "colored", specifier = ">=2.3.0" },
-    { name = "pytz", specifier = ">=2025.2" },
+    { name = "pytz", specifier = ">=2018.5" },
 ]
 
 [package.metadata.requires-dev]
