@@ -296,7 +296,7 @@ if True:  # @autorun, @instance
 		f()
 		return f
 
-	def instance[R](f: Callable[..., R]) -> R:
+	def instance[R](f: Callable[[], R]) -> R:
 		return f()
 
 	if 1 - 1:
