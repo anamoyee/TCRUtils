@@ -9,6 +9,7 @@
 ```
 >>> from tcrutils.print import gay
 >>> print(gay('nyaaaaa')) # uwu :3
+```
 """
 
 from ._version import __version__
