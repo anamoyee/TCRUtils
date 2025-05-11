@@ -161,7 +161,7 @@ wheels = [
 
 [[package]]
 name = "hikari"
-version = "2.3.1"
+version = "2.3.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -169,9 +169,9 @@ dependencies = [
     { name = "colorlog" },
     { name = "multidict" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c6/87/7d6ae4bd18b9a93227c93f90f0259d7828a1d351b74c74d93429ab698dee/hikari-2.3.1.tar.gz", hash = "sha256:870d75424cdade5f3944d182d9fad6ae0e55016e7ce58713f24f30b557b36678", size = 1045335, upload-time = "2025-04-27T20:15:10.086Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/f6/b01226d433dfae3cabf7dbabd7cd8326d6c186bb03b7f4bd2125bec46176/hikari-2.3.2.tar.gz", hash = "sha256:1de322a84d402edb264d9e054d3a3e72ffbe3ccffea2f3f1476370ccf5b8609a", size = 1882598, upload-time = "2025-05-09T15:17:43.065Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1d/94/b80eb68d697000e789575f9e652f494809041f8bd73ac10c240b47e8a133/hikari-2.3.1-py3-none-any.whl", hash = "sha256:9f6283c8d6562d69523b97074a7a2747cc9c022c535389d7f031eb436337c1b7", size = 565669, upload-time = "2025-04-27T20:15:07.79Z" },
+    { url = "https://files.pythonhosted.org/packages/fc/41/976f02fb6c00358f73a2108c5468b3ca0d61bb250b8ec0d01203d5f49bb4/hikari-2.3.2-py3-none-any.whl", hash = "sha256:4a52d24be8dc9ecf094e4119058971c03c5109dc5c406231003fe7ce8d3863c1", size = 573776, upload-time = "2025-05-09T15:17:40.935Z" },
 ]
 
 [[package]]
@@ -210,6 +210,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7590aa73f1f1d3fa9a380e654b86af429e0934a32f7d/idna-3.10.tar.gz", hash = "sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9", size = 190490, upload-time = "2024-09-15T18:07:39.745Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/76/c6/c88e154df9c4e1a2a66ccf0005a88dfb2650c1dffb6f5ce603dfbd452ce3/idna-3.10-py3-none-any.whl", hash = "sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3", size = 70442, upload-time = "2024-09-15T18:07:37.964Z" },
+]
+
+[[package]]
+name = "iniconfig"
+version = "2.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f2/97/ebf4da567aa6827c909642694d71c9fcf53e5b504f2d96afea02718862f3/iniconfig-2.1.0.tar.gz", hash = "sha256:3abbd2e30b36733fee78f9c7f7308f2d0050e88f0087fd25c2645f63c773e1c7", size = 4793, upload-time = "2025-03-19T20:09:59.721Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2c/e1/e6716421ea10d38022b952c159d5161ca1193197fb744506875fbb87ea7b/iniconfig-2.1.0-py3-none-any.whl", hash = "sha256:9deba5723312380e77435581c6bf4935c94cbfab9b1ed33ef8d238ea168eb760", size = 6050, upload-time = "2025-03-19T20:10:01.071Z" },
 ]
 
 [[package]]
@@ -253,6 +262,24 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/b9/3b/1599631f59024b75c4d6e3069f4502409970a336647502aaf6b62fb7ac98/multidict-6.4.3-cp313-cp313t-win32.whl", hash = "sha256:0ecdc12ea44bab2807d6b4a7e5eef25109ab1c82a8240d86d3c1fc9f3b72efd5", size = 41775, upload-time = "2025-04-10T22:19:43.707Z" },
     { url = "https://files.pythonhosted.org/packages/e8/4e/09301668d675d02ca8e8e1a3e6be046619e30403f5ada2ed5b080ae28d02/multidict-6.4.3-cp313-cp313t-win_amd64.whl", hash = "sha256:7146a8742ea71b5d7d955bffcef58a9e6e04efba704b52a460134fefd10a8208", size = 45946, upload-time = "2025-04-10T22:19:45.071Z" },
     { url = "https://files.pythonhosted.org/packages/96/10/7d526c8974f017f1e7ca584c71ee62a638e9334d8d33f27d7cdfc9ae79e4/multidict-6.4.3-py3-none-any.whl", hash = "sha256:59fe01ee8e2a1e8ceb3f6dbb216b09c8d9f4ef1c22c4fc825d045a147fa2ebc9", size = 10400, upload-time = "2025-04-10T22:20:16.445Z" },
+]
+
+[[package]]
+name = "packaging"
+version = "25.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a1/d4/1fc4078c65507b51b96ca8f8c3ba19e6a61c8253c72794544580a7b6c24d/packaging-25.0.tar.gz", hash = "sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f", size = 165727, upload-time = "2025-04-19T11:48:59.673Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/20/12/38679034af332785aac8774540895e234f4d07f7545804097de4b666afd8/packaging-25.0-py3-none-any.whl", hash = "sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484", size = 66469, upload-time = "2025-04-19T11:48:57.875Z" },
+]
+
+[[package]]
+name = "pluggy"
+version = "1.5.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/96/2d/02d4312c973c6050a18b314a5ad0b3210edb65a906f868e31c111dede4a6/pluggy-1.5.0.tar.gz", hash = "sha256:2cffa88e94fdc978c4c574f15f9e59b7f4201d439195c3715ca9e2486f1d0cf1", size = 67955, upload-time = "2024-04-20T21:34:42.531Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/88/5f/e351af9a41f866ac3f1fac4ca0613908d9a41741cfcf2228f4ad853b697d/pluggy-1.5.0-py3-none-any.whl", hash = "sha256:44e1ad92c8ca002de6377e165f3e0f1be63266ab4d554740532335b9d75ea669", size = 20556, upload-time = "2024-04-20T21:34:40.434Z" },
 ]
 
 [[package]]
@@ -340,6 +367,21 @@ wheels = [
 ]
 
 [[package]]
+name = "pytest"
+version = "8.3.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "iniconfig" },
+    { name = "packaging" },
+    { name = "pluggy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ae/3c/c9d525a414d506893f0cd8a8d0de7706446213181570cdbd766691164e40/pytest-8.3.5.tar.gz", hash = "sha256:f4efe70cc14e511565ac476b57c279e12a855b11f48f212af1080ef2263d3845", size = 1450891, upload-time = "2025-03-02T12:54:54.503Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/30/3d/64ad57c803f1fa1e963a7946b6e0fea4a70df53c1a7fed304586539c2bac/pytest-8.3.5-py3-none-any.whl", hash = "sha256:c69214aa47deac29fad6c2a4f590b9c4a9fdb16a403176fe154b79c0b4d4d820", size = 343634, upload-time = "2025-03-02T12:54:52.069Z" },
+]
+
+[[package]]
 name = "pytz"
 version = "2025.2"
 source = { registry = "https://pypi.org/simple" }
@@ -362,6 +404,7 @@ dev = [
     { name = "hikari-arc" },
     { name = "hikari-miru" },
     { name = "pydantic" },
+    { name = "pytest" },
 ]
 
 [package.metadata]
@@ -372,10 +415,11 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "hikari", specifier = ">=2.3.1" },
+    { name = "hikari", specifier = ">=2.3.2" },
     { name = "hikari-arc", specifier = ">=2.1.0" },
     { name = "hikari-miru", specifier = ">=4.2.0,<5.0.0" },
     { name = "pydantic", specifier = ">=2.11.4" },
+    { name = "pytest", specifier = ">=8.3.5" },
 ]
 
 [[package]]
