@@ -6,7 +6,8 @@ from typing import overload
 from .print import tcrfmt_dataclass_by_name_args_kwargs as _tcrfmt_dataclass_by_name_args_kwargs
 
 
-class Lang[LocaleK: Hashable = str, TranslationK: Hashable = str, V = str]:
+# py313: class Lang[LocaleK: Hashable = str, TranslationK: Hashable = str, V = str]:
+class Lang[LocaleK: Hashable, TranslationK: Hashable, V]:
 	_d: dict[LocaleK | None, dict[TranslationK, V]]
 	_merge_func: Callable[[V, V], V]
 

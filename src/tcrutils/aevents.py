@@ -15,7 +15,8 @@ def _filter_out_none_results_in_place(results: list[Result[Any | None, Any]]) ->
 	results[:] = [r for r in results if (r.is_err or r.unwrap() is not None)]
 
 
-class BaseEvent[R: Any = None](TcrFmt_KwargsDataclass):
+# py313: class BaseEvent[R: Any = None](TcrFmt_KwargsDataclass):
+class BaseEvent[R: Any](TcrFmt_KwargsDataclass):
 	"""Represents a base event, kind of like BaseException represents base exception. Generic on the return value."""
 
 	_subscribers = defaultdict(set)
