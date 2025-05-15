@@ -3,7 +3,7 @@ name = "tcrutils"
 dynamic = ["version"]
 description = "Useful stuff for TCR projects!"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
 	"pytz>=2018.5",
 	"colored>=2.3.0",
@@ -16,7 +16,6 @@ classifiers = [
 	"Intended Audience :: Developers",
 	"Programming Language :: Python :: 3.13",
 	"Programming Language :: Python :: 3 :: Only",
-	# "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
 	"Typing :: Typed",
 	"Topic :: Utilities",
 	"Operating System :: POSIX",

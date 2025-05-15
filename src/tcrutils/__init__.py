@@ -50,7 +50,7 @@ if False:  # Left `if False`d out for archival purposes (yeah.. there's git but 
 	from .console import breakpoint, console, start_eval_session
 	from .console import console as c
 	from .context import random_seed_lock
-	from .decorator import convert, copy_kwargs, copy_kwargs_sunder, skip_first_call, skip_first_call_async, test, timeit, with_overrides
+	from .decorator import copy_kwargs, copy_kwargs_sunder, skip_first_call, skip_first_call_async, test, timeit, with_overrides
 	from .dev import generate_function_argument_typehints, generate_type_hinter
 	from .dict import DotDict, clean_dunder_dict, dict_zip, merge_dicts
 	from .dir import dir2, dir3, dir_recursive, vars2, vars3, vars_recursive
