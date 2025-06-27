@@ -413,10 +413,20 @@ if True:  # \/ # fmt & print iterable
 
 		Assuming syntax_highlighting==True && isinstance(text, BrainfuckCode)
 		"""
-		return str(text.replace("[", "#").replace("<", f"{FMTC.ASTERISK}<").replace(">", f"{FMTC.ASTERISK}>").replace(".", f"{FMTC.DECIMAL}.").replace(",", f"{FMTC.COMMA},").replace("+", f"{FMTC.TRUE}+").replace("-", f"{FMTC.FALSE}-").replace("]", f"{FMTC.BRACKET}]").replace("#", f"{FMTC.BRACKET}["))
+		return str(
+			text.replace("[", "#")
+			.replace("<", f"{FMTC.ASTERISK}<")
+			.replace(">", f"{FMTC.ASTERISK}>")
+			.replace(".", f"{FMTC.DECIMAL}.")
+			.replace(",", f"{FMTC.COMMA},")
+			.replace("+", f"{FMTC.TRUE}+")
+			.replace("-", f"{FMTC.FALSE}-")
+			.replace("]", f"{FMTC.BRACKET}]")
+			.replace("#", f"{FMTC.BRACKET}[")
+		)
 
 	def _pydantic_hopefully_non_erroring_dumper(obj) -> dict:
-		return {k: getattr(obj, k) for k in obj.model_fields}
+		return {k: getattr(obj, k) for k in obj.__class__.model_fields}
 
 	def parse_repr_literal(repr_str: str) -> tuple[str, tuple[Any], dict[str, Any]]:
 		"""Parse a repr in the form of Class('args', 'args', ..., kwargs='kwargs', kwargs2=2) and return ParsedRepr(name='Class', args=('args', 'args', ...), kwargs={'kwargs': 'kwargs', 'kwargs2': 2}). Fail with ValueError on non-literal parsing.
@@ -981,13 +991,18 @@ if True:  # \/ # fmt & print iterable
 				if is_mapping:
 					if it is sys.modules:
 						it = it.copy()  # Fix crash because changed size during iteration because reasons
-					inner = f"{comma}{enter or space}".join([indent + (f"{k}{FMTC.COLON}:{FMTC._}{space}{v}" if syntax_highlighting else f"{k}:{space}{v}").replace(enter, f"{enter}{indent}") for k, v in {this(key): this(value) for key, value in it.items()}.items()]) + (comma if trailing_commas else "")
+					inner = f"{comma}{enter or space}".join([
+						indent + (f"{k}{FMTC.COLON}:{FMTC._}{space}{v}" if syntax_highlighting else f"{k}:{space}{v}").replace(enter, f"{enter}{indent}")
+						for k, v in {this(key): this(value) for key, value in it.items()}.items()
+					]) + (comma if trailing_commas else "")
 
 					return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[dict])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
 				else:
-					inner = f"{comma}{enter or space}".join([indent + x.replace("\n", f"\n{indent}") for x in [this(element) for element in itl] + ([] if not (overflow if not kwargs.get("_ov") else kwargs.get("_ov")) else [this(_OverflowClass(overflow if not kwargs.get("_ov") else kwargs.get("_ov")))])]) + (
-						comma if (trailing_commas or ((not kwargs.get("_force_tuple_no_trailing_comma_on_single_element")) and _t is tuple and len(it) == 1)) else ""
-					)
+					inner = f"{comma}{enter or space}".join([
+						indent + x.replace("\n", f"\n{indent}")
+						for x in [this(element) for element in itl]
+						+ ([] if not (overflow if not kwargs.get("_ov") else kwargs.get("_ov")) else [this(_OverflowClass(overflow if not kwargs.get("_ov") else kwargs.get("_ov")))])
+					]) + (comma if (trailing_commas or ((not kwargs.get("_force_tuple_no_trailing_comma_on_single_element")) and _t is tuple and len(it) == 1)) else "")
 
 					return (FMT_BRACKETS[_t] if _t in FMT_BRACKETS else FMT_BRACKETS[None])[syntax_highlighting] % f'{enter}{inner}{enter}'  # fmt: skip
 			else:
@@ -1023,7 +1038,15 @@ if True:  # \/ # fmt & print iterable
 			else:
 				return FMT_UNKNOWN_NO_PARENS[syntax_highlighting] % (
 					parse_repr_name,
-					FMT_BRACKETS[tuple][syntax_highlighting] % (FMT_ASTERISK[syntax_highlighting] + this(parse_repr_args, no_implicit_quoteless=True) + comma + space + (FMT_ASTERISK[syntax_highlighting] * 2) + this(parse_repr_kwargs, no_implicit_quoteless=True)),
+					FMT_BRACKETS[tuple][syntax_highlighting]
+					% (
+						FMT_ASTERISK[syntax_highlighting]
+						+ this(parse_repr_args, no_implicit_quoteless=True)
+						+ comma
+						+ space
+						+ (FMT_ASTERISK[syntax_highlighting] * 2)
+						+ this(parse_repr_kwargs, no_implicit_quoteless=True)
+					),
 				)
 
 			# If the repr looks like a instantiation Name(args, kw=args), etc. then parse it into a str(*tuple, **dict) nice looking, indentend thing.
