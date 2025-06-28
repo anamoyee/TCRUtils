@@ -108,3 +108,35 @@ class AlwaysTruthyStr(str):
 
 	def __bool__(self):
 		return True
+
+
+def _merge_with_common_suffix(*args: str) -> str:
+	"""`["OwnedMenu", "UserMenu"] -> "OwnedUserMenu"`."""
+	if not args:
+		return ""
+
+	common_suffix = ""
+
+	for i in range(1, min(map(len, args)) + 1):
+		suffix = args[0][-i:]
+		if all(s.endswith(suffix) for s in args):
+			common_suffix = suffix
+		else:
+			break
+	else:
+		common_suffix = args[0]
+
+	return "".join(s.removesuffix(common_suffix) for s in args) + common_suffix
+
+
+def DynType(*bases: type) -> type:
+	"""Make a dynamic, multiple-inherited type."""
+	if not bases:
+		raise ValueError("At least one base class must be provided")
+
+	if len(bases) == 1:
+		return bases[0]
+
+	name = _merge_with_common_suffix(*(b.__name__ for b in bases if hasattr(b, "__name__"))) or "UnnamedDynType"
+
+	return type(name, bases, {})
