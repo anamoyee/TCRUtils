@@ -2,7 +2,7 @@ from collections.abc import Callable, Coroutine
 from dataclasses import dataclass
 from enum import Enum, auto
 from functools import wraps
-from typing import Any, Generic, Literal, TypeVar, overload
+from typing import Any, Generic, Literal, Self, TypeVar, overload
 
 from .print import FMT_BRACKETS
 
@@ -120,6 +120,18 @@ class Result[Ok, Err: BaseException]:
 
 		if self.is_err:
 			raise self._value
+
+	def map_err(self, f: Callable[[Err], Err]) -> Self:
+		if self.is_err:
+			self._value = f(self._value)
+
+		return self
+
+	def map_ok(self, f: Callable[[Ok], Ok]) -> Self:
+		if self.is_ok:
+			self._value = f(self._value)
+
+		return self
 
 	def __tcr_fmt__(self=None, *, fmt_iterable, syntax_highlighting, **kwargs):
 		if self is None:
