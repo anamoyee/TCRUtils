@@ -1,7 +1,8 @@
-from collections.abc import Callable
+from collections.abc import Callable, Coroutine
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Generic, Literal, TypeVar, overload
+from functools import wraps
+from typing import Any, Generic, Literal, TypeVar, overload
 
 from .print import FMT_BRACKETS
 
@@ -124,4 +125,31 @@ class Result[Ok, Err: BaseException]:
 		if self is None:
 			raise NotImplementedError
 
-		return fmt_iterable(self.__class__) + fmt_iterable(696969.696969).replace("696969", "") + fmt_iterable(bool(self.is_ok)).replace("True", "Ok").replace("False", "Err") + (FMT_BRACKETS[tuple][syntax_highlighting] % fmt_iterable(self._value))
+		return (
+			fmt_iterable(self.__class__)
+			+ fmt_iterable(696969.696969).replace("696969", "")
+			+ fmt_iterable(bool(self.is_ok)).replace("True", "Ok").replace("False", "Err")
+			+ (FMT_BRACKETS[tuple][syntax_highlighting] % fmt_iterable(self._value))
+		)
+
+
+def aresultify[**P, R](f: Callable[P, Coroutine[Any, Any, R]]) -> Callable[P, Coroutine[Any, Any, Result[R, Exception]]]:
+	@wraps(f)
+	async def wrapper(*args, **kwargs):
+		try:
+			return Result.new_ok(await f(*args, **kwargs))
+		except Exception as e:
+			return Result.new_err(e)
+
+	return wrapper
+
+
+def resultify[**P, R](f: Callable[P, R]) -> Callable[P, Result[R, Exception]]:
+	@wraps(f)
+	def wrapper(*args, **kwargs):
+		try:
+			return Result.new_ok(f(*args, **kwargs))
+		except Exception as e:
+			return Result.new_err(e)
+
+	return wrapper
