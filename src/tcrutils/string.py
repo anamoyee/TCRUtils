@@ -5,7 +5,7 @@ import re as regex
 from .int import clamp
 
 
-def commafy(text: str | int, splitter: str = ","):
+def commafy(text: str | int, splitter: str = ",") -> str:
 	"""Commafy a number.
 
 	Returns a string of that number split by commas if needed, or any character passed as splitter.
