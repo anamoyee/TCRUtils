@@ -36,7 +36,7 @@ class BaseEvent[R: Any](TcrFmt_KwargsDataclass):
 
 			yield from self._subscribers.get(cls, set())
 
-	async def emit_results(self, *, filter_out_nones: bool = False) -> list[Result[R, Exception]]:
+	async def emit_results(self, *, filter_out_nones: bool = False) -> tuple[Result[R, Exception], ...]:
 		"""Emit the event instance, calling & awaiting all relevant subscribers. Returns a tuple of all subscriber return values (if subscriber raises, appropriate Result value is used in the given position)."""
 		results = []
 		for func in self._iter_subscriber_calls():
@@ -50,9 +50,9 @@ class BaseEvent[R: Any](TcrFmt_KwargsDataclass):
 		if filter_out_nones:
 			_filter_out_none_results_in_place(results)
 
-		return results
+		return tuple(results)
 
-	async def emit_excgroup(self, *, filter_out_nones: bool = False) -> list[R]:
+	async def emit_excgroup(self, *, filter_out_nones: bool = False) -> tuple[R, ...]:
 		"""Emit the event instance, calling & awaiting all relevant subscribers. Returns a tuple of all subscriber return values (if subscriber raises, an exception group is raised, emitting continues, and at the end the accumulated exceptions in the exception group are raised)."""
 		results = []
 		exceptions = []
@@ -69,9 +69,9 @@ class BaseEvent[R: Any](TcrFmt_KwargsDataclass):
 		if filter_out_nones:
 			_filter_out_nones_in_place(results)
 
-		return results
+		return tuple(results)
 
-	async def emit_failfast(self, *, filter_out_nones: bool = False) -> list[R]:
+	async def emit_failfast(self, *, filter_out_nones: bool = False) -> tuple[R, ...]:
 		"""Emit the event instance, calling & awaiting all relevant subscribers. Returns a tuple of all subscriber return values (if subscriber raises, dont catch the error, the emission ends immediately)."""
 		results = []
 
@@ -81,7 +81,7 @@ class BaseEvent[R: Any](TcrFmt_KwargsDataclass):
 		if filter_out_nones:
 			_filter_out_nones_in_place(results)
 
-		return results
+		return tuple(results)
 
 
 if __name__ == "__main__":
