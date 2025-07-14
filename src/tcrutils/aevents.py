@@ -64,7 +64,7 @@ class BaseEvent[R: Any](TcrFmt_KwargsDataclass):
 				exceptions.append(e)
 
 		if exceptions:
-			raise ExceptionGroup("During event emission at least 1 subscriber raised an exception", exceptions)
+			raise ExceptionGroup(f"{self.__class__.__name__}: During event emission at least 1 subscriber raised an exception", exceptions)
 
 		if filter_out_nones:
 			_filter_out_nones_in_place(results)
